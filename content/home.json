@@ -1,0 +1,118 @@
+{
+  "hero": {
+    "eyebrow": "Hosted by Collapse Creative",
+    "title": "OpenVibe",
+    "subtitle": "",
+    "lead": "Espacio para observar, entender y practicar con IA mientras cambia: contexto claro, herramientas reales y aprendizaje compartido.",
+    "primaryCta": "Ver sesi\u00f3n 0",
+    "secondaryCta": "Inscribirse"
+  },
+  "context": {
+    "house": "Por qu\u00e9 existe OpenVibe",
+    "unit": "La IA evoluciona demasiado r\u00e1pido para tratarla como una asignatura cerrada. OpenVibe propone un espacio para seguirla de cerca, entenderla sin humo y aprender a usarla con criterio desde la pr\u00e1ctica creativa.",
+    "cta": "Descubre m\u00e1s de Collapse!",
+    "title": "Por qu\u00e9 nace OpenVibe",
+    "body": "OpenVibe nace porque la IA est\u00e1 cambiando demasiado r\u00e1pido como para tratarla como un curso cerrado. No tiene sentido sentar c\u00e1tedra sobre una tecnolog\u00eda que ma\u00f1ana puede cambiar con una nueva versi\u00f3n de Claude, una LLM local con m\u00e1s contexto o una mejora radical de coste e inteligencia.\n\nLa idea es juntarnos para observar, estudiar y desmitificar esta tecnolog\u00eda mientras ocurre. Queremos entender qu\u00e9 est\u00e1 pasando, compartir herramientas, probar usos reales y aprender a convertir la IA en una herramienta pr\u00e1ctica. Collapse Creative hostea estas sesiones porque investiga, prueba, dise\u00f1a y construye dentro de este medio cada d\u00eda.",
+    "bodyA": "OpenVibe nace porque la IA est\u00e1 cambiando demasiado r\u00e1pido como para tratarla como un curso cerrado. No tiene sentido sentar c\u00e1tedra sobre una tecnolog\u00eda que ma\u00f1ana puede cambiar con una nueva versi\u00f3n de Claude, una LLM local con m\u00e1s contexto o una mejora radical de coste e inteligencia.",
+    "bodyB": "La idea es juntarnos para observar, estudiar y desmitificar esta tecnolog\u00eda mientras ocurre. Queremos entender qu\u00e9 est\u00e1 pasando, compartir herramientas, probar usos reales y aprender a convertir la IA en una herramienta pr\u00e1ctica. Collapse Creative hostea estas sesiones porque investiga, prueba, dise\u00f1a y construye dentro de este medio cada d\u00eda."
+  },
+  "openvibe": {
+    "title": "Qu\u00e9 es OpenVibe",
+    "body": "OpenVibe es una l\u00ednea de sesiones de aprendizaje colectivo y comunitario. Sirve para compartir informaci\u00f3n, contrastar herramientas y entender c\u00f3mo usar todo esto en trabajo real."
+  },
+  "sessions": {
+    "title": "Qu\u00e9 pasa en estas sesiones",
+    "body": "En cada sesi\u00f3n se revisa contexto, se ven herramientas en uso real y se comparten formas de trabajo. La idea es entender qu\u00e9 est\u00e1 pasando y c\u00f3mo usarlo, no solo verlo desde fuera."
+  },
+  "unaverdad": {
+    "title": "Nadie es el m\u00e1s listo",
+    "body": "Precisamente debido al vertiginoso desarrollo de esta tecnolog\u00eda no hay una ciencia cierta que se mantenga lo suficientemente estable, lo cual refuerza nuestra idea de realizar sesiones guiadas por nosotros pero enfocadas al aprendizaje colectivo. Queremos facilitar la teor\u00eda y tecnolog\u00eda detr\u00e1s de las LLMs e investigar buenas pr\u00e1cticas y protocolos, pero no definimos dogma."
+  },
+  "corpotoday": {
+    "title": "LLMs m\u00e1s all\u00e1 de las comerciales",
+    "body": "Una de las primeras cosas que aprenderemos ser\u00e1 descubrir LLMs open source y locales como QWEN o LLAMA. Hay vida m\u00e1s all\u00e1 de las corporaciones; estimaciones predicen que los modelos open source gratuitos dentro de un a\u00f1o como mucho ser\u00e1n capaces de realizar tareas complejas. Dicho esto, s\u00ed que usaremos los modelos GPT y Claude, ya que son los m\u00e1s usados com\u00fanmente y hoy en d\u00eda nos sirven para aprender. No obstante, a la que avance el tema introduciremos las LLMs open source."
+  },
+  "learn": {
+    "title": "Qu\u00e9 puedes esperar aprender",
+    "items": [
+      {
+        "title": "Contexto",
+        "body": "Qu\u00e9 est\u00e1 cambiando y por qu\u00e9 importa."
+      },
+      {
+        "title": "Herramientas",
+        "body": "Qu\u00e9 tools existen y c\u00f3mo se est\u00e1n usando."
+      },
+      {
+        "title": "IA + dise\u00f1o",
+        "body": "Aplicaciones reales en procesos creativos."
+      },
+      {
+        "title": "Workflow",
+        "body": "GitHub, organizaci\u00f3n, documentaci\u00f3n y estructura."
+      },
+      {
+        "title": "Orientaci\u00f3n",
+        "body": "C\u00f3mo no perderse en un entorno que cambia r\u00e1pido."
+      },
+      {
+        "title": "Tu proceso",
+        "body": "C\u00f3mo se puede adaptar la IA a tus necesidades."
+      },
+      {
+        "title": "Programaci\u00f3n",
+        "body": "Programaci\u00f3n, mitos vs. realidad, perder miedo al c\u00f3digo."
+      },
+      {
+        "title": "Desarrolla tu proyecto",
+        "body": "Acompa\u00f1ado de feedback en cada sesi\u00f3n por parte de todos."
+      }
+    ]
+  },
+  "audience": {
+    "title": "Para qui\u00e9n es",
+    "items": [
+      {
+        "title": "Estoy empezando",
+        "body": "No hace falta experiencia previa. La sesi\u00f3n 0 est\u00e1 pensada como introducci\u00f3n."
+      },
+      {
+        "title": "Ya estoy tocando esto",
+        "body": "Sirve para contrastar criterio, herramientas y formas de trabajo."
+      },
+      {
+        "title": "No s\u00e9 por d\u00f3nde empezar",
+        "body": "Aqu\u00ed puedes ver opciones reales y entender qu\u00e9 tiene sentido explorar."
+      },
+      {
+        "title": "\u00bfEsto es t\u00e9cnico?",
+        "body": "Se explicar\u00e1 desde dise\u00f1o y pr\u00e1ctica real. Lo t\u00e9cnico aparece cuando hace falta, no como barrera."
+      }
+    ]
+  },
+  "session0": {
+    "title": "Hello World! 2.0",
+    "body": "Sesi\u00f3n inicial para abrir OpenVibe. Da igual el nivel: sirve para reunir contexto, ver herramientas y decidir hacia d\u00f3nde pueden ir las siguientes sesiones. Propuesta de sesi\u00f3n:",
+    "bullets": [
+      "Panorama actual: diferencias entre LLM, AI, AGI y otras siglas.",
+      "Formas reales de trabajar con LLMs en procesos creativos.",
+      "Aplicaciones posibles y qu\u00e9 significa trabajar con open source.",
+      "Necesidades, intereses, miedos y preguntas del grupo.",
+      "C\u00f3mo adaptar estas herramientas a proyectos propios.",
+      "C\u00f3mo estructurar futuras sesiones si hay m\u00e1s inter\u00e9s."
+    ]
+  },
+  "funding": {
+    "title": "C\u00f3mo se sostiene",
+    "body": "Entrada libre. Al final habr\u00e1 caja inversa para cubrir espacio, materiales y tiempo de preparaci\u00f3n. Eso ayuda a investigar, preparar sesiones y mejorar la siguiente."
+  },
+  "roadmap": {
+    "title": "Roadmap futuro",
+    "body": "Si hay inter\u00e9s, OpenVibe puede crecer como l\u00ednea de sesiones: encuentros regulares, formatos por nivel, talleres y una comunidad que comparte conocimiento y aprende en conjunto. Esto se definir\u00e1 con la gente que participe en la sesi\u00f3n 0."
+  },
+  "signup": {
+    "title": "Inscripci\u00f3n \u2014 Session 0",
+    "body": "La sesi\u00f3n se preparar\u00e1 en base a qui\u00e9n venga. Por eso se piden algunas referencias.",
+    "submit": "Enviar inscripci\u00f3n"
+  }
+}

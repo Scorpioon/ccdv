@@ -1,0 +1,30 @@
+{
+  "hero": {
+    "eyebrow": "About",
+    "title": "Collapse Creative, Dev Unit y OpenVibe",
+    "lead": "La estructura es simple: Collapse Creative es la casa, Collapse Dev Unit es una unidad interna y OpenVibe es una l\u00ednea de sesiones nacida desde ah\u00ed."
+  },
+  "sections": [
+    {
+      "kicker": "House",
+      "title": "Collapse Creative",
+      "body": "Collapse Creative es un estudio freelance-first de comunicaci\u00f3n, dise\u00f1o y creatividad. Trabaja con un n\u00facleo estable y una red activable de colaboradores, montando equipos seg\u00fan lo que cada proyecto necesita."
+    },
+    {
+      "kicker": "Unit",
+      "title": "Collapse Dev Unit",
+      "body": "Collapse Dev Unit ampl\u00eda esa pr\u00e1ctica en el terreno t\u00e9cnico. Toca IA, prototipos, tooling, workflows y construcci\u00f3n digital desde la utilidad, la claridad y la pr\u00e1ctica real."
+    },
+    {
+      "kicker": "Program",
+      "title": "OpenVibe",
+      "body": "OpenVibe es una l\u00ednea de sesiones de aprendizaje colectivo y comunitario. Sirve para compartir contexto, abrir conversaci\u00f3n y construir criterio alrededor de IA, dise\u00f1o y nuevas formas de trabajo."
+    },
+    {
+      "kicker": "Map",
+      "title": "C\u00f3mo se conectan",
+      "body": "Collapse Creative es la estructura principal. Dev Unit ampl\u00eda su capacidad t\u00e9cnica. OpenVibe es una de las iniciativas que nacen desde ah\u00ed."
+    }
+  ],
+  "cta": "Visit Collapse Creative"
+}

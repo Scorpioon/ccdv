@@ -1,0 +1,17 @@
+media: assets
+content:
+  - name: global
+    label: Global
+    type: file
+    path: content/global.json
+    format: json
+  - name: home
+    label: Home
+    type: file
+    path: content/home.json
+    format: json
+  - name: about
+    label: About
+    type: file
+    path: content/about.json
+    format: json

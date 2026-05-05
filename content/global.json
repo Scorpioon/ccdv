@@ -1,0 +1,119 @@
+{
+  "site": {
+    "title": "Collapse Dev Unit : OpenVibe",
+    "tagline": "Hosted by Collapse Creative",
+    "external_about": "https://www.collapsecreative.com"
+  },
+  "nav": {
+    "about": "About",
+    "openvibe": "OpenVibe",
+    "meeting": "Meeting",
+    "signup": "Sign up"
+  },
+  "footer": {
+    "house": "Collapse Creative",
+    "unit": "Collapse Dev Unit",
+    "location": "Barcelona, Catalunya",
+    "email": "contact@collapsecreative.com"
+  },
+  "form": {
+    "sessionLanguages": [
+      "Castellano",
+      "English"
+    ],
+    "days": [
+      "Lunes",
+      "Martes",
+      "Mi\u00e9rcoles",
+      "Jueves",
+      "Viernes",
+      "S\u00e1bado"
+    ],
+    "times": [
+      "Ma\u00f1ana",
+      "Tarde",
+      "Noche"
+    ],
+    "backgrounds": [
+      "Dise\u00f1o",
+      "Desarrollo",
+      "Oficina",
+      "Creativo general",
+      "Otro"
+    ],
+    "levels": [
+      "No he tocado una LLM nunca",
+      "User casual",
+      "User que se apoya en work pero light",
+      "User que usa mucho o a diario en work",
+      "Token burner"
+    ],
+    "systems": [
+      "Windows",
+      "macOS",
+      "Linux"
+    ],
+    "llms": [
+      "ChatGPT",
+      "Claude",
+      "Gemini",
+      "Local LLM",
+      "Ninguna"
+    ],
+    "futureInterest": [
+      "S\u00ed",
+      "No",
+      "Depende"
+    ]
+  },
+  "formOptions": {
+    "sessionLanguages": [
+      "Castellano",
+      "English"
+    ],
+    "days": [
+      "Lunes",
+      "Martes",
+      "Mi\u00e9rcoles",
+      "Jueves",
+      "Viernes",
+      "S\u00e1bado"
+    ],
+    "times": [
+      "Ma\u00f1ana",
+      "Tarde",
+      "Noche"
+    ],
+    "backgrounds": [
+      "Dise\u00f1o",
+      "Desarrollo",
+      "Oficina",
+      "Creativo general",
+      "Otro"
+    ],
+    "levels": [
+      "No he tocado una LLM nunca",
+      "User casual",
+      "User que se apoya en work pero light",
+      "User que usa mucho o a diario en work",
+      "Token burner"
+    ],
+    "systems": [
+      "Windows",
+      "macOS",
+      "Linux"
+    ],
+    "llms": [
+      "ChatGPT",
+      "Claude",
+      "Gemini",
+      "Local LLM",
+      "Ninguna"
+    ],
+    "futureInterest": [
+      "S\u00ed",
+      "No",
+      "Depende"
+    ]
+  }
+}
