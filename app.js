@@ -1,6 +1,9 @@
 const GLOBAL_PATH = './content/global.json';
 const HOME_PATH = './content/home.json';
 const ABOUT_PATH = './content/about.json';
+const WORK_PATH = './content/work.json';
+const SERVICES_PATH = './content/services.json';
+const PRODUCTS_PATH = './content/products.json';
 
 let globalContent = null;
 let pageContent = null;
@@ -23,19 +26,32 @@ const formStages = [
   { id: 'tools', title: 'Herramientas e inter\u00e9s', fields: ['llms', 'futureInterest'], required: ['futureInterest'] }
 ];
 
+function detectPagePath() {
+  if (document.getElementById('workCases')) return WORK_PATH;
+  if (document.getElementById('servicesOffers')) return SERVICES_PATH;
+  if (document.getElementById('aionShelf')) return PRODUCTS_PATH;
+  if (document.body.querySelector('.section--about-hero')) return ABOUT_PATH;
+  return HOME_PATH;
+}
+
 async function init() {
-  const isAbout = document.body.querySelector('.section--about-hero');
+  const pagePath = detectPagePath();
   const [globalRes, pageRes] = await Promise.all([
     fetch(GLOBAL_PATH, { cache: 'no-store' }),
-    fetch(isAbout ? ABOUT_PATH : HOME_PATH, { cache: 'no-store' })
+    fetch(pagePath, { cache: 'no-store' })
   ]);
   globalContent = await globalRes.json();
   pageContent = await pageRes.json();
   bindClock();
   bindFixedHeaderOffset();
   bindGlobal();
-  if (isAbout) renderAbout(); else renderHome();
+  if (pagePath === ABOUT_PATH) renderAbout();
+  else if (pagePath === WORK_PATH) renderWork();
+  else if (pagePath === SERVICES_PATH) renderServices();
+  else if (pagePath === PRODUCTS_PATH) renderProducts();
+  else renderHome();
   setActiveNav();
+  bindMobileMenu();
 }
 
 function textByPath(obj, path) {
@@ -521,6 +537,288 @@ function renderAbout() {
   `).join('');
 }
 
+function renderWork() {
+  const railNav = document.getElementById('workRail');
+  const target = document.getElementById('workCases');
+  if (!target) return;
+  const projects = (pageContent.projects || [])
+    .filter(p => p.publicSafe)
+    .sort((a, b) => a.order - b.order);
+
+  projects.forEach((p, i) => {
+    const num = String(i + 1).padStart(2, '0');
+    const anchorId = `project-${num}`;
+
+    if (railNav) {
+      const link = document.createElement('a');
+      link.className = 'work-rail__link' + (i === 0 ? ' is-active' : '');
+      link.href = `#${anchorId}`;
+      link.dataset.target = anchorId;
+      const railNum = document.createElement('span');
+      railNum.className = 'work-rail__num';
+      railNum.textContent = num;
+      const railName = document.createElement('span');
+      railName.className = 'work-rail__name';
+      railName.textContent = p.title;
+      link.append(railNum, railName);
+      railNav.appendChild(link);
+    }
+
+    const article = document.createElement('article');
+    article.className = 'work-case';
+    article.id = anchorId;
+
+    const info = document.createElement('div');
+    info.className = 'work-case__info';
+
+    const index = document.createElement('p');
+    index.className = 'work-case__index';
+    index.textContent = `Proyecto ${num}`;
+
+    const h2 = document.createElement('h2');
+    h2.className = 'work-case__title';
+    h2.textContent = p.title;
+
+    info.append(index, h2);
+
+    const typeStatus = [p.type, p.status].filter(Boolean).join(' · ');
+    if (typeStatus) {
+      const type = document.createElement('p');
+      type.className = 'work-case__type';
+      type.textContent = typeStatus;
+      info.appendChild(type);
+    }
+
+    const meta = document.createElement('dl');
+    meta.className = 'work-case__meta';
+    [['Problema', p.problem], ['Sistema', p.system], ['Output', p.output]].forEach(([label, value]) => {
+      if (!value) return;
+      const row = document.createElement('div');
+      row.className = 'work-case__meta-row';
+      const dt = document.createElement('dt');
+      dt.textContent = label;
+      const dd = document.createElement('dd');
+      dd.textContent = value;
+      row.append(dt, dd);
+      meta.appendChild(row);
+    });
+    if (meta.childNodes.length) info.appendChild(meta);
+
+    if (p.publicNote) {
+      const note = document.createElement('p');
+      note.className = 'work-case__note';
+      note.textContent = p.publicNote;
+      info.appendChild(note);
+    }
+
+    const figure = document.createElement('figure');
+    figure.className = 'work-case__visual';
+    const frame = document.createElement('div');
+    frame.className = 'work-case__frame';
+    if (p.image) {
+      const img = document.createElement('img');
+      img.src = p.image;
+      img.alt = p.imageAlt || p.title;
+      img.loading = 'lazy';
+      frame.appendChild(img);
+    } else {
+      const placeholder = document.createElement('span');
+      placeholder.className = 'work-case__placeholder';
+      placeholder.textContent = p.title;
+      frame.appendChild(placeholder);
+    }
+    figure.appendChild(frame);
+
+    article.append(info, figure);
+    target.appendChild(article);
+  });
+
+  bindWorkRail();
+}
+
+function bindWorkRail() {
+  const links = [...document.querySelectorAll('.work-rail__link')];
+  const cases = [...document.querySelectorAll('.work-case')];
+  if (!links.length || !cases.length) return;
+
+  const setActive = id => {
+    links.forEach(link => link.classList.toggle('is-active', link.dataset.target === id));
+  };
+
+  if (!('IntersectionObserver' in window)) return;
+
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) setActive(entry.target.id);
+    });
+  }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+
+  cases.forEach(c => io.observe(c));
+}
+
+function renderServices() {
+  const offersList = document.getElementById('servicesOffers');
+  const methodStepper = document.getElementById('methodStepper');
+  if (offersList) {
+    const offers = (pageContent.offers || []).slice().sort((a, b) => a.order - b.order);
+    offers.forEach((offer, i) => {
+      const li = document.createElement('li');
+      li.className = 'offer-item';
+      li.dataset.offerId = offer.id;
+
+      const index = document.createElement('span');
+      index.className = 'offer-item__index';
+      index.textContent = String(i + 1).padStart(2, '0');
+
+      const main = document.createElement('div');
+      main.className = 'offer-item__main';
+      const h3 = document.createElement('h3');
+      h3.className = 'offer-item__title';
+      h3.textContent = offer.title;
+      const body = document.createElement('p');
+      body.className = 'offer-item__body';
+      body.textContent = offer.body;
+      main.append(h3, body);
+
+      li.append(index, main);
+
+      if (offer.tag) {
+        const tag = document.createElement('span');
+        tag.className = 'offer-item__tag';
+        tag.textContent = offer.tag;
+        li.appendChild(tag);
+      }
+
+      offersList.appendChild(li);
+    });
+  }
+  if (methodStepper) {
+    const steps = (pageContent.method || []).slice().sort((a, b) => a.order - b.order);
+    steps.forEach((step, i) => {
+      const li = document.createElement('li');
+      li.className = 'method-step';
+      li.tabIndex = 0;
+      li.dataset.stepId = step.id;
+
+      const node = document.createElement('span');
+      node.className = 'method-step__node';
+      node.setAttribute('aria-hidden', 'true');
+
+      const num = document.createElement('span');
+      num.className = 'method-step__num';
+      num.textContent = step.step || String(i + 1).padStart(2, '0');
+
+      const h3 = document.createElement('h3');
+      h3.className = 'method-step__title';
+      h3.textContent = step.title;
+
+      const body = document.createElement('p');
+      body.className = 'method-step__body';
+      body.textContent = step.body;
+
+      li.append(node, num, h3, body);
+      methodStepper.appendChild(li);
+    });
+  }
+}
+
+function renderProducts() {
+  const aionTarget = document.getElementById('aionShelf');
+  const registryTarget = document.getElementById('registryGrid');
+  if (!aionTarget && !registryTarget) return;
+
+  const items = (pageContent.items || [])
+    .filter(p => p.publicSafe || p.teaserOnly)
+    .sort((a, b) => a.order - b.order);
+
+  if (aionTarget) {
+    items.filter(p => p.group === 'aion').forEach(p => {
+      const item = document.createElement('article');
+      item.className = 'aion-shelf__item' + (p.status === 'private' ? ' aion-shelf__item--private' : '');
+      item.dataset.productId = p.id;
+      item.dataset.group = p.group;
+
+      const code = document.createElement('p');
+      code.className = 'aion-shelf__code';
+      code.textContent = p.type || 'AION';
+
+      const name = document.createElement('h3');
+      name.className = 'aion-shelf__name';
+      name.textContent = p.name;
+
+      const meta = document.createElement('div');
+      meta.className = 'aion-shelf__meta';
+
+      if (p.body) {
+        const body = document.createElement('p');
+        body.className = 'aion-shelf__body';
+        body.textContent = p.body;
+        meta.appendChild(body);
+      }
+
+      const badge = document.createElement('span');
+      badge.className = 'aion-shelf__status-badge';
+      const dot = document.createElement('span');
+      dot.className = 'aion-shelf__status-dot';
+      dot.setAttribute('aria-hidden', 'true');
+      badge.append(dot, p.status || '—');
+      meta.appendChild(badge);
+
+      item.append(code, name, meta);
+      aionTarget.appendChild(item);
+    });
+  }
+
+  if (registryTarget) {
+    items.filter(p => p.group !== 'aion').forEach(p => {
+      const card = document.createElement('article');
+      card.className = 'registry-card';
+      card.dataset.productId = p.id;
+      card.dataset.group = p.group;
+
+      if (p.icon) {
+        const icon = document.createElement('span');
+        icon.className = 'ccdv-card__icon ' + p.icon;
+        icon.setAttribute('aria-hidden', 'true');
+        card.appendChild(icon);
+      }
+
+      const name = document.createElement('h3');
+      name.className = 'registry-card__name';
+      name.textContent = p.name;
+      card.appendChild(name);
+
+      if (p.type) {
+        const type = document.createElement('p');
+        type.className = 'registry-card__type';
+        type.textContent = p.type;
+        card.appendChild(type);
+      }
+
+      if (p.body) {
+        const body = document.createElement('p');
+        body.className = 'registry-card__body';
+        body.textContent = p.body;
+        card.appendChild(body);
+      }
+
+      const footer = document.createElement('div');
+      footer.className = 'registry-card__footer';
+      const statusTag = document.createElement('span');
+      statusTag.className = 'status-tag';
+      statusTag.textContent = p.status || '—';
+      footer.appendChild(statusTag);
+      if (p.version) {
+        const vTag = document.createElement('span');
+        vTag.className = 'status-tag';
+        vTag.textContent = p.version;
+        footer.appendChild(vTag);
+      }
+      card.appendChild(footer);
+      registryTarget.appendChild(card);
+    });
+  }
+}
 
 function bindFixedHeaderOffset() {
   const header = document.querySelector('.site-header');
@@ -560,6 +858,33 @@ function bindClock() {
   setInterval(update, 1000);
 }
 
+function bindMobileMenu() {
+  const toggle = document.querySelector('[data-nav-toggle]');
+  const nav = document.getElementById('primaryNav');
+  if (!toggle || !nav) return;
+
+  const close = () => {
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.classList.remove('is-open');
+    nav.classList.remove('is-open');
+  };
+
+  toggle.addEventListener('click', () => {
+    const expanded = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!expanded));
+    toggle.classList.toggle('is-open', !expanded);
+    nav.classList.toggle('is-open', !expanded);
+  });
+
+  nav.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', close);
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && nav.classList.contains('is-open')) close();
+  });
+}
+
 function setActiveNav() {
   const navLinks = [...document.querySelectorAll('.site-nav a[href^="#"]')];
   if (!navLinks.length) return;
@@ -576,4 +901,31 @@ function setActiveNav() {
   window.addEventListener('scroll', mark, { passive: true });
 }
 
+function bindMotionReveal() {
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const targets = [
+    ...document.querySelectorAll(
+      '.ccdv-main > .section:not(.section--hero):not(.section--about-hero)'
+    ),
+  ];
+
+  if (!targets.length) return;
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-in');
+      io.unobserve(entry.target);
+    });
+  }, { threshold: 0, rootMargin: '0px 0px -16px 0px' });
+
+  targets.forEach(el => {
+    el.classList.add('will-reveal');
+    io.observe(el);
+  });
+}
+
 init().catch(err => console.error(err));
+bindMotionReveal();

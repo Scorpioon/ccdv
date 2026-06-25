@@ -1,0 +1,90 @@
+{
+  "meta": {
+    "version": "v0.5.2f",
+    "note": "CMS-ready services and method. Offers render as an editorial list sorted by order (title, body, tag). Method renders as a connected stepper diagram sorted by order (step number, title, body). Copy is sentence-case, not all-caps catalogue."
+  },
+  "offers": [
+    {
+      "id": "workflow_audit",
+      "title": "Workflow Audit",
+      "body": "Revisamos procesos, fricciones y estructura de operación. Devolvemos un mapa claro de qué se puede mejorar y por dónde empezar.",
+      "tag": "Diagnóstico",
+      "icon": "ccdv-icon--ops",
+      "order": 1
+    },
+    {
+      "id": "internal_tool_mvp",
+      "title": "Internal Tool MVP",
+      "body": "Construimos la herramienta interna mínima viable cuando un proceso ya pide su propio sistema. Pensada para durar y transferirse.",
+      "tag": "Construcción",
+      "icon": "ccdv-icon--website",
+      "order": 2
+    },
+    {
+      "id": "ai_workflow_setup",
+      "title": "AI Workflow Setup",
+      "body": "Integramos IA con control humano en flujos de trabajo reales. Sin automatización ciega y sin promesas mágicas.",
+      "tag": "Integración",
+      "icon": "ccdv-icon--brain",
+      "order": 3
+    },
+    {
+      "id": "ux_ui_product_rescue",
+      "title": "UX/UI Product Rescue",
+      "body": "Intervenimos productos digitales con problemas de uso, estructura o legibilidad. Diagnóstico primero, diseño después.",
+      "tag": "Rediseño",
+      "icon": "ccdv-icon--wireframe",
+      "order": 4
+    },
+    {
+      "id": "digital_hygiene",
+      "title": "Public-Ready Digital Hygiene",
+      "body": "Limpiamos, ordenamos y preparamos entregas públicas. Auditoría y trazabilidad antes del release.",
+      "tag": "Release",
+      "icon": "ccdv-icon--safe",
+      "order": 5
+    }
+  ],
+  "method": [
+    {
+      "id": "step_diagnostico",
+      "step": "01",
+      "title": "Diagnóstico",
+      "body": "Identificamos el problema real. Sin diagnóstico no hay diseño de sistema.",
+      "icon": "ccdv-icon--protocol",
+      "order": 1
+    },
+    {
+      "id": "step_mapa",
+      "step": "02",
+      "title": "Mapa de fricciones",
+      "body": "Cartografiamos puntos de rotura, dependencias y contexto del sistema existente.",
+      "icon": "ccdv-icon--control",
+      "order": 2
+    },
+    {
+      "id": "step_sistema",
+      "step": "03",
+      "title": "Diseño de sistema",
+      "body": "Definimos estructura, criterios y flujos antes de construir ninguna herramienta.",
+      "icon": "ccdv-icon--ops",
+      "order": 3
+    },
+    {
+      "id": "step_prototipo",
+      "step": "04",
+      "title": "Prototipo / MVP",
+      "body": "Solo cuando el sistema está claro construimos la herramienta mínima viable.",
+      "icon": "ccdv-icon--website",
+      "order": 4
+    },
+    {
+      "id": "step_continuidad",
+      "step": "05",
+      "title": "Continuidad",
+      "body": "Lo que se construye debe poder entenderse, mantenerse y transferirse.",
+      "icon": "ccdv-icon--safe",
+      "order": 5
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "meta": {
+    "version": "v0.5.2g",
+    "note": "CMS-ready work case/project system. Render only publicSafe:true items, sorted by order, as alternating case rows with a 16:9 visual (image or placeholder) and a left project rail. Scaffold/future items must be publicSafe:false to stay off the page — never expose them as fake public cases."
+  },
+  "projects": [
+    {
+      "id": "adg_ops",
+      "title": "ADG-OPS",
+      "type": "Sistema operativo interno",
+      "status": "Prueba pública controlada",
+      "summary": "Ordena procesos, seguimiento y trabajo digital en contextos de gestión cultural y profesional.",
+      "problem": "Operaciones fragmentadas y sin trazabilidad en entornos culturales y profesionales.",
+      "system": "Sistema de seguimiento y gestión digital para flujos de trabajo internos.",
+      "output": "Entorno operativo con procesos visibles, repetibles y transferibles.",
+      "publicNote": "Vista controlada: sin datos internos, nombres sensibles ni pantallas privadas.",
+      "publicSafe": true,
+      "image": null,
+      "imageAlt": null,
+      "order": 1
+    }
+  ]
+}

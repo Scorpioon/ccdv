@@ -1,0 +1,302 @@
+{
+  "meta": {
+    "project": "Collapse Creative Dev Unit website",
+    "version": "v0.5.2h",
+    "status": "content-architecture-json-parity",
+    "sourceLanguage": "es",
+    "publicRendering": "updated",
+    "createdFor": "static-first CCDV website expansion",
+    "notes": [
+      "v0.5.1k: global nav IA, services/method merge applied. Correct IA, navbar required full refactor before commit.",
+      "v0.5.1l: full navbar refactor — hamburger system rebuilt clean. Pending visual validation by K.",
+      "v0.5.2c1: openvibe structural parity — <main id=\"top\" class=\"ccdv-main\"> applied to openvibe.html. .openvibe-box special-case removed from bindMotionReveal(); OpenVibe now participates in shared .ccdv-main > .section motion and hairline foundation.",
+      "Primary nav now: HOME / WORK / SERVICES-METHOD / PRODUCTS-LABS / OPENVIBE / CONTACT.",
+      "method.html is a legacy route pointing to services.html.",
+      "Hero mark/frame alignment remains visual debt — do not touch until explicitly scoped.",
+      "MVP content is Spanish-first. CAT/EN support is planned later.",
+      "v0.5.2d: content architecture + JSON parity — work.json, services.json, products.json created. Work/Services/Products pages now rendered from JSON via app.js. CMS-ready structure with stable ids, public-safe status fields, and clear grouping.",
+      "v0.5.2e: Products/Labs redesign — AION ecosystem suite shelf (3-col, teaser framing, private/internal distinction) + labs/proof registry grid (4-col, status tags, icons). projects.html restructured with two content sections. All items driven from content/products.json. adg_ops publicSafe corrected to true. AION items set to teaserOnly:true with public-safe teaser copy.",
+      "v0.5.2f: Services/Method editorial redesign — page reframed as Práctica / Método (nav label SERVICES/METHOD unchanged). Offers now render as an editorial offer list (index, sentence-case title/body, format tag); method renders as a connected stepper diagram (numbered nodes, rail line, hover/focus highlight, reduced-motion safe). services.json copy de-uppercased and given step numbers + tags. method.html legacy route copy aligned to new naming.",
+      "v0.5.2g: Work case/project system — work.html rebuilt with a sticky left project rail (scrollspy via IntersectionObserver) and N-ready alternating case rows (info + 16:9 visual frame, inverted on even rows). Each case renders title, type · status, problem/system/output meta, public-safety note, and a 16:9 image-or-placeholder. Only publicSafe:true items render; ADG-OPS is the single Proyecto 01. No private/prohibited cases exposed.",
+      "v0.5.2h: Home strengthening — index.html reframed around the Collapse Creative → CCDV lineage thesis (anti-hype, design/comms/experience origin). New editorial rhythm: hero (logo/frame untouched, lead rooted in BP) → lineage band (Origen/Unidad two-col + arrow) → process sequence diagram (problema → sistema → software, reusing the method stepper) → offer entry linking to Práctica / Método → ADG-OPS controlled proof with 16:9 frame → Products/Labs + OpenVibe ecosystem teaser → contact CTA. Sentence-case, no hype, no AI-magic claims. Home remains static HTML; no OpenVibe form changes."
+    ]
+  },
+  "languages": {
+    "mvp": "es",
+    "futureToggle": ["es", "ca", "en"],
+    "implementationNow": false,
+    "utf8Requirement": "hard",
+    "mojibakePolicy": "All Spanish/Catalan/English text must remain valid UTF-8. Any mojibake is a blocker."
+  },
+  "brand": {
+    "name": "Collapse Creative Dev Unit",
+    "shortName": "CCDV",
+    "parent": "Collapse Creative",
+    "definition": "Collapse Creative Dev Unit es una unidad de Collapse Creative dedicada a construir sistemas, flujos de trabajo y software para operaciones digitales con control humano.",
+    "positioning": "Sistemas, flujos de trabajo y software para operaciones digitales.",
+    "coreFormula": [
+      "Detectamos un proceso roto o repetitivo.",
+      "Lo convertimos en sistema.",
+      "Y cuando tiene sentido, lo convertimos en software."
+    ],
+    "relationshipToCollapseCreative": "CCDV nace dentro de Collapse Creative para dar forma técnica y operativa a procesos, herramientas y sistemas que no encajan del todo en una oferta tradicional de estudio creativo.",
+    "tone": [
+      "claro",
+      "estructural",
+      "calmo",
+      "preciso",
+      "sin hype",
+      "sin lenguaje genérico de agencia de IA"
+    ]
+  },
+  "visualLock": {
+    "redesignAllowed": false,
+    "styleDirection": "continue-existing",
+    "instruction": "No rediseñar. Continuar y moldear el sistema visual existente.",
+    "cssPolicy": "No CSS changes beyond scoped patches. Future CSS work must preserve the existing visual language.",
+    "heroMarkFrameDebt": "Hero mark/frame alignment is visual debt. Not to be touched until explicitly scoped by K."
+  },
+  "navigation": {
+    "primary": [
+      { "label": "Home", "href": "index.html", "role": "CCDV main identity" },
+      { "label": "Work", "href": "work.html", "role": "proof and selected work" },
+      { "label": "Services/Method", "href": "services.html", "role": "commercial services and working method (merged)" },
+      { "label": "Products/Labs", "href": "projects.html", "role": "products and labs overview" },
+      { "label": "OpenVibe", "href": "openvibe.html", "role": "lab/community surface" },
+      { "label": "Contact", "href": "contact.html", "role": "inquiry and contact" }
+    ],
+    "secondary": [
+      { "label": "Privacy", "href": "privacy.html", "role": "legal utility, later" },
+      { "label": "Cookies", "href": "cookies.html", "role": "legal utility, if needed later" }
+    ],
+    "footer": {
+      "includeParentBrand": true,
+      "includeLocation": true,
+      "location": "Barcelona / remote",
+      "includeLanguageToggleLater": true
+    }
+  },
+  "pages": {
+    "home": {
+      "file": "index.html",
+      "futureRole": "CCDV main home",
+      "status": "active",
+      "notes": "v0.5.2h: reframed around Collapse Creative → CCDV lineage thesis. Static HTML home (no JS render hooks). Hero logo/frame is visual debt — untouched.",
+      "sections": [
+        "Hero CCDV (logo frame + CCDV: Systems + lineage-rooted lead)",
+        "Lineage band — Convertimos procesos en sistemas (Collapse Creative → CCDV)",
+        "Process sequence — problema → sistema → software (method stepper)",
+        "Offer entry — links to Práctica / Método",
+        "Selected proof — ADG-OPS controlled",
+        "Products/Labs + OpenVibe ecosystem teaser",
+        "Contact CTA"
+      ]
+    },
+    "work": {
+      "file": "work.html",
+      "futureRole": "proof and selected work",
+      "status": "active",
+      "notes": "v0.5.2g: case/project system with left project rail + alternating info/16:9 rows, N-ready from work.json. Only publicSafe:true renders. ADG-OPS = Proyecto 01. Do not overfill. Public proof is controlled."
+    },
+    "services": {
+      "file": "services.html",
+      "futureRole": "combined services and method page",
+      "status": "active",
+      "notes": "v0.5.2f: reframed as Práctica / Método (nav label SERVICES/METHOD unchanged). Offers = editorial offer list; Method = connected stepper diagram. Lead: Qué construimos, cómo decidimos y cuándo una herramienta tiene sentido.",
+      "sections": [
+        "Hero: Práctica / Método",
+        "Lead: Qué construimos, cómo decidimos y cuándo una herramienta tiene sentido",
+        "Sistema de servicios — offer list (Workflow Audit, Internal Tool MVP, AI Workflow Setup, UX/UI Product Rescue, Public-Ready Digital Hygiene)",
+        "Del problema al sistema — method stepper (Diagnóstico, Mapa de fricciones, Diseño de sistema, Prototipo / MVP, Continuidad)",
+        "Contact CTA"
+      ]
+    },
+    "method": {
+      "file": "method.html",
+      "futureRole": "legacy route to services.html",
+      "status": "legacy-redirect",
+      "notes": "v0.5.1k: method content merged into services.html. method.html is a legacy route with visible Spanish message and CTA link to services.html."
+    },
+    "projects": {
+      "file": "projects.html",
+      "futureRole": "products/labs overview",
+      "status": "active",
+      "notes": "v0.5.1k: now primary nav item PRODUCTS/LABS.",
+      "publicPolicy": "Only include projects explicitly approved by K."
+    },
+    "openvibe": {
+      "file": "openvibe.html",
+      "futureRole": "OpenVibe dedicated route",
+      "status": "active",
+      "notes": "OpenVibe as lab/community surface. Signup form endpoint preserved."
+    },
+    "contact": {
+      "file": "contact.html",
+      "futureRole": "contact and inquiry",
+      "status": "active",
+      "sections": [
+        "Contact CTA",
+        "Email/social",
+        "Barcelona / remote"
+      ]
+    },
+    "thanks": {
+      "file": "thanks.html",
+      "futureRole": "form confirmation",
+      "status": "existing-utility-page"
+    }
+  },
+  "proof": {
+    "publicNow": [
+      {
+        "id": "adg_ops",
+        "label": "ADG-OPS",
+        "status": "approved-public-proof-for-now",
+        "description": "Sistema operativo interno para ordenar procesos, seguimiento y trabajo digital en contextos de gestión cultural y profesional.",
+        "disclosureLevel": "controlled-teaser",
+        "avoid": [
+          "datos internos",
+          "nombres sensibles",
+          "promesas de producto final",
+          "pantallas privadas",
+          "detalles operativos no aprobados"
+        ]
+      }
+    ],
+    "notPublicYet": [
+      "AION / KAIA",
+      "LocalScene",
+      "PANOPTES",
+      "WRKOPS / CollapseOS",
+      "otros clientes o laboratorios no aprobados"
+    ],
+    "rule": "No project enters public proof unless K explicitly approves what enters and how."
+  },
+  "openvibe": {
+    "relationship": "OpenVibe is a CCDV lab/community surface, not the main CCDV brand.",
+    "futureRoute": "openvibe.html",
+    "keep": [
+      "sessions",
+      "learning/research surface",
+      "community experiments",
+      "AI culture and tooling conversation"
+    ],
+    "avoid": [
+      "making OpenVibe the whole site identity",
+      "keeping Session 0 as the primary home forever"
+    ]
+  },
+  "contentGovernance": {
+    "renderingNow": "updated",
+    "sourceOfTruth": "This file is the IA/content contract and reflects the current installed state.",
+    "futureConnection": "A later scoped patch may connect selected fields to app.js or page templates.",
+    "securityNotes": [
+      "Do not connect editable CMS content to innerHTML without sanitization or safe DOM rendering.",
+      "Form endpoint hardening is a separate security patch.",
+      "Public-pristine sync requires CLEANREPO review."
+    ]
+  },
+  "vocabulary": {
+    "approvedTermsEs": [
+      "sistemas",
+      "flujos de trabajo",
+      "software",
+      "operaciones digitales",
+      "control humano",
+      "herramientas internas",
+      "automatización con criterio",
+      "interfaces",
+      "trazabilidad"
+    ],
+    "avoidTermsEs": [
+      "agencia de IA",
+      "revolucionario",
+      "disruptivo",
+      "soluciones mágicas",
+      "automatización total",
+      "sin esfuerzo",
+      "hype"
+    ]
+  },
+  "implementationPhases": [
+    {
+      "id": "v0.5.0c",
+      "name": "IA/content contract",
+      "status": "complete",
+      "publicRenderingChange": false
+    },
+    {
+      "id": "v0.5.1a",
+      "name": "CCDV page shell",
+      "status": "complete",
+      "publicRenderingChange": true
+    },
+    {
+      "id": "v0.5.1b",
+      "name": "OpenVibe route extraction",
+      "status": "complete",
+      "publicRenderingChange": true
+    },
+    {
+      "id": "v0.5.1d",
+      "name": "Footer nav parity stabilization",
+      "status": "complete",
+      "publicRenderingChange": true
+    },
+    {
+      "id": "v0.5.1k",
+      "name": "Global nav IA, services/method merge",
+      "status": "complete — IA correct, navbar required refactor",
+      "publicRenderingChange": true
+    },
+    {
+      "id": "v0.5.1l",
+      "name": "Full navbar refactor — hamburger system rebuild",
+      "status": "complete",
+      "publicRenderingChange": true
+    },
+    {
+      "id": "v0.5.2c1",
+      "name": "OpenVibe structural parity — shared .ccdv-main shell",
+      "status": "complete",
+      "publicRenderingChange": false
+    },
+    {
+      "id": "v0.5.2d",
+      "name": "Content architecture + JSON parity — Work, Services, Products rendered from JSON",
+      "status": "complete",
+      "publicRenderingChange": true
+    },
+    {
+      "id": "v0.5.2e",
+      "name": "Products/Labs redesign — AION suite shelf + labs/proof registry",
+      "status": "complete",
+      "publicRenderingChange": true
+    },
+    {
+      "id": "v0.5.2f",
+      "name": "Services/Method editorial redesign — offer list + method stepper diagram",
+      "status": "complete",
+      "publicRenderingChange": true
+    },
+    {
+      "id": "v0.5.2g",
+      "name": "Work case/project system — project rail + alternating 16:9 case rows",
+      "status": "complete",
+      "publicRenderingChange": true
+    },
+    {
+      "id": "v0.5.2h",
+      "name": "Home strengthening — Collapse Creative → CCDV lineage, process diagram, offer/proof/ecosystem editorial",
+      "status": "this patch",
+      "publicRenderingChange": true
+    }
+  ],
+  "pendingDecisions": [
+    "Exact Spanish public copy for each page.",
+    "Which ADG-OPS screenshots/copy are public-safe.",
+    "When CAT/EN support becomes active.",
+    "Legal/privacy/cookie text.",
+    "Hero mark/frame alignment — scoped as visual debt, decision deferred to K."
+  ]
+}

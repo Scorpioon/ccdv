@@ -1,0 +1,58 @@
+# CLEANREPO v0.1.0b - public repo hygiene
+
+# OS / editor noise
+desktop.ini
+Thumbs.db
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# Environment and secrets
+.env
+.env.*
+*.local
+*.local.*
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+
+# Logs / temp / generated
+*.log
+*.tmp
+*.temp
+tmp/
+_tmp/
+_tmp*/
+cache/
+.cache/
+
+# Archives and handoff bundles
+*.zip
+*.7z
+*.rar
+*_llm_bundle_*
+*llm_handoff*
+*_handoff_*
+
+# Local operational exports
+_sots/
+_old/
+backups/
+exports/
+snapshots/
+
+# Local patch/runtime tooling
+patch_*.ps1
+*_patch_*.ps1
+docs/patching/
+
+# Local handoff workspace
+_handoffs/
+_handoff/
+
+# Local/private enterprise docs
+docs/enterprise/

@@ -1,0 +1,182 @@
+{
+  "meta": {
+    "version": "v0.5.2e",
+    "note": "CMS-ready products and labs. AION items teaserOnly:true for shelf display. Render publicSafe:true and teaserOnly:true items, sorted by order. Status vocabulary: internal lab, private, teaser, needs review, public proof, slowburn, activo."
+  },
+  "groups": [
+    { "id": "aion", "label": "AION Ecosystem" },
+    { "id": "labs", "label": "Labs" },
+    { "id": "proof", "label": "Proof" }
+  ],
+  "items": [
+    {
+      "id": "openvibe",
+      "name": "OPENVIBE",
+      "type": "LAB / COMMUNITY",
+      "status": "Activo",
+      "version": null,
+      "publicSafe": true,
+      "teaserOnly": false,
+      "body": "Sesiones y aprendizaje compartido alrededor de IA y tooling.",
+      "group": "labs",
+      "icon": "ccdv-icon--unit",
+      "order": 1
+    },
+    {
+      "id": "future_labs",
+      "name": "FUTURE LABS",
+      "type": null,
+      "status": "No público todavía",
+      "version": null,
+      "publicSafe": false,
+      "teaserOnly": true,
+      "body": "Las líneas en desarrollo se compartirán solo cuando estén listas y aprobadas.",
+      "group": "labs",
+      "icon": "ccdv-icon--brain",
+      "order": 2
+    },
+    {
+      "id": "research",
+      "name": "RESEARCH",
+      "type": null,
+      "status": "En curso",
+      "version": null,
+      "publicSafe": false,
+      "teaserOnly": true,
+      "body": "Investigación aplicada a sistemas, herramientas y operación digital.",
+      "group": "proof",
+      "icon": "ccdv-icon--protocol",
+      "order": 3
+    },
+    {
+      "id": "adg_ops",
+      "name": "ADG-OPS",
+      "type": "Sistema operativo interno",
+      "status": "public proof",
+      "version": null,
+      "publicSafe": true,
+      "teaserOnly": false,
+      "body": "Ordena procesos, seguimiento y trabajo digital en contextos de gestión cultural y profesional.",
+      "group": "proof",
+      "icon": "ccdv-icon--ops",
+      "order": 4
+    },
+    {
+      "id": "better_bicing",
+      "name": "BETTER BICING",
+      "type": "Public tool",
+      "status": "slowburn",
+      "version": null,
+      "publicSafe": false,
+      "teaserOnly": true,
+      "body": "Consulta de disponibilidad y estado de estaciones Bicing en Barcelona.",
+      "group": "proof",
+      "icon": "ccdv-icon--map",
+      "order": 5
+    },
+    {
+      "id": "localscene",
+      "name": "LOCALSCENE",
+      "type": "Platform",
+      "status": "teaser",
+      "version": null,
+      "publicSafe": false,
+      "teaserOnly": true,
+      "body": "Plataforma de agenda y descubrimiento cultural local.",
+      "group": "proof",
+      "icon": "ccdv-icon--music",
+      "order": 6
+    },
+    {
+      "id": "htw_generator",
+      "name": "HTW GENERATOR",
+      "type": "Tool",
+      "status": "needs review",
+      "version": null,
+      "publicSafe": false,
+      "teaserOnly": true,
+      "body": "Generador de contenido creativo estructurado. En revisión antes de publicar.",
+      "group": "proof",
+      "icon": "ccdv-icon--generator",
+      "order": 7
+    },
+    {
+      "id": "aion",
+      "name": "AION",
+      "type": "Internal suite",
+      "status": "internal lab",
+      "version": null,
+      "publicSafe": false,
+      "teaserOnly": true,
+      "body": "Suite principal de sistemas de operación interna de CCDV.",
+      "group": "aion",
+      "icon": null,
+      "order": 10
+    },
+    {
+      "id": "kaia",
+      "name": "KAIA",
+      "type": "Internal agent",
+      "status": "internal lab",
+      "version": null,
+      "publicSafe": false,
+      "teaserOnly": true,
+      "body": "HQ local-first para coordinación operativa y agentes.",
+      "group": "aion",
+      "icon": null,
+      "order": 11
+    },
+    {
+      "id": "kairon",
+      "name": "KAIRON",
+      "type": "Internal tool",
+      "status": "private",
+      "version": null,
+      "publicSafe": false,
+      "teaserOnly": true,
+      "body": null,
+      "group": "aion",
+      "icon": null,
+      "order": 12
+    },
+    {
+      "id": "panoptes",
+      "name": "PANOPTES",
+      "type": "Internal system",
+      "status": "internal lab",
+      "version": null,
+      "publicSafe": false,
+      "teaserOnly": true,
+      "body": "Gobernanza digital e higiene operativa. No es ciberseguridad.",
+      "group": "aion",
+      "icon": null,
+      "order": 13
+    },
+    {
+      "id": "athernos",
+      "name": "ATHERNOS",
+      "type": "Internal archive",
+      "status": "teaser",
+      "version": null,
+      "publicSafe": false,
+      "teaserOnly": true,
+      "body": "Archivo de inteligencia, contexto y prompts operativos.",
+      "group": "aion",
+      "icon": null,
+      "order": 14
+    },
+    {
+      "id": "wrkops_deck",
+      "name": "WRKOPS DECK",
+      "type": "Internal workflow",
+      "status": "internal lab",
+      "version": null,
+      "publicSafe": false,
+      "teaserOnly": true,
+      "body": "Interfaz de documentación y protocolos del sistema de trabajo CCDV.",
+      "group": "aion",
+      "icon": null,
+      "order": 15
+    }
+  ]
+}

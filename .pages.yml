@@ -15,3 +15,18 @@ content:
     type: file
     path: content/about.json
     format: json
+  - name: work
+    label: Work
+    type: file
+    path: content/work.json
+    format: json
+  - name: services
+    label: Services
+    type: file
+    path: content/services.json
+    format: json
+  - name: products
+    label: Products
+    type: file
+    path: content/products.json
+    format: json
