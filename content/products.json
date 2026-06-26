@@ -1,7 +1,7 @@
 {
   "meta": {
-    "version": "v0.5.2e",
-    "note": "CMS-ready products and labs. AION items teaserOnly:true for shelf display. Render publicSafe:true and teaserOnly:true items, sorted by order. Status vocabulary: internal lab, private, teaser, needs review, public proof, slowburn, activo."
+    "version": "v0.5.2j",
+    "note": "CMS-ready products and labs. AION items teaserOnly:true for shelf display. Render publicSafe:true and teaserOnly:true items, sorted by order. Status vocabulary: internal lab, teaser, needs review, public proof, slowburn, activo, en desarrollo."
   },
   "groups": [
     { "id": "aion", "label": "AION Ecosystem" },
@@ -29,7 +29,7 @@
       "status": "No público todavía",
       "version": null,
       "publicSafe": false,
-      "teaserOnly": true,
+      "teaserOnly": false,
       "body": "Las líneas en desarrollo se compartirán solo cuando estén listas y aprobadas.",
       "group": "labs",
       "icon": "ccdv-icon--brain",
@@ -42,7 +42,7 @@
       "status": "En curso",
       "version": null,
       "publicSafe": false,
-      "teaserOnly": true,
+      "teaserOnly": false,
       "body": "Investigación aplicada a sistemas, herramientas y operación digital.",
       "group": "proof",
       "icon": "ccdv-icon--protocol",
@@ -52,9 +52,9 @@
       "id": "adg_ops",
       "name": "ADG-OPS",
       "type": "Sistema operativo interno",
-      "status": "public proof",
+      "status": "Primera comisión CCDV",
       "version": null,
-      "publicSafe": true,
+      "publicSafe": false,
       "teaserOnly": false,
       "body": "Ordena procesos, seguimiento y trabajo digital en contextos de gestión cultural y profesional.",
       "group": "proof",
@@ -63,26 +63,26 @@
     },
     {
       "id": "better_bicing",
-      "name": "BETTER BICING",
-      "type": "Public tool",
-      "status": "slowburn",
+      "name": "PROJECT BB — BETTER BICING",
+      "type": "Propuesta de UX cívica",
+      "status": "teaser",
       "version": null,
       "publicSafe": false,
       "teaserOnly": true,
-      "body": "Consulta de disponibilidad y estado de estaciones Bicing en Barcelona.",
+      "body": "Propuesta de rediseño de la app Bicing de Barcelona. Crítica de UX en uso diario y concepto de nueva interfaz.",
       "group": "proof",
       "icon": "ccdv-icon--map",
       "order": 5
     },
     {
       "id": "localscene",
-      "name": "LOCALSCENE",
-      "type": "Platform",
+      "name": "PROJECT LS — LOCALSCENE",
+      "type": "Concepto de plataforma",
       "status": "teaser",
       "version": null,
       "publicSafe": false,
       "teaserOnly": true,
-      "body": "Plataforma de agenda y descubrimiento cultural local.",
+      "body": "Concepto de plataforma city-first para agenda local, música y eventos.",
       "group": "proof",
       "icon": "ccdv-icon--music",
       "order": 6
@@ -94,7 +94,7 @@
       "status": "needs review",
       "version": null,
       "publicSafe": false,
-      "teaserOnly": true,
+      "teaserOnly": false,
       "body": "Generador de contenido creativo estructurado. En revisión antes de publicar.",
       "group": "proof",
       "icon": "ccdv-icon--generator",
@@ -111,7 +111,9 @@
       "body": "Suite principal de sistemas de operación interna de CCDV.",
       "group": "aion",
       "icon": null,
-      "order": 10
+      "order": 10,
+      "suite": "aion",
+      "accent": "neutral"
     },
     {
       "id": "kaia",
@@ -124,20 +126,39 @@
       "body": "HQ local-first para coordinación operativa y agentes.",
       "group": "aion",
       "icon": null,
-      "order": 11
+      "order": 11,
+      "suite": "aion",
+      "accent": "kaia"
     },
     {
       "id": "kairon",
       "name": "KAIRON",
       "type": "Internal tool",
-      "status": "private",
+      "status": "internal lab",
       "version": null,
       "publicSafe": false,
       "teaserOnly": true,
-      "body": null,
+      "body": "Lógica fiscal y de operaciones. Soporte estructurado para decisiones contables y operativas.",
       "group": "aion",
       "icon": null,
-      "order": 12
+      "order": 12,
+      "suite": "aion",
+      "accent": "kairon"
+    },
+    {
+      "id": "kron",
+      "name": "KRON",
+      "type": "Internal time manager",
+      "status": "internal lab",
+      "version": null,
+      "publicSafe": false,
+      "teaserOnly": true,
+      "body": "Gestión del tiempo, cadencia operativa y control de sesiones de trabajo.",
+      "group": "aion",
+      "icon": null,
+      "order": 13,
+      "suite": "aion",
+      "accent": "kron"
     },
     {
       "id": "panoptes",
@@ -147,10 +168,12 @@
       "version": null,
       "publicSafe": false,
       "teaserOnly": true,
-      "body": "Gobernanza digital e higiene operativa. No es ciberseguridad.",
+      "body": "Higiene de repositorio, seguridad de releases públicos y gobernanza de operaciones digitales.",
       "group": "aion",
       "icon": null,
-      "order": 13
+      "order": 14,
+      "suite": "aion",
+      "accent": "panoptes"
     },
     {
       "id": "athernos",
@@ -163,7 +186,9 @@
       "body": "Archivo de inteligencia, contexto y prompts operativos.",
       "group": "aion",
       "icon": null,
-      "order": 14
+      "order": 15,
+      "suite": "aion",
+      "accent": "athernos"
     },
     {
       "id": "wrkops_deck",
@@ -176,7 +201,9 @@
       "body": "Interfaz de documentación y protocolos del sistema de trabajo CCDV.",
       "group": "aion",
       "icon": null,
-      "order": 15
+      "order": 16,
+      "suite": "aion",
+      "accent": "neutral"
     }
   ]
 }

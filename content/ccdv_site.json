@@ -1,7 +1,7 @@
 {
   "meta": {
     "project": "Collapse Creative Dev Unit website",
-    "version": "v0.5.2h",
+    "version": "v0.5.2l",
     "status": "content-architecture-json-parity",
     "sourceLanguage": "es",
     "publicRendering": "updated",
@@ -18,7 +18,14 @@
       "v0.5.2e: Products/Labs redesign — AION ecosystem suite shelf (3-col, teaser framing, private/internal distinction) + labs/proof registry grid (4-col, status tags, icons). projects.html restructured with two content sections. All items driven from content/products.json. adg_ops publicSafe corrected to true. AION items set to teaserOnly:true with public-safe teaser copy.",
       "v0.5.2f: Services/Method editorial redesign — page reframed as Práctica / Método (nav label SERVICES/METHOD unchanged). Offers now render as an editorial offer list (index, sentence-case title/body, format tag); method renders as a connected stepper diagram (numbered nodes, rail line, hover/focus highlight, reduced-motion safe). services.json copy de-uppercased and given step numbers + tags. method.html legacy route copy aligned to new naming.",
       "v0.5.2g: Work case/project system — work.html rebuilt with a sticky left project rail (scrollspy via IntersectionObserver) and N-ready alternating case rows (info + 16:9 visual frame, inverted on even rows). Each case renders title, type · status, problem/system/output meta, public-safety note, and a 16:9 image-or-placeholder. Only publicSafe:true items render; ADG-OPS is the single Proyecto 01. No private/prohibited cases exposed.",
-      "v0.5.2h: Home strengthening — index.html reframed around the Collapse Creative → CCDV lineage thesis (anti-hype, design/comms/experience origin). New editorial rhythm: hero (logo/frame untouched, lead rooted in BP) → lineage band (Origen/Unidad two-col + arrow) → process sequence diagram (problema → sistema → software, reusing the method stepper) → offer entry linking to Práctica / Método → ADG-OPS controlled proof with 16:9 frame → Products/Labs + OpenVibe ecosystem teaser → contact CTA. Sentence-case, no hype, no AI-magic claims. Home remains static HTML; no OpenVibe form changes."
+      "v0.5.2h: Home strengthening — index.html reframed around the Collapse Creative → CCDV lineage thesis (anti-hype, design/comms/experience origin). New editorial rhythm: hero (logo/frame untouched, lead rooted in BP) → lineage band (Origen/Unidad two-col + arrow) → process sequence diagram (problema → sistema → software, reusing the method stepper) → offer entry linking to Práctica / Método → ADG-OPS controlled proof with 16:9 frame → Products/Labs + OpenVibe ecosystem teaser → contact CTA. Sentence-case, no hype, no AI-magic claims. Home remains static HTML; no OpenVibe form changes.",
+      "v0.5.2i: public blocker hygiene — asset cache-busting (styles.css?v=0.5.2i, app.js?v=0.5.2i on all HTML pages), JS render failure fallback (renderContentFallback helper in app.js, safe textContent insertion into first available content container), no-JS noscript fallback blocks on work/services/projects/openvibe, mojibake fix (conexión restored in app.js form error message).",
+      "v0.5.2j: Products/Labs and Work data governance correction — AION internal tools visible as proof-of-activity, KRON added, Labs registry cleaned, ADG-OPS/HTW Generator moved to Work, Laus Ops and HTW Web added as coming-soon work entries.",
+      "v0.5.2j2: Work rail left-site hotfix — rail repositioned into the Work page left site gutter on desktop, with safe responsive fallback.",
+      "v0.5.2j4: Work rail real sticky hotfix — wraps rail content in an inner sticky element so the left-site Work rail follows scroll correctly inside the Work section. CSS sticky confirmed failed in real browser smoke (innerTop tracked outerTop exactly; position:sticky did not activate). Superseded by v0.5.2j5 bounded fixed behavior.",
+      "v0.5.2j5: Work rail bounded fixed hotfix — CSS sticky was unreliable in the current scroll architecture, so the Work rail now uses a scoped desktop-only bounded fixed behavior inside the Work section.",
+      "v0.5.2k: ADG-OPS governance trace alignment — stale proof/publicNow wording updated to reflect first CCDV commission, private beta status, and future public release framing.",
+      "v0.5.2l: AION visual highlight system — Products/Labs now uses subtle public-safe accent metadata and rendering for AION internal tools without changing their access/status framing."
     ]
   },
   "languages": {
@@ -151,15 +158,20 @@
       {
         "id": "adg_ops",
         "label": "ADG-OPS",
-        "status": "approved-public-proof-for-now",
+        "commissionType": "primera-comisión-ccdv",
+        "status": "beta-privada — acceso-actual-limitado — apertura-pública-próxima",
+        "visibility": "Work — public-safe controlled teaser only",
         "description": "Sistema operativo interno para ordenar procesos, seguimiento y trabajo digital en contextos de gestión cultural y profesional.",
         "disclosureLevel": "controlled-teaser",
+        "governanceNote": "Primera comisión formal CCDV. Beta cerrada. Solo K tiene acceso actualmente. No es un ítem de Products/Labs. Visibilidad pública en Work como teaser controlado. Apertura pública próxima.",
         "avoid": [
           "datos internos",
           "nombres sensibles",
           "promesas de producto final",
           "pantallas privadas",
-          "detalles operativos no aprobados"
+          "detalles operativos no aprobados",
+          "implicar acceso público o SaaS abierto",
+          "implicar disponibilidad general o descarga"
         ]
       }
     ],
@@ -288,6 +300,48 @@
     {
       "id": "v0.5.2h",
       "name": "Home strengthening — Collapse Creative → CCDV lineage, process diagram, offer/proof/ecosystem editorial",
+      "status": "complete",
+      "publicRenderingChange": true
+    },
+    {
+      "id": "v0.5.2i",
+      "name": "Public blocker hygiene — asset cache-busting, JS render/no-JS fallback, mojibake fix",
+      "status": "complete",
+      "publicRenderingChange": false
+    },
+    {
+      "id": "v0.5.2j",
+      "name": "Products/Labs and Work data governance — AION visibility, KRON, registry clean, Work IA correction",
+      "status": "complete",
+      "publicRenderingChange": false
+    },
+    {
+      "id": "v0.5.2j2",
+      "name": "Work rail left-site hotfix — rail repositioned into left site gutter on desktop",
+      "status": "complete",
+      "publicRenderingChange": true
+    },
+    {
+      "id": "v0.5.2j4",
+      "name": "Work rail real sticky hotfix — inner wrapper makes left-site rail follow scroll correctly",
+      "status": "complete — CSS sticky structural wrapper, superseded by v0.5.2j5 bounded fixed behavior",
+      "publicRenderingChange": true
+    },
+    {
+      "id": "v0.5.2j5",
+      "name": "Work rail bounded fixed hotfix — JS scoped desktop-only bounded fixed behavior replaces CSS sticky",
+      "status": "complete",
+      "publicRenderingChange": true
+    },
+    {
+      "id": "v0.5.2k",
+      "name": "ADG-OPS governance trace alignment — proof/publicNow stale wording corrected to first CCDV commission, private beta, future public release",
+      "status": "complete",
+      "publicRenderingChange": false
+    },
+    {
+      "id": "v0.5.2l",
+      "name": "AION visual highlight system — Products/Labs subtle public-safe accent metadata and rendering for AION internal tools",
       "status": "this patch",
       "publicRenderingChange": true
     }
@@ -295,6 +349,9 @@
   "pendingDecisions": [
     "Exact Spanish public copy for each page.",
     "Which ADG-OPS screenshots/copy are public-safe.",
+    "RESOLVED: ADG-OPS public status — visible as first CCDV commission, private beta, public release soon.",
+    "RESOLVED: HTW Generator version — v0.6.5n; moved to Work.",
+    "RESOLVED: KAIRON public wording — internal fiscal/operations logic tool, visible as proof-of-activity, not public product.",
     "When CAT/EN support becomes active.",
     "Legal/privacy/cookie text.",
     "Hero mark/frame alignment — scoped as visual debt, decision deferred to K."

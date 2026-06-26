@@ -520,7 +520,7 @@ function bindSignupFormSubmit() {
       })
       .catch(error => {
         console.error(error);
-        setSignupSubmitting(form, false, 'No se ha podido enviar. Revisa la conexiÃ³n y prueba otra vez.');
+        setSignupSubmitting(form, false, 'No se ha podido enviar. Revisa la conexión y prueba otra vez.');
       });
   });
 }
@@ -634,6 +634,71 @@ function renderWork() {
   });
 
   bindWorkRail();
+  initWorkRailFollow();
+}
+
+function initWorkRailFollow() {
+  const section = document.querySelector('.work-cases-section');
+  const layout = section && section.querySelector('.work-layout');
+  const rail = section && section.querySelector('.work-rail');
+  const sticky = rail && rail.querySelector('.work-rail__sticky');
+  if (!section || !layout || !rail || !sticky) return;
+
+  const mq = window.matchMedia('(min-width: 1100px)');
+  let rafId = null;
+  let bound = false;
+
+  const headerOffset = () => {
+    const h = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--site-header-h')) || 72;
+    return h + 28;
+  };
+
+  const update = () => {
+    if (!mq.matches) {
+      sticky.classList.remove('is-fixed', 'is-bottom');
+      return;
+    }
+    const railRect = rail.getBoundingClientRect();
+    const sectionRect = section.getBoundingClientRect();
+    const stickyH = sticky.offsetHeight;
+    const offset = headerOffset();
+
+    if (sectionRect.top > offset) {
+      sticky.classList.remove('is-fixed', 'is-bottom');
+    } else if (sectionRect.bottom - stickyH > offset) {
+      sticky.classList.add('is-fixed');
+      sticky.classList.remove('is-bottom');
+      document.documentElement.style.setProperty('--work-rail-left', `${railRect.left}px`);
+      document.documentElement.style.setProperty('--work-rail-width', `${railRect.width}px`);
+    } else {
+      sticky.classList.remove('is-fixed');
+      sticky.classList.add('is-bottom');
+    }
+  };
+
+  const onScroll = () => {
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(() => { rafId = null; update(); });
+  };
+
+  const bind = () => {
+    if (bound) return;
+    bound = true;
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  };
+
+  const unbind = () => {
+    if (!bound) return;
+    bound = false;
+    window.removeEventListener('scroll', onScroll);
+    window.removeEventListener('resize', update);
+    sticky.classList.remove('is-fixed', 'is-bottom');
+  };
+
+  mq.addEventListener('change', e => { e.matches ? bind() : unbind(); });
+  if (mq.matches) bind();
 }
 
 function bindWorkRail() {
@@ -731,12 +796,16 @@ function renderProducts() {
     .filter(p => p.publicSafe || p.teaserOnly)
     .sort((a, b) => a.order - b.order);
 
+  const AION_ACCENT_WHITELIST = ['kaia', 'kairon', 'kron', 'panoptes', 'athernos', 'neutral'];
+
   if (aionTarget) {
     items.filter(p => p.group === 'aion').forEach(p => {
       const item = document.createElement('article');
       item.className = 'aion-shelf__item' + (p.status === 'private' ? ' aion-shelf__item--private' : '');
       item.dataset.productId = p.id;
       item.dataset.group = p.group;
+      const accentValue = (p.accent && AION_ACCENT_WHITELIST.includes(p.accent)) ? p.accent : 'neutral';
+      item.dataset.accent = accentValue;
 
       const code = document.createElement('p');
       code.className = 'aion-shelf__code';
@@ -927,5 +996,29 @@ function bindMotionReveal() {
   });
 }
 
-init().catch(err => console.error(err));
+function renderContentFallback(message) {
+  const targets = ['#workCases','#servicesOffers','#methodStepper','#aionShelf','#registryGrid','#openvibeSessions','#sessionFaq','#signupForm'];
+  for (const sel of targets) {
+    const el = document.querySelector(sel);
+    if (el) {
+      const notice = document.createElement('p');
+      notice.className = 'section__body';
+      notice.textContent = message;
+      el.appendChild(notice);
+      return;
+    }
+  }
+  const main = document.getElementById('top');
+  if (main) {
+    const notice = document.createElement('p');
+    notice.className = 'section__body';
+    notice.textContent = message;
+    main.prepend(notice);
+  }
+}
+
+init().catch(err => {
+  console.error(err);
+  renderContentFallback('No se ha podido cargar este contenido. Puedes recargar la página o contactar con CCDV.');
+});
 bindMotionReveal();

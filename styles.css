@@ -3341,9 +3341,14 @@ body::-webkit-scrollbar{
 }
 
 .work-rail{
+  position:relative;
+  top:auto;
+  align-self:stretch;
+}
+
+.work-rail__sticky{
   position:sticky;
   top:calc(var(--site-header-h, 72px) + 28px);
-  align-self:start;
 }
 
 .work-rail__label{
@@ -3588,6 +3593,100 @@ body::-webkit-scrollbar{
   }
 }
 
+/* CCDV v0.5.2j2 — Work rail left-site hotfix */
+@media (min-width: 1100px) {
+  /* Expand work section beyond .wrap centering — rail uses left site area */
+  .work-cases-section {
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  /* 5-col grid: [left-gutter][rail][spacer][cases][right-gutter] */
+  .work-cases-section .work-layout {
+    grid-template-columns: 36px 180px 48px minmax(0, 1fr) 36px;
+    gap: 0;
+    align-items: start;
+  }
+
+  /* Rail anchored to left site edge (column 2) */
+  .work-cases-section .work-rail {
+    grid-column: 2;
+  }
+
+  /* Cases fill main content column (column 4) */
+  .work-cases-section .work-cases {
+    grid-column: 4;
+  }
+}
+
+/* CCDV v0.5.2j4 — Work rail real sticky: inner wrapper */
+@media (min-width: 1100px) {
+  .work-cases-section .work-layout {
+    align-items: stretch;
+  }
+
+  .work-cases-section .work-rail {
+    position: relative;
+    top: auto;
+    align-self: stretch;
+  }
+
+  .work-cases-section .work-rail__sticky {
+    position: sticky;
+    top: calc(var(--site-header-h, 72px) + 28px);
+  }
+}
+
+@media (max-width: 980px) {
+  .work-rail__sticky {
+    position: static;
+  }
+}
+
+/* CCDV v0.5.2j5 — Work rail bounded fixed hotfix */
+/* CSS sticky removed at desktop; JS drives positioning via is-fixed / is-bottom */
+@media (min-width: 1100px) {
+  .work-cases-section .work-rail__sticky {
+    position: static;
+    top: auto;
+  }
+
+  .work-rail__sticky.is-fixed {
+    position: fixed;
+    top: calc(var(--site-header-h, 72px) + 28px);
+    left: var(--work-rail-left, 0px);
+    width: var(--work-rail-width, 180px);
+    z-index: 10;
+  }
+
+  .work-rail__sticky.is-bottom {
+    position: absolute;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: auto;
+  }
+}
+
+/* Tablet/mobile reset — discard any leaked JS state classes */
+@media (max-width: 1099px) {
+  .work-cases-section .work-rail__sticky {
+    position: static;
+    top: auto;
+  }
+
+  .work-rail__sticky.is-fixed,
+  .work-rail__sticky.is-bottom {
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: auto !important;
+  }
+}
+
 /* CCDV v0.5.2h — Home strengthening: lineage, process, offers, proof, ecosystem */
 .home-lineage__head{
   max-width:760px;
@@ -3826,4 +3925,28 @@ body::-webkit-scrollbar{
   .home-ecosystem__links{
     grid-template-columns:1fr;
   }
+}
+
+/* CCDV v0.5.2l — AION visual highlight system */
+:root{
+  --aion-kaia:rgba(160,100,220,.55);
+  --aion-kairon:rgba(80,180,100,.5);
+  --aion-kron:rgba(210,165,60,.55);
+  --aion-panoptes:rgba(80,165,220,.55);
+  --aion-athernos:rgba(200,80,60,.55);
+}
+
+.aion-shelf__item[data-accent="kaia"]    { --aion-accent:var(--aion-kaia); }
+.aion-shelf__item[data-accent="kairon"]  { --aion-accent:var(--aion-kairon); }
+.aion-shelf__item[data-accent="kron"]    { --aion-accent:var(--aion-kron); }
+.aion-shelf__item[data-accent="panoptes"]{ --aion-accent:var(--aion-panoptes); }
+.aion-shelf__item[data-accent="athernos"]{ --aion-accent:var(--aion-athernos); }
+
+.aion-shelf__item[data-accent]:not([data-accent="neutral"]){
+  border-top:2px solid var(--aion-accent);
+}
+
+.aion-shelf__item[data-accent]:not([data-accent="neutral"]) .aion-shelf__status-dot{
+  background:var(--aion-accent);
+  opacity:1;
 }

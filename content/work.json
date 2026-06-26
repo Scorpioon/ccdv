@@ -1,23 +1,68 @@
 {
   "meta": {
-    "version": "v0.5.2g",
-    "note": "CMS-ready work case/project system. Render only publicSafe:true items, sorted by order, as alternating case rows with a 16:9 visual (image or placeholder) and a left project rail. Scaffold/future items must be publicSafe:false to stay off the page — never expose them as fake public cases."
+    "version": "v0.5.2j",
+    "note": "CMS-ready work case/project system. Render only publicSafe:true items, sorted by order, as alternating case rows with a 16:9 visual (image or placeholder) and a left project rail. Scaffold/future items must be publicSafe:false to stay off the page — never expose them as fake public cases. Coming-soon entries are publicSafe:true but clearly labeled; problem/system/output may be null for unbuilt items."
   },
   "projects": [
     {
       "id": "adg_ops",
       "title": "ADG-OPS",
-      "type": "Sistema operativo interno",
-      "status": "Prueba pública controlada",
-      "summary": "Ordena procesos, seguimiento y trabajo digital en contextos de gestión cultural y profesional.",
+      "type": "Primera comisión CCDV",
+      "status": "Beta privada · apertura pública próxima",
+      "summary": "Sistema operativo interno para ordenar procesos, seguimiento y trabajo digital en contextos de gestión cultural y profesional.",
       "problem": "Operaciones fragmentadas y sin trazabilidad en entornos culturales y profesionales.",
       "system": "Sistema de seguimiento y gestión digital para flujos de trabajo internos.",
       "output": "Entorno operativo con procesos visibles, repetibles y transferibles.",
-      "publicNote": "Vista controlada: sin datos internos, nombres sensibles ni pantallas privadas.",
+      "publicNote": "Beta cerrada. Acceso actual limitado. Apertura pública próxima.",
       "publicSafe": true,
       "image": null,
       "imageAlt": null,
       "order": 1
+    },
+    {
+      "id": "htw_generator",
+      "title": "HTW GENERATOR",
+      "type": "Herramienta interna",
+      "status": "v0.6.5n — prueba controlada",
+      "summary": "Generador de contenido creativo estructurado.",
+      "problem": "Generación de contenido sin estructura ni sistema reutilizable.",
+      "system": "Herramienta de generación de contenido estructurado.",
+      "output": "Contenido generado con plantillas operativas.",
+      "publicNote": "Prueba interna. Sin acceso público activo.",
+      "publicSafe": true,
+      "image": null,
+      "imageAlt": null,
+      "order": 2
+    },
+    {
+      "id": "laus_ops",
+      "title": "LAUS OPS",
+      "type": "Sistema operativo",
+      "status": "En desarrollo · próximamente",
+      "summary": "Sistema de operaciones en desarrollo.",
+      "problem": null,
+      "system": null,
+      "output": null,
+      "publicNote": "Próximamente.",
+      "publicSafe": true,
+      "image": null,
+      "imageAlt": null,
+      "order": 3
+    },
+    {
+      "id": "htw_web",
+      "title": "HTW WEB",
+      "type": "Plataforma web",
+      "status": "Próximamente",
+      "summary": "Plataforma web en desarrollo.",
+      "problem": null,
+      "system": null,
+      "output": null,
+      "publicNote": "Próximamente.",
+      "publicSafe": true,
+      "image": null,
+      "imageAlt": null,
+      "order": 4
     }
   ]
 }
