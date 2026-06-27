@@ -2864,6 +2864,17 @@ body::-webkit-scrollbar{
   border-top:none;
 }
 
+/* CCDV v0.5.2m — Header/main boundary cleanup */
+/* The page hero is also a .section, so .ccdv-page .section (0,2,0) gives it a
+   top border. On inner pages <noscript> is .ccdv-main's first child, so the
+   v0.5.2b :first-child rule above misses the hero and the border stacks under
+   the fixed header. Disable the hero top border directly. Specificity (0,2,0)
+   matches .ccdv-page .section and wins on later source order — no !important.
+   .site-header border-bottom stays the sole owner of the navbar/content seam. */
+.ccdv-page .ccdv-page-hero{
+  border-top:0;
+}
+
 /* CCDV v0.5.2c — motion foundation */
 :root{
   --motion-fast:180ms;
@@ -3643,50 +3654,6 @@ body::-webkit-scrollbar{
   }
 }
 
-/* CCDV v0.5.2j5 — Work rail bounded fixed hotfix */
-/* CSS sticky removed at desktop; JS drives positioning via is-fixed / is-bottom */
-@media (min-width: 1100px) {
-  .work-cases-section .work-rail__sticky {
-    position: static;
-    top: auto;
-  }
-
-  .work-rail__sticky.is-fixed {
-    position: fixed;
-    top: calc(var(--site-header-h, 72px) + 28px);
-    left: var(--work-rail-left, 0px);
-    width: var(--work-rail-width, 180px);
-    z-index: 10;
-  }
-
-  .work-rail__sticky.is-bottom {
-    position: absolute;
-    top: auto;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: auto;
-  }
-}
-
-/* Tablet/mobile reset — discard any leaked JS state classes */
-@media (max-width: 1099px) {
-  .work-cases-section .work-rail__sticky {
-    position: static;
-    top: auto;
-  }
-
-  .work-rail__sticky.is-fixed,
-  .work-rail__sticky.is-bottom {
-    position: static !important;
-    top: auto !important;
-    left: auto !important;
-    right: auto !important;
-    bottom: auto !important;
-    width: auto !important;
-  }
-}
-
 /* CCDV v0.5.2h — Home strengthening: lineage, process, offers, proof, ecosystem */
 .home-lineage__head{
   max-width:760px;
@@ -3949,4 +3916,30 @@ body::-webkit-scrollbar{
 .aion-shelf__item[data-accent]:not([data-accent="neutral"]) .aion-shelf__status-dot{
   background:var(--aion-accent);
   opacity:1;
+}
+
+/* CCDV v0.5.2n — Services desktop layout tuning */
+.services-offers-section .offer-list{
+  max-width:880px;
+}
+
+.services-offers-section .offer-item__tag{
+  color:var(--fg);
+  border-color:var(--line-strong);
+}
+
+/* CCDV v0.5.2o — Home offers + Work rail rebuild */
+/* Home offers: cap list width so name/tag rows stay visually paired on desktop */
+.home-offers__list{
+  max-width:620px;
+}
+
+/* Work rail: simple CSS sticky restored (JS fixed/is-bottom removed).
+   Reveal-transform exclusion of .work-cases-section in app.js lets sticky resolve
+   against the viewport instead of a transformed ancestor. */
+@media (max-width: 1099px) {
+  .work-cases-section .work-rail__sticky {
+    position: static;
+    top: auto;
+  }
 }

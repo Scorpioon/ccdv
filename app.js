@@ -634,71 +634,6 @@ function renderWork() {
   });
 
   bindWorkRail();
-  initWorkRailFollow();
-}
-
-function initWorkRailFollow() {
-  const section = document.querySelector('.work-cases-section');
-  const layout = section && section.querySelector('.work-layout');
-  const rail = section && section.querySelector('.work-rail');
-  const sticky = rail && rail.querySelector('.work-rail__sticky');
-  if (!section || !layout || !rail || !sticky) return;
-
-  const mq = window.matchMedia('(min-width: 1100px)');
-  let rafId = null;
-  let bound = false;
-
-  const headerOffset = () => {
-    const h = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--site-header-h')) || 72;
-    return h + 28;
-  };
-
-  const update = () => {
-    if (!mq.matches) {
-      sticky.classList.remove('is-fixed', 'is-bottom');
-      return;
-    }
-    const railRect = rail.getBoundingClientRect();
-    const sectionRect = section.getBoundingClientRect();
-    const stickyH = sticky.offsetHeight;
-    const offset = headerOffset();
-
-    if (sectionRect.top > offset) {
-      sticky.classList.remove('is-fixed', 'is-bottom');
-    } else if (sectionRect.bottom - stickyH > offset) {
-      sticky.classList.add('is-fixed');
-      sticky.classList.remove('is-bottom');
-      document.documentElement.style.setProperty('--work-rail-left', `${railRect.left}px`);
-      document.documentElement.style.setProperty('--work-rail-width', `${railRect.width}px`);
-    } else {
-      sticky.classList.remove('is-fixed');
-      sticky.classList.add('is-bottom');
-    }
-  };
-
-  const onScroll = () => {
-    if (rafId) cancelAnimationFrame(rafId);
-    rafId = requestAnimationFrame(() => { rafId = null; update(); });
-  };
-
-  const bind = () => {
-    if (bound) return;
-    bound = true;
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', update, { passive: true });
-    update();
-  };
-
-  const unbind = () => {
-    if (!bound) return;
-    bound = false;
-    window.removeEventListener('scroll', onScroll);
-    window.removeEventListener('resize', update);
-    sticky.classList.remove('is-fixed', 'is-bottom');
-  };
-
-  mq.addEventListener('change', e => { e.matches ? bind() : unbind(); });
-  if (mq.matches) bind();
 }
 
 function bindWorkRail() {
@@ -976,7 +911,7 @@ function bindMotionReveal() {
 
   const targets = [
     ...document.querySelectorAll(
-      '.ccdv-main > .section:not(.section--hero):not(.section--about-hero)'
+      '.ccdv-main > .section:not(.section--hero):not(.section--about-hero):not(.work-cases-section)'
     ),
   ];
 

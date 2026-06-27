@@ -1,7 +1,7 @@
 {
   "meta": {
     "project": "Collapse Creative Dev Unit website",
-    "version": "v0.5.2l",
+    "version": "v0.5.2p",
     "status": "content-architecture-json-parity",
     "sourceLanguage": "es",
     "publicRendering": "updated",
@@ -25,7 +25,11 @@
       "v0.5.2j4: Work rail real sticky hotfix — wraps rail content in an inner sticky element so the left-site Work rail follows scroll correctly inside the Work section. CSS sticky confirmed failed in real browser smoke (innerTop tracked outerTop exactly; position:sticky did not activate). Superseded by v0.5.2j5 bounded fixed behavior.",
       "v0.5.2j5: Work rail bounded fixed hotfix — CSS sticky was unreliable in the current scroll architecture, so the Work rail now uses a scoped desktop-only bounded fixed behavior inside the Work section.",
       "v0.5.2k: ADG-OPS governance trace alignment — stale proof/publicNow wording updated to reflect first CCDV commission, private beta status, and future public release framing.",
-      "v0.5.2l: AION visual highlight system — Products/Labs now uses subtle public-safe accent metadata and rendering for AION internal tools without changing their access/status framing."
+      "v0.5.2l: AION visual highlight system — Products/Labs now uses subtle public-safe accent metadata and rendering for AION internal tools without changing their access/status framing.",
+      "v0.5.2m: Header/main boundary cleanup — page hero top border disabled so the fixed header remains the sole owner of the navbar/content seam on inner pages.",
+      "v0.5.2n: Services desktop layout tuning — services offer matrix width and tag contrast adjusted so offer titles and tags remain visually connected on desktop while preserving responsive behavior.",
+      "v0.5.2o: Home offers and Work rail rebuild — Home offer rows constrained for desktop pairing; Work rail simplified back to CSS sticky after excluding the Work section from motion reveal transforms and removing the broken fixed-position fallback.",
+      "v0.5.2p: Public hygiene cache and UTF-8 cleanup — public HTML asset query strings aligned to the current release and Work page mojibake corrected without changing layout or content data."
     ]
   },
   "languages": {
@@ -342,6 +346,30 @@
     {
       "id": "v0.5.2l",
       "name": "AION visual highlight system — Products/Labs subtle public-safe accent metadata and rendering for AION internal tools",
+      "status": "complete",
+      "publicRenderingChange": true
+    },
+    {
+      "id": "v0.5.2m",
+      "name": "Header/main boundary cleanup — page hero top border disabled so the fixed header owns the navbar/content seam on inner pages",
+      "status": "complete",
+      "publicRenderingChange": true
+    },
+    {
+      "id": "v0.5.2n",
+      "name": "Services desktop layout tuning — services offer matrix width and tag contrast adjusted for desktop readability",
+      "status": "complete",
+      "publicRenderingChange": true
+    },
+    {
+      "id": "v0.5.2o",
+      "name": "Home offers + Work rail rebuild — Home offer rows constrained for desktop pairing; Work rail restored to CSS sticky after excluding Work section from motion reveal and removing the broken JS fixed-position fallback",
+      "status": "complete",
+      "publicRenderingChange": true
+    },
+    {
+      "id": "v0.5.2p",
+      "name": "Public hygiene cache and UTF-8 cleanup — HTML asset query strings aligned to current release; Work page mojibake corrected",
       "status": "this patch",
       "publicRenderingChange": true
     }
