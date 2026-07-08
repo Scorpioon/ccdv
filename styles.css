@@ -48,7 +48,7 @@
 .field input,.field select,.field textarea{width:100%;border:1px solid var(--line);background:#070707;color:var(--fg);border-radius: 0;padding:14px 16px;font:inherit;outline:none}.field textarea{resize:vertical;min-height:120px}
 .field select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 20px) calc(50% - 3px),calc(100% - 14px) calc(50% - 3px);background-size:6px 6px,6px 6px;background-repeat:no-repeat;padding-right:40px}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--line-strong)}
 .site-footer{border-top:1px solid var(--line);padding:32px 0 48px}.site-footer__inner{display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:end}.footer__title{margin:0;font-size:14px}.footer__title--muted{color:var(--muted);margin-top:4px}.site-footer__meta{justify-self:center;text-align:center;color:var(--muted);font-size:14px}.site-footer__meta p{margin:0 0 6px}.site-footer__nav{display:flex;gap:18px;flex-wrap:wrap;justify-self:end}
-.about-hero__lead{max-width:900px}.about-sections{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.about-block{border:1px solid var(--line);border-radius: 0;padding:24px;background:var(--panel)}.thanks-body{display:grid;place-items:center;min-height:100vh;padding:40px}.thanks-wrap{width:min(calc(100% - 40px),720px);border:1px solid var(--line);border-radius: 0;padding:40px;background:var(--panel)}.thanks-logo{width:28px;height:28px;margin-bottom:20px}
+.about-hero__lead{max-width:900px}.about-sections{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.about-block{border:1px solid var(--line);border-radius: 0;padding:24px;background:var(--panel)}.thanks-body{display:grid;place-items:center;min-height:100vh;padding:40px}.thanks-wrap{width:min(calc(100% - 40px),720px);border:1px solid var(--line);border-radius: 0;padding:40px;background:var(--panel)}.thanks-logo{width:28px;height:28px;object-fit:contain;margin-bottom:20px}
 @media (max-width: 1120px){.site-header__inner{grid-template-columns:1fr;gap:12px;padding:14px 0}.site-nav{justify-self:start}.hero,.split,.split--signup,.about-sections,.learn-grid,.site-footer__inner,.field-grid--two{grid-template-columns:1fr}.site-footer__meta,.site-footer__nav{justify-self:start;text-align:left}.wrap{width:min(calc(100% - 32px),var(--max))}.section{padding:56px 0}.hero__title,.section__title,.about-hero__title{font-size:clamp(28px,7vw,40px)}}
 
 
@@ -164,22 +164,6 @@
   min-height:100%;
 }
 .hero__actions{margin-top:22px}
-
-
-.hero__title--compound{
-  display:flex;
-  align-items:baseline;
-  gap:0;
-}
-
-.hero__title-prefix{
-  opacity:0.45;
-  margin-right:0;
-}
-
-.hero__title-main{
-  color:var(--fg);
-}
 
 
 .section--editorial{
@@ -1218,11 +1202,6 @@ body{
 
   .site-header__meta{
     font-size:10px;
-  }
-
-  .hero__title-prefix,
-  .hero__title-main{
-    display:inline;
   }
 
   .session0-meta__list li{
@@ -4437,4 +4416,66 @@ body::-webkit-scrollbar{
   .service-blueprint{
     margin-top:var(--space-3);
   }
+}
+
+/* ============================================================================
+   CCDV v0.5.8 — BlackPrint primitives (union_blackprint_foundation)
+
+   Small, reusable, namespaced primitives applied to the page-hero/header
+   surfaces touched this patch: numbered chip + mono-meta label (replaces the
+   redundant "CCDV:" kicker — the logo already brands), a fine hairline rule,
+   and a technical-plate frame with an optional corner-tick bracket accent
+   (applied to the flagship hero mark box). No new palette; aliases of
+   existing --line/--line-strong/--panel tokens only.
+   ============================================================================ */
+.ccdv-kicker{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:0 0 14px;
+}
+
+.ccdv-chip{
+  display:inline-flex;
+  flex-shrink:0;
+  align-items:center;
+  justify-content:center;
+  min-width:26px;
+  height:22px;
+  padding:0 7px;
+  border:1px solid var(--line-strong);
+  font-size:10px;
+  letter-spacing:.06em;
+  color:var(--fg);
+}
+
+.ccdv-kicker__label{
+  font-size:11px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+
+.ccdv-rule{
+  width:56px;
+  height:1px;
+  margin:22px 0 0;
+  padding:0;
+  border:0;
+  background:var(--line-strong);
+}
+
+.ccdv-plate{
+  position:relative;
+}
+
+.ccdv-plate--bracket::after{
+  content:"";
+  position:absolute;
+  top:8px;
+  right:8px;
+  width:9px;
+  height:9px;
+  border-top:1px solid var(--line-strong);
+  border-right:1px solid var(--line-strong);
 }

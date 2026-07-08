@@ -56,3 +56,6 @@ _handoff/
 
 # Local/private enterprise docs
 docs/enterprise/
+
+# Local/private reports and module-copy audits
+_reports/
