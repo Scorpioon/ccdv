@@ -1,11 +1,218 @@
 <!DOCTYPE html>
-<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>CCDV — OpenVibe</title><meta name="description" content="OpenVibe: sesiones de aprendizaje colectivo y comunitario sobre IA, diseño, herramientas y nuevas formas de trabajo."><link rel="stylesheet" href="./styles.css?v=0.5.2p"></head>
-<body><header class="site-header"><div class="site-header__inner wrap"><a href="./index.html" class="brand" aria-label="Collapse Creative Dev Unit home"><img src="./assets/logo-mark.png" alt="Collapse Creative" class="brand__logo"><span class="brand__text">COLLAPSECREATIVE&trade;</span></a><div class="site-header__meta" id="clock">BARCELONA 00:00:00</div><button type="button" class="nav-toggle" aria-label="Abrir navegación" aria-expanded="false" aria-controls="primaryNav" data-nav-toggle><span class="nav-toggle__bar" aria-hidden="true"></span><span class="nav-toggle__bar" aria-hidden="true"></span><span class="nav-toggle__bar" aria-hidden="true"></span></button><nav class="site-nav site-nav--global" id="primaryNav" aria-label="Primary"><a href="./index.html">HOME</a><a href="./work.html">WORK</a><a href="./services.html">SERVICES/METHOD</a><a href="./projects.html">PRODUCTS/LABS</a><a href="./openvibe.html" aria-current="page" class="is-active">OPENVIBE</a><a href="./contact.html">CONTACT</a></nav></div></header>
-<main id="top" class="ccdv-main"><noscript><div class="wrap section"><p class="section__kicker">Aviso</p><p class="section__body">Esta página usa JavaScript ligero para cargar el contenido público. Activa JavaScript en tu navegador, o visita <a href="./contact.html">contacto</a> o <a href="./index.html">inicio</a>.</p></div></noscript><section id="context" class="hero wrap section section--hero section--hero-context"><div class="hero__copy"><div class="hero__stack hero__stack--closed"><div class="hero__mark hero__mark--closed"><img src="./assets/logo-mark.png" alt="Collapse mark"></div><div class="hero__titles hero__titles--closed"><p class="eyebrow hero__eyebrow" data-bind="hero.eyebrow"></p><h1 class="hero__title hero__title--compound"><span class="hero__title-prefix">CCDV:</span><span class="hero__title-main">OpenVibe</span></h1><p class="hero__lead hero__lead--compact" data-bind="hero.lead"></p><div class="hero__actions"><a href="#session-0" class="button" data-bind="hero.primaryCta"></a><a href="#signup" class="button button--ghost" data-bind="hero.secondaryCta"></a></div></div></div></div></section>
-<section class="wrap section section--context-narrative"><div class="context-narrative-grid"><div class="context-narrative__copy"><p class="section__kicker">Context</p><h2 class="section__title" data-bind="context.title"></h2><div class="context-copy-blocks"><p class="section__body context-copy-block" data-bind="context.bodyA"></p><p class="section__body context-copy-block" data-bind="context.bodyB"></p></div></div><div class="context-future-module" aria-hidden="true"></div></div></section>
-<section id="openvibe" class="wrap section section--openvibe-flow"><div class="openvibe-flow"><article class="openvibe-flow__item openvibe-box"><p class="section__kicker">OpenVibe</p><h2 class="section__title" data-bind="openvibe.title"></h2><p class="section__body" data-bind="openvibe.body"></p></article><article class="openvibe-flow__item openvibe-box"><p class="section__kicker">Sessions</p><h2 class="section__title" data-bind="sessions.title"></h2><p class="section__body" data-bind="sessions.body"></p></article><article class="openvibe-flow__item openvibe-box editorial-box"><p class="section__kicker">Una verdad</p><h2 class="section__title" data-bind="unaverdad.title"></h2><p class="section__body" data-bind="unaverdad.body"></p></article><article class="openvibe-flow__item openvibe-box editorial-box"><p class="section__kicker">Corpo today, local soon!</p><h2 class="section__title" data-bind="corpotoday.title"></h2><p class="section__body" data-bind="corpotoday.body"></p></article></div></section>
-<section class="wrap section"><p class="section__kicker">Overview</p><h2 class="section__title" data-bind="learn.title"></h2><div class="learn-grid" id="learnGrid"></div></section>
-<section class="wrap section section--session0"><div class="session0-layout session0-layout--swap"><div class="card card--session session0-main" id="session-0"><p class="section__kicker">Session 0</p><h2 class="section__title section__title--session" data-bind="session0.title"></h2><p class="section__body" data-bind="session0.body"></p><div class="session0-meta-panel"><div class="session0-meta-list session0-meta-list--plain"><article class="session0-meta-row"><span class="session0-meta-row__icon">01</span><div><p class="session0-meta-row__label">Dónde</p><p class="session0-meta-row__value">La Otra Sala Coworking<br>Diputació 411, bajos 1, 08013 Barcelona, España</p></div></article><article class="session0-meta-row"><span class="session0-meta-row__icon">02</span><div><p class="session0-meta-row__label">Cuándo</p><p class="session0-meta-row__value">Por confirmar</p></div></article><article class="session0-meta-row"><span class="session0-meta-row__icon">03</span><div><p class="session0-meta-row__label">Horario / plazas</p><p class="session0-meta-row__value">Por confirmar</p></div></article><article class="session0-meta-row"><span class="session0-meta-row__icon">04</span><div><p class="session0-meta-row__label">Precio</p><p class="session0-meta-row__value">Entrada libre + caja inversa</p></div></article></div></div></div><aside class="session0-class-grid" aria-label="Propuesta de sesión"><p class="session0-proposal__label session0-class-grid__label">Propuesta de sesión</p><ol class="session0-class-list" id="session0Bullets"></ol></aside></div></section>
-<section class="wrap section section--support"><div class="support-shell"><div class="support-shell__header"><p class="section__kicker">Support</p><h2 class="section__title">Cómo participar</h2></div><div class="support-layout"><article class="support-panel support-panel--faq"><p class="section__kicker">Acceso</p><h3 class="support-panel__title" data-bind="audience.title"></h3><div class="accordion support-accordion" id="audienceAccordion"></div></article><div class="support-side"><article class="support-panel support-panel--text"><p class="section__kicker">Sostenibilidad</p><h3 class="support-panel__title" data-bind="funding.title"></h3><p class="section__body" data-bind="funding.body"></p></article><article class="support-panel support-panel--text"><p class="section__kicker">Roadmap</p><h3 class="support-panel__title" data-bind="roadmap.title"></h3><p class="section__body" data-bind="roadmap.body"></p></article></div></div></div></section>
-<section id="signup" class="wrap section split split--signup"><div><p class="section__kicker">Session 0</p><h2 class="section__title section__title--signup" data-bind="signup.title"></h2><p class="section__body" data-bind="signup.body"></p></div><form class="signup-form" action="./thanks.html" method="GET" data-apps-script-endpoint="https://script.google.com/macros/s/AKfycbwTPbrEm3kht142TdG0twmUrEDxvCz7sdIIrp80ijyTAvTbL0jk1voHkdPncDeJBI8i/exec"><div class="field-grid field-grid--two"><label class="field"><span>Nombre</span><input type="text" name="name" required></label><label class="field"><span>Email</span><input type="email" name="email" required></label></div><div id="dynamicFormFields" class="signup-dynamic-grid"></div><label class="field field--span-2"><span>Opcional: Cuéntanos qué quieres aprender, qué te interesa y qué desayunaste c:</span><textarea name="note" rows="4"></textarea></label><button type="submit" class="button">Enviar inscripción</button></form></section></main>
-<footer class="site-footer ov-footer"><div class="wrap ov-footer__inner"><div class="ov-footer__brand"><img src="./assets/logo-mark.png" alt="Collapse Creative" class="brand__logo brand__logo--footer"><div><p class="footer__title">Collapse Creative</p><p class="footer__title footer__title--muted">Dev Unit</p></div></div><div class="ov-footer__center"><div class="ov-footer__meta"><p>Barcelona / remote</p><a href="mailto:contact@collapsecreative.com">contact@collapsecreative.com</a></div></div><nav class="ov-footer__nav" aria-label="Footer sitemap"><div class="ov-footer__nav-col"><a href="./index.html">HOME</a><a href="./work.html">WORK</a><a href="./services.html">SERVICES/METHOD</a></div><div class="ov-footer__nav-col"><a href="./projects.html">PRODUCTS/LABS</a><a href="./openvibe.html">OPENVIBE</a><a href="./contact.html">CONTACT</a></div></nav></div></footer><script src="./app.js?v=0.5.2p"></script></body></html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CCDV — OpenVibe</title>
+  <meta name="description" content="OpenVibe: sesiones de aprendizaje colectivo y comunitario sobre IA, diseño, herramientas y nuevas formas de trabajo.">
+  <link rel="stylesheet" href="./styles.css?v=0.5.6a">
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header__inner wrap">
+      <a href="./index.html" class="brand" aria-label="Collapse Creative Dev Unit home">
+        <img src="./assets/logo-mark.png" alt="Collapse Creative" class="brand__logo">
+        <span class="brand__text">COLLAPSECREATIVE&trade;</span>
+      </a>
+      <div class="site-header__meta" id="clock">BARCELONA 00:00:00</div>
+      <button type="button" class="nav-toggle" aria-label="Abrir navegación" aria-expanded="false" aria-controls="primaryNav" data-nav-toggle>
+        <span class="nav-toggle__bar" aria-hidden="true"></span>
+        <span class="nav-toggle__bar" aria-hidden="true"></span>
+        <span class="nav-toggle__bar" aria-hidden="true"></span>
+      </button>
+      <nav class="site-nav site-nav--global" id="primaryNav" aria-label="Primary">
+        <a href="./index.html">HOME</a>
+        <a href="./work.html">WORK</a>
+        <a href="./services.html">SERVICES/METHOD</a>
+        <a href="./projects.html">PRODUCTS/LABS</a>
+        <a href="./openvibe.html" aria-current="page" class="is-active">OPENVIBE</a>
+        <a href="./contact.html">CONTACT</a>
+      </nav>
+    </div>
+  </header>
+  <main id="top" class="ccdv-main">
+    <noscript>
+      <div class="wrap section">
+        <p class="section__kicker">Aviso</p>
+        <p class="section__body">Esta página usa JavaScript ligero para cargar el contenido público. Activa JavaScript en tu navegador, o visita <a href="./contact.html">contacto</a> o <a href="./index.html">inicio</a>.</p>
+      </div>
+    </noscript>
+    <section id="context" class="hero wrap section section--hero section--hero-context">
+      <div class="hero__copy">
+        <div class="hero__stack hero__stack--closed">
+          <div class="hero__mark hero__mark--closed"><img src="./assets/logo-mark.png" alt="Collapse mark"></div>
+          <div class="hero__titles hero__titles--closed">
+            <p class="eyebrow hero__eyebrow" data-bind="hero.eyebrow"></p>
+            <h1 class="hero__title hero__title--compound"><span class="hero__title-prefix">CCDV:</span><span class="hero__title-main">OpenVibe</span></h1>
+            <p class="hero__lead hero__lead--compact" data-bind="hero.lead"></p>
+            <div class="hero__actions">
+              <a href="#session-0" class="button" data-bind="hero.primaryCta"></a>
+              <a href="#signup" class="button button--ghost" data-bind="hero.secondaryCta"></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="wrap section section--context-narrative">
+      <div class="context-narrative-grid">
+        <div class="context-narrative__copy">
+          <p class="section__kicker">Context</p>
+          <h2 class="section__title" data-bind="context.title"></h2>
+          <div class="context-copy-blocks">
+            <p class="section__body context-copy-block" data-bind="context.bodyA"></p>
+            <p class="section__body context-copy-block" data-bind="context.bodyB"></p>
+          </div>
+        </div>
+        <div class="context-future-module" aria-hidden="true"></div>
+      </div>
+    </section>
+    <section id="openvibe" class="wrap section section--openvibe-flow">
+      <div class="openvibe-flow">
+        <article class="openvibe-flow__item openvibe-box">
+          <p class="section__kicker">OpenVibe</p>
+          <h2 class="section__title" data-bind="openvibe.title"></h2>
+          <p class="section__body" data-bind="openvibe.body"></p>
+        </article>
+        <article class="openvibe-flow__item openvibe-box">
+          <p class="section__kicker">Sessions</p>
+          <h2 class="section__title" data-bind="sessions.title"></h2>
+          <p class="section__body" data-bind="sessions.body"></p>
+        </article>
+        <article class="openvibe-flow__item openvibe-box editorial-box">
+          <p class="section__kicker">Una verdad</p>
+          <h2 class="section__title" data-bind="unaverdad.title"></h2>
+          <p class="section__body" data-bind="unaverdad.body"></p>
+        </article>
+        <article class="openvibe-flow__item openvibe-box editorial-box">
+          <p class="section__kicker">Corpo today, local soon!</p>
+          <h2 class="section__title" data-bind="corpotoday.title"></h2>
+          <p class="section__body" data-bind="corpotoday.body"></p>
+        </article>
+      </div>
+    </section>
+    <section class="wrap section">
+      <p class="section__kicker">Overview</p>
+      <h2 class="section__title" data-bind="learn.title"></h2>
+      <div class="learn-grid" id="learnGrid"></div>
+    </section>
+    <section class="wrap section section--session0">
+      <div class="session0-layout session0-layout--swap">
+        <div class="card card--session session0-main" id="session-0">
+          <p class="section__kicker">Session 0</p>
+          <h2 class="section__title section__title--session" data-bind="session0.title"></h2>
+          <p class="section__body" data-bind="session0.body"></p>
+          <div class="session0-meta-panel">
+            <div class="session0-meta-list session0-meta-list--plain">
+              <article class="session0-meta-row">
+                <span class="session0-meta-row__icon">01</span>
+                <div>
+                  <p class="session0-meta-row__label">Dónde</p>
+                  <p class="session0-meta-row__value">La Otra Sala Coworking<br>Diputació 411, bajos 1, 08013 Barcelona, España</p>
+                </div>
+              </article>
+              <article class="session0-meta-row">
+                <span class="session0-meta-row__icon">02</span>
+                <div>
+                  <p class="session0-meta-row__label">Cuándo</p>
+                  <p class="session0-meta-row__value">Por confirmar</p>
+                </div>
+              </article>
+              <article class="session0-meta-row">
+                <span class="session0-meta-row__icon">03</span>
+                <div>
+                  <p class="session0-meta-row__label">Horario / plazas</p>
+                  <p class="session0-meta-row__value">Por confirmar</p>
+                </div>
+              </article>
+              <article class="session0-meta-row">
+                <span class="session0-meta-row__icon">04</span>
+                <div>
+                  <p class="session0-meta-row__label">Precio</p>
+                  <p class="session0-meta-row__value">Entrada libre + caja inversa</p>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+        <aside class="session0-class-grid" aria-label="Propuesta de sesión">
+          <p class="session0-proposal__label session0-class-grid__label">Propuesta de sesión</p>
+          <ol class="session0-class-list" id="session0Bullets"></ol>
+        </aside>
+      </div>
+    </section>
+    <section class="wrap section section--support">
+      <div class="support-shell">
+        <div class="support-shell__header">
+          <p class="section__kicker">Support</p>
+          <h2 class="section__title">Cómo participar</h2>
+        </div>
+        <div class="support-layout">
+          <article class="support-panel support-panel--faq">
+            <p class="section__kicker">Acceso</p>
+            <h3 class="support-panel__title" data-bind="audience.title"></h3>
+            <div class="accordion support-accordion" id="audienceAccordion"></div>
+          </article>
+          <div class="support-side">
+            <article class="support-panel support-panel--text">
+              <p class="section__kicker">Sostenibilidad</p>
+              <h3 class="support-panel__title" data-bind="funding.title"></h3>
+              <p class="section__body" data-bind="funding.body"></p>
+            </article>
+            <article class="support-panel support-panel--text">
+              <p class="section__kicker">Roadmap</p>
+              <h3 class="support-panel__title" data-bind="roadmap.title"></h3>
+              <p class="section__body" data-bind="roadmap.body"></p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="signup" class="wrap section split split--signup">
+      <div>
+        <p class="section__kicker">Session 0</p>
+        <h2 class="section__title section__title--signup" data-bind="signup.title"></h2>
+        <p class="section__body" data-bind="signup.body"></p>
+      </div>
+      <form class="signup-form" action="./thanks.html" method="GET" data-apps-script-endpoint="https://script.google.com/macros/s/AKfycbwTPbrEm3kht142TdG0twmUrEDxvCz7sdIIrp80ijyTAvTbL0jk1voHkdPncDeJBI8i/exec">
+        <div class="field-grid field-grid--two">
+          <label class="field"><span>Nombre</span><input type="text" name="name" required></label>
+          <label class="field"><span>Email</span><input type="email" name="email" required></label>
+        </div>
+        <div id="dynamicFormFields" class="signup-dynamic-grid"></div>
+        <label class="field field--span-2"><span>Opcional: Cuéntanos qué quieres aprender, qué te interesa y qué desayunaste c:</span><textarea name="note" rows="4"></textarea></label>
+        <button type="submit" class="button">Enviar inscripción</button>
+      </form>
+    </section>
+  </main>
+  <footer class="site-footer ov-footer">
+    <div class="wrap ov-footer__inner">
+      <div class="ov-footer__brand">
+        <img src="./assets/logo-mark.png" alt="Collapse Creative" class="brand__logo brand__logo--footer">
+        <div>
+          <p class="footer__title">Collapse Creative</p>
+          <p class="footer__title footer__title--muted">Dev Unit</p>
+        </div>
+      </div>
+      <div class="ov-footer__center">
+        <div class="ov-footer__meta">
+          <p>Barcelona / remote</p>
+          <a href="mailto:contact@collapsecreative.com">contact@collapsecreative.com</a>
+        </div>
+      </div>
+      <nav class="ov-footer__nav" aria-label="Footer sitemap">
+        <div class="ov-footer__nav-col">
+          <a href="./index.html">HOME</a>
+          <a href="./work.html">WORK</a>
+          <a href="./services.html">SERVICES/METHOD</a>
+        </div>
+        <div class="ov-footer__nav-col">
+          <a href="./projects.html">PRODUCTS/LABS</a>
+          <a href="./openvibe.html">OPENVIBE</a>
+          <a href="./contact.html">CONTACT</a>
+        </div>
+      </nav>
+    </div>
+  </footer>
+  <script src="./app.js?v=0.5.6a"></script>
+</body>
+</html>

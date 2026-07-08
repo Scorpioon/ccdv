@@ -5,6 +5,19 @@ const WORK_PATH = './content/work.json';
 const SERVICES_PATH = './content/services.json';
 const PRODUCTS_PATH = './content/products.json';
 
+// Service-flow config (see the "SERVICE-FLOW INTERACTION" section below).
+// Public-safe, generic output labels for the interactive service-flow graphic.
+// Keyed by services.json offer id. Falls back to the offer title if unmapped.
+// Consumed by renderServices(); mirrored into the graphic by bindServiceFlow().
+const SERVICE_OUTPUTS = {
+  workflow_audit: 'Mapa de proceso',
+  internal_tool_mvp: 'Tool MVP',
+  ai_workflow_setup: 'Flujo IA',
+  ux_ui_product_rescue: 'Rescate UX/UI',
+  digital_hygiene: 'Release hygiene'
+};
+
+
 let globalContent = null;
 let pageContent = null;
 let formState = {};
@@ -73,6 +86,7 @@ function bindGlobal() {
 }
 
 function renderHome() {
+  bindHomeSchematic();
   renderLearnGrid();
   bindOverviewCarousel();
   renderAccordion();
@@ -538,7 +552,6 @@ function renderAbout() {
 }
 
 function renderWork() {
-  const railNav = document.getElementById('workRail');
   const target = document.getElementById('workCases');
   if (!target) return;
   const projects = (pageContent.projects || [])
@@ -548,21 +561,6 @@ function renderWork() {
   projects.forEach((p, i) => {
     const num = String(i + 1).padStart(2, '0');
     const anchorId = `project-${num}`;
-
-    if (railNav) {
-      const link = document.createElement('a');
-      link.className = 'work-rail__link' + (i === 0 ? ' is-active' : '');
-      link.href = `#${anchorId}`;
-      link.dataset.target = anchorId;
-      const railNum = document.createElement('span');
-      railNum.className = 'work-rail__num';
-      railNum.textContent = num;
-      const railName = document.createElement('span');
-      railName.className = 'work-rail__name';
-      railName.textContent = p.title;
-      link.append(railNum, railName);
-      railNav.appendChild(link);
-    }
 
     const article = document.createElement('article');
     article.className = 'work-case';
@@ -632,28 +630,121 @@ function renderWork() {
     article.append(info, figure);
     target.appendChild(article);
   });
-
-  bindWorkRail();
 }
 
-function bindWorkRail() {
-  const links = [...document.querySelectorAll('.work-rail__link')];
-  const cases = [...document.querySelectorAll('.work-case')];
-  if (!links.length || !cases.length) return;
+/* ============================================================
+   SERVICE-FLOW INTERACTION (Home + Services)
+   ------------------------------------------------------------
+   Output labels live in SERVICE_OUTPUTS near the top of this
+   file. renderServices() builds the offer rows and stamps the
+   data-service-* attributes; renderHome() (home-offers layout)
+   and renderServices() (services-offers layout) both call
+   bindServiceFlow() to wire the hover / focus / click selection
+   and reflect the active service into the .service-flow panel.
+   ============================================================ */
 
-  const setActive = id => {
-    links.forEach(link => link.classList.toggle('is-active', link.dataset.target === id));
+// Reusable interaction binder for the Home and Services service-flow graphics.
+// `root` is the two-column layout holding both the service list (rows carrying
+// data-service-* attributes) and the .service-flow panel. Hover, focus and
+// click on a row select that service and mirror it into the graphic. Purely
+// presentational: no data fetches, no dependency on render order beyond markup.
+function bindServiceFlow(root) {
+  if (!root) return;
+  const flow = root.querySelector('.service-flow');
+  const rows = [...root.querySelectorAll('[data-service-key]')];
+  if (!flow || !rows.length) return;
+
+  const titleEl = flow.querySelector('[data-flow-title]');
+  const indexEl = flow.querySelector('[data-flow-index]');
+  const outputEl = flow.querySelector('[data-flow-output]');
+  const catEl = flow.querySelector('[data-flow-cat]');
+
+  const activate = row => {
+    rows.forEach(other => other.classList.toggle('is-active', other === row));
+    const data = row.dataset;
+    flow.dataset.activeService = data.serviceKey || '';
+    if (indexEl && data.serviceIndex) indexEl.textContent = data.serviceIndex;
+    if (titleEl && data.serviceTitle) titleEl.textContent = data.serviceTitle;
+    if (outputEl && data.serviceOutput) outputEl.textContent = data.serviceOutput;
+    if (catEl) catEl.textContent = data.serviceCat || '';
   };
 
-  if (!('IntersectionObserver' in window)) return;
+  rows.forEach(row => {
+    row.addEventListener('mouseenter', () => activate(row));
+    row.addEventListener('focusin', () => activate(row));
+    row.addEventListener('click', () => activate(row));
+  });
 
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) setActive(entry.target.id);
+  activate(rows[0]);
+}
+
+// Home flagship schematic — "Por dónde se entra". Drives the five-input → CCDV
+// core → five-output system map. Distinct from bindServiceFlow (single selected
+// pipeline): here all inputs and outputs stay visible as a system, and the
+// active index lights one full route — input, inbound wire, core, outbound wire,
+// output — together. Inputs are real <button>s (keyboard + aria-pressed); the
+// SVG wires and the outputs column are decorative mirrors (aria-hidden), so the
+// semantic path lives in each input's text. No data fetch, no render-order
+// dependency beyond the markup.
+function bindHomeSchematic() {
+  const root = document.querySelector('[data-home-schematic]');
+  if (!root) return;
+  const inputs = [...root.querySelectorAll('[data-home-entry-index]')];
+  if (!inputs.length) return;
+
+  const outputs = [...root.querySelectorAll('[data-home-output-index]')];
+  const inPaths = [...root.querySelectorAll('.home-entry-schematic__connectors--in [data-path-index]')];
+  const outPaths = [...root.querySelectorAll('.home-entry-schematic__connectors--out [data-path-index]')];
+
+  const activate = index => {
+    inputs.forEach(el => {
+      const on = Number(el.dataset.homeEntryIndex) === index;
+      el.classList.toggle('is-active', on);
+      el.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
-  }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+    outputs.forEach(el => el.classList.toggle('is-active', Number(el.dataset.homeOutputIndex) === index));
+    inPaths.forEach(el => el.classList.toggle('is-active', Number(el.dataset.pathIndex) === index));
+    outPaths.forEach(el => el.classList.toggle('is-active', Number(el.dataset.pathIndex) === index));
+    root.dataset.activeIndex = String(index);
+  };
 
-  cases.forEach(c => io.observe(c));
+  inputs.forEach(el => {
+    const index = Number(el.dataset.homeEntryIndex);
+    el.addEventListener('mouseenter', () => activate(index));
+    el.addEventListener('focusin', () => activate(index));
+    el.addEventListener('click', () => activate(index));
+  });
+
+  activate(0);
+}
+
+// Services flagship blueprint — "Sistema de servicios". Activates the matching
+// SVG blueprint group when the user hovers, focuses, or clicks an offer row.
+// `root` is the .services-offers-layout. The aria-hidden [data-service-blueprint]
+// figure holds the SVG; each <g data-blueprint-key> maps to a services.json id.
+// Purely presentational: no data fetch, no render-order dependency beyond markup.
+function bindServiceBlueprint(root) {
+  if (!root) return;
+  const figure = root.querySelector('[data-service-blueprint]');
+  const rows = [...root.querySelectorAll('[data-service-key]')];
+  if (!figure || !rows.length) return;
+
+  const groups = [...figure.querySelectorAll('[data-blueprint-key]')];
+
+  const activate = row => {
+    rows.forEach(other => other.classList.toggle('is-active', other === row));
+    const key = row.dataset.serviceKey || '';
+    figure.dataset.activeService = key;
+    groups.forEach(g => g.classList.toggle('is-active', g.dataset.blueprintKey === key));
+  };
+
+  rows.forEach(row => {
+    row.addEventListener('mouseenter', () => activate(row));
+    row.addEventListener('focusin', () => activate(row));
+    row.addEventListener('click', () => activate(row));
+  });
+
+  if (rows[0]) activate(rows[0]);
 }
 
 function renderServices() {
@@ -666,9 +757,15 @@ function renderServices() {
       li.className = 'offer-item';
       li.dataset.offerId = offer.id;
 
+      const orderNum = String(i + 1).padStart(2, '0');
+      li.tabIndex = 0;
+      li.dataset.serviceKey = offer.id;
+      li.dataset.serviceIndex = orderNum;
+      li.dataset.serviceTitle = offer.title;
+
       const index = document.createElement('span');
       index.className = 'offer-item__index';
-      index.textContent = String(i + 1).padStart(2, '0');
+      index.textContent = orderNum;
 
       const main = document.createElement('div');
       main.className = 'offer-item__main';
@@ -682,15 +779,9 @@ function renderServices() {
 
       li.append(index, main);
 
-      if (offer.tag) {
-        const tag = document.createElement('span');
-        tag.className = 'offer-item__tag';
-        tag.textContent = offer.tag;
-        li.appendChild(tag);
-      }
-
       offersList.appendChild(li);
     });
+    bindServiceBlueprint(offersList.closest('.services-offers-layout'));
   }
   if (methodStepper) {
     const steps = (pageContent.method || []).slice().sort((a, b) => a.order - b.order);
@@ -911,7 +1002,7 @@ function bindMotionReveal() {
 
   const targets = [
     ...document.querySelectorAll(
-      '.ccdv-main > .section:not(.section--hero):not(.section--about-hero):not(.work-cases-section)'
+      '.ccdv-main > .section:not(.section--hero):not(.section--about-hero)'
     ),
   ];
 

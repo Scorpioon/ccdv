@@ -1,7 +1,7 @@
 {
   "meta": {
     "project": "Collapse Creative Dev Unit website",
-    "version": "v0.5.2p",
+    "version": "v0.5.6a",
     "status": "content-architecture-json-parity",
     "sourceLanguage": "es",
     "publicRendering": "updated",
@@ -29,7 +29,15 @@
       "v0.5.2m: Header/main boundary cleanup — page hero top border disabled so the fixed header remains the sole owner of the navbar/content seam on inner pages.",
       "v0.5.2n: Services desktop layout tuning — services offer matrix width and tag contrast adjusted so offer titles and tags remain visually connected on desktop while preserving responsive behavior.",
       "v0.5.2o: Home offers and Work rail rebuild — Home offer rows constrained for desktop pairing; Work rail simplified back to CSS sticky after excluding the Work section from motion reveal transforms and removing the broken fixed-position fallback.",
-      "v0.5.2p: Public hygiene cache and UTF-8 cleanup — public HTML asset query strings aligned to the current release and Work page mojibake corrected without changing layout or content data."
+      "v0.5.2p: Public hygiene cache and UTF-8 cleanup — public HTML asset query strings aligned to the current release and Work page mojibake corrected without changing layout or content data.",
+      "v0.5.3: Visual balance and Work rail removal — Work rail removed completely after browser review; page heroes compacted globally; Home and Services left-column sections gained right-side visual containers for desktop balance.",
+      "v0.5.3a: Interactive service graphics correction — Home entry module redesigned as a service-to-CCDV-to-output flow; Services offer tags removed and the service list now drives an interactive selected-service graphic; oversized static placeholders reduced. Corrects v0.5.3.",
+      "v0.5.3b: Code hygiene and de-monolith pass — public HTML pages formatted for readable diffs; service-flow JavaScript and CSS organized for human/LLM maintainability without intentional visual or content changes.",
+      "v0.5.3c: Service-flow visual polish — Home and Services interactive graphics refined from rough stacked boxes into quieter editorial system diagrams; interaction behavior and content data preserved.",
+      "v0.5.4: Schematic grammar lock — CCDV Visual Language v1 formalized as outline-first, thin-line, blueprint/schematic primitives; public CSS tokens/primitives added without module redesign.",
+      "v0.5.5: Home flagship schematic — \"Por dónde se entra\" redesigned as a five-input to CCDV-core to five-output schematic system map using Visual Language v1; Services remains unchanged for the next flagship step.",
+      "v0.5.6: Services flagship schematic — \"Sistema de servicios\" redesigned as a selected-service input/problema to CCDV-proceso to output schematic pipeline (with a static criterio gate) using Visual Language v1; the offer list is the keyboard selector and the aria-hidden figure mirrors the active service. Home flagship remains unchanged except cache-bust. VISUAL SMOKE FAILED — stacked card boxes remained; not committed.",
+      "v0.5.6a: Services blueprint corrective — replaced the failed stacked text/card service schematic with a white technical blueprint canvas and five distinct service-specific SVG diagrams; fixed left service index/active-state alignment (vertical bar replaced with bottom rule); v0.5.6 remains a failed visual attempt in history."
     ]
   },
   "languages": {
@@ -370,6 +378,54 @@
     {
       "id": "v0.5.2p",
       "name": "Public hygiene cache and UTF-8 cleanup — HTML asset query strings aligned to current release; Work page mojibake corrected",
+      "status": "complete",
+      "publicRenderingChange": true
+    },
+    {
+      "id": "v0.5.3",
+      "name": "Visual balance + no Work rail — Work rail removed completely (HTML/JS/CSS); global compact page hero; Home and Services left-column sections gained desktop right-side visual containers",
+      "status": "complete — corrected by v0.5.3a",
+      "publicRenderingChange": true
+    },
+    {
+      "id": "v0.5.3a",
+      "name": "Interactive service graphics correction — Home entry module rebuilt as a service→CCDV→output flow; Services offer tag pills removed, service list drives an interactive selected-service graphic; method generic side visual removed; oversized static placeholders eliminated",
+      "status": "complete — corrected by v0.5.3b code hygiene pass",
+      "publicRenderingChange": true
+    },
+    {
+      "id": "v0.5.3b",
+      "name": "Code hygiene and de-monolith pass — public HTML pages formatted into readable multi-line documents; service-flow JavaScript sectioned and CSS dead-rule cleanup for human/LLM maintainability",
+      "status": "complete",
+      "publicRenderingChange": "no intentional rendering change"
+    },
+    {
+      "id": "v0.5.3c",
+      "name": "Service-flow visual polish — Home and Services interactive graphics refined from rough stacked boxes into quieter editorial system diagrams (continuous routing spine, distinct source/hub/output weights, single framed output artifact); interaction behavior and content data preserved",
+      "status": "complete",
+      "publicRenderingChange": true
+    },
+    {
+      "id": "v0.5.4",
+      "name": "Schematic grammar lock — Visual Language v1 tokens/primitives lock",
+      "status": "complete",
+      "publicRenderingChange": "minimal — token/radius/primitives only"
+    },
+    {
+      "id": "v0.5.5",
+      "name": "Home flagship schematic — five inputs to CCDV core to five outputs",
+      "status": "complete",
+      "publicRenderingChange": true
+    },
+    {
+      "id": "v0.5.6",
+      "name": "Services flagship schematic — selected service pipeline (input/problema → CCDV/proceso → output)",
+      "status": "attempted — visual smoke failed — not committed",
+      "publicRenderingChange": true
+    },
+    {
+      "id": "v0.5.6a",
+      "name": "Services blueprint corrective — five service-specific technical diagrams",
       "status": "this patch",
       "publicRenderingChange": true
     }

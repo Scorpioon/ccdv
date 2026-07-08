@@ -15,6 +15,11 @@
 :root {
   --bg:#000; --fg:#f4f4f1; --muted:rgba(244,244,241,.68); --line:rgba(244,244,241,.14); --line-strong:rgba(244,244,241,.24); --panel:rgba(255,255,255,.03); --panel-2:rgba(255,255,255,.05); --max:1380px; --copy:720px;
   --space-1:12px; --space-2:18px; --space-3:28px; --space-4:44px; --space-5:72px; --space-6:112px;
+  /* CCDV v0.5.4 — Schematic / outline grammar lock (Visual Language v1). Aliases of existing values; no new palette. */
+  --stroke-hairline:var(--line); --stroke-active:var(--line-strong);
+  --schematic-line:var(--line); --schematic-line-strong:var(--line-strong);
+  --schematic-panel:var(--panel); --schematic-panel-soft:var(--panel-2); --schematic-grid:var(--line);
+  --schematic-node-size:12px; --schematic-active-size:16px;
 }
 *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:var(--bg);color:var(--fg);font-family:"Inter Display",Arial,sans-serif;line-height:1.45;min-height:100vh} a{color:inherit;text-decoration:none} img{display:block;max-width:100%}
 .wrap{width:min(calc(100% - 72px),var(--max));margin:0 auto}
@@ -38,7 +43,7 @@
 .mini-card__icon--guide::before{left:2px;bottom:2px;width:16px;height:16px;border-left:1px solid var(--fg);border-bottom:1px solid var(--fg)}.mini-card__icon--guide::after{right:2px;top:2px;width:8px;height:8px;border-top:1px solid var(--fg);border-right:1px solid var(--fg)}
 .accordion{display:grid;gap:10px;margin-top:24px}.accordion__item{border:1px solid var(--line);border-radius: 0;background:var(--panel);overflow:hidden}.accordion__button{width:100%;display:flex;justify-content:space-between;align-items:center;padding:18px 20px;background:none;border:0;color:var(--fg);cursor:pointer;font:inherit;text-align:left}.accordion__plus{position:relative;width:14px;height:14px;flex:0 0 14px}.accordion__plus::before,.accordion__plus::after{content:"";position:absolute;left:0;top:50%;width:14px;height:1px;background:var(--fg);transform:translateY(-50%)}.accordion__plus::after{transform:translateY(-50%) rotate(90deg);transition:transform .24s ease}.accordion__item.is-open .accordion__plus::after{transform:translateY(-50%) rotate(0deg)}
 .accordion__panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .28s ease}.accordion__panel p{overflow:hidden;margin:0;padding:0 20px 0 20px}.accordion__item.is-open .accordion__panel{grid-template-rows:1fr}.accordion__item.is-open .accordion__panel p{padding-bottom:20px}
-.card{border:1px solid var(--line);background:var(--panel);padding:28px;border-radius:18px}.card--session,.card--equal{height:100%}.bullet-list{margin:20px 0 0;padding:0 0 0 18px;color:var(--muted);display:grid;gap:10px}
+.card{border:1px solid var(--line);background:var(--panel);padding:28px;border-radius:0}.card--session,.card--equal{height:100%}.bullet-list{margin:20px 0 0;padding:0 0 0 18px;color:var(--muted);display:grid;gap:10px}
 .split--signup{grid-template-columns:minmax(0,.78fr) minmax(420px,1.22fr)}.signup-form{border:1px solid var(--line);border-radius: 0;background:var(--panel);padding:28px;display:grid;gap:18px}.field-grid{display:grid;grid-template-columns:1fr;gap:16px}.field-grid--two{grid-template-columns:1fr 1fr}.field{display:grid;gap:8px}.field span{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .field input,.field select,.field textarea{width:100%;border:1px solid var(--line);background:#070707;color:var(--fg);border-radius: 0;padding:14px 16px;font:inherit;outline:none}.field textarea{resize:vertical;min-height:120px}
 .field select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 20px) calc(50% - 3px),calc(100% - 14px) calc(50% - 3px);background-size:6px 6px,6px 6px;background-repeat:no-repeat;padding-right:40px}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--line-strong)}
@@ -3172,18 +3177,6 @@ body::-webkit-scrollbar{
   color:var(--muted);
 }
 
-.offer-item__tag{
-  justify-self:end;
-  margin-top:4px;
-  padding:5px 10px;
-  border:1px solid var(--line);
-  font-size:10px;
-  letter-spacing:.13em;
-  text-transform:uppercase;
-  color:var(--muted);
-  white-space:nowrap;
-}
-
 /* method stepper — connected diagram */
 .services-method-section{
   padding-top:var(--space-5);
@@ -3280,12 +3273,6 @@ body::-webkit-scrollbar{
     gap:6px 18px;
   }
 
-  .offer-item__tag{
-    grid-column:2;
-    justify-self:start;
-    margin-top:12px;
-  }
-
   /* stepper becomes a vertical rail */
   .method-stepper{
     grid-template-columns:1fr;
@@ -3331,100 +3318,12 @@ body::-webkit-scrollbar{
   .offer-item__index{
     padding-top:0;
   }
-
-  .offer-item__tag{
-    grid-column:1;
-    margin-top:12px;
-  }
 }
 
 /* CCDV v0.5.2g — Work case/project system + project rail */
 .work-cases-section{
   padding-top:var(--space-4) !important;
   padding-bottom:var(--space-5) !important;
-}
-
-.work-layout{
-  display:grid;
-  grid-template-columns:220px minmax(0,1fr);
-  gap:56px;
-  align-items:start;
-}
-
-.work-rail{
-  position:relative;
-  top:auto;
-  align-self:stretch;
-}
-
-.work-rail__sticky{
-  position:sticky;
-  top:calc(var(--site-header-h, 72px) + 28px);
-}
-
-.work-rail__label{
-  margin:0 0 16px 0;
-  font-size:11px;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  color:var(--muted);
-}
-
-.work-rail__nav{
-  display:grid;
-  gap:0;
-  border-top:1px solid var(--line);
-}
-
-.work-rail__link{
-  position:relative;
-  display:grid;
-  grid-template-columns:auto minmax(0,1fr);
-  gap:12px;
-  align-items:baseline;
-  padding:14px 0 14px 16px;
-  border-bottom:1px solid var(--line);
-  color:var(--muted);
-  transition:color var(--motion-fast) ease;
-}
-
-.work-rail__link::before{
-  content:"";
-  position:absolute;
-  left:0;
-  top:50%;
-  width:5px;
-  height:5px;
-  border-radius:50%;
-  background:var(--fg);
-  transform:translateY(-50%) scale(0);
-  transition:transform var(--motion-fast) ease;
-}
-
-.work-rail__link:hover,
-.work-rail__link.is-active{
-  color:var(--fg);
-}
-
-.work-rail__link.is-active::before{
-  transform:translateY(-50%) scale(1);
-}
-
-.work-rail__num{
-  font-size:11px;
-  letter-spacing:.12em;
-  color:var(--muted);
-  transition:color var(--motion-fast) ease;
-}
-
-.work-rail__link.is-active .work-rail__num{
-  color:var(--fg);
-}
-
-.work-rail__name{
-  min-width:0;
-  font-size:13px;
-  letter-spacing:.04em;
 }
 
 .work-cases{
@@ -3555,28 +3454,6 @@ body::-webkit-scrollbar{
 }
 
 @media (max-width:980px){
-  .work-layout{
-    grid-template-columns:1fr;
-    gap:32px;
-  }
-
-  .work-rail{
-    position:static;
-    top:auto;
-  }
-
-  .work-rail__nav{
-    display:flex;
-    flex-wrap:wrap;
-    gap:0 8px;
-    border-bottom:1px solid var(--line);
-  }
-
-  .work-rail__link{
-    border-bottom:none;
-    padding:10px 12px 10px 18px;
-  }
-
   .work-case{
     gap:36px;
   }
@@ -3601,56 +3478,6 @@ body::-webkit-scrollbar{
   .work-case__meta-row{
     grid-template-columns:1fr;
     gap:4px;
-  }
-}
-
-/* CCDV v0.5.2j2 — Work rail left-site hotfix */
-@media (min-width: 1100px) {
-  /* Expand work section beyond .wrap centering — rail uses left site area */
-  .work-cases-section {
-    width: 100% !important;
-    max-width: none !important;
-  }
-
-  /* 5-col grid: [left-gutter][rail][spacer][cases][right-gutter] */
-  .work-cases-section .work-layout {
-    grid-template-columns: 36px 180px 48px minmax(0, 1fr) 36px;
-    gap: 0;
-    align-items: start;
-  }
-
-  /* Rail anchored to left site edge (column 2) */
-  .work-cases-section .work-rail {
-    grid-column: 2;
-  }
-
-  /* Cases fill main content column (column 4) */
-  .work-cases-section .work-cases {
-    grid-column: 4;
-  }
-}
-
-/* CCDV v0.5.2j4 — Work rail real sticky: inner wrapper */
-@media (min-width: 1100px) {
-  .work-cases-section .work-layout {
-    align-items: stretch;
-  }
-
-  .work-cases-section .work-rail {
-    position: relative;
-    top: auto;
-    align-self: stretch;
-  }
-
-  .work-cases-section .work-rail__sticky {
-    position: sticky;
-    top: calc(var(--site-header-h, 72px) + 28px);
-  }
-}
-
-@media (max-width: 980px) {
-  .work-rail__sticky {
-    position: static;
   }
 }
 
@@ -3923,23 +3750,691 @@ body::-webkit-scrollbar{
   max-width:880px;
 }
 
-.services-offers-section .offer-item__tag{
-  color:var(--fg);
-  border-color:var(--line-strong);
-}
-
 /* CCDV v0.5.2o — Home offers + Work rail rebuild */
 /* Home offers: cap list width so name/tag rows stay visually paired on desktop */
 .home-offers__list{
   max-width:620px;
 }
 
-/* Work rail: simple CSS sticky restored (JS fixed/is-bottom removed).
-   Reveal-transform exclusion of .work-cases-section in app.js lets sticky resolve
-   against the viewport instead of a transformed ancestor. */
-@media (max-width: 1099px) {
-  .work-cases-section .work-rail__sticky {
-    position: static;
-    top: auto;
+/* CCDV v0.5.3 — Visual balance + no Work rail */
+
+/* Global compact page hero — generalized from the former Work-only rule so all
+   CCDV page heroes share the same vertical rhythm. */
+.ccdv-page .ccdv-page-hero{
+  padding-top:var(--space-6) !important;
+  padding-bottom:var(--space-6) !important;
+}
+
+/* CCDV v0.5.3c — Service-flow visual polish (Home + Services)
+   The former stacked-box flow is recomposed as a quiet editorial system map:
+   one hairline spine routes a live input (the selected service) through a small
+   CCDV processing node into a single framed output artifact. Same DOM, same
+   data-flow hooks, same hover/focus/click interaction — only the visual system
+   changes. Three distinct weights replace three equal rectangles. */
+.service-flow{
+  position:relative;
+  border:1px solid var(--line);
+  background:var(--panel);
+  padding:clamp(24px,2.6vw,34px);
+  display:flex;
+  flex-direction:column;
+  gap:clamp(20px,2.2vw,28px);
+}
+
+.service-flow__kicker{
+  margin:0;
+  padding-bottom:14px;
+  border-bottom:1px solid var(--line);
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+
+/* the stage is a routed spine, not a column of boxes */
+.service-flow__stage{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  gap:clamp(18px,2vw,26px);
+  padding-left:30px;
+}
+
+/* continuous hairline spine in the left gutter — the routing path. Faded ends
+   keep it reading as an intentional rail rather than a cut-off line. */
+.service-flow__stage::before{
+  content:"";
+  position:absolute;
+  left:9px;
+  top:0;
+  bottom:0;
+  width:1px;
+  background:linear-gradient(180deg,
+    transparent 0,
+    var(--line-strong) 16px,
+    var(--line-strong) calc(100% - 24px),
+    transparent 100%);
+}
+
+/* nodes share the spine but carry distinct weights — no equal-weight boxes */
+.service-flow__node{
+  position:relative;
+  border:0;
+  background:none;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+/* each node pins a marker onto the spine */
+.service-flow__node::before{
+  content:"";
+  position:absolute;
+  left:-24px;
+  top:5px;
+  width:7px;
+  height:7px;
+  background:var(--bg);
+  border:1px solid var(--line-strong);
+  transition:border-color var(--motion-fast) ease, background var(--motion-fast) ease;
+}
+
+.service-flow__node-label{
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+
+.service-flow__node-index{
+  color:var(--fg);
+}
+
+.service-flow__node-name{
+  font-size:19px;
+  font-weight:400;
+  letter-spacing:-.01em;
+  line-height:1.15;
+  color:var(--fg);
+}
+
+.service-flow__node-cat{
+  font-size:10px;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+
+/* SOURCE — the live input signal. Borderless; its spine marker fills in when a
+   service is selected, so emphasis tracks the active row without a heavy box. */
+.service-flow[data-active-service]:not([data-active-service=""]) .service-flow__source::before{
+  background:var(--fg);
+  border-color:var(--fg);
+}
+
+/* the former segmented connectors are superseded by the continuous spine */
+.service-flow__line{
+  display:none;
+}
+
+/* HUB — a quiet processing node: smaller than source/output, set inline so it
+   reads as a junction on the spine, not a third card. */
+.service-flow__hub{
+  flex-direction:row;
+  align-items:center;
+  gap:9px;
+}
+
+.service-flow__hub::before{
+  left:-26px;
+  top:3px;
+  width:11px;
+  height:11px;
+  border-radius:50%;
+  background:var(--panel-2);
+  border-color:var(--line-strong);
+}
+
+.service-flow__hub-mark{
+  width:20px;
+  height:20px;
+  object-fit:contain;
+  opacity:.85;
+}
+
+.service-flow__hub-name{
+  font-size:11px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--fg);
+}
+
+.service-flow__hub-sub{
+  font-size:10px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+
+.service-flow__hub-sub::before{
+  content:"·";
+  margin-right:7px;
+  color:var(--line-strong);
+}
+
+/* OUTPUT — the result artifact: the one framed element and the endpoint of the
+   route. Square corners, hairline frame, filled spine marker, corner tick. */
+.service-flow__output{
+  margin-top:4px;
+  gap:8px;
+  border:1px solid var(--line);
+  background:var(--bg);
+  padding:18px 18px 20px;
+}
+
+.service-flow__output::before{
+  left:-24px;
+  top:21px;
+  background:var(--fg);
+  border-color:var(--fg);
+}
+
+.service-flow__output::after{
+  content:"";
+  position:absolute;
+  top:9px;
+  right:9px;
+  width:10px;
+  height:10px;
+  border-top:1px solid var(--line-strong);
+  border-right:1px solid var(--line-strong);
+}
+
+.service-flow__output .service-flow__node-name{
+  font-size:21px;
+}
+
+/* Services variant — the selected-service endpoint reads a touch larger so the
+   result stays the clear focus of the panel. */
+.service-flow--services .service-flow__output .service-flow__node-name{
+  font-size:22px;
+}
+
+/* active-row feedback — Services offer list */
+.offer-item{
+  position:relative;
+  outline:none;
+}
+
+.offer-item.is-active{
+  background:var(--panel);
+}
+
+.offer-item.is-active::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:2px;
+  background:var(--line-strong);
+}
+
+.offer-item:focus-visible{
+  outline:1px solid var(--line-strong);
+  outline-offset:4px;
+}
+
+/* active-row feedback — Home offers list */
+.home-offers__item{
+  cursor:default;
+  outline:none;
+  transition:background var(--motion-fast) ease;
+}
+
+.home-offers__item.is-active{
+  background:var(--panel);
+}
+
+.home-offers__item.is-active .home-offers__tag{
+  color:var(--fg);
+}
+
+.home-offers__item:focus-visible{
+  outline:1px solid var(--line-strong);
+  outline-offset:4px;
+}
+
+/* Home / "Por dónde se entra" — keep the compact left content, add a balancing
+   visual on desktop. */
+.home-offers-layout{
+  display:grid;
+  grid-template-columns:minmax(0,620px) minmax(280px,1fr);
+  gap:clamp(32px,5vw,72px);
+  align-items:start;
+}
+
+.home-offers-content{
+  min-width:0;
+}
+
+/* Services / "Sistema de servicios" — offer intro + list kept left, visual right. */
+.services-offers-layout{
+  display:grid;
+  grid-template-columns:minmax(0,660px) minmax(280px,1fr);
+  gap:clamp(32px,5vw,72px);
+  align-items:start;
+}
+
+.services-offers-content{
+  min-width:0;
+}
+
+/* Services / "Del problema al sistema" — the generic side visual was removed;
+   the intro now sits full-width above the method stepper, which owns the
+   section. No oversized empty panel. */
+.services-method-layout{
+  margin-bottom:var(--space-4);
+}
+
+.services-method-head{
+  min-width:0;
+  max-width:760px;
+}
+
+/* Tablet/mobile: stack to single column and drop the visual so small screens
+   stay readable and do not grow taller than before. */
+@media (max-width:900px){
+  .home-offers-layout,
+  .services-offers-layout{
+    grid-template-columns:1fr;
+    gap:0;
+  }
+
+  .services-method-layout{
+    margin-bottom:var(--space-3);
+  }
+
+  /* Below ~900px the interaction has no hover surface; drop the graphic so the
+     service list stays the readable primary content. */
+  .service-flow{
+    display:none;
+  }
+}
+
+/* ============================================================================
+   CCDV v0.5.4 — Schematic / outline grammar lock — Visual Language v1
+
+   Low-risk, namespaced primitives for the future schematic flagship modules
+   (Home "Por dónde se entra", Services "Sistema de servicios"). These are
+   intentionally unused by current markup; they only formalize the outline-first
+   grammar (square corners, hairline strokes, no fills beyond panel tokens) so
+   later module work has a stable vocabulary. No SVG, no layout changes here.
+   ============================================================================ */
+.schematic-frame{
+  border:1px solid var(--schematic-line);
+  background:var(--schematic-panel);
+  border-radius:0;
+  padding:var(--space-3);
+}
+.schematic-node{
+  width:var(--schematic-node-size);
+  height:var(--schematic-node-size);
+  border:1px solid var(--stroke-hairline);
+  background:transparent;
+  border-radius:0;
+}
+.schematic-node--core{
+  width:var(--schematic-active-size);
+  height:var(--schematic-active-size);
+  border-color:var(--stroke-active);
+}
+.schematic-connector{
+  height:1px;
+  background:var(--schematic-line);
+  border:0;
+}
+.schematic-label{
+  font-size:11px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.schematic-output{
+  border:1px solid var(--schematic-line-strong);
+  background:var(--schematic-panel-soft);
+  border-radius:0;
+  padding:var(--space-2);
+}
+
+/* ============================================================================
+   CCDV v0.5.5 — Home flagship schematic — "Por dónde se entra"
+
+   The former list + adjacent service-flow panel is replaced by a true
+   five-input → CCDV core → five-output system map built on Visual Language v1
+   (outline-first, hairline strokes, square corners, no filled cards). Desktop
+   is a five-column grid: inputs / inbound wires / core / outbound wires /
+   outputs. Inbound + outbound wires are inline SVG (decorative, aria-hidden);
+   the active route lights input + its wires + output as one path. Below 900px
+   the wires drop and the columns stack to inputs / core / outputs.
+   ============================================================================ */
+
+/* visually-hidden text utility — keeps the input→output relationship available
+   to assistive tech while the SVG wires and outputs column stay decorative. */
+.u-visually-hidden{
+  position:absolute;
+  width:1px;height:1px;
+  padding:0;margin:-1px;
+  overflow:hidden;
+  clip:rect(0 0 0 0);
+  clip-path:inset(50%);
+  white-space:nowrap;
+  border:0;
+}
+
+.home-entry__head{
+  max-width:680px;
+  margin-bottom:36px;
+}
+
+.home-entry__head .section__body{
+  margin-top:14px;
+}
+
+.home-entry-schematic{
+  display:grid;
+  grid-template-columns:minmax(0,1.1fr) minmax(48px,0.62fr) auto minmax(48px,0.62fr) minmax(0,1.1fr);
+  grid-template-rows:auto 1fr;
+  column-gap:0;
+  row-gap:16px;
+  align-items:stretch;
+}
+
+.home-entry-schematic__axis{
+  margin:0;
+  font-size:10px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+
+.home-entry-schematic__axis--in{ grid-column:1; grid-row:1; }
+.home-entry-schematic__axis--out{ grid-column:5; grid-row:1; text-align:right; }
+
+.home-entry-schematic__list{
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  gap:clamp(8px,1.1vw,14px);
+  height:100%;
+}
+
+.home-entry-schematic__inputs{ grid-column:1; grid-row:2; }
+.home-entry-schematic__outputs{ grid-column:5; grid-row:2; }
+.home-entry-schematic__connectors--in{ grid-column:2; grid-row:2; }
+.home-entry-schematic__connectors--out{ grid-column:4; grid-row:2; }
+.home-entry-schematic__core{ grid-column:3; grid-row:1 / 3; display:grid; place-items:center; }
+
+/* nodes — outline-first, square, no fill until active */
+.home-entry-node{
+  position:relative;
+  width:100%;
+  display:flex;
+  align-items:baseline;
+  gap:12px;
+  text-align:left;
+  font:inherit;
+  color:var(--fg);
+  border:1px solid var(--schematic-line);
+  background:transparent;
+  border-radius:0;
+  padding:12px 14px;
+  transition:border-color var(--motion-fast) ease, background var(--motion-fast) ease;
+}
+
+.home-entry-node--input{ cursor:pointer; }
+
+.home-entry-node__index{
+  font-size:10px;
+  letter-spacing:.13em;
+  color:var(--muted);
+  transition:color var(--motion-fast) ease;
+}
+
+.home-entry-node__name{
+  font-size:clamp(14px,1.1vw,16px);
+  letter-spacing:-.01em;
+  line-height:1.2;
+  color:var(--fg);
+}
+
+.home-entry-node__meta{
+  margin-left:auto;
+  font-size:10px;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  color:var(--muted);
+  white-space:nowrap;
+  transition:color var(--motion-fast) ease;
+}
+
+/* edge marker — pins the node onto its wire (inputs route right, outputs left) */
+.home-entry-node::after{
+  content:"";
+  position:absolute;
+  top:50%;
+  width:6px;
+  height:6px;
+  background:var(--bg);
+  border:1px solid var(--schematic-line-strong);
+  transition:background var(--motion-fast) ease, border-color var(--motion-fast) ease;
+}
+
+.home-entry-node--input::after{ right:0; transform:translate(50%,-50%); }
+.home-entry-node--output::after{ left:0; transform:translate(-50%,-50%); }
+
+.home-entry-node.is-active{
+  border-color:var(--stroke-active);
+  background:var(--panel);
+}
+
+.home-entry-node.is-active .home-entry-node__meta,
+.home-entry-node.is-active .home-entry-node__index{
+  color:var(--fg);
+}
+
+.home-entry-node.is-active::after{
+  background:var(--fg);
+  border-color:var(--fg);
+}
+
+.home-entry-node--input:focus-visible{
+  outline:1px solid var(--stroke-active);
+  outline-offset:3px;
+}
+
+/* inbound / outbound wire layer — decorative, fills its grid cell */
+.home-entry-schematic__connectors{
+  position:relative;
+  min-height:100%;
+}
+
+.home-entry-schematic__wires{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+.home-entry-schematic__path{
+  fill:none;
+  stroke:var(--schematic-line);
+  stroke-width:1;
+  vector-effect:non-scaling-stroke;
+  opacity:.5;
+  transition:stroke var(--motion-fast) ease, opacity var(--motion-fast) ease;
+}
+
+.home-entry-schematic__path.is-active{
+  stroke:var(--fg);
+  opacity:1;
+}
+
+/* core node — the constant junction. Square hairline frame, corner tick. */
+.home-entry-core{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  min-width:128px;
+  padding:clamp(20px,2.4vw,30px) clamp(18px,2vw,26px);
+  border:1px solid var(--stroke-active);
+  background:var(--panel);
+  border-radius:0;
+}
+
+.home-entry-core::after{
+  content:"";
+  position:absolute;
+  top:8px;
+  right:8px;
+  width:9px;
+  height:9px;
+  border-top:1px solid var(--stroke-active);
+  border-right:1px solid var(--stroke-active);
+}
+
+.home-entry-core__mark{
+  width:36px;
+  height:36px;
+  object-fit:contain;
+  opacity:.9;
+}
+
+.home-entry-core__name{
+  font-size:13px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--fg);
+}
+
+.home-entry-core__sub{
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+
+/* Tablet/mobile: drop the decorative wires and stack inputs → core → outputs.
+   Inputs stay full buttons (tap/focus still light the route); outputs remain a
+   readable mirror. Keeps the section from growing noisy or overly tall. */
+@media (max-width:900px){
+  .home-entry-schematic{
+    grid-template-columns:1fr;
+    grid-template-rows:none;
+    row-gap:10px;
+    align-items:stretch;
+  }
+
+  .home-entry-schematic__axis--in,
+  .home-entry-schematic__inputs,
+  .home-entry-schematic__core,
+  .home-entry-schematic__axis--out,
+  .home-entry-schematic__outputs{
+    grid-column:1;
+    grid-row:auto;
+  }
+
+  .home-entry-schematic__connectors{ display:none; }
+
+  .home-entry-schematic__core{
+    place-items:stretch;
+    margin:6px 0;
+  }
+
+  .home-entry-core{
+    flex-direction:row;
+    justify-content:center;
+    min-width:0;
+  }
+
+  .home-entry-schematic__list{
+    height:auto;
+    gap:8px;
+  }
+
+  .home-entry-node::after{ display:none; }
+}
+
+/* ============================================================================
+   CCDV v0.5.6a — Services blueprint corrective
+
+   Replaces the failed v0.5.6 stacked text/card service schematic with a white
+   technical blueprint canvas. Five SVG groups (one per service) activated by
+   bindServiceBlueprint() in app.js. Left offer list remains the semantic selector.
+   Active-state indicator fixed: vertical left-bar replaced with a bottom rule so
+   the index number is never trapped or boxed by the border.
+   ============================================================================ */
+
+/* Left list: active-state alignment fix */
+.offer-item.is-active::before{
+  top:auto;
+  width:auto;
+  right:0;
+  height:1px;
+  bottom:0;
+}
+
+.offer-item.is-active .offer-item__index{
+  color:var(--fg);
+}
+
+/* Blueprint canvas wrapper */
+.service-blueprint{
+  margin:0;
+  border:1px solid rgba(0,0,0,.12);
+  border-radius:0;
+  overflow:hidden;
+  background:#f4f4f1;
+}
+
+.service-blueprint__kicker{
+  display:block;
+  padding:10px 14px;
+  border-bottom:1px solid rgba(0,0,0,.1);
+  font-size:9px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:#888;
+}
+
+.service-blueprint__canvas{
+  background:#f4f4f1;
+}
+
+.service-blueprint__svg{
+  display:block;
+  width:100%;
+  height:auto;
+}
+
+/* SVG blueprint group visibility */
+.service-blueprint__svg [data-blueprint-key]{
+  display:none;
+}
+
+.service-blueprint__svg [data-blueprint-key].is-active{
+  display:block;
+}
+
+@media (max-width:900px){
+  .service-blueprint{
+    margin-top:var(--space-3);
   }
 }
