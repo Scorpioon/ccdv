@@ -29,7 +29,7 @@
       "system": "Herramienta de generación de contenido estructurado.",
       "output": "Contenido generado con plantillas operativas.",
       "publicNote": "Prueba interna. Sin acceso público activo.",
-      "publicSafe": true,
+      "publicSafe": false,
       "image": null,
       "imageAlt": null,
       "order": 2
@@ -44,7 +44,7 @@
       "system": null,
       "output": null,
       "publicNote": "Próximamente.",
-      "publicSafe": true,
+      "publicSafe": false,
       "image": null,
       "imageAlt": null,
       "order": 3
@@ -59,7 +59,7 @@
       "system": null,
       "output": null,
       "publicNote": "Próximamente.",
-      "publicSafe": true,
+      "publicSafe": false,
       "image": null,
       "imageAlt": null,
       "order": 4

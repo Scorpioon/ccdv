@@ -1,10 +1,10 @@
 {
   "meta": {
-    "version": "v0.5.2j",
-    "note": "CMS-ready products and labs. AION items teaserOnly:true for shelf display. Render publicSafe:true and teaserOnly:true items, sorted by order. Status vocabulary: internal lab, teaser, needs review, public proof, slowburn, activo, en desarrollo."
+    "version": "v0.5.9",
+    "note": "CMS-ready products and labs, scrubbed to the approved public-facing set only. Render publicSafe:true and teaserOnly:true items, sorted by order. No private module names or internal-tool detail are stored here — see _reports/ (gitignored) for the private roadmap."
   },
   "groups": [
-    { "id": "aion", "label": "AION Ecosystem" },
+    { "id": "aion", "label": "Sistemas internos" },
     { "id": "labs", "label": "Labs" },
     { "id": "proof", "label": "Proof" }
   ],
@@ -23,43 +23,18 @@
       "order": 1
     },
     {
-      "id": "future_labs",
-      "name": "FUTURE LABS",
-      "type": null,
-      "status": "No público todavía",
+      "id": "internal_systems",
+      "name": "SISTEMAS INTERNOS",
+      "type": "Internal systems",
+      "status": "internal lab",
       "version": null,
-      "publicSafe": false,
+      "publicSafe": true,
       "teaserOnly": false,
-      "body": "Las líneas en desarrollo se compartirán solo cuando estén listas y aprobadas.",
-      "group": "labs",
-      "icon": "ccdv-icon--brain",
-      "order": 2
-    },
-    {
-      "id": "research",
-      "name": "RESEARCH",
-      "type": null,
-      "status": "En curso",
-      "version": null,
-      "publicSafe": false,
-      "teaserOnly": false,
-      "body": "Investigación aplicada a sistemas, herramientas y operación digital.",
-      "group": "proof",
-      "icon": "ccdv-icon--protocol",
-      "order": 3
-    },
-    {
-      "id": "adg_ops",
-      "name": "ADG-OPS",
-      "type": "Sistema operativo interno",
-      "status": "Primera comisión CCDV",
-      "version": null,
-      "publicSafe": false,
-      "teaserOnly": false,
-      "body": "Ordena procesos, seguimiento y trabajo digital en contextos de gestión cultural y profesional.",
-      "group": "proof",
-      "icon": "ccdv-icon--ops",
-      "order": 4
+      "body": "Conjunto de sistemas internos de operación, documentación, gobernanza y control. Laboratorio y método, no productos públicos ni SaaS.",
+      "group": "aion",
+      "icon": null,
+      "order": 2,
+      "accent": "neutral"
     },
     {
       "id": "better_bicing",
@@ -72,7 +47,7 @@
       "body": "Propuesta de rediseño de la app Bicing de Barcelona. Crítica de UX en uso diario y concepto de nueva interfaz.",
       "group": "proof",
       "icon": "ccdv-icon--map",
-      "order": 5
+      "order": 3
     },
     {
       "id": "localscene",
@@ -85,125 +60,7 @@
       "body": "Concepto de plataforma city-first para agenda local, música y eventos.",
       "group": "proof",
       "icon": "ccdv-icon--music",
-      "order": 6
-    },
-    {
-      "id": "htw_generator",
-      "name": "HTW GENERATOR",
-      "type": "Tool",
-      "status": "needs review",
-      "version": null,
-      "publicSafe": false,
-      "teaserOnly": false,
-      "body": "Generador de contenido creativo estructurado. En revisión antes de publicar.",
-      "group": "proof",
-      "icon": "ccdv-icon--generator",
-      "order": 7
-    },
-    {
-      "id": "aion",
-      "name": "AION",
-      "type": "Internal suite",
-      "status": "internal lab",
-      "version": null,
-      "publicSafe": false,
-      "teaserOnly": true,
-      "body": "Suite principal de sistemas de operación interna de CCDV.",
-      "group": "aion",
-      "icon": null,
-      "order": 10,
-      "suite": "aion",
-      "accent": "neutral"
-    },
-    {
-      "id": "kaia",
-      "name": "KAIA",
-      "type": "Internal agent",
-      "status": "internal lab",
-      "version": null,
-      "publicSafe": false,
-      "teaserOnly": true,
-      "body": "HQ local-first para coordinación operativa y agentes.",
-      "group": "aion",
-      "icon": null,
-      "order": 11,
-      "suite": "aion",
-      "accent": "kaia"
-    },
-    {
-      "id": "kairon",
-      "name": "KAIRON",
-      "type": "Internal tool",
-      "status": "internal lab",
-      "version": null,
-      "publicSafe": false,
-      "teaserOnly": true,
-      "body": "Lógica fiscal y de operaciones. Soporte estructurado para decisiones contables y operativas.",
-      "group": "aion",
-      "icon": null,
-      "order": 12,
-      "suite": "aion",
-      "accent": "kairon"
-    },
-    {
-      "id": "kron",
-      "name": "KRON",
-      "type": "Internal time manager",
-      "status": "internal lab",
-      "version": null,
-      "publicSafe": false,
-      "teaserOnly": true,
-      "body": "Gestión del tiempo, cadencia operativa y control de sesiones de trabajo.",
-      "group": "aion",
-      "icon": null,
-      "order": 13,
-      "suite": "aion",
-      "accent": "kron"
-    },
-    {
-      "id": "panoptes",
-      "name": "PANOPTES",
-      "type": "Internal system",
-      "status": "internal lab",
-      "version": null,
-      "publicSafe": false,
-      "teaserOnly": true,
-      "body": "Higiene de repositorio, seguridad de releases públicos y gobernanza de operaciones digitales.",
-      "group": "aion",
-      "icon": null,
-      "order": 14,
-      "suite": "aion",
-      "accent": "panoptes"
-    },
-    {
-      "id": "athernos",
-      "name": "ATHERNOS",
-      "type": "Internal archive",
-      "status": "teaser",
-      "version": null,
-      "publicSafe": false,
-      "teaserOnly": true,
-      "body": "Archivo de inteligencia, contexto y prompts operativos.",
-      "group": "aion",
-      "icon": null,
-      "order": 15,
-      "suite": "aion",
-      "accent": "athernos"
-    },
-    {
-      "id": "wrkops_deck",
-      "name": "WRKOPS DECK",
-      "type": "Internal workflow",
-      "status": "internal lab",
-      "version": null,
-      "publicSafe": false,
-      "teaserOnly": true,
-      "body": "Interfaz de documentación y protocolos del sistema de trabajo CCDV.",
-      "group": "aion",
-      "icon": null,
-      "order": 16,
-      "suite": "aion",
-      "accent": "neutral"
+      "order": 4
     }
   ]
 }

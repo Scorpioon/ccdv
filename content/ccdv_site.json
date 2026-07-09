@@ -1,6 +1,6 @@
 {
   "meta": {
-    "project": "Collapse Creative Dev Unit website",
+    "project": "CC.Dev.Unit website",
     "version": "v0.5.6a",
     "status": "content-architecture-json-parity",
     "sourceLanguage": "es",
@@ -15,12 +15,12 @@
       "Hero mark/frame alignment remains visual debt — do not touch until explicitly scoped.",
       "MVP content is Spanish-first. CAT/EN support is planned later.",
       "v0.5.2d: content architecture + JSON parity — work.json, services.json, products.json created. Work/Services/Products pages now rendered from JSON via app.js. CMS-ready structure with stable ids, public-safe status fields, and clear grouping.",
-      "v0.5.2e: Products/Labs redesign — AION ecosystem suite shelf (3-col, teaser framing, private/internal distinction) + labs/proof registry grid (4-col, status tags, icons). projects.html restructured with two content sections. All items driven from content/products.json. adg_ops publicSafe corrected to true. AION items set to teaserOnly:true with public-safe teaser copy.",
+      "v0.5.2e: Products/Labs redesign — AION shelf (3-col, teaser framing, private/internal distinction) + labs/proof registry grid (4-col, status tags, icons). projects.html restructured with two content sections. All items driven from content/products.json. adg_ops publicSafe corrected to true.",
       "v0.5.2f: Services/Method editorial redesign — page reframed as Práctica / Método (nav label SERVICES/METHOD unchanged). Offers now render as an editorial offer list (index, sentence-case title/body, format tag); method renders as a connected stepper diagram (numbered nodes, rail line, hover/focus highlight, reduced-motion safe). services.json copy de-uppercased and given step numbers + tags. method.html legacy route copy aligned to new naming.",
       "v0.5.2g: Work case/project system — work.html rebuilt with a sticky left project rail (scrollspy via IntersectionObserver) and N-ready alternating case rows (info + 16:9 visual frame, inverted on even rows). Each case renders title, type · status, problem/system/output meta, public-safety note, and a 16:9 image-or-placeholder. Only publicSafe:true items render; ADG-OPS is the single Proyecto 01. No private/prohibited cases exposed.",
       "v0.5.2h: Home strengthening — index.html reframed around the Collapse Creative → CCDV lineage thesis (anti-hype, design/comms/experience origin). New editorial rhythm: hero (logo/frame untouched, lead rooted in BP) → lineage band (Origen/Unidad two-col + arrow) → process sequence diagram (problema → sistema → software, reusing the method stepper) → offer entry linking to Práctica / Método → ADG-OPS controlled proof with 16:9 frame → Products/Labs + OpenVibe ecosystem teaser → contact CTA. Sentence-case, no hype, no AI-magic claims. Home remains static HTML; no OpenVibe form changes.",
       "v0.5.2i: public blocker hygiene — asset cache-busting (styles.css?v=0.5.2i, app.js?v=0.5.2i on all HTML pages), JS render failure fallback (renderContentFallback helper in app.js, safe textContent insertion into first available content container), no-JS noscript fallback blocks on work/services/projects/openvibe, mojibake fix (conexión restored in app.js form error message).",
-      "v0.5.2j: Products/Labs and Work data governance correction — AION internal tools visible as proof-of-activity, KRON added, Labs registry cleaned, ADG-OPS/HTW Generator moved to Work, Laus Ops and HTW Web added as coming-soon work entries.",
+      "v0.5.2j: Products/Labs and Work data governance correction — AION internal tools visibility governance corrected, Labs registry cleaned, ADG-OPS/HTW Generator moved to Work, Laus Ops and HTW Web added as coming-soon work entries.",
       "v0.5.2j2: Work rail left-site hotfix — rail repositioned into the Work page left site gutter on desktop, with safe responsive fallback.",
       "v0.5.2j4: Work rail real sticky hotfix — wraps rail content in an inner sticky element so the left-site Work rail follows scroll correctly inside the Work section. CSS sticky confirmed failed in real browser smoke (innerTop tracked outerTop exactly; position:sticky did not activate). Superseded by v0.5.2j5 bounded fixed behavior.",
       "v0.5.2j5: Work rail bounded fixed hotfix — CSS sticky was unreliable in the current scroll architecture, so the Work rail now uses a scoped desktop-only bounded fixed behavior inside the Work section.",
@@ -34,7 +34,7 @@
       "v0.5.3a: Interactive service graphics correction — Home entry module redesigned as a service-to-CCDV-to-output flow; Services offer tags removed and the service list now drives an interactive selected-service graphic; oversized static placeholders reduced. Corrects v0.5.3.",
       "v0.5.3b: Code hygiene and de-monolith pass — public HTML pages formatted for readable diffs; service-flow JavaScript and CSS organized for human/LLM maintainability without intentional visual or content changes.",
       "v0.5.3c: Service-flow visual polish — Home and Services interactive graphics refined from rough stacked boxes into quieter editorial system diagrams; interaction behavior and content data preserved.",
-      "v0.5.4: Schematic grammar lock — CCDV Visual Language v1 formalized as outline-first, thin-line, blueprint/schematic primitives; public CSS tokens/primitives added without module redesign.",
+      "v0.5.4: Schematic grammar lock — CCDV Visual Language v1 formalized as outline-first, thin-line, blueprint/schematic primitives; private roadmap updated with the identity track; public CSS tokens/primitives added without module redesign.",
       "v0.5.5: Home flagship schematic — \"Por dónde se entra\" redesigned as a five-input to CCDV-core to five-output schematic system map using Visual Language v1; Services remains unchanged for the next flagship step.",
       "v0.5.6: Services flagship schematic — \"Sistema de servicios\" redesigned as a selected-service input/problema to CCDV-proceso to output schematic pipeline (with a static criterio gate) using Visual Language v1; the offer list is the keyboard selector and the aria-hidden figure mirrors the active service. Home flagship remains unchanged except cache-bust. VISUAL SMOKE FAILED — stacked card boxes remained; not committed.",
       "v0.5.6a: Services blueprint corrective — replaced the failed stacked text/card service schematic with a white technical blueprint canvas and five distinct service-specific SVG diagrams; fixed left service index/active-state alignment (vertical bar replaced with bottom rule); v0.5.6 remains a failed visual attempt in history."
@@ -48,17 +48,18 @@
     "mojibakePolicy": "All Spanish/Catalan/English text must remain valid UTF-8. Any mojibake is a blocker."
   },
   "brand": {
-    "name": "Collapse Creative Dev Unit",
+    "name": "CC.Dev.Unit",
     "shortName": "CCDV",
-    "parent": "Collapse Creative",
-    "definition": "Collapse Creative Dev Unit es una unidad de Collapse Creative dedicada a construir sistemas, flujos de trabajo y software para operaciones digitales con control humano.",
+    "parent": "Collapse",
+    "relatedUnit": "Collapse Creative",
+    "definition": "CC.Dev.Unit es una unidad de Collapse dedicada a construir sistemas, flujos de trabajo y software para operaciones digitales con control humano.",
     "positioning": "Sistemas, flujos de trabajo y software para operaciones digitales.",
     "coreFormula": [
       "Detectamos un proceso roto o repetitivo.",
       "Lo convertimos en sistema.",
       "Y cuando tiene sentido, lo convertimos en software."
     ],
-    "relationshipToCollapseCreative": "CCDV nace dentro de Collapse Creative para dar forma técnica y operativa a procesos, herramientas y sistemas que no encajan del todo en una oferta tradicional de estudio creativo.",
+    "relationshipToCollapseCreative": "Collapse Creative y CC.Dev.Unit son dos unidades de Collapse. Creative trabaja la capa de marca, comunicación y experiencia; CC.Dev.Unit, la de operación, software y workflow. Misma mirada, distinta entrada de mercado.",
     "tone": [
       "claro",
       "estructural",
@@ -89,7 +90,8 @@
       { "label": "Cookies", "href": "cookies.html", "role": "legal utility, if needed later" }
     ],
     "footer": {
-      "includeParentBrand": true,
+      "includeParentBrand": false,
+      "relatedUnitLine": "CC.Dev.Unit · una unidad de Collapse",
       "includeLocation": true,
       "location": "Barcelona / remote",
       "includeLanguageToggleLater": true
@@ -188,9 +190,7 @@
       }
     ],
     "notPublicYet": [
-      "AION / KAIA",
-      "LocalScene",
-      "PANOPTES",
+      "AION (sistemas internos)",
       "WRKOPS / CollapseOS",
       "otros clientes o laboratorios no aprobados"
     ],
@@ -293,7 +293,7 @@
     },
     {
       "id": "v0.5.2e",
-      "name": "Products/Labs redesign — AION suite shelf + labs/proof registry",
+      "name": "Products/Labs redesign — AION shelf + labs/proof registry",
       "status": "complete",
       "publicRenderingChange": true
     },
@@ -323,7 +323,7 @@
     },
     {
       "id": "v0.5.2j",
-      "name": "Products/Labs and Work data governance — AION visibility, KRON, registry clean, Work IA correction",
+      "name": "Products/Labs and Work data governance — AION visibility, registry clean, Work IA correction",
       "status": "complete",
       "publicRenderingChange": false
     },
@@ -407,7 +407,7 @@
     },
     {
       "id": "v0.5.4",
-      "name": "Schematic grammar lock — Visual Language v1 tokens/primitives lock",
+      "name": "Schematic grammar lock — Visual Language v1 tokens/primitives and private roadmap lock",
       "status": "complete",
       "publicRenderingChange": "minimal — token/radius/primitives only"
     },
@@ -435,7 +435,6 @@
     "Which ADG-OPS screenshots/copy are public-safe.",
     "RESOLVED: ADG-OPS public status — visible as first CCDV commission, private beta, public release soon.",
     "RESOLVED: HTW Generator version — v0.6.5n; moved to Work.",
-    "RESOLVED: KAIRON public wording — internal fiscal/operations logic tool, visible as proof-of-activity, not public product.",
     "When CAT/EN support becomes active.",
     "Legal/privacy/cookie text.",
     "Hero mark/frame alignment — scoped as visual debt, decision deferred to K."

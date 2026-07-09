@@ -2281,8 +2281,6 @@ body{
 .ccdv-icon--control::after{ inset:8px; border:1px solid currentColor; border-radius:50%; }
 .ccdv-icon--time::before{ inset:3px; border:1px solid currentColor; border-radius:50%; }
 .ccdv-icon--time::after{ left:10px; top:5px; width:1px; height:9px; background:currentColor; box-shadow:4px 4px 0 currentColor; }
-.ccdv-icon--finance::before{ inset:3px; border:1px solid currentColor; }
-.ccdv-icon--finance::after{ left:7px; top:3px; width:1px; height:16px; background:currentColor; box-shadow:5px 0 0 currentColor; }
 .ccdv-icon--work::before{ left:3px; right:3px; top:5px; height:1px; background:currentColor; box-shadow:0 6px 0 currentColor,0 12px 0 currentColor; }
 .ccdv-icon--work::after{ right:3px; top:4px; width:4px; height:4px; background:currentColor; box-shadow:0 6px 0 currentColor,0 12px 0 currentColor; }
 .ccdv-icon--security::before{ left:3px; right:3px; top:7px; height:8px; border:1px solid currentColor; border-radius:50%; }
@@ -2887,7 +2885,7 @@ body::-webkit-scrollbar{
   }
 }
 
-/* CCDV v0.5.2e — Products/Labs redesign: AION suite shelf + registry grid */
+/* CCDV v0.5.2e — Products/Labs redesign: AION shelf + registry grid */
 
 .products-suite__header{
   max-width:680px;
@@ -3703,16 +3701,12 @@ body::-webkit-scrollbar{
 /* CCDV v0.5.2l — AION visual highlight system */
 :root{
   --aion-kaia:rgba(160,100,220,.55);
-  --aion-kairon:rgba(80,180,100,.5);
   --aion-kron:rgba(210,165,60,.55);
-  --aion-panoptes:rgba(80,165,220,.55);
   --aion-athernos:rgba(200,80,60,.55);
 }
 
 .aion-shelf__item[data-accent="kaia"]    { --aion-accent:var(--aion-kaia); }
-.aion-shelf__item[data-accent="kairon"]  { --aion-accent:var(--aion-kairon); }
 .aion-shelf__item[data-accent="kron"]    { --aion-accent:var(--aion-kron); }
-.aion-shelf__item[data-accent="panoptes"]{ --aion-accent:var(--aion-panoptes); }
 .aion-shelf__item[data-accent="athernos"]{ --aion-accent:var(--aion-athernos); }
 
 .aion-shelf__item[data-accent]:not([data-accent="neutral"]){

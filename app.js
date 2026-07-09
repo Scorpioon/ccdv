@@ -822,7 +822,7 @@ function renderProducts() {
     .filter(p => p.publicSafe || p.teaserOnly)
     .sort((a, b) => a.order - b.order);
 
-  const AION_ACCENT_WHITELIST = ['kaia', 'kairon', 'kron', 'panoptes', 'athernos', 'neutral'];
+  const AION_ACCENT_WHITELIST = ['kaia', 'kron', 'athernos', 'neutral'];
 
   if (aionTarget) {
     items.filter(p => p.group === 'aion').forEach(p => {

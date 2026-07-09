@@ -1,7 +1,7 @@
 {
   "site": {
-    "title": "Collapse Dev Unit : OpenVibe",
-    "tagline": "Hosted by Collapse Creative",
+    "title": "CC.Dev.Unit : OpenVibe",
+    "tagline": "Una línea de CC.Dev.Unit",
     "external_about": "https://www.collapsecreative.com"
   },
   "nav": {
@@ -12,7 +12,7 @@
   },
   "footer": {
     "house": "Collapse Creative",
-    "unit": "Collapse Dev Unit",
+    "unit": "CC.Dev.Unit",
     "location": "Barcelona, Catalunya",
     "email": "contact@collapsecreative.com"
   },
