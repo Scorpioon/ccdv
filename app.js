@@ -822,7 +822,7 @@ function renderProducts() {
     .filter(p => p.publicSafe || p.teaserOnly)
     .sort((a, b) => a.order - b.order);
 
-  const AION_ACCENT_WHITELIST = ['kaia', 'kron', 'athernos', 'neutral'];
+  const AION_ACCENT_WHITELIST = ['neutral']; // CCDV v0.6.1 — codename accents retired
 
   if (aionTarget) {
     items.filter(p => p.group === 'aion').forEach(p => {

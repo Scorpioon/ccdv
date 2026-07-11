@@ -3698,25 +3698,7 @@ body::-webkit-scrollbar{
   }
 }
 
-/* CCDV v0.5.2l — AION visual highlight system */
-:root{
-  --aion-kaia:rgba(160,100,220,.55);
-  --aion-kron:rgba(210,165,60,.55);
-  --aion-athernos:rgba(200,80,60,.55);
-}
-
-.aion-shelf__item[data-accent="kaia"]    { --aion-accent:var(--aion-kaia); }
-.aion-shelf__item[data-accent="kron"]    { --aion-accent:var(--aion-kron); }
-.aion-shelf__item[data-accent="athernos"]{ --aion-accent:var(--aion-athernos); }
-
-.aion-shelf__item[data-accent]:not([data-accent="neutral"]){
-  border-top:2px solid var(--aion-accent);
-}
-
-.aion-shelf__item[data-accent]:not([data-accent="neutral"]) .aion-shelf__status-dot{
-  background:var(--aion-accent);
-  opacity:1;
-}
+/* CCDV v0.6.1 — AION accent highlight system retired; inert codename accent residue removed. All AION items render neutral. */
 
 /* CCDV v0.5.2n — Services desktop layout tuning */
 .services-offers-section .offer-list{
