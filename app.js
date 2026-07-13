@@ -2,21 +2,7 @@ const GLOBAL_PATH = './content/global.json';
 const HOME_PATH = './content/home.json';
 const ABOUT_PATH = './content/about.json';
 const WORK_PATH = './content/work.json';
-const SERVICES_PATH = './content/services.json';
 const PRODUCTS_PATH = './content/products.json';
-
-// Service-flow config (see the "SERVICE-FLOW INTERACTION" section below).
-// Public-safe, generic output labels for the interactive service-flow graphic.
-// Keyed by services.json offer id. Falls back to the offer title if unmapped.
-// Consumed by renderServices(); mirrored into the graphic by bindServiceFlow().
-const SERVICE_OUTPUTS = {
-  workflow_audit: 'Mapa de proceso',
-  internal_tool_mvp: 'Tool MVP',
-  ai_workflow_setup: 'Flujo IA',
-  ux_ui_product_rescue: 'Rescate UX/UI',
-  digital_hygiene: 'Release hygiene'
-};
-
 
 let globalContent = null;
 let pageContent = null;
@@ -41,7 +27,6 @@ const formStages = [
 
 function detectPagePath() {
   if (document.getElementById('workCases')) return WORK_PATH;
-  if (document.getElementById('servicesOffers')) return SERVICES_PATH;
   if (document.getElementById('aionShelf')) return PRODUCTS_PATH;
   if (document.body.querySelector('.section--about-hero')) return ABOUT_PATH;
   return HOME_PATH;
@@ -60,7 +45,6 @@ async function init() {
   bindGlobal();
   if (pagePath === ABOUT_PATH) renderAbout();
   else if (pagePath === WORK_PATH) renderWork();
-  else if (pagePath === SERVICES_PATH) renderServices();
   else if (pagePath === PRODUCTS_PATH) renderProducts();
   else renderHome();
   setActiveNav();
@@ -632,56 +616,10 @@ function renderWork() {
   });
 }
 
-/* ============================================================
-   SERVICE-FLOW INTERACTION (Home + Services)
-   ------------------------------------------------------------
-   Output labels live in SERVICE_OUTPUTS near the top of this
-   file. renderServices() builds the offer rows and stamps the
-   data-service-* attributes; renderHome() (home-offers layout)
-   and renderServices() (services-offers layout) both call
-   bindServiceFlow() to wire the hover / focus / click selection
-   and reflect the active service into the .service-flow panel.
-   ============================================================ */
-
-// Reusable interaction binder for the Home and Services service-flow graphics.
-// `root` is the two-column layout holding both the service list (rows carrying
-// data-service-* attributes) and the .service-flow panel. Hover, focus and
-// click on a row select that service and mirror it into the graphic. Purely
-// presentational: no data fetches, no dependency on render order beyond markup.
-function bindServiceFlow(root) {
-  if (!root) return;
-  const flow = root.querySelector('.service-flow');
-  const rows = [...root.querySelectorAll('[data-service-key]')];
-  if (!flow || !rows.length) return;
-
-  const titleEl = flow.querySelector('[data-flow-title]');
-  const indexEl = flow.querySelector('[data-flow-index]');
-  const outputEl = flow.querySelector('[data-flow-output]');
-  const catEl = flow.querySelector('[data-flow-cat]');
-
-  const activate = row => {
-    rows.forEach(other => other.classList.toggle('is-active', other === row));
-    const data = row.dataset;
-    flow.dataset.activeService = data.serviceKey || '';
-    if (indexEl && data.serviceIndex) indexEl.textContent = data.serviceIndex;
-    if (titleEl && data.serviceTitle) titleEl.textContent = data.serviceTitle;
-    if (outputEl && data.serviceOutput) outputEl.textContent = data.serviceOutput;
-    if (catEl) catEl.textContent = data.serviceCat || '';
-  };
-
-  rows.forEach(row => {
-    row.addEventListener('mouseenter', () => activate(row));
-    row.addEventListener('focusin', () => activate(row));
-    row.addEventListener('click', () => activate(row));
-  });
-
-  activate(rows[0]);
-}
-
 // Home flagship schematic — "Por dónde se entra". Drives the five-input → CCDV
-// core → five-output system map. Distinct from bindServiceFlow (single selected
-// pipeline): here all inputs and outputs stay visible as a system, and the
-// active index lights one full route — input, inbound wire, core, outbound wire,
+// core → five-output system map. All inputs and outputs stay visible as a
+// system, and the active index lights one full route — input, inbound wire,
+// core, outbound wire,
 // output — together. Inputs are real <button>s (keyboard + aria-pressed); the
 // SVG wires and the outputs column are decorative mirrors (aria-hidden), so the
 // semantic path lives in each input's text. No data fetch, no render-order
@@ -716,101 +654,6 @@ function bindHomeSchematic() {
   });
 
   activate(0);
-}
-
-// Services flagship blueprint — "Sistema de servicios". Activates the matching
-// SVG blueprint group when the user hovers, focuses, or clicks an offer row.
-// `root` is the .services-offers-layout. The aria-hidden [data-service-blueprint]
-// figure holds the SVG; each <g data-blueprint-key> maps to a services.json id.
-// Purely presentational: no data fetch, no render-order dependency beyond markup.
-function bindServiceBlueprint(root) {
-  if (!root) return;
-  const figure = root.querySelector('[data-service-blueprint]');
-  const rows = [...root.querySelectorAll('[data-service-key]')];
-  if (!figure || !rows.length) return;
-
-  const groups = [...figure.querySelectorAll('[data-blueprint-key]')];
-
-  const activate = row => {
-    rows.forEach(other => other.classList.toggle('is-active', other === row));
-    const key = row.dataset.serviceKey || '';
-    figure.dataset.activeService = key;
-    groups.forEach(g => g.classList.toggle('is-active', g.dataset.blueprintKey === key));
-  };
-
-  rows.forEach(row => {
-    row.addEventListener('mouseenter', () => activate(row));
-    row.addEventListener('focusin', () => activate(row));
-    row.addEventListener('click', () => activate(row));
-  });
-
-  if (rows[0]) activate(rows[0]);
-}
-
-function renderServices() {
-  const offersList = document.getElementById('servicesOffers');
-  const methodStepper = document.getElementById('methodStepper');
-  if (offersList) {
-    const offers = (pageContent.offers || []).slice().sort((a, b) => a.order - b.order);
-    offers.forEach((offer, i) => {
-      const li = document.createElement('li');
-      li.className = 'offer-item';
-      li.dataset.offerId = offer.id;
-
-      const orderNum = String(i + 1).padStart(2, '0');
-      li.tabIndex = 0;
-      li.dataset.serviceKey = offer.id;
-      li.dataset.serviceIndex = orderNum;
-      li.dataset.serviceTitle = offer.title;
-
-      const index = document.createElement('span');
-      index.className = 'offer-item__index';
-      index.textContent = orderNum;
-
-      const main = document.createElement('div');
-      main.className = 'offer-item__main';
-      const h3 = document.createElement('h3');
-      h3.className = 'offer-item__title';
-      h3.textContent = offer.title;
-      const body = document.createElement('p');
-      body.className = 'offer-item__body';
-      body.textContent = offer.body;
-      main.append(h3, body);
-
-      li.append(index, main);
-
-      offersList.appendChild(li);
-    });
-    bindServiceBlueprint(offersList.closest('.services-offers-layout'));
-  }
-  if (methodStepper) {
-    const steps = (pageContent.method || []).slice().sort((a, b) => a.order - b.order);
-    steps.forEach((step, i) => {
-      const li = document.createElement('li');
-      li.className = 'method-step';
-      li.tabIndex = 0;
-      li.dataset.stepId = step.id;
-
-      const node = document.createElement('span');
-      node.className = 'method-step__node';
-      node.setAttribute('aria-hidden', 'true');
-
-      const num = document.createElement('span');
-      num.className = 'method-step__num';
-      num.textContent = step.step || String(i + 1).padStart(2, '0');
-
-      const h3 = document.createElement('h3');
-      h3.className = 'method-step__title';
-      h3.textContent = step.title;
-
-      const body = document.createElement('p');
-      body.className = 'method-step__body';
-      body.textContent = step.body;
-
-      li.append(node, num, h3, body);
-      methodStepper.appendChild(li);
-    });
-  }
 }
 
 function renderProducts() {
@@ -1023,7 +866,7 @@ function bindMotionReveal() {
 }
 
 function renderContentFallback(message) {
-  const targets = ['#workCases','#servicesOffers','#methodStepper','#aionShelf','#registryGrid','#openvibeSessions','#sessionFaq','#signupForm'];
+  const targets = ['#workCases','#aionShelf','#registryGrid','#openvibeSessions','#sessionFaq','#signupForm'];
   for (const sel of targets) {
     const el = document.querySelector(sel);
     if (el) {
