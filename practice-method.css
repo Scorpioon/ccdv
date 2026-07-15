@@ -1,0 +1,760 @@
+/* ============================================================================
+   CCDV — Practice / Method — page-local styles
+   v0.6.7 — practice_method_six_stack_rail_refactor
+   Scope: services.html only. Loaded after styles.css.
+   All selectors are namespaced under .practice-method-page. No global overrides.
+   Reuses global tokens from styles.css (:root). No generic selector redefinition.
+   ========================================================================== */
+
+.practice-method-page {
+  --pm7-rail-w: 240px;
+  --pm7-gap-anchor: 24px;                 /* offset below fixed header */
+  --pm7-stack-pad: var(--space-5);
+  --pm7-read: 68ch;
+}
+
+/* ---- Shell -------------------------------------------------------------- */
+.practice-method-page .practice-method-shell {
+  display: grid;
+  grid-template-columns: var(--pm7-rail-w) minmax(0, 1fr);
+  gap: var(--space-5);
+  align-items: start;                     /* required so the sticky rail column does not stretch */
+  padding-top: var(--space-4);
+  padding-bottom: var(--space-6);
+}
+
+/* ---- Desktop rail ------------------------------------------------------- */
+.practice-method-page .practice-rail {
+  position: sticky;
+  top: calc(var(--site-header-h, 72px) + var(--pm7-gap-anchor));
+  align-self: start;
+}
+
+.practice-method-page .practice-rail__nav {
+  display: block;
+}
+
+.practice-method-page .practice-rail__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+  border-left: 1px solid var(--line);
+}
+
+.practice-method-page .practice-rail__link {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: baseline;
+  padding: 12px 14px;
+  margin-left: -1px;
+  border-left: 1px solid transparent;
+  color: var(--muted);
+  transition: color var(--motion-fast, 180ms) var(--ease, ease),
+              border-color var(--motion-fast, 180ms) var(--ease, ease);
+  min-height: 44px;
+}
+
+.practice-method-page .practice-rail__num {
+  font-size: 10px;
+  letter-spacing: .08em;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.practice-method-page .practice-rail__label {
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.practice-method-page .practice-rail__link:hover {
+  color: var(--fg);
+}
+
+.practice-method-page .practice-rail__link[aria-current="true"] {
+  color: var(--fg);
+  border-left-color: var(--fg);
+}
+
+.practice-method-page .practice-rail__link[aria-current="true"] .practice-rail__num {
+  color: var(--fg);
+}
+
+.practice-method-page .practice-rail__link:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+  color: var(--fg);
+}
+
+/* ---- Mobile section selector (hidden on desktop) ------------------------ */
+.practice-method-page .practice-mobile-index {
+  display: none;
+}
+
+/* ---- Stack column ------------------------------------------------------- */
+.practice-method-page .practice-stack-column {
+  min-width: 0;
+}
+
+/* ---- Stacks ------------------------------------------------------------- */
+.practice-method-page .practice-stack {
+  position: relative;
+  min-height: calc(100svh - var(--site-header-h, 72px) - var(--space-5));
+  padding: var(--pm7-stack-pad) 0;
+  scroll-margin-top: calc(var(--site-header-h, 72px) + var(--pm7-gap-anchor));
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.practice-method-page .practice-stack:first-of-type {
+  border-top: 0;
+  padding-top: var(--space-3);
+}
+
+/* Stacks 04 and 05 carry two internal scenes and may exceed one viewport. */
+.practice-method-page .practice-stack--04,
+.practice-method-page .practice-stack--05 {
+  justify-content: flex-start;
+}
+
+/* Restrained alternating tone so each stack reads as a distinct rectangle. */
+.practice-method-page .practice-stack[data-stack-tone="alt"] {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.012), rgba(255,255,255,.012));
+}
+
+/* ---- Stack heading block ------------------------------------------------ */
+.practice-method-page .pm7-head {
+  max-width: 900px;
+}
+
+.practice-method-page .pm7-head__intro {
+  margin-top: var(--space-3);
+}
+
+.practice-method-page .pm7-h1 {
+  max-width: 20ch;
+}
+@media (max-width: 1024px) {
+  .practice-method-page .pm7-h1 { max-width: 24ch; }
+}
+
+.practice-method-page .pm7-stack-mark {
+  position: absolute;
+  top: var(--space-2);
+  right: 0;
+  font-size: 12px;
+  letter-spacing: .18em;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  opacity: .6;
+  pointer-events: none;
+}
+
+.practice-method-page .pm7-body {
+  font-size: 17px;
+  color: var(--muted);
+  max-width: var(--pm7-read);
+  margin: 18px 0 0;
+  line-height: 1.5;
+}
+
+.practice-method-page .pm7-h2 {
+  font-size: clamp(26px, 3vw, 40px);
+  line-height: 1.06;
+  font-weight: 400;
+  letter-spacing: -.03em;
+  margin: 0;
+}
+
+.practice-method-page .pm7-h3 {
+  font-size: 15px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  font-weight: 400;
+  margin: 0;
+}
+
+.practice-method-page .pm7-scene-kicker {
+  font-size: 11px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 16px;
+}
+
+.practice-method-page .pm7-close {
+  font-size: 17px;
+  color: var(--fg);
+  max-width: var(--pm7-read);
+  margin: var(--space-4) 0 0;
+  line-height: 1.5;
+}
+
+.practice-method-page .pm7-note {
+  font-size: 13px;
+  letter-spacing: .04em;
+  color: var(--muted);
+  margin: var(--space-2) 0 0;
+}
+
+.practice-method-page .pm7-sub {
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+
+.practice-method-page .pm7-sub li {
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 4px 9px;
+  border: 1px solid var(--line);
+}
+
+/* ---- Two-column layouts (adapted per stack) ---------------------------- */
+.practice-method-page .pm7-grid {
+  display: grid;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+  align-items: start;
+}
+.practice-method-page .pm7-grid--5-7 { grid-template-columns: minmax(0,5fr) minmax(0,7fr); }
+.practice-method-page .pm7-grid--4-8 { grid-template-columns: minmax(0,4fr) minmax(0,8fr); }
+.practice-method-page .pm7-grid--6-6 { grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
+.practice-method-page .pm7-grid--7-5 { grid-template-columns: minmax(0,7fr) minmax(0,5fr); }
+
+/* ============================================================================
+   Selector / editorial tabs (Stack 01, 02, 04A)
+   No-JS: all panels visible. JS enhancement hides inactive panels.
+   ========================================================================== */
+.practice-method-page .pm7-tabs {
+  margin-top: var(--space-4);
+}
+
+.practice-method-page .pm7-tabs__main {
+  min-width: 0;
+}
+.practice-method-page .pm7-tabs__main .pm7-bp {
+  margin-top: var(--space-3);
+}
+
+.practice-method-page .pm7-tabs__list {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.practice-method-page .pm7-tab {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  border-left: 2px solid var(--line);
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+  padding: 14px 16px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  font-size: 13px;
+  transition: color var(--motion-fast,180ms) var(--ease,ease),
+              border-color var(--motion-fast,180ms) var(--ease,ease),
+              background var(--motion-fast,180ms) var(--ease,ease);
+}
+
+.practice-method-page .pm7-tab:hover { color: var(--fg); }
+
+.practice-method-page .pm7-tab[aria-selected="true"] {
+  color: var(--fg);
+  border-left-color: var(--fg);
+  background: var(--panel);
+}
+
+.practice-method-page .pm7-tab:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: -2px;
+  color: var(--fg);
+}
+
+.practice-method-page .pm7-tabs__panels {
+  min-width: 0;
+}
+
+.practice-method-page .pm7-panel {
+  margin-top: 18px;
+}
+.practice-method-page .pm7-panel:first-child { margin-top: 0; }
+
+/* Once enhanced, panels are separated only by tab switching. */
+.practice-method-page .pm7-tabs[data-enhanced="true"] .pm7-panel { margin-top: 0; }
+
+.practice-method-page .pm7-panel__title {
+  font-size: 18px;
+  letter-spacing: -.01em;
+  text-transform: none;
+  color: var(--fg);
+  margin: 0 0 4px;
+  font-weight: 400;
+}
+
+/* ============================================================================
+   Expandable index / accordion (Stack 03, 05B, 06) — native details/summary
+   No-JS: works natively. JS enhancement coordinates single-open.
+   ========================================================================== */
+.practice-method-page .pm7-accordion {
+  display: grid;
+  gap: 8px;
+  margin-top: var(--space-3);
+}
+
+.practice-method-page .pm7-acc {
+  border: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.practice-method-page .pm7-acc__summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  color: var(--fg);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-size: 14px;
+  min-height: 44px;
+}
+.practice-method-page .pm7-acc__summary::-webkit-details-marker { display: none; }
+
+.practice-method-page .pm7-acc__sign {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+}
+.practice-method-page .pm7-acc__sign::before,
+.practice-method-page .pm7-acc__sign::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 14px;
+  height: 1px;
+  background: var(--fg);
+  transform: translateY(-50%);
+}
+.practice-method-page .pm7-acc__sign::after {
+  transform: translateY(-50%) rotate(90deg);
+  transition: transform var(--motion,320ms) var(--ease,ease);
+}
+.practice-method-page .pm7-acc[open] .pm7-acc__sign::after {
+  transform: translateY(-50%) rotate(0deg);
+}
+
+.practice-method-page .pm7-acc__summary:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: -2px;
+}
+
+.practice-method-page .pm7-acc__panel {
+  padding: 0 18px 18px;
+}
+
+.practice-method-page .pm7-acc__panel .pm7-body { margin-top: 0; }
+
+/* ============================================================================
+   Carousel / stepped sequence (Stack 04B, 05A)
+   No-JS: all slides stacked & readable, controls hidden.
+   JS enhancement: paginate to one slide, show controls.
+   ========================================================================== */
+.practice-method-page .pm7-carousel__viewport { min-width: 0; }
+
+.practice-method-page .pm7-carousel__track {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.practice-method-page .pm7-slide {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  padding: var(--space-3);
+}
+
+.practice-method-page .pm7-slide__index {
+  font-size: 11px;
+  letter-spacing: .14em;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  margin: 0 0 10px;
+}
+
+.practice-method-page .pm7-slide__title {
+  font-size: 18px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  font-weight: 400;
+  margin: 0;
+  color: var(--fg);
+}
+
+.practice-method-page .pm7-carousel__controls { display: none; }
+
+.practice-method-page .pm7-carousel__pos {
+  font-size: 12px;
+  letter-spacing: .12em;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  min-width: 68px;
+  text-align: center;
+}
+
+.practice-method-page .pm7-carousel__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  color: var(--fg);
+  cursor: pointer;
+  font: inherit;
+  font-size: 18px;
+  line-height: 1;
+}
+.practice-method-page .pm7-carousel__btn:hover { background: var(--panel-2); }
+.practice-method-page .pm7-carousel__btn:disabled { opacity: .35; cursor: default; }
+.practice-method-page .pm7-carousel__btn:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+}
+
+/* Enhanced (JS) mode */
+.practice-method-page .pm7-carousel[data-enhanced="true"] .pm7-carousel__viewport {
+  overflow: hidden;
+}
+.practice-method-page .pm7-carousel[data-enhanced="true"] .pm7-carousel__track {
+  display: flex;
+  gap: 0;
+  transition: transform var(--motion,320ms) var(--ease,ease);
+  will-change: transform;
+}
+.practice-method-page .pm7-carousel[data-enhanced="true"] .pm7-slide {
+  flex: 0 0 100%;
+  min-width: 0;
+}
+.practice-method-page .pm7-carousel[data-enhanced="true"] .pm7-carousel__controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: var(--space-3);
+}
+
+/* Stepped sequence (04B) — construction step carries visual weight via marker */
+.practice-method-page .pm7-slide--emphasis .pm7-slide__title { letter-spacing: .06em; }
+
+/* ============================================================================
+   Real interface evidence (Stack 04A)
+   ========================================================================== */
+.practice-method-page .pm7-evidence {
+  margin: 0;
+  border: 1px solid var(--line);
+  background: #050505;
+}
+
+.practice-method-page .pm7-evidence__frame {
+  display: block;
+  width: 100%;
+  aspect-ratio: 2560 / 1252;      /* reserve dimensions to avoid layout shift */
+  overflow: hidden;
+}
+
+.practice-method-page .pm7-evidence__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
+/* ============================================================================
+   BlackPrint (Stack 01, 02, 03, 06) — restrained inline SVG
+   ========================================================================== */
+.practice-method-page .pm7-bp {
+  margin: 0;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  padding: var(--space-3);
+  display: block;
+}
+
+.practice-method-page .pm7-bp__svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.practice-method-page .pm7-bp__grid line {
+  stroke: var(--line);
+  stroke-width: 1;
+  opacity: .5;
+}
+
+.practice-method-page .pm7-bp__link {
+  stroke: var(--line-strong);
+  stroke-width: 1;
+  fill: none;
+}
+
+.practice-method-page .pm7-bp__node {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 1;
+}
+
+.practice-method-page .pm7-bp__core {
+  fill: var(--panel-2);
+  stroke: var(--fg);
+  stroke-width: 1;
+}
+
+.practice-method-page .pm7-bp__label {
+  fill: var(--muted);
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-family: "Inter Display", Arial, sans-serif;
+}
+
+.practice-method-page .pm7-bp__label--core { fill: var(--fg); }
+
+/* Active-node emphasis driven by the Stack 01 selector (static meaning kept). */
+.practice-method-page .pm7-bp [data-bp-node].is-active .pm7-bp__node,
+.practice-method-page .pm7-bp [data-bp-node].is-active .pm7-bp__core {
+  stroke: var(--fg);
+}
+.practice-method-page .pm7-bp [data-bp-node].is-active .pm7-bp__link {
+  stroke: var(--fg);
+}
+.practice-method-page .pm7-bp [data-bp-node].is-active .pm7-bp__label {
+  fill: var(--fg);
+}
+
+/* ============================================================================
+   Conditions band (Stack 06)
+   ========================================================================== */
+.practice-method-page .pm7-conditions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.practice-method-page .pm7-condition__title {
+  font-size: 12px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--fg);
+  margin: 0 0 8px;
+  font-weight: 400;
+}
+
+/* ============================================================================
+   CTA (Stack 06)
+   ========================================================================== */
+.practice-method-page .pm7-cta {
+  margin-top: var(--space-5);
+  max-width: 760px;
+}
+
+.practice-method-page .pm7-cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: var(--space-3);
+}
+
+/* ============================================================================
+   Utility
+   ========================================================================== */
+.practice-method-page .pm7-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ============================================================================
+   Responsive — rail collapses to mobile selector at <= 1024px
+   Audited widths: 390 / 768 / 1100 / 1440
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .practice-method-page .practice-method-shell {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    padding-top: 0;
+  }
+
+  .practice-method-page .practice-rail { display: none; }
+
+  .practice-method-page .practice-mobile-index {
+    display: block;
+    position: sticky;
+    top: var(--site-header-h, 72px);
+    z-index: 15;
+    margin: 0 0 var(--space-3);
+    background: rgba(0, 0, 0, .92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .practice-method-page .pm7-mindex { display: block; }
+
+  .practice-method-page .pm7-mindex__summary {
+    list-style: none;
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 14px 4px;
+    min-height: 44px;
+  }
+  .practice-method-page .pm7-mindex__summary::-webkit-details-marker { display: none; }
+
+  .practice-method-page .pm7-mindex__pos {
+    font-size: 12px;
+    letter-spacing: .12em;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .practice-method-page .pm7-mindex__label {
+    font-size: 12px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--fg);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .practice-method-page .pm7-mindex__cue {
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .practice-method-page .pm7-mindex__summary:focus-visible {
+    outline: 2px solid var(--fg);
+    outline-offset: -2px;
+  }
+
+  .practice-method-page .pm7-mindex__nav {
+    display: grid;
+    gap: 1px;
+    padding: 4px 0 12px;
+    border-top: 1px solid var(--line);
+  }
+
+  .practice-method-page .pm7-mindex__link {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 12px;
+    align-items: baseline;
+    padding: 12px 4px;
+    color: var(--muted);
+    min-height: 44px;
+  }
+  .practice-method-page .pm7-mindex__link[aria-current="true"] { color: var(--fg); }
+  .practice-method-page .pm7-mindex__link:focus-visible {
+    outline: 2px solid var(--fg);
+    outline-offset: -2px;
+    color: var(--fg);
+  }
+  .practice-method-page .pm7-mindex__num {
+    font-size: 10px;
+    letter-spacing: .08em;
+    font-variant-numeric: tabular-nums;
+  }
+  .practice-method-page .pm7-mindex__name {
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+
+  /* Tablet: keep two-column reading where it still fits, but avoid narrow copy */
+  .practice-method-page .pm7-grid--5-7,
+  .practice-method-page .pm7-grid--4-8 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .practice-method-page .practice-stack {
+    min-height: 0;
+    padding: var(--space-4) 0;
+    justify-content: flex-start;
+  }
+
+  .practice-method-page .pm7-grid,
+  .practice-method-page .pm7-grid--6-6,
+  .practice-method-page .pm7-grid--7-5 {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-3);
+  }
+
+  .practice-method-page .pm7-conditions {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
+  }
+
+  .practice-method-page .pm7-stack-mark { position: static; margin-bottom: 12px; opacity: .6; }
+
+  .practice-method-page .pm7-cta__actions { flex-direction: column; align-items: stretch; }
+  .practice-method-page .pm7-cta__actions .button { width: 100%; }
+}
+
+@media (max-width: 420px) {
+  .practice-method-page .pm7-body,
+  .practice-method-page .pm7-close { font-size: 16px; }
+  .practice-method-page .pm7-bp { padding: var(--space-2); }
+}
+
+/* ============================================================================
+   Reduced motion
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .practice-method-page .pm7-carousel[data-enhanced="true"] .pm7-carousel__track { transition: none; }
+  .practice-method-page .pm7-acc__sign::after { transition: none; }
+  .practice-method-page .pm7-tab,
+  .practice-method-page .practice-rail__link { transition: none; }
+}

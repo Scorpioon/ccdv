@@ -26,6 +26,7 @@
   <meta name="twitter:title" content="CCDV — Practice / Method">
   <meta name="twitter:description" content="Cómo CC Dev. Unit lee una operación, define el proyecto, diseña la arquitectura y construye sistemas digitales preparados para entrar en uso y evolucionar.">
   <link rel="stylesheet" href="./styles.css?v=0.6.6">
+  <link rel="stylesheet" href="./practice-method.css?v=0.6.7">
 </head>
 <body class="ccdv-page">
   <header class="site-header">
@@ -50,638 +51,513 @@
       </nav>
     </div>
   </header>
-  <main id="top" class="ccdv-main pm">
+  <main id="top" class="ccdv-main practice-method-page">
+    <div class="practice-method-shell wrap">
 
-    <!-- 00 — APERTURA -->
-    <section id="apertura" class="wrap section ccdv-page-hero pm-section pm-section--00" aria-labelledby="pm-h1">
-      <div class="pm-open">
-        <div class="pm-open__lead">
-          <p class="ccdv-kicker"><span class="ccdv-chip">00</span><span class="ccdv-kicker__label">Practice / Method</span></p>
-          <h1 id="pm-h1" class="section__title ccdv-page-title ccdv-page-title--editorial">Cómo diseñamos y construimos sistemas digitales.</h1>
-          <div class="ccdv-rule" aria-hidden="true"></div>
-          <p class="section__body pm-lead">CC Dev. Unit trabaja sobre la capa operativa y digital de proyectos, equipos y organizaciones.</p>
-          <p class="section__body">Cada proyecto comienza entendiendo cómo funciona la operación y qué información necesita mover. Esa lectura permite definir el alcance, diseñar la arquitectura y construir una solución preparada para entrar en uso y evolucionar.</p>
-        </div>
-        <div class="pm-open__aside">
-          <figure class="pm-bp pm-bp--open" aria-hidden="true">
-            <svg class="pm-bp__svg" viewBox="0 0 320 300" preserveAspectRatio="xMidYMid meet" focusable="false" role="presentation">
-              <g class="pm-bp__mesh">
-                <line x1="0" y1="150" x2="320" y2="150"/>
-                <line x1="160" y1="0" x2="160" y2="300"/>
-              </g>
-              <line class="pm-bp__link" x1="160" y1="150" x2="74" y2="76"/>
-              <line class="pm-bp__link" x1="160" y1="150" x2="252" y2="82"/>
-              <line class="pm-bp__link" x1="160" y1="150" x2="166" y2="250"/>
-              <rect class="pm-bp__sq pm-bp__sq--core" x="126" y="120" width="68" height="60" rx="4"/>
-              <text class="pm-bp__label pm-bp__label--core" x="160" y="154">OPERACIÓN</text>
-              <circle class="pm-bp__node" cx="74" cy="76" r="15"/>
-              <text class="pm-bp__label pm-bp__label--sec" x="74" y="46">INFORMACIÓN</text>
-              <rect class="pm-bp__sq" x="236" y="66" width="32" height="30" rx="4"/>
-              <text class="pm-bp__label pm-bp__label--sec" x="252" y="54">INTERFAZ</text>
-              <circle class="pm-bp__node" cx="166" cy="250" r="15"/>
-              <text class="pm-bp__label pm-bp__label--sec" x="166" y="280">SOFTWARE</text>
-            </svg>
-          </figure>
-          <nav class="pm-index" aria-label="Índice de capítulos">
-            <ol class="pm-index__list">
-              <li><a href="#leer-operacion">LEER LA OPERACIÓN</a></li>
-              <li><a href="#campo-practica">CAMPO DE PRÁCTICA</a></li>
-              <li><a href="#definir-proyecto">DEFINIR EL PROYECTO</a></li>
-              <li><a href="#disenar-sistema">DISEÑAR EL SISTEMA</a></li>
-              <li><a href="#construir-probar">CONSTRUIR Y PROBAR</a></li>
-              <li><a href="#documentar-evolucionar">DOCUMENTAR Y EVOLUCIONAR</a></li>
-            </ol>
-          </nav>
-        </div>
-      </div>
-    </section>
+      <aside class="practice-rail">
+        <nav class="practice-rail__nav" aria-label="Practice / Method — secciones">
+          <ol class="practice-rail__list">
+            <li><a class="practice-rail__link" href="#operacion" data-rail-link="operacion"><span class="practice-rail__num">01</span><span class="practice-rail__label">Operación</span></a></li>
+            <li><a class="practice-rail__link" href="#practica" data-rail-link="practica"><span class="practice-rail__num">02</span><span class="practice-rail__label">Práctica</span></a></li>
+            <li><a class="practice-rail__link" href="#definicion" data-rail-link="definicion"><span class="practice-rail__num">03</span><span class="practice-rail__label">Definición</span></a></li>
+            <li><a class="practice-rail__link" href="#diseno-desarrollo" data-rail-link="diseno-desarrollo"><span class="practice-rail__num">04</span><span class="practice-rail__label">Diseño + Desarrollo</span></a></li>
+            <li><a class="practice-rail__link" href="#formas" data-rail-link="formas"><span class="practice-rail__num">05</span><span class="practice-rail__label">Formas</span></a></li>
+            <li><a class="practice-rail__link" href="#colaboracion" data-rail-link="colaboracion"><span class="practice-rail__num">06</span><span class="practice-rail__label">Colaboración</span></a></li>
+          </ol>
+        </nav>
+      </aside>
 
-    <!-- 01 — LEER LA OPERACIÓN -->
-    <section id="leer-operacion" class="wrap section pm-section pm-section--01" aria-labelledby="leer-title">
-      <div class="pm-band">
-        <p class="pm-marker">01</p>
-        <div class="pm-band__head">
-          <h2 id="leer-title" class="section__title">La operación define el punto de partida.</h2>
-          <p class="section__body">El trabajo comienza observando cómo funciona el proyecto en la práctica. Seguimos el recorrido de la información, las herramientas que intervienen y las decisiones que permiten avanzar.</p>
-          <p class="section__body">Las personas, los flujos y las dependencias completan esa lectura. Con este contexto podemos identificar qué necesita estructura y convertir una necesidad general en un alcance concreto.</p>
-        </div>
-      </div>
-      <figure class="pm-bp pm-bp--field" aria-hidden="true">
-        <svg class="pm-bp__svg" viewBox="0 0 640 240" preserveAspectRatio="xMidYMid meet" focusable="false" role="presentation">
-          <g class="pm-bp__mesh">
-            <line x1="0" y1="120" x2="640" y2="120"/>
-            <line x1="160" y1="20" x2="160" y2="220"/>
-            <line x1="480" y1="20" x2="480" y2="220"/>
-          </g>
-          <line class="pm-bp__link" x1="320" y1="120" x2="150" y2="58"/>
-          <line class="pm-bp__link" x1="320" y1="120" x2="150" y2="186"/>
-          <line class="pm-bp__link" x1="320" y1="120" x2="500" y2="60"/>
-          <line class="pm-bp__link" x1="320" y1="120" x2="500" y2="184"/>
-          <text class="pm-bp__label pm-bp__label--flow" x="235" y="80">FLUJOS</text>
-          <rect class="pm-bp__sq pm-bp__sq--core" x="286" y="92" width="68" height="56" rx="4"/>
-          <text class="pm-bp__label pm-bp__label--core" x="320" y="124">OPERACIÓN</text>
-          <circle class="pm-bp__node" cx="150" cy="58" r="14"/>
-          <text class="pm-bp__label pm-bp__label--sec" x="150" y="34">PERSONAS</text>
-          <circle class="pm-bp__node" cx="150" cy="186" r="14"/>
-          <text class="pm-bp__label pm-bp__label--sec" x="150" y="216">INFORMACIÓN</text>
-          <rect class="pm-bp__sq" x="486" y="46" width="30" height="28" rx="4"/>
-          <text class="pm-bp__label pm-bp__label--sec" x="500" y="34">HERRAMIENTAS</text>
-          <circle class="pm-bp__node" cx="500" cy="184" r="14"/>
-          <text class="pm-bp__label pm-bp__label--sec" x="500" y="214">DECISIONES</text>
-        </svg>
-      </figure>
-      <ul class="pm-layers" role="list">
-        <li class="pm-layer">
-          <h3 class="pm-layer__title">Personas</h3>
-          <p class="section__body">Quién utiliza el sistema, quién toma decisiones y qué responsabilidades intervienen.</p>
-        </li>
-        <li class="pm-layer">
-          <h3 class="pm-layer__title">Flujos</h3>
-          <p class="section__body">Cómo avanza el trabajo entre tareas, estados, validaciones y puntos de entrega.</p>
-        </li>
-        <li class="pm-layer">
-          <h3 class="pm-layer__title">Información</h3>
-          <p class="section__body">Qué datos entran, cómo cambian, dónde se consultan y qué necesita mantenerse actualizado.</p>
-        </li>
-        <li class="pm-layer">
-          <h3 class="pm-layer__title">Herramientas</h3>
-          <p class="section__body">Qué plataformas, documentos e interfaces sostienen actualmente la operación.</p>
-        </li>
-        <li class="pm-layer">
-          <h3 class="pm-layer__title">Decisiones</h3>
-          <p class="section__body">Qué necesita visibilidad, seguimiento, validación o control.</p>
-        </li>
-      </ul>
-      <p class="section__body pm-close">Esta lectura permite delimitar el sistema antes de decidir qué capas necesitan diseño, conexión o desarrollo.</p>
-    </section>
+      <div class="practice-stack-column">
 
-    <!-- 02 — CAMPO DE PRÁCTICA -->
-    <section id="campo-practica" class="wrap section pm-section pm-section--02" aria-labelledby="campo-title">
-      <div class="pm-band">
-        <p class="pm-marker">02</p>
-        <div class="pm-band__head">
-          <h2 id="campo-title" class="section__title">Trabajamos sobre las capas que sostienen la operación digital.</h2>
-          <p class="section__body">Procesos, información, interfaces y tecnología se combinan de manera distinta en cada proyecto.</p>
-          <p class="section__body">La práctica de CC Dev. Unit se organiza en cinco áreas. El contexto y el uso previsto determinan qué relación existe entre ellas y qué profundidad necesita cada una.</p>
+        <div class="practice-mobile-index" data-practice-mobile>
+          <details class="pm7-mindex" data-mindex>
+            <summary class="pm7-mindex__summary">
+              <span class="pm7-mindex__pos"><span data-mindex-count>01</span> / <span data-mindex-total>06</span></span>
+              <span class="pm7-mindex__label" data-mindex-label>Operación</span>
+              <span class="pm7-mindex__cue">Ver índice</span>
+            </summary>
+            <nav class="pm7-mindex__nav" aria-label="Practice / Method — índice">
+              <a class="pm7-mindex__link" href="#operacion" data-mindex-link="operacion"><span class="pm7-mindex__num">01</span><span class="pm7-mindex__name">Operación</span></a>
+              <a class="pm7-mindex__link" href="#practica" data-mindex-link="practica"><span class="pm7-mindex__num">02</span><span class="pm7-mindex__name">Práctica</span></a>
+              <a class="pm7-mindex__link" href="#definicion" data-mindex-link="definicion"><span class="pm7-mindex__num">03</span><span class="pm7-mindex__name">Definición</span></a>
+              <a class="pm7-mindex__link" href="#diseno-desarrollo" data-mindex-link="diseno-desarrollo"><span class="pm7-mindex__num">04</span><span class="pm7-mindex__name">Diseño + Desarrollo</span></a>
+              <a class="pm7-mindex__link" href="#formas" data-mindex-link="formas"><span class="pm7-mindex__num">05</span><span class="pm7-mindex__name">Formas</span></a>
+              <a class="pm7-mindex__link" href="#colaboracion" data-mindex-link="colaboracion"><span class="pm7-mindex__num">06</span><span class="pm7-mindex__name">Colaboración</span></a>
+            </nav>
+          </details>
         </div>
-      </div>
-      <figure class="pm-bp pm-bp--stack" aria-hidden="true">
-        <svg class="pm-bp__svg" viewBox="0 0 640 220" preserveAspectRatio="xMidYMid meet" focusable="false" role="presentation">
-          <g class="pm-bp__mesh">
-            <line x1="0" y1="110" x2="640" y2="110"/>
-          </g>
-          <line class="pm-bp__link" x1="96" y1="110" x2="544" y2="110"/>
-          <g class="pm-bp__cluster">
-            <rect class="pm-bp__sq" x="72" y="86" width="48" height="48" rx="5"/>
-            <text class="pm-bp__label pm-bp__label--sec" x="96" y="160">OPERACIÓN</text>
-          </g>
-          <g class="pm-bp__cluster">
-            <rect class="pm-bp__sq" x="184" y="86" width="48" height="48" rx="5"/>
-            <text class="pm-bp__label pm-bp__label--sec" x="208" y="160">INFORMACIÓN</text>
-          </g>
-          <g class="pm-bp__cluster">
-            <rect class="pm-bp__sq" x="296" y="86" width="48" height="48" rx="5"/>
-            <text class="pm-bp__label pm-bp__label--sec" x="320" y="160">INTERFAZ</text>
-          </g>
-          <g class="pm-bp__cluster">
-            <rect class="pm-bp__sq" x="408" y="86" width="48" height="48" rx="5"/>
-            <text class="pm-bp__label pm-bp__label--sec" x="432" y="160">SOFTWARE</text>
-          </g>
-          <g class="pm-bp__cluster">
-            <circle class="pm-bp__node" cx="544" cy="110" r="24"/>
-            <text class="pm-bp__label pm-bp__label--sec" x="544" y="160">IA APLICADA</text>
-          </g>
-        </svg>
-      </figure>
-      <div class="pm-areas">
-        <article class="pm-area">
-          <h3 class="pm-area__title">01 — Operaciones y workflows</h3>
-          <p class="section__body">La estructura de tareas, estados, responsabilidades y decisiones organiza cómo avanza el trabajo.</p>
-          <p class="section__body">La intervención puede revisar un proceso existente o establecer una nueva forma de operar cuando el proyecto necesita seguimiento, coordinación o capacidad de adaptación.</p>
-          <ul class="pm-anno" role="list">
-            <li>MAPEO DE PROCESOS</li>
-            <li>ESTADOS Y VALIDACIONES</li>
-            <li>PROTOCOLOS OPERATIVOS</li>
-            <li>SISTEMAS DE SEGUIMIENTO</li>
-          </ul>
-        </article>
-        <article class="pm-area">
-          <h3 class="pm-area__title">02 — Datos e información</h3>
-          <p class="section__body">La información que sostiene la operación necesita una estructura: qué datos se recogen, cómo se relacionan, quién accede a ellos y qué debe mantenerse actualizado.</p>
-          <p class="section__body">Esta capa puede incorporar sistemas de carga, clasificación, consulta y seguimiento.</p>
-          <ul class="pm-anno" role="list">
-            <li>MODELOS DE DATOS</li>
-            <li>FORMULARIOS Y ENTRADAS</li>
-            <li>CLASIFICACIÓN</li>
-            <li>DASHBOARDS Y CONSULTA</li>
-          </ul>
-        </article>
-        <article class="pm-area">
-          <h3 class="pm-area__title">03 — Interfaces y producto digital</h3>
-          <p class="section__body">Recorridos, jerarquías, estados e interacciones se diseñan alrededor del uso real.</p>
-          <p class="section__body">La interfaz conecta la arquitectura con el trabajo cotidiano y convierte una estructura funcional en una experiencia comprensible.</p>
-          <ul class="pm-anno" role="list">
-            <li>ARQUITECTURA DE INFORMACIÓN</li>
-            <li>UX/UI</li>
-            <li>PROTOTIPOS</li>
-            <li>PRODUCTO DIGITAL</li>
-          </ul>
-        </article>
-        <article class="pm-area">
-          <h3 class="pm-area__title">04 — Software y herramientas</h3>
-          <p class="section__body">Aplicaciones, plataformas e integraciones se desarrollan alrededor del funcionamiento de cada proyecto.</p>
-          <p class="section__body">La arquitectura técnica responde a la información gestionada, al mantenimiento previsto y a las condiciones reales de operación.</p>
-          <ul class="pm-anno" role="list">
-            <li>HERRAMIENTAS INTERNAS</li>
-            <li>WEB APPS</li>
-            <li>PLATAFORMAS</li>
-            <li>INTEGRACIONES</li>
-          </ul>
-        </article>
-        <article class="pm-area">
-          <h3 class="pm-area__title">05 — IA aplicada y sistemas asistidos</h3>
-          <p class="section__body">Capacidades de consulta, clasificación, generación o ayuda contextual pueden integrarse en herramientas y workflows concretos.</p>
-          <p class="section__body">Cada aplicación define qué información utiliza, qué decisiones acompaña y dónde se mantienen la revisión y la responsabilidad humanas.</p>
-          <ul class="pm-anno" role="list">
-            <li>ASISTENTES INTERNOS</li>
-            <li>CONSULTA CONTEXTUAL</li>
-            <li>CLASIFICACIÓN</li>
-            <li>APOYO A PRODUCCIÓN Y REVISIÓN</li>
-          </ul>
-        </article>
-      </div>
-      <p class="section__body pm-close">El diagnóstico determina qué áreas entran en el proyecto, cómo se relacionan y qué profundidad necesita cada una.</p>
-    </section>
 
-    <!-- 03 — DEFINIR EL PROYECTO -->
-    <section id="definir-proyecto" class="wrap section pm-section pm-section--03" aria-labelledby="definir-title">
-      <div class="pm-band">
-        <p class="pm-marker">03</p>
-        <div class="pm-band__head">
-          <h2 id="definir-title" class="section__title">El alcance organiza las decisiones del proyecto.</h2>
-          <p class="section__body">El diagnóstico reúne la información necesaria para decidir qué parte de la operación necesita cambiar y qué resultado debe producir el trabajo.</p>
-          <p class="section__body">Necesidades, personas usuarias, datos, dependencias y prioridades forman una base común. Sobre ella se establecen el alcance, los límites y los criterios que permitirán comprobar la respuesta de la solución.</p>
-        </div>
-      </div>
-      <ol class="pm-decisions" role="list">
-        <li class="pm-decision">
-          <span class="pm-decision__num" aria-hidden="true">01</span>
-          <div class="pm-decision__body">
-            <h3 class="pm-decision__title">01 — Contexto actual</h3>
-            <p class="section__body">Recogemos cómo funciona hoy la operación, qué herramientas la sostienen y qué personas intervienen.</p>
-            <p class="section__body">Esta base permite reconocer relaciones, dependencias y condicionantes que deberán mantenerse, reorganizarse o evolucionar.</p>
-          </div>
-        </li>
-        <li class="pm-decision">
-          <span class="pm-decision__num" aria-hidden="true">02</span>
-          <div class="pm-decision__body">
-            <h3 class="pm-decision__title">02 — Prioridades</h3>
-            <p class="section__body">Las necesidades del equipo se contrastan con su impacto sobre el trabajo, la información y la experiencia de uso.</p>
-            <p class="section__body">Las prioridades concentran el proyecto en los cambios que aportan capacidad operativa y preparan la base de las siguientes fases.</p>
-          </div>
-        </li>
-        <li class="pm-decision">
-          <span class="pm-decision__num" aria-hidden="true">03</span>
-          <div class="pm-decision__body">
-            <h3 class="pm-decision__title">03 — Alcance</h3>
-            <p class="section__body">Definimos qué componentes, recorridos, datos y funciones forman parte del trabajo.</p>
-            <p class="section__body">También quedan registradas las relaciones con sistemas existentes, las responsabilidades implicadas y las cuestiones reservadas para fases posteriores.</p>
-          </div>
-        </li>
-        <li class="pm-decision">
-          <span class="pm-decision__num" aria-hidden="true">04</span>
-          <div class="pm-decision__body">
-            <h3 class="pm-decision__title">04 — Validación</h3>
-            <p class="section__body">Establecemos qué debe poder hacer el sistema, cómo se comprobará su funcionamiento y qué señales permitirán revisar las decisiones tomadas.</p>
-            <p class="section__body">Estos criterios acompañan el diseño, el prototipo y las pruebas posteriores.</p>
-          </div>
-        </li>
-      </ol>
-      <p class="section__body pm-close">Con el alcance definido, procesos, información e interfaz pueden organizarse como partes de una misma arquitectura.</p>
-    </section>
+        <!-- ============================================================ -->
+        <!-- STACK 01 — OPERACIÓN -->
+        <!-- ============================================================ -->
+        <section id="operacion" class="practice-stack practice-stack--01" data-practice-stack data-stack-id="operacion" data-stack-index="1" data-stack-label="Operación" aria-labelledby="pm-op-h1">
+          <p class="pm7-stack-mark" aria-hidden="true">01 / 06</p>
+          <div class="pm7-grid pm7-grid--5-7">
+            <div class="pm7-head">
+              <p class="ccdv-kicker"><span class="ccdv-chip">01</span><span class="ccdv-kicker__label">Practice / Method</span></p>
+              <h1 id="pm-op-h1" class="pm7-h1 section__title ccdv-page-title ccdv-page-title--editorial">Diseñamos sistemas digitales desde el funcionamiento real de cada proyecto.</h1>
+              <div class="ccdv-rule" aria-hidden="true"></div>
+              <p class="pm7-body">CC Dev. Unit trabaja sobre operaciones, información, interfaces y tecnología.</p>
+              <p class="pm7-body">El punto de partida es comprender cómo avanza el trabajo, qué herramientas intervienen y qué decisiones sostienen la actividad cotidiana.</p>
 
-    <!-- 04 — DISEÑAR EL SISTEMA -->
-    <section id="disenar-sistema" class="wrap section pm-section pm-section--04" aria-labelledby="disenar-title">
-      <div class="pm-band">
-        <p class="pm-marker">04</p>
-        <div class="pm-band__head">
-          <h2 id="disenar-title" class="section__title">La arquitectura organiza funcionamiento, información y acceso.</h2>
-          <p class="section__body">Con el alcance definido, ordenamos los procesos, la información y las acciones que deberá sostener la solución.</p>
-          <p class="section__body">Esta fase establece la relación entre componentes, las consultas y acciones disponibles para cada persona y la respuesta del sistema en distintos estados de uso.</p>
-        </div>
-      </div>
-      <div class="pm-split">
-        <ul class="pm-layers pm-layers--four" role="list">
-          <li class="pm-layer">
-            <h3 class="pm-layer__title">01 — Funcionamiento</h3>
-            <p class="section__body">Los recorridos organizan el trabajo desde la entrada de información hasta las decisiones, validaciones y resultados de cada proceso.</p>
-            <p class="section__body">Los estados muestran qué está ocurriendo, qué necesita atención y qué acción corresponde a continuación.</p>
-          </li>
-          <li class="pm-layer">
-            <h3 class="pm-layer__title">02 — Información</h3>
-            <p class="section__body">Datos, documentos y relaciones sostienen cada función.</p>
-            <p class="section__body">La arquitectura determina qué información entra, cómo se transforma, dónde se consulta y qué historial necesita conservarse.</p>
-          </li>
-          <li class="pm-layer">
-            <h3 class="pm-layer__title">03 — Acceso e interacción</h3>
-            <p class="section__body">Responsabilidades, permisos y puntos de acceso se organizan según el papel de cada persona dentro de la operación.</p>
-            <p class="section__body">La interfaz traduce esa estructura en acciones comprensibles, jerarquías claras y respuestas visibles.</p>
-          </li>
-          <li class="pm-layer">
-            <h3 class="pm-layer__title">04 — Estructura técnica</h3>
-            <p class="section__body">Componentes, integraciones y dependencias sostienen la arquitectura funcional.</p>
-            <p class="section__body">Las decisiones técnicas atienden al contexto de uso, la información gestionada, el mantenimiento previsto y las posibles ampliaciones.</p>
-          </li>
-        </ul>
-        <figure class="pm-bp pm-bp--planes" aria-hidden="true">
-          <svg class="pm-bp__svg" viewBox="0 0 360 320" preserveAspectRatio="xMidYMid meet" focusable="false" role="presentation">
-            <g class="pm-bp__plane">
-              <path class="pm-bp__sq" d="M40 96 L232 60 L320 92 L128 128 Z"/>
-              <text class="pm-bp__label pm-bp__label--sec" x="300" y="86">FUNCIONAMIENTO</text>
-            </g>
-            <g class="pm-bp__plane">
-              <path class="pm-bp__sq" d="M40 156 L232 120 L320 152 L128 188 Z"/>
-              <text class="pm-bp__label pm-bp__label--sec" x="300" y="146">INFORMACIÓN</text>
-            </g>
-            <g class="pm-bp__plane">
-              <path class="pm-bp__sq" d="M40 216 L232 180 L320 212 L128 248 Z"/>
-              <text class="pm-bp__label pm-bp__label--sec" x="300" y="206">ACCESO</text>
-            </g>
-            <g class="pm-bp__plane">
-              <path class="pm-bp__sq pm-bp__sq--core" d="M40 276 L232 240 L320 272 L128 308 Z"/>
-              <text class="pm-bp__label pm-bp__label--sec" x="300" y="266">BASE TÉCNICA</text>
-            </g>
-            <line class="pm-bp__link" x1="128" y1="128" x2="128" y2="308"/>
-          </svg>
-        </figure>
-      </div>
-      <div class="pm-turn">
-        <p class="pm-turn__kicker">La arquitectura toma forma en la interfaz</p>
-        <h3 class="pm-turn__title section__title">La interfaz hace visible el funcionamiento.</h3>
-        <p class="section__body">La interfaz organiza la información, las acciones y los estados que necesita cada recorrido.</p>
-        <p class="section__body">Jerarquías, componentes y patrones de interacción permiten trabajar con el sistema manteniendo visible el contexto, las responsabilidades y las consecuencias de cada acción.</p>
-        <p class="section__body">La arquitectura establece una base común para prototipar, comprobar decisiones y avanzar hacia la construcción.</p>
-      </div>
-    </section>
+              <div class="pm7-tabs" data-pm-tabs data-bp-target="op-bp">
+                <div class="pm7-tabs__list" role="tablist" aria-orientation="vertical" aria-label="Qué necesita comprender CC Dev. Unit">
+                  <button id="op-tab-0" class="pm7-tab" role="tab" type="button" aria-selected="true" aria-controls="op-panel-0" tabindex="0">Personas</button>
+                  <button id="op-tab-1" class="pm7-tab" role="tab" type="button" aria-selected="false" aria-controls="op-panel-1" tabindex="-1">Información</button>
+                  <button id="op-tab-2" class="pm7-tab" role="tab" type="button" aria-selected="false" aria-controls="op-panel-2" tabindex="-1">Herramientas</button>
+                  <button id="op-tab-3" class="pm7-tab" role="tab" type="button" aria-selected="false" aria-controls="op-panel-3" tabindex="-1">Flujo y decisión</button>
+                </div>
+                <div class="pm7-tabs__panels">
+                  <div id="op-panel-0" class="pm7-panel" role="tabpanel" aria-labelledby="op-tab-0" tabindex="0">
+                    <p class="pm7-body">Quién utiliza el sistema, quién toma decisiones y qué responsabilidades intervienen.</p>
+                  </div>
+                  <div id="op-panel-1" class="pm7-panel" role="tabpanel" aria-labelledby="op-tab-1" tabindex="0">
+                    <p class="pm7-body">Qué datos, documentos y conocimiento necesita la operación para avanzar.</p>
+                  </div>
+                  <div id="op-panel-2" class="pm7-panel" role="tabpanel" aria-labelledby="op-tab-2" tabindex="0">
+                    <p class="pm7-body">Qué plataformas, interfaces y recursos sostienen actualmente el trabajo.</p>
+                  </div>
+                  <div id="op-panel-3" class="pm7-panel" role="tabpanel" aria-labelledby="op-tab-3" tabindex="0">
+                    <p class="pm7-body">Cómo se conectan tareas, estados, validaciones y puntos de entrega.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-    <!-- 05 — PROTOTIPAR, CONSTRUIR Y PROBAR -->
-    <section id="construir-probar" class="wrap section pm-section pm-section--05" aria-labelledby="construir-title">
-      <div class="pm-band">
-        <p class="pm-marker">05</p>
-        <div class="pm-band__head">
-          <h2 id="construir-title" class="section__title">Prototipo, construcción y prueba convierten la arquitectura en una herramienta utilizable.</h2>
-          <p class="section__body">El prototipo comprueba recorridos, jerarquías y decisiones antes de consolidar la solución.</p>
-          <p class="section__body">La construcción avanza por partes verificables. Cada función se conecta con la arquitectura definida y se revisa en relación con los datos, las personas usuarias y las condiciones reales de trabajo.</p>
-        </div>
-      </div>
-      <figure class="pm-bp pm-bp--sequence" aria-hidden="true">
-        <svg class="pm-bp__svg" viewBox="0 0 640 200" preserveAspectRatio="xMidYMid meet" focusable="false" role="presentation">
-          <line class="pm-bp__link" x1="112" y1="86" x2="248" y2="86"/>
-          <line class="pm-bp__link" x1="360" y1="86" x2="496" y2="86"/>
-          <path class="pm-bp__return" d="M528 100 C528 168, 112 168, 112 104"/>
-          <rect class="pm-bp__sq" x="64" y="60" width="52" height="52" rx="5"/>
-          <text class="pm-bp__label pm-bp__label--sec" x="90" y="138">PROTOTIPAR</text>
-          <rect class="pm-bp__sq pm-bp__sq--core" x="294" y="60" width="52" height="52" rx="5"/>
-          <text class="pm-bp__label pm-bp__label--sec" x="320" y="138">CONSTRUIR</text>
-          <rect class="pm-bp__sq" x="524" y="60" width="52" height="52" rx="5"/>
-          <text class="pm-bp__label pm-bp__label--sec" x="550" y="138">PROBAR</text>
-          <text class="pm-bp__label pm-bp__label--flow" x="320" y="184">AJUSTE</text>
-        </svg>
-      </figure>
-      <div class="pm-chapters">
-        <article class="pm-chapter">
-          <h3 class="pm-chapter__title">01 — Prototipar</h3>
-          <p class="section__body">Representamos recorridos, estados y funciones con el nivel de detalle necesario para tomar decisiones.</p>
-          <p class="section__body">Un prototipo puede comprobar la organización de la información, la lógica de una tarea, la respuesta de una interfaz o la viabilidad de una función.</p>
-        </article>
-        <article class="pm-chapter">
-          <h3 class="pm-chapter__title">02 — Construir</h3>
-          <p class="section__body">El sistema se desarrolla mediante componentes y funciones que pueden revisarse de forma independiente.</p>
-          <p class="section__body">Datos, interfaz y lógica técnica se integran progresivamente, manteniendo visibles las dependencias y las decisiones que sostienen cada parte.</p>
-        </article>
-        <article class="pm-chapter">
-          <h3 class="pm-chapter__title">03 — Probar</h3>
-          <p class="section__body">Las pruebas cubren recorridos principales, estados alternativos y situaciones que pueden alterar el funcionamiento previsto.</p>
-          <p class="section__body">La revisión combina comportamiento técnico, comprensión de la interfaz y uso operativo. Los resultados permiten corregir, simplificar o completar el sistema antes de ampliar su alcance.</p>
-        </article>
-      </div>
-      <div class="pm-turn">
-        <p class="pm-turn__kicker">Lo que aprendemos vuelve al sistema</p>
-        <h3 class="pm-turn__title section__title">Cada prueba aporta información para la siguiente versión.</h3>
-        <p class="section__body">Los resultados se incorporan al recorrido, la interfaz o la arquitectura según el ajuste necesario.</p>
-        <p class="section__body">La iteración mantiene la relación entre lo diseñado, lo construido y la forma en que el sistema se utiliza.</p>
-        <p class="section__body">Cuando el funcionamiento ha sido comprobado, el proyecto puede consolidar sus entregables, preparar la adopción y definir su continuidad.</p>
-      </div>
-    </section>
-
-    <!-- 06 — FORMAS DEL TRABAJO -->
-    <section id="formas-trabajo" class="wrap section pm-section pm-section--06" aria-labelledby="formas-title">
-      <div class="pm-band">
-        <p class="pm-marker">06</p>
-        <div class="pm-band__head">
-          <h2 id="formas-title" class="section__title">Una necesidad puede tomar formas distintas.</h2>
-          <p class="section__body">El resultado depende del punto de partida, del alcance y de la profundidad que requiere cada capa del proyecto.</p>
-          <p class="section__body">El trabajo puede concluir con una arquitectura, avanzar hacia un prototipo o desarrollarse como workflow, herramienta, plataforma o producto preparado para entrar en uso.</p>
-        </div>
-      </div>
-      <div class="pm-families">
-        <section class="pm-family" aria-label="Definir">
-          <h3 class="pm-family__title">Definir</h3>
-          <div class="pm-family__items">
-            <article class="pm-form">
-              <h4 class="pm-form__title">Diagnóstico y arquitectura</h4>
-              <p class="section__body">Analizamos la operación y establecemos cómo deberían organizarse sus procesos, su información y sus componentes digitales.</p>
-              <p class="section__body">El resultado puede incluir mapas, criterios, recorridos, modelos de información y una definición de alcance.</p>
-            </article>
-            <article class="pm-form">
-              <h4 class="pm-form__title">Workflow o sistema operativo</h4>
-              <p class="section__body">Diseñamos la estructura que conecta tareas, estados, responsabilidades, validaciones y puntos de entrega.</p>
-              <p class="section__body">Puede vivir dentro de una herramienta existente, combinar varias plataformas o convertirse en la base de un sistema propio.</p>
-            </article>
-            <article class="pm-form">
-              <h4 class="pm-form__title">Prototipo</h4>
-              <p class="section__body">Construimos una representación funcional o interactiva para evaluar recorridos, interfaces, capacidades o decisiones técnicas.</p>
-              <p class="section__body">El nivel de detalle responde a la incertidumbre y a la decisión que necesita comprobarse.</p>
-            </article>
+            <div class="pm7-visual">
+              <figure class="pm7-bp pm7-bp--field" id="op-bp" aria-hidden="true">
+                <svg class="pm7-bp__svg" viewBox="0 0 480 300" preserveAspectRatio="xMidYMid meet" focusable="false" role="presentation">
+                  <g class="pm7-bp__grid">
+                    <line x1="0" y1="150" x2="480" y2="150"/>
+                    <line x1="240" y1="20" x2="240" y2="280"/>
+                  </g>
+                  <rect class="pm7-bp__core" x="206" y="126" width="68" height="48" rx="3"/>
+                  <text class="pm7-bp__label pm7-bp__label--core" x="240" y="154" text-anchor="middle">Operación</text>
+                  <g class="pm7-bp__group" data-bp-node="0">
+                    <line class="pm7-bp__link" x1="240" y1="150" x2="92" y2="72"/>
+                    <circle class="pm7-bp__node" cx="92" cy="72" r="16"/>
+                    <text class="pm7-bp__label" x="92" y="44" text-anchor="middle">Personas</text>
+                  </g>
+                  <g class="pm7-bp__group" data-bp-node="1">
+                    <line class="pm7-bp__link" x1="240" y1="150" x2="388" y2="72"/>
+                    <circle class="pm7-bp__node" cx="388" cy="72" r="16"/>
+                    <text class="pm7-bp__label" x="388" y="44" text-anchor="middle">Información</text>
+                  </g>
+                  <g class="pm7-bp__group" data-bp-node="2">
+                    <line class="pm7-bp__link" x1="240" y1="150" x2="92" y2="228"/>
+                    <rect class="pm7-bp__node" x="76" y="212" width="32" height="32" rx="3"/>
+                    <text class="pm7-bp__label" x="92" y="270" text-anchor="middle">Herramientas</text>
+                  </g>
+                  <g class="pm7-bp__group" data-bp-node="3">
+                    <line class="pm7-bp__link" x1="240" y1="150" x2="388" y2="228"/>
+                    <circle class="pm7-bp__node" cx="388" cy="228" r="16"/>
+                    <text class="pm7-bp__label" x="388" y="270" text-anchor="middle">Flujo y decisión</text>
+                  </g>
+                </svg>
+              </figure>
+            </div>
           </div>
         </section>
-        <section class="pm-family" aria-label="Operar">
-          <h3 class="pm-family__title">Operar</h3>
-          <div class="pm-family__items">
-            <article class="pm-form">
-              <h4 class="pm-form__title">Dashboard o sistema de consulta</h4>
-              <p class="section__body">Organizamos datos y fuentes para que puedan consultarse desde una interfaz vinculada al funcionamiento real de la operación.</p>
-              <p class="section__body">Puede reunir seguimiento, clasificación, búsquedas, filtros, alertas o vistas adaptadas a distintos perfiles.</p>
-            </article>
-            <article class="pm-form">
-              <h4 class="pm-form__title">Herramienta interna</h4>
-              <p class="section__body">Construimos aplicaciones orientadas a tareas, decisiones o recorridos que requieren una lógica propia.</p>
-              <p class="section__body">La herramienta se adapta a las personas que la utilizan, a la información que gestiona y al contexto técnico en el que debe funcionar.</p>
-            </article>
-            <article class="pm-form">
-              <h4 class="pm-form__title">Integración</h4>
-              <p class="section__body">Diseñamos la relación entre herramientas existentes para reducir transferencias manuales y mantener la información sincronizada.</p>
-              <p class="section__body">La integración puede conectar servicios, bases de datos, formularios, interfaces o funciones internas.</p>
-            </article>
+
+        <!-- ============================================================ -->
+        <!-- STACK 02 — PRÁCTICA -->
+        <!-- ============================================================ -->
+        <section id="practica" class="practice-stack practice-stack--02" data-practice-stack data-stack-id="practica" data-stack-index="2" data-stack-label="Práctica" data-stack-tone="alt" aria-labelledby="pm-pr-h2">
+          <p class="pm7-stack-mark" aria-hidden="true">02 / 06</p>
+          <div class="pm7-head">
+            <p class="ccdv-kicker"><span class="ccdv-chip">02</span><span class="ccdv-kicker__label">Campo de práctica</span></p>
+            <h2 id="pm-pr-h2" class="pm7-h2">Trabajamos sobre las capas que sostienen la operación digital.</h2>
+            <div class="pm7-head__intro">
+              <p class="pm7-body">Cada proyecto combina procesos, información, interfaces y tecnología de una manera distinta.</p>
+              <p class="pm7-body">El contexto determina qué áreas entran en el alcance y qué profundidad necesita cada una.</p>
+            </div>
+          </div>
+
+          <div class="pm7-tabs pm7-grid pm7-grid--4-8" data-pm-tabs>
+            <div class="pm7-tabs__list" role="tablist" aria-orientation="vertical" aria-label="Capas de la práctica">
+              <button id="pr-tab-0" class="pm7-tab" role="tab" type="button" aria-selected="true" aria-controls="pr-panel-0" tabindex="0">Operaciones y workflows</button>
+              <button id="pr-tab-1" class="pm7-tab" role="tab" type="button" aria-selected="false" aria-controls="pr-panel-1" tabindex="-1">Datos e información</button>
+              <button id="pr-tab-2" class="pm7-tab" role="tab" type="button" aria-selected="false" aria-controls="pr-panel-2" tabindex="-1">Interfaces y producto</button>
+              <button id="pr-tab-3" class="pm7-tab" role="tab" type="button" aria-selected="false" aria-controls="pr-panel-3" tabindex="-1">Software y herramientas</button>
+              <button id="pr-tab-4" class="pm7-tab" role="tab" type="button" aria-selected="false" aria-controls="pr-panel-4" tabindex="-1">IA aplicada</button>
+            </div>
+            <div class="pm7-tabs__main">
+              <div class="pm7-tabs__panels">
+                <div id="pr-panel-0" class="pm7-panel" role="tabpanel" aria-labelledby="pr-tab-0" tabindex="0">
+                  <p class="pm7-body">Organizamos tareas, estados, responsabilidades y validaciones para que el trabajo pueda seguirse y coordinarse.</p>
+                  <ul class="pm7-sub"><li>Mapeo de procesos</li><li>Sistemas de seguimiento</li></ul>
+                </div>
+                <div id="pr-panel-1" class="pm7-panel" role="tabpanel" aria-labelledby="pr-tab-1" tabindex="0">
+                  <p class="pm7-body">Estructuramos cómo entra, cambia y se consulta la información que sostiene cada recorrido.</p>
+                  <ul class="pm7-sub"><li>Modelos de datos</li><li>Sistemas de consulta</li></ul>
+                </div>
+                <div id="pr-panel-2" class="pm7-panel" role="tabpanel" aria-labelledby="pr-tab-2" tabindex="0">
+                  <p class="pm7-body">Diseñamos recorridos, jerarquías y estados alrededor de las personas que utilizarán la solución.</p>
+                  <ul class="pm7-sub"><li>Arquitectura de información</li><li>UX/UI y prototipos</li></ul>
+                </div>
+                <div id="pr-panel-3" class="pm7-panel" role="tabpanel" aria-labelledby="pr-tab-3" tabindex="0">
+                  <p class="pm7-body">Desarrollamos aplicaciones, plataformas e integraciones adaptadas al contexto técnico y operativo del proyecto.</p>
+                  <ul class="pm7-sub"><li>Herramientas internas</li><li>Web apps e integraciones</li></ul>
+                </div>
+                <div id="pr-panel-4" class="pm7-panel" role="tabpanel" aria-labelledby="pr-tab-4" tabindex="0">
+                  <p class="pm7-body">Integramos capacidades de consulta, clasificación, generación o asistencia dentro de funciones concretas.</p>
+                  <p class="pm7-body">Cada aplicación define la información utilizada, el resultado esperado y la revisión necesaria.</p>
+                  <ul class="pm7-sub"><li>Consulta contextual</li><li>Sistemas asistidos</li></ul>
+                </div>
+              </div>
+              <figure class="pm7-bp pm7-bp--layers" aria-hidden="true">
+                <svg class="pm7-bp__svg" viewBox="0 0 480 320" preserveAspectRatio="xMidYMid meet" focusable="false" role="presentation">
+                  <g class="pm7-bp__grid">
+                    <line x1="410" y1="40" x2="410" y2="228"/>
+                  </g>
+                  <line class="pm7-bp__link" x1="340" y1="57" x2="392" y2="120"/>
+                  <line class="pm7-bp__link" x1="340" y1="107" x2="392" y2="130"/>
+                  <line class="pm7-bp__link" x1="340" y1="157" x2="392" y2="140"/>
+                  <line class="pm7-bp__link" x1="340" y1="207" x2="392" y2="150"/>
+                  <rect class="pm7-bp__node" x="40" y="40" width="300" height="34" rx="3"/>
+                  <text class="pm7-bp__label" x="56" y="62" text-anchor="start">Operaciones</text>
+                  <rect class="pm7-bp__node" x="40" y="90" width="300" height="34" rx="3"/>
+                  <text class="pm7-bp__label" x="56" y="112" text-anchor="start">Datos</text>
+                  <rect class="pm7-bp__node" x="40" y="140" width="300" height="34" rx="3"/>
+                  <text class="pm7-bp__label" x="56" y="162" text-anchor="start">Interfaces</text>
+                  <rect class="pm7-bp__node" x="40" y="190" width="300" height="34" rx="3"/>
+                  <text class="pm7-bp__label" x="56" y="212" text-anchor="start">Software</text>
+                  <circle class="pm7-bp__node" cx="410" cy="135" r="26"/>
+                  <text class="pm7-bp__label" x="410" y="188" text-anchor="middle">IA aplicada</text>
+                </svg>
+              </figure>
+            </div>
           </div>
         </section>
-        <section class="pm-family" aria-label="Desarrollar">
-          <h3 class="pm-family__title">Desarrollar</h3>
-          <div class="pm-family__items">
-            <article class="pm-form">
-              <h4 class="pm-form__title">Plataforma o web app</h4>
-              <p class="section__body">Desarrollamos plataformas que permiten consultar información, gestionar procesos o prestar un servicio desde un entorno web.</p>
-              <p class="section__body">Su arquitectura puede incorporar distintos perfiles, recorridos, módulos e integraciones.</p>
-            </article>
-            <article class="pm-form">
-              <h4 class="pm-form__title">Producto digital</h4>
-              <p class="section__body">Diseñamos y desarrollamos productos digitales con una función definida, una arquitectura propia y capacidad para evolucionar.</p>
-              <p class="section__body">El trabajo puede abarcar investigación, estrategia de producto, experiencia, desarrollo, documentación y seguimiento posterior.</p>
-            </article>
-            <article class="pm-form">
-              <h4 class="pm-form__title">Sistema asistido por IA</h4>
-              <p class="section__body">Integramos modelos y capacidades asistidas en recorridos donde aportan una función verificable.</p>
-              <p class="section__body">La arquitectura establece qué información utilizan, qué resultados producen y qué revisión acompaña su incorporación a la operación.</p>
-            </article>
+
+        <!-- ============================================================ -->
+        <!-- STACK 03 — DEFINICIÓN -->
+        <!-- ============================================================ -->
+        <section id="definicion" class="practice-stack practice-stack--03" data-practice-stack data-stack-id="definicion" data-stack-index="3" data-stack-label="Definición" aria-labelledby="pm-de-h2">
+          <p class="pm7-stack-mark" aria-hidden="true">03 / 06</p>
+          <div class="pm7-head">
+            <p class="ccdv-kicker"><span class="ccdv-chip">03</span><span class="ccdv-kicker__label">Definición</span></p>
+            <h2 id="pm-de-h2" class="pm7-h2">El alcance organiza las decisiones del proyecto.</h2>
+            <div class="pm7-head__intro">
+              <p class="pm7-body">El diagnóstico reúne la información necesaria para establecer qué necesita cambiar, qué resultado debe producir el trabajo y cómo podrá comprobarse.</p>
+            </div>
+          </div>
+
+          <div class="pm7-grid pm7-grid--6-6">
+            <div class="pm7-accordion" data-pm-accordion>
+              <details class="pm7-acc" open>
+                <summary class="pm7-acc__summary">Contexto<span class="pm7-acc__sign" aria-hidden="true"></span></summary>
+                <div class="pm7-acc__panel">
+                  <p class="pm7-body">Recogemos cómo funciona la operación, qué herramientas la sostienen y qué personas participan.</p>
+                  <ul class="pm7-sub"><li>Procesos</li><li>Herramientas</li><li>Personas</li><li>Información</li></ul>
+                </div>
+              </details>
+              <details class="pm7-acc">
+                <summary class="pm7-acc__summary">Prioridades<span class="pm7-acc__sign" aria-hidden="true"></span></summary>
+                <div class="pm7-acc__panel">
+                  <p class="pm7-body">Ordenamos las necesidades según su impacto, sus dependencias y los riesgos asociados.</p>
+                  <ul class="pm7-sub"><li>Impacto</li><li>Dependencias</li><li>Riesgos</li></ul>
+                </div>
+              </details>
+              <details class="pm7-acc">
+                <summary class="pm7-acc__summary">Alcance<span class="pm7-acc__sign" aria-hidden="true"></span></summary>
+                <div class="pm7-acc__panel">
+                  <p class="pm7-body">Definimos qué funciones, recorridos, datos y componentes forman parte de esta fase.</p>
+                  <ul class="pm7-sub"><li>Funciones</li><li>Componentes</li><li>Integraciones</li><li>Límites</li></ul>
+                </div>
+              </details>
+              <details class="pm7-acc">
+                <summary class="pm7-acc__summary">Validación<span class="pm7-acc__sign" aria-hidden="true"></span></summary>
+                <div class="pm7-acc__panel">
+                  <p class="pm7-body">Establecemos qué debe poder hacer el sistema y qué señales permitirán revisar su funcionamiento.</p>
+                  <ul class="pm7-sub"><li>Uso</li><li>Casos clave</li><li>Criterios de revisión</li></ul>
+                </div>
+              </details>
+            </div>
+
+            <div class="pm7-visual">
+              <figure class="pm7-bp pm7-bp--scope" aria-hidden="true">
+                <svg class="pm7-bp__svg" viewBox="0 0 480 210" preserveAspectRatio="xMidYMid meet" focusable="false" role="presentation">
+                  <g class="pm7-bp__grid">
+                    <line x1="0" y1="105" x2="480" y2="105"/>
+                  </g>
+                  <line class="pm7-bp__link" x1="112" y1="105" x2="196" y2="105"/>
+                  <line class="pm7-bp__link" x1="284" y1="105" x2="368" y2="105"/>
+                  <circle class="pm7-bp__node" cx="80" cy="105" r="26"/>
+                  <text class="pm7-bp__label" x="80" y="162" text-anchor="middle">Contexto</text>
+                  <rect class="pm7-bp__core" x="212" y="79" width="56" height="52" rx="3"/>
+                  <text class="pm7-bp__label pm7-bp__label--core" x="240" y="162" text-anchor="middle">Definición</text>
+                  <rect class="pm7-bp__node" x="374" y="79" width="52" height="52" rx="3"/>
+                  <text class="pm7-bp__label" x="400" y="162" text-anchor="middle">Alcance</text>
+                </svg>
+              </figure>
+            </div>
+          </div>
+
+          <p class="pm7-close">El alcance establece una base compartida para diseñar la arquitectura y avanzar hacia una solución verificable.</p>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- STACK 04 — DISEÑO + DESARROLLO -->
+        <!-- ============================================================ -->
+        <section id="diseno-desarrollo" class="practice-stack practice-stack--04" data-practice-stack data-stack-id="diseno-desarrollo" data-stack-index="4" data-stack-label="Diseño + Desarrollo" data-stack-tone="alt" aria-labelledby="pm-dd-h2">
+          <p class="pm7-stack-mark" aria-hidden="true">04 / 06</p>
+          <div class="pm7-head">
+            <p class="ccdv-kicker"><span class="ccdv-chip">04</span><span class="ccdv-kicker__label">Diseño + Desarrollo</span></p>
+            <h2 id="pm-dd-h2" class="pm7-h2">La arquitectura conecta funcionamiento, información e interfaz.</h2>
+            <div class="pm7-head__intro">
+              <p class="pm7-body">Procesos, datos, accesos y componentes técnicos se organizan como partes de un mismo sistema.</p>
+            </div>
+          </div>
+
+          <!-- Scene A — selectable architecture layers + real interface evidence -->
+          <div class="pm7-grid pm7-grid--5-7">
+            <div class="pm7-tabs" data-pm-tabs>
+              <div class="pm7-tabs__list" role="tablist" aria-orientation="vertical" aria-label="Capas de la arquitectura">
+                <button id="dd-tab-0" class="pm7-tab" role="tab" type="button" aria-selected="true" aria-controls="dd-panel-0" tabindex="0">Funcionamiento</button>
+                <button id="dd-tab-1" class="pm7-tab" role="tab" type="button" aria-selected="false" aria-controls="dd-panel-1" tabindex="-1">Información</button>
+                <button id="dd-tab-2" class="pm7-tab" role="tab" type="button" aria-selected="false" aria-controls="dd-panel-2" tabindex="-1">Interfaz y acceso</button>
+                <button id="dd-tab-3" class="pm7-tab" role="tab" type="button" aria-selected="false" aria-controls="dd-panel-3" tabindex="-1">Estructura técnica</button>
+              </div>
+              <div class="pm7-tabs__panels">
+                <div id="dd-panel-0" class="pm7-panel" role="tabpanel" aria-labelledby="dd-tab-0" tabindex="0">
+                  <p class="pm7-body">Los recorridos y estados muestran cómo avanza cada proceso y qué acción corresponde en cada momento.</p>
+                </div>
+                <div id="dd-panel-1" class="pm7-panel" role="tabpanel" aria-labelledby="dd-tab-1" tabindex="0">
+                  <p class="pm7-body">Los datos, documentos y relaciones se estructuran según las funciones que deben sostener.</p>
+                </div>
+                <div id="dd-panel-2" class="pm7-panel" role="tabpanel" aria-labelledby="dd-tab-2" tabindex="0">
+                  <p class="pm7-body">Roles, permisos, jerarquías y patrones de interacción convierten la arquitectura en una experiencia comprensible.</p>
+                </div>
+                <div id="dd-panel-3" class="pm7-panel" role="tabpanel" aria-labelledby="dd-tab-3" tabindex="0">
+                  <p class="pm7-body">Componentes, integraciones y dependencias se definen según el uso previsto, el mantenimiento y la posible evolución del sistema.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="pm7-visual">
+              <figure class="pm7-evidence">
+                <span class="pm7-evidence__frame">
+                  <img class="pm7-evidence__img" src="./assets/cases/htw-gen-interface-overview.png" width="2560" height="1252" loading="lazy" decoding="async" alt="Interfaz de HTW-GEN: panel de modos, controles de paleta y exportación.">
+                </span>
+              </figure>
+            </div>
+          </div>
+
+          <!-- Scene B — development sequence (manual, no autoplay) -->
+          <div class="pm7-carousel pm7-carousel--sequence" data-pm-carousel aria-roledescription="secuencia" aria-label="Secuencia de desarrollo">
+            <div class="pm7-carousel__viewport">
+              <ul class="pm7-carousel__track" data-carousel-track>
+                <li class="pm7-slide" data-carousel-slide data-carousel-title="Prototipar">
+                  <p class="pm7-slide__index" aria-hidden="true">01 / 04</p>
+                  <h3 class="pm7-slide__title">Prototipar</h3>
+                  <p class="pm7-body">Representamos recorridos, funciones y estados con el nivel de detalle necesario para comprobar decisiones.</p>
+                </li>
+                <li class="pm7-slide pm7-slide--emphasis" data-carousel-slide data-carousel-title="Construir">
+                  <p class="pm7-slide__index" aria-hidden="true">02 / 04</p>
+                  <h3 class="pm7-slide__title">Construir</h3>
+                  <p class="pm7-body">Desarrollamos componentes y funciones por partes verificables, manteniendo visible su relación con la arquitectura general.</p>
+                </li>
+                <li class="pm7-slide" data-carousel-slide data-carousel-title="Probar">
+                  <p class="pm7-slide__index" aria-hidden="true">03 / 04</p>
+                  <h3 class="pm7-slide__title">Probar</h3>
+                  <p class="pm7-body">Revisamos recorridos principales, estados alternativos y situaciones que pueden alterar el funcionamiento previsto.</p>
+                </li>
+                <li class="pm7-slide" data-carousel-slide data-carousel-title="Ajustar">
+                  <p class="pm7-slide__index" aria-hidden="true">04 / 04</p>
+                  <h3 class="pm7-slide__title">Ajustar</h3>
+                  <p class="pm7-body">Los resultados de cada prueba actualizan la interfaz, la arquitectura o el alcance cuando aparece nueva información.</p>
+                </li>
+              </ul>
+            </div>
+            <div class="pm7-carousel__controls">
+              <button type="button" class="pm7-carousel__btn" data-carousel-prev aria-label="Paso anterior">&#8592;</button>
+              <span class="pm7-carousel__pos" aria-hidden="true"><span data-carousel-index>01</span> / <span data-carousel-total>04</span></span>
+              <button type="button" class="pm7-carousel__btn" data-carousel-next aria-label="Paso siguiente">&#8594;</button>
+            </div>
+            <p class="pm7-visually-hidden" aria-live="polite" data-carousel-status></p>
+          </div>
+
+          <p class="pm7-close">La construcción consolida una solución capaz de entrar en uso y aportar evidencia sobre su funcionamiento real.</p>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- STACK 05 — FORMAS -->
+        <!-- ============================================================ -->
+        <section id="formas" class="practice-stack practice-stack--05" data-practice-stack data-stack-id="formas" data-stack-index="5" data-stack-label="Formas" aria-labelledby="pm-fo-h2">
+          <p class="pm7-stack-mark" aria-hidden="true">05 / 06</p>
+          <div class="pm7-head">
+            <p class="ccdv-kicker"><span class="ccdv-chip">05</span><span class="ccdv-kicker__label">Formas del trabajo</span></p>
+            <h2 id="pm-fo-h2" class="pm7-h2">El trabajo puede tomar distintas formas dentro de un mismo alcance.</h2>
+            <div class="pm7-head__intro">
+              <p class="pm7-body">La forma final depende del punto de partida, de la función que debe sostener el proyecto y del nivel de desarrollo necesario.</p>
+            </div>
+          </div>
+
+          <!-- Scene A — possible forms (manual editorial carousel) -->
+          <div class="pm7-carousel pm7-carousel--forms" data-pm-carousel aria-roledescription="carrusel" aria-label="Formas posibles del trabajo">
+            <div class="pm7-carousel__viewport">
+              <ul class="pm7-carousel__track" data-carousel-track>
+                <li class="pm7-slide" data-carousel-slide data-carousel-title="Workflow o sistema operativo">
+                  <p class="pm7-slide__index" aria-hidden="true">01 / 06</p>
+                  <h3 class="pm7-slide__title">Workflow o sistema operativo</h3>
+                  <p class="pm7-body">Estructura tareas, estados, responsabilidades y validaciones dentro de una operación.</p>
+                </li>
+                <li class="pm7-slide" data-carousel-slide data-carousel-title="Dashboard o sistema de consulta">
+                  <p class="pm7-slide__index" aria-hidden="true">02 / 06</p>
+                  <h3 class="pm7-slide__title">Dashboard o sistema de consulta</h3>
+                  <p class="pm7-body">Reúne información, búsquedas, filtros, seguimiento y vistas adaptadas a distintos perfiles.</p>
+                </li>
+                <li class="pm7-slide" data-carousel-slide data-carousel-title="Herramienta interna">
+                  <p class="pm7-slide__index" aria-hidden="true">03 / 06</p>
+                  <h3 class="pm7-slide__title">Herramienta interna</h3>
+                  <p class="pm7-body">Resuelve tareas o decisiones que requieren una lógica y una interfaz propias.</p>
+                </li>
+                <li class="pm7-slide" data-carousel-slide data-carousel-title="Integración">
+                  <p class="pm7-slide__index" aria-hidden="true">04 / 06</p>
+                  <h3 class="pm7-slide__title">Integración</h3>
+                  <p class="pm7-body">Conecta sistemas, datos y acciones que ya forman parte del trabajo.</p>
+                </li>
+                <li class="pm7-slide" data-carousel-slide data-carousel-title="Plataforma o web app">
+                  <p class="pm7-slide__index" aria-hidden="true">05 / 06</p>
+                  <h3 class="pm7-slide__title">Plataforma o web app</h3>
+                  <p class="pm7-body">Reúne varias funciones dentro de un entorno digital común.</p>
+                </li>
+                <li class="pm7-slide" data-carousel-slide data-carousel-title="Producto digital">
+                  <p class="pm7-slide__index" aria-hidden="true">06 / 06</p>
+                  <h3 class="pm7-slide__title">Producto digital</h3>
+                  <p class="pm7-body">Desarrolla una función estable para un grupo definido de usuarios y permite su evolución posterior.</p>
+                </li>
+              </ul>
+            </div>
+            <div class="pm7-carousel__controls">
+              <button type="button" class="pm7-carousel__btn" data-carousel-prev aria-label="Forma anterior">&#8592;</button>
+              <span class="pm7-carousel__pos" aria-hidden="true"><span data-carousel-index>01</span> / <span data-carousel-total>06</span></span>
+              <button type="button" class="pm7-carousel__btn" data-carousel-next aria-label="Forma siguiente">&#8594;</button>
+            </div>
+            <p class="pm7-visually-hidden" aria-live="polite" data-carousel-status></p>
+          </div>
+          <p class="pm7-note">Varias formas pueden combinarse dentro del mismo proyecto.</p>
+
+          <!-- Scene B — continuity (accordion, one open) -->
+          <div class="pm7-accordion" data-pm-accordion>
+            <details class="pm7-acc" open>
+              <summary class="pm7-acc__summary">Documentar<span class="pm7-acc__sign" aria-hidden="true"></span></summary>
+              <div class="pm7-acc__panel">
+                <p class="pm7-body">Registramos la arquitectura, los recorridos, los componentes y las decisiones principales.</p>
+              </div>
+            </details>
+            <details class="pm7-acc">
+              <summary class="pm7-acc__summary">Incorporar<span class="pm7-acc__sign" aria-hidden="true"></span></summary>
+              <div class="pm7-acc__panel">
+                <p class="pm7-body">Preparamos la entrada en uso mediante guías, sesiones de trabajo y una transición proporcionada al equipo.</p>
+              </div>
+            </details>
+            <details class="pm7-acc">
+              <summary class="pm7-acc__summary">Mantener<span class="pm7-acc__sign" aria-hidden="true"></span></summary>
+              <div class="pm7-acc__panel">
+                <p class="pm7-body">Identificamos dependencias, actualizaciones y ajustes necesarios para conservar el funcionamiento.</p>
+              </div>
+            </details>
+            <details class="pm7-acc">
+              <summary class="pm7-acc__summary">Evolucionar<span class="pm7-acc__sign" aria-hidden="true"></span></summary>
+              <div class="pm7-acc__panel">
+                <p class="pm7-body">Las nuevas funciones y cambios se incorporan sobre una base conocida y documentada.</p>
+              </div>
+            </details>
+          </div>
+
+          <p class="pm7-close">La continuidad se define según la naturaleza del proyecto y el uso previsto para la solución.</p>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- STACK 06 — COLABORACIÓN -->
+        <!-- ============================================================ -->
+        <section id="colaboracion" class="practice-stack practice-stack--06" data-practice-stack data-stack-id="colaboracion" data-stack-index="6" data-stack-label="Colaboración" data-stack-tone="alt" aria-labelledby="pm-co-h2">
+          <p class="pm7-stack-mark" aria-hidden="true">06 / 06</p>
+          <div class="pm7-head">
+            <p class="ccdv-kicker"><span class="ccdv-chip">06</span><span class="ccdv-kicker__label">Colaboración</span></p>
+            <h2 id="pm-co-h2" class="pm7-h2">Cada colaboración se organiza alrededor del estado real del proyecto.</h2>
+            <div class="pm7-head__intro">
+              <p class="pm7-body">El punto de partida puede ser una necesidad abierta, una herramienta existente, un prototipo o un sistema que necesita evolucionar.</p>
+            </div>
+          </div>
+
+          <div class="pm7-grid pm7-grid--6-6">
+            <div class="pm7-accordion" data-pm-accordion>
+              <details class="pm7-acc" open>
+                <summary class="pm7-acc__summary">Diagnóstico y definición<span class="pm7-acc__sign" aria-hidden="true"></span></summary>
+                <div class="pm7-acc__panel">
+                  <p class="pm7-body">Para proyectos que necesitan ordenar contexto, prioridades, alcance y arquitectura antes de avanzar.</p>
+                </div>
+              </details>
+              <details class="pm7-acc">
+                <summary class="pm7-acc__summary">Proyecto o piloto<span class="pm7-acc__sign" aria-hidden="true"></span></summary>
+                <div class="pm7-acc__panel">
+                  <p class="pm7-body">Para desarrollar una intervención delimitada o comprobar una función antes de ampliar el sistema.</p>
+                </div>
+              </details>
+              <details class="pm7-acc">
+                <summary class="pm7-acc__summary">Desarrollo por fases<span class="pm7-acc__sign" aria-hidden="true"></span></summary>
+                <div class="pm7-acc__panel">
+                  <p class="pm7-body">Para construir capacidades sucesivas dentro de una arquitectura compartida.</p>
+                </div>
+              </details>
+              <details class="pm7-acc">
+                <summary class="pm7-acc__summary">Mantenimiento y evolución<span class="pm7-acc__sign" aria-hidden="true"></span></summary>
+                <div class="pm7-acc__panel">
+                  <p class="pm7-body">Para revisar una base existente e incorporar mejoras vinculadas al uso real.</p>
+                </div>
+              </details>
+            </div>
+
+            <div class="pm7-visual">
+              <figure class="pm7-bp pm7-bp--fit" aria-hidden="true">
+                <svg class="pm7-bp__svg" viewBox="0 0 480 190" preserveAspectRatio="xMidYMid meet" focusable="false" role="presentation">
+                  <g class="pm7-bp__grid">
+                    <line x1="0" y1="95" x2="480" y2="95"/>
+                  </g>
+                  <line class="pm7-bp__link" x1="112" y1="95" x2="206" y2="95"/>
+                  <line class="pm7-bp__link" x1="274" y1="95" x2="368" y2="95"/>
+                  <circle class="pm7-bp__node" cx="80" cy="95" r="26"/>
+                  <text class="pm7-bp__label" x="80" y="150" text-anchor="middle">CC Dev. Unit</text>
+                  <rect class="pm7-bp__core" x="212" y="69" width="56" height="52" rx="3"/>
+                  <text class="pm7-bp__label pm7-bp__label--core" x="240" y="150" text-anchor="middle">Alcance compartido</text>
+                  <circle class="pm7-bp__node" cx="400" cy="95" r="26"/>
+                  <text class="pm7-bp__label" x="400" y="150" text-anchor="middle">Proyecto</text>
+                </svg>
+              </figure>
+            </div>
+          </div>
+
+          <div class="pm7-conditions">
+            <div class="pm7-condition">
+              <h3 class="pm7-condition__title">Contexto</h3>
+              <p class="pm7-body">Acceso proporcionado al funcionamiento, las herramientas y la información implicada.</p>
+            </div>
+            <div class="pm7-condition">
+              <h3 class="pm7-condition__title">Interlocución</h3>
+              <p class="pm7-body">Personas capaces de aportar conocimiento operativo y tomar decisiones dentro del proyecto.</p>
+            </div>
+            <div class="pm7-condition">
+              <h3 class="pm7-condition__title">Validación</h3>
+              <p class="pm7-body">Momentos definidos para comprobar funcionamiento, comprensión y uso.</p>
+            </div>
+          </div>
+
+          <div class="pm7-cta">
+            <h2 class="pm7-h2">Cuéntanos cómo funciona ahora.</h2>
+            <p class="pm7-body">Puedes iniciar la conversación desde una necesidad todavía abierta.</p>
+            <p class="pm7-body">Explícanos qué existe, qué necesita cambiar y quién utiliza actualmente el proceso, la herramienta o la información implicada. Ese contexto permite identificar el punto de partida y establecer el siguiente paso.</p>
+            <div class="pm7-cta__actions">
+              <a href="./contact.html" class="button">PLANTEAR UN PROYECTO</a>
+              <a href="mailto:contact@collapsecreative.com" class="button button--ghost">ESCRIBIR POR CORREO</a>
+            </div>
           </div>
         </section>
-      </div>
-      <div class="pm-turn">
-        <h3 class="pm-turn__title section__title">Un proyecto puede combinar varias formas</h3>
-        <p class="section__body">Un diagnóstico puede conducir a un prototipo. Una herramienta interna puede incorporar un dashboard, una integración o una capacidad asistida.</p>
-        <p class="section__body">La combinación responde al funcionamiento que necesita sostener el proyecto y al nivel de desarrollo adecuado para cada fase.</p>
-        <p class="section__body">La forma del trabajo define qué se entrega. La documentación y la evolución determinan cómo podrá utilizarse y mantenerse después.</p>
-      </div>
-    </section>
 
-    <!-- 07 — DOCUMENTAR Y EVOLUCIONAR -->
-    <section id="documentar-evolucionar" class="wrap section pm-section pm-section--07" aria-labelledby="documentar-title">
-      <div class="pm-band">
-        <p class="pm-marker">07</p>
-        <div class="pm-band__head">
-          <h2 id="documentar-title" class="section__title">Lo construido necesita una base para continuar.</h2>
-          <p class="section__body">La documentación recoge cómo funciona el sistema, qué decisiones sostienen su arquitectura y qué necesita conocer cada persona para utilizarlo o mantenerlo.</p>
-          <p class="section__body">Cuando el proyecto continúa, esa base permite revisar procesos, incorporar funciones y adaptar la herramienta conservando la relación con su propósito inicial.</p>
-        </div>
       </div>
-      <ul class="pm-layers pm-layers--four" role="list">
-        <li class="pm-layer">
-          <h3 class="pm-layer__title">01 — Documentación</h3>
-          <p class="section__body">Registramos la estructura del sistema, sus componentes, recorridos y decisiones principales.</p>
-          <p class="section__body">La documentación puede cubrir el uso, la arquitectura, los datos, las integraciones y las condiciones necesarias para mantener o ampliar la solución.</p>
-        </li>
-        <li class="pm-layer">
-          <h3 class="pm-layer__title">02 — Adopción</h3>
-          <p class="section__body">La entrada en uso se prepara atendiendo a responsabilidades, cambios de proceso y conocimiento necesario para cada perfil.</p>
-          <p class="section__body">Puede incluir guías, sesiones de trabajo, pruebas acompañadas o una incorporación progresiva de funciones.</p>
-        </li>
-        <li class="pm-layer">
-          <h3 class="pm-layer__title">03 — Mantenimiento</h3>
-          <p class="section__body">Definimos qué partes requieren seguimiento, actualización o soporte técnico después de la entrega.</p>
-          <p class="section__body">El mantenimiento puede abarcar dependencias, integraciones, datos, seguridad, compatibilidad y ajustes derivados del uso.</p>
-        </li>
-        <li class="pm-layer">
-          <h3 class="pm-layer__title">04 — Evolución</h3>
-          <p class="section__body">Las nuevas necesidades se incorporan sobre una arquitectura y una documentación conocidas.</p>
-          <p class="section__body">Una evolución puede ampliar funciones, adaptar recorridos, revisar la información o conectar nuevas herramientas manteniendo visible el impacto de cada cambio.</p>
-        </li>
-      </ul>
-      <div class="pm-turn">
-        <p class="pm-turn__kicker">El sistema entra en la operación</p>
-        <h3 class="pm-turn__title section__title">La puesta en uso también forma parte del proyecto.</h3>
-        <p class="section__body">Una herramienta modifica recorridos, responsabilidades y formas de consultar la información.</p>
-        <p class="section__body">La incorporación atiende a quién utilizará cada función, qué necesita aprender el equipo y qué aspectos conviene observar durante las primeras etapas de uso.</p>
-      </div>
-      <div class="pm-turn">
-        <p class="pm-turn__kicker">El sistema mantiene una historia comprensible</p>
-        <h3 class="pm-turn__title section__title">Cada versión debe poder entenderse desde la anterior.</h3>
-        <p class="section__body">Registrar cambios, decisiones y dependencias permite saber qué se modificó, por qué se hizo y qué partes pueden verse afectadas.</p>
-        <p class="section__body">Esa trazabilidad facilita el mantenimiento y conserva el contexto cuando el sistema evoluciona.</p>
-      </div>
-      <p class="section__body pm-close">La continuidad se define según el proyecto: puede concluir con una entrega documentada o seguir mediante mantenimiento, evolución y nuevas fases de trabajo.</p>
-    </section>
-
-    <!-- 08 — COLABORACIÓN Y ENCAJE -->
-    <section id="colaboracion-encaje" class="wrap section pm-section pm-section--08" aria-labelledby="colaboracion-title">
-      <div class="pm-band">
-        <p class="pm-marker">08</p>
-        <div class="pm-band__head">
-          <h2 id="colaboracion-title" class="section__title">Cada colaboración se organiza alrededor del estado real del proyecto.</h2>
-          <p class="section__body">El punto de partida puede ser una necesidad abierta, una arquitectura existente, una herramienta en desarrollo o un sistema en evolución.</p>
-          <p class="section__body">La colaboración se define según las decisiones pendientes y la capacidad del equipo para aportar contexto, validar el trabajo e incorporar la solución a su operación.</p>
-        </div>
-      </div>
-      <ol class="pm-modes" role="list">
-        <li class="pm-mode">
-          <h3 class="pm-mode__title">01 — Diagnóstico y definición</h3>
-          <p class="section__body">Analizamos la operación, las herramientas y la información implicada para delimitar el proyecto.</p>
-          <p class="section__body">Esta fase ordena decisiones, establece prioridades y prepara una base para diseñar, presupuestar o desarrollar las siguientes etapas.</p>
-        </li>
-        <li class="pm-mode">
-          <h3 class="pm-mode__title">02 — Proyecto cerrado</h3>
-          <p class="section__body">El trabajo se organiza alrededor de un resultado delimitado, con responsabilidades, fases y criterios de revisión acordados.</p>
-          <p class="section__body">El proyecto puede abarcar diseño, desarrollo, documentación y puesta en uso según la profundidad necesaria.</p>
-        </li>
-        <li class="pm-mode">
-          <h3 class="pm-mode__title">03 — Prototipo o piloto</h3>
-          <p class="section__body">Construimos una versión acotada para evaluar el uso, la viabilidad técnica o la relación entre varias partes del sistema.</p>
-          <p class="section__body">El piloto aporta información para decidir qué conviene mantener, modificar, ampliar o descartar en la siguiente fase.</p>
-        </li>
-        <li class="pm-mode">
-          <h3 class="pm-mode__title">04 — Desarrollo por fases</h3>
-          <p class="section__body">El proyecto se divide en entregas sucesivas que permiten construir funciones, comprobar su comportamiento y ampliar el alcance sobre una base estable.</p>
-          <p class="section__body">Cada fase mantiene objetivos y criterios propios dentro de la arquitectura general.</p>
-        </li>
-        <li class="pm-mode">
-          <h3 class="pm-mode__title">05 — Mantenimiento y evolución</h3>
-          <p class="section__body">Trabajamos sobre una base existente para conservar su funcionamiento, revisar dependencias y desarrollar mejoras vinculadas al uso real.</p>
-          <p class="section__body">La evolución puede incorporar funciones, cambios de interfaz, integraciones o revisiones de arquitectura.</p>
-        </li>
-        <li class="pm-mode">
-          <h3 class="pm-mode__title">06 — Acompañamiento y transferencia</h3>
-          <p class="section__body">Acompañamos decisiones de producto, arquitectura, documentación o desarrollo mediante sesiones de trabajo y revisión.</p>
-          <p class="section__body">La colaboración puede ordenar una fase, desbloquear una decisión o transferir conocimiento al equipo responsable.</p>
-        </li>
-      </ol>
-      <div class="pm-turn">
-        <p class="pm-turn__kicker">Lo que necesita el proyecto para avanzar</p>
-        <h3 class="pm-turn__title section__title">El acceso al contexto forma parte del trabajo.</h3>
-        <p class="section__body">Las decisiones de sistema dependen de conocer cómo funciona la operación, qué personas intervienen y qué información sostiene cada recorrido.</p>
-        <p class="section__body">El proyecto necesita interlocución, acceso proporcionado al contexto y capacidad para revisar decisiones en momentos definidos.</p>
-        <ul class="pm-anno pm-anno--wide" role="list">
-          <li>CONTEXTO DISPONIBLE</li>
-          <li>PERSONAS IMPLICADAS</li>
-          <li>CAPACIDAD DE DECISIÓN</li>
-          <li>INFORMACIÓN Y ACCESOS</li>
-          <li>ALCANCE REALISTA</li>
-          <li>VALIDACIÓN</li>
-        </ul>
-      </div>
-      <div class="pm-shared">
-        <figure class="pm-bp pm-bp--fit" aria-hidden="true">
-          <svg class="pm-bp__svg" viewBox="0 0 480 180" preserveAspectRatio="xMidYMid meet" focusable="false" role="presentation">
-            <g class="pm-bp__mesh">
-              <line x1="0" y1="90" x2="480" y2="90"/>
-            </g>
-            <line class="pm-bp__link" x1="118" y1="90" x2="206" y2="90"/>
-            <line class="pm-bp__link" x1="274" y1="90" x2="362" y2="90"/>
-            <circle class="pm-bp__node" cx="80" cy="90" r="28"/>
-            <text class="pm-bp__label pm-bp__label--sec" x="80" y="150">CCDV</text>
-            <rect class="pm-bp__sq pm-bp__sq--core" x="212" y="62" width="56" height="56" rx="5"/>
-            <text class="pm-bp__label pm-bp__label--sec" x="240" y="150">ALCANCE COMPARTIDO</text>
-            <circle class="pm-bp__node" cx="400" cy="90" r="28"/>
-            <text class="pm-bp__label pm-bp__label--sec" x="400" y="150">PROYECTO</text>
-          </svg>
-        </figure>
-        <div class="pm-turn">
-          <p class="pm-turn__kicker">Una estructura compartida</p>
-          <h3 class="pm-turn__title section__title">El alcance también organiza responsabilidades.</h3>
-          <p class="section__body">CC Dev. Unit dirige el diagnóstico, la arquitectura, el diseño y el desarrollo incluidos en la colaboración.</p>
-          <p class="section__body">El equipo del proyecto aporta contexto, acceso, conocimiento operativo y capacidad de validación. Las responsabilidades concretas se definen al inicio y se revisan cuando cambia el alcance.</p>
-        </div>
-      </div>
-      <div class="pm-turn">
-        <p class="pm-turn__kicker">Condiciones de encaje</p>
-        <h3 class="pm-turn__title section__title">El sistema debe formar parte real del proyecto.</h3>
-        <p class="section__body">La colaboración necesita una necesidad operativa o digital que requiera comprensión, estructura y capacidad de desarrollo.</p>
-        <p class="section__body">También requiere disposición para compartir contexto, revisar decisiones y construir una base que pueda sostenerse después de la intervención.</p>
-        <p class="section__body">La primera conversación identifica el punto de partida, comprueba el encaje y establece el tipo de intervención adecuado.</p>
-      </div>
-    </section>
-
-    <!-- 09 — EMPEZAR POR EL CONTEXTO -->
-    <section id="empezar-contexto" class="wrap section pm-section pm-section--09" aria-labelledby="empezar-title">
-      <div class="pm-band">
-        <p class="pm-marker">09</p>
-        <div class="pm-band__head">
-          <h2 id="empezar-title" class="section__title">Cuéntanos cómo funciona ahora.</h2>
-          <p class="section__body">Puedes iniciar la conversación desde una necesidad abierta, una herramienta existente o una idea en desarrollo.</p>
-          <p class="section__body">Explícanos qué existe, qué necesita cambiar y quién utiliza actualmente el proceso, la herramienta o la información implicada. Ese contexto permite identificar el punto de partida y proponer el siguiente paso.</p>
-        </div>
-      </div>
-      <div class="pm-context">
-        <article class="pm-context__item">
-          <h3 class="pm-context__title">01 — Situación actual</h3>
-          <p class="pm-question"><strong>¿Qué existe hoy?</strong></p>
-          <p class="section__body">Describe brevemente cómo funciona ahora el proceso, la herramienta o el producto.</p>
-          <p class="section__body">Puede tratarse de una operación manual, varias plataformas conectadas, una interfaz existente, una idea en desarrollo o un sistema que necesita evolucionar.</p>
-        </article>
-        <article class="pm-context__item">
-          <h3 class="pm-context__title">02 — Cambio necesario</h3>
-          <p class="pm-question"><strong>¿Qué necesita ocurrir de otra manera?</strong></p>
-          <p class="section__body">Indica qué parte del funcionamiento necesita más estructura, visibilidad, coordinación o capacidad técnica.</p>
-          <p class="section__body">También puede tratarse de una función nueva, una experiencia que debe revisarse o una herramienta todavía por definir.</p>
-        </article>
-        <article class="pm-context__item">
-          <h3 class="pm-context__title">03 — Personas y uso</h3>
-          <p class="pm-question"><strong>¿Quién utiliza o utilizará la solución?</strong></p>
-          <p class="section__body">Cuéntanos qué personas intervienen, qué responsabilidades tienen y en qué contexto realizan el trabajo.</p>
-          <p class="section__body">Esta información ayuda a comprender los recorridos, accesos y decisiones que deberá sostener el proyecto.</p>
-        </article>
-        <article class="pm-context__item">
-          <h3 class="pm-context__title">04 — Información y herramientas</h3>
-          <p class="pm-question"><strong>¿Qué datos, documentos o plataformas forman parte del contexto?</strong></p>
-          <p class="section__body">Puedes mencionar las herramientas actuales, las fuentes de información y cualquier dependencia relevante.</p>
-          <p class="section__body pm-note">El primer contacto debe excluir contraseñas, accesos e información sensible.</p>
-        </article>
-      </div>
-      <div class="pm-turn">
-        <h3 class="pm-turn__title section__title">Una necesidad abierta también es un punto de partida</h3>
-        <p class="section__body">Una idea puede encontrarse en una fase temprana, una herramienta puede requerir una revisión general y una operación puede contener varias necesidades todavía difíciles de separar.</p>
-        <p class="section__body">La primera conversación ordena esa situación, identifica la información pendiente y establece si el siguiente paso corresponde a diagnóstico, definición, prototipado o desarrollo.</p>
-      </div>
-      <div class="pm-cta">
-        <p class="pm-turn__kicker">Qué ocurre después</p>
-        <h3 class="pm-turn__title section__title">La primera conversación delimita el siguiente movimiento.</h3>
-        <p class="section__body">Revisaremos el contexto, las necesidades principales y el estado actual del proyecto.</p>
-        <p class="section__body">Cuando existe encaje, definimos qué información necesita ampliarse y qué intervención permite avanzar con una base clara.</p>
-        <div class="pm-cta__actions">
-          <a href="./contact.html" class="button">PLANTEAR UN PROYECTO</a>
-          <a href="mailto:contact@collapsecreative.com" class="button button--ghost">ESCRIBIR POR CORREO</a>
-        </div>
-      </div>
-    </section>
-
+    </div>
   </main>
   <footer class="site-footer ov-footer">
     <div class="wrap ov-footer__inner">
@@ -717,5 +593,6 @@
     </div>
   </footer>
   <script src="./app.js?v=0.6.6"></script>
+  <script src="./practice-method.js?v=0.6.7"></script>
 </body>
 </html>
