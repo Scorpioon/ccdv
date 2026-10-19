@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ccos/wrkops/1.8/handoff.schema.json",
+  "title": "WRKOPS 1.8 Handoff",
+  "schema_version": "1.1.0",
+  "type": "object",
+  "required": [
+    "task_id",
+    "slug",
+    "mode",
+    "target_version",
+    "current_version",
+    "model",
+    "state",
+    "stack",
+    "created"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "pattern": "^t_[0-9]{8}_[a-z0-9]{4,}$"
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(_[a-z0-9-]+)+$"
+    },
+    "mode": {
+      "enum": [
+        "AUDIT",
+        "PATCH",
+        "REFACTOR",
+        "RECOVERY",
+        "DOCS",
+        "WWL",
+        "ROADMAP"
+      ]
+    },
+    "target_version": {
+      "type": "string",
+      "pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+[a-z]*$"
+    },
+    "current_version": {
+      "type": "string",
+      "pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+[a-z]*$"
+    },
+    "model": {
+      "type": "string",
+      "minLength": 1
+    },
+    "state": {
+      "enum": [
+        "REQUESTED",
+        "SCOPED",
+        "ATTEMPTED",
+        "IMPLEMENTED",
+        "VALIDATED",
+        "COMMITTED",
+        "SHIPPED",
+        "BLOCKED",
+        "FAILED",
+        "ABORTED",
+        "REJECTED",
+        "SUPERSEDED",
+        "CANCELLED"
+      ]
+    },
+    "stack": {
+      "enum": [
+        "website",
+        "software",
+        "app"
+      ]
+    },
+    "created": {
+      "type": "string",
+      "format": "date"
+    }
+  }
+}

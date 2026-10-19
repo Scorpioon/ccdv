@@ -1,0 +1,257 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ccos/wrkops/1.8/settings.schema.json",
+  "title": "WRKOPS 1.8.2 composed .claude/settings.json",
+  "schema_version": "1.0.0",
+  "description": "Validates the FINAL composed settings object produced by wrksettings.compose, not a raw source layer. Written entirely in the Draft 2020-12 subset wrkparse.validate_against_schema implements (no third-party dependency, CLAUDECLI.2.02 NO_INSTALL). Semantic rules this subset cannot express - hook wiring against DEPLOYMENT_MANIFEST.json, resolved env values, comment-key discipline - are explicit fail-closed checks in wrksettings.py.",
+  "type": "object",
+  "required": [
+    "//",
+    "permissions",
+    "hooks",
+    "env"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "//": {
+      "description": "The single generated provenance comment. Source '//' keys are stripped before merge; exactly one generated key is added back.",
+      "type": "string",
+      "minLength": 1
+    },
+    "permissions": {
+      "description": "Static allow/deny rule lists. Stable unions of base + variant: base order preserved, variant-only rules appended, never sorted.",
+      "type": "object",
+      "required": [
+        "deny",
+        "allow"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "deny": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "allow": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "hooks": {
+      "description": "Logic-bearing guarantees. The three event names required here are the frozen 1.8.2 baseline inherited from settings.base.json; a variant may add further events, which is why additional event keys are permitted.",
+      "type": "object",
+      "required": [
+        "SessionStart",
+        "PreToolUse",
+        "Stop"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "SessionStart": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "hooks"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "matcher": {
+                "type": "string",
+                "minLength": 1
+              },
+              "hooks": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "command"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "command"
+                      ]
+                    },
+                    "command": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "timeout": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "PreToolUse": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "hooks"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "matcher": {
+                "type": "string",
+                "minLength": 1
+              },
+              "hooks": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "command"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "command"
+                      ]
+                    },
+                    "command": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "timeout": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "Stop": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "hooks"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "matcher": {
+                "type": "string",
+                "minLength": 1
+              },
+              "hooks": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "command"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "command"
+                      ]
+                    },
+                    "command": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "timeout": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "env": {
+      "description": "Required CCOS env baseline. Extra valid env keys are allowed. CCOS_WORKSPACE_ROOT and CCOS_PYTHON must be resolved absolute values; that rule is enforced in wrksettings, not expressible here.",
+      "type": "object",
+      "required": [
+        "CCOS_ACTIVE_TASK",
+        "CCOS_ALLOW_READONLY_GIT",
+        "CCOS_HANDOFF_DIR",
+        "CCOS_INTEL_DIR",
+        "CCOS_METADATA_DIR",
+        "CCOS_OPS_ROOT",
+        "CCOS_PYTHON",
+        "CCOS_REPORT_DIR",
+        "CCOS_REPORT_STRICT",
+        "CCOS_WORKSPACE_ROOT",
+        "CCOS_WRKOPS_DIR"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "CCOS_ACTIVE_TASK": {
+          "type": "string",
+          "minLength": 1
+        },
+        "CCOS_ALLOW_READONLY_GIT": {
+          "type": "string",
+          "minLength": 1
+        },
+        "CCOS_HANDOFF_DIR": {
+          "type": "string",
+          "minLength": 1
+        },
+        "CCOS_INTEL_DIR": {
+          "type": "string",
+          "minLength": 1
+        },
+        "CCOS_METADATA_DIR": {
+          "type": "string",
+          "minLength": 1
+        },
+        "CCOS_OPS_ROOT": {
+          "type": "string",
+          "minLength": 1
+        },
+        "CCOS_PYTHON": {
+          "type": "string",
+          "minLength": 1
+        },
+        "CCOS_REPORT_DIR": {
+          "type": "string",
+          "minLength": 1
+        },
+        "CCOS_REPORT_STRICT": {
+          "type": "string",
+          "minLength": 1
+        },
+        "CCOS_WORKSPACE_ROOT": {
+          "type": "string",
+          "minLength": 1
+        },
+        "CCOS_WRKOPS_DIR": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ccos/wrkops/1.8/active_task.schema.json",
+  "title": "WRKOPS 1.8.1 active_task.json",
+  "schema_version": "1.2.0",
+  "type": "object",
+  "required": [
+    "task_id",
+    "slug",
+    "handoff",
+    "expected_report",
+    "state"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "pattern": "^t_[0-9]{8}_[a-z0-9]{4,}$"
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(_[a-z0-9-]+)+$"
+    },
+    "handoff": {
+      "type": "string",
+      "minLength": 1
+    },
+    "expected_report": {
+      "type": "string",
+      "minLength": 1
+    },
+    "state": {
+      "enum": [
+        "REQUESTED",
+        "SCOPED",
+        "ATTEMPTED",
+        "IMPLEMENTED",
+        "VALIDATED",
+        "COMMITTED",
+        "SHIPPED",
+        "BLOCKED",
+        "FAILED",
+        "ABORTED",
+        "REJECTED",
+        "SUPERSEDED",
+        "CANCELLED"
+      ]
+    },
+    "required_reads": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "operator_validation": {
+      "type": "object",
+      "required": [
+        "validated",
+        "date"
+      ],
+      "properties": {
+        "validated": {
+          "type": "boolean"
+        },
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

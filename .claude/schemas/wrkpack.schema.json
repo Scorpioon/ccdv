@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ccos/wrkops/1.8/wrkpack.schema.json",
+  "title": "WRKOPS 1.8.1 task pack manifest",
+  "schema_version": "1.1.0",
+  "type": "object",
+  "required": [
+    "pack_version",
+    "task_id",
+    "slug",
+    "handoff"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "pack_version": {
+      "type": "string",
+      "pattern": "^1\\.0$"
+    },
+    "task_id": {
+      "type": "string",
+      "pattern": "^t_[0-9]{8}_[a-z0-9]{4,}$"
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(_[a-z0-9-]+)+$"
+    },
+    "handoff": {
+      "type": "string",
+      "minLength": 1
+    },
+    "attachments": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "hashes": {
+      "type": "object"
+    },
+    "required_reads": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}

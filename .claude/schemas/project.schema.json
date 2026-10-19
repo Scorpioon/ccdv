@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ccos/wrkops/1.8/project.schema.json",
+  "title": "WRKOPS 1.8 project.json",
+  "schema_version": "1.3.0",
+  "type": "object",
+  "required": [
+    "project",
+    "module",
+    "workspace_root",
+    "stack",
+    "current_version",
+    "target_version",
+    "slug_ledger"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "project": {
+      "type": "string",
+      "minLength": 1
+    },
+    "module": {
+      "type": "string",
+      "minLength": 1
+    },
+    "workspace_root": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stack": {
+      "enum": [
+        "website",
+        "software",
+        "app"
+      ]
+    },
+    "current_version": {
+      "type": "string",
+      "pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+[a-z]*$"
+    },
+    "target_version": {
+      "type": "string",
+      "pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+[a-z]*$"
+    },
+    "slug_ledger": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "task_id",
+          "slug",
+          "state"
+        ],
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "pattern": "^t_[0-9]{8}_[a-z0-9]{4,}$"
+          },
+          "slug": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(_[a-z0-9-]+)+$"
+          },
+          "state": {
+            "enum": [
+              "REQUESTED",
+              "SCOPED",
+              "ATTEMPTED",
+              "IMPLEMENTED",
+              "VALIDATED",
+              "COMMITTED",
+              "SHIPPED",
+              "BLOCKED",
+              "FAILED",
+              "ABORTED",
+              "REJECTED",
+              "SUPERSEDED",
+              "CANCELLED"
+            ]
+          }
+        }
+      }
+    },
+    "project_id": {
+      "type": "string",
+      "pattern": "^p_[0-9a-f]{16}$"
+    },
+    "boundary_findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "finding",
+          "task_id",
+          "date",
+          "detail"
+        ],
+        "properties": {
+          "finding": {
+            "enum": [
+              "NO_REPORT_ON_STOP",
+              "REPORT_DIR_UNWRITABLE",
+              "REPORT_UNPARSEABLE",
+              "IDENTITY_MISMATCH"
+            ]
+          },
+          "task_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "slug": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "detail": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

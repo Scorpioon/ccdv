@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ccos/wrkops/1.8/scope.schema.json",
+  "title": "WRKOPS 1.8 Scope statement",
+  "schema_version": "1.0.0",
+  "type": "object",
+  "required": ["touch","do_not_touch","change_type"],
+  "additionalProperties": true,
+  "properties": {
+    "touch":        {"type":"array","items":{"type":"string"},"minItems":1},
+    "do_not_touch": {"type":"array","items":{"type":"string"},"minItems":1},
+    "change_type":  {"enum":["feature","fix","refactor","docs","chore"]},
+    "file_count_estimate": {"type":"integer","minimum":0}
+  }
+}
