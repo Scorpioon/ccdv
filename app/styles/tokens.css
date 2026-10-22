@@ -1,0 +1,53 @@
+/* CCDV design tokens — GF07-C visual-first reconstruction of R1.1.
+   Every colour below is sampled from the manifest-pinned R1.1 page exports
+   (pages_index_home.svg / pages_studio.svg), not chosen. The artboard is a
+   fixed 1440 design; see --u in global.css for how that maps to any width. */
+
+/* GF07-C3 — the R1.1 face itself.
+   R1.1 is set in Victor Mono SemiBold, confirmed by the OPERATOR and verified
+   against the archive's own outlines: unitsPerEm 1100, advance 600, cap 800,
+   x-height 618, lsb("[") 155, "[" ink 155..485 and -145..945, overshoot 14,
+   underline -75/50. Every one of those is the value measured off the R1.1
+   page exports. The six emoticon origins already in global.css/home.tsx
+   reproduce R1.1's ink to three decimals once this face's bearings are added,
+   which is what pins the identification.
+
+   ONE face covers both pages — every element was tested by ink width and
+   bearing against SemiBold and Regular, and all of them are SemiBold. It is
+   declared at its real weight, 600, not relabelled 400; global.css asks for
+   600 everywhere and sets font-synthesis: none so no UA default can
+   manufacture a bold that is not this outline.
+
+   Self-hosted WOFF2, resolved and emitted by Vite through this relative url().
+   No external request. The JetBrains Mono TTF and its OFL.txt stay in
+   app/assets/fonts as reversible historical assets and are no longer referenced
+   by any rule. */
+@font-face {
+  font-family: "Victor Mono";
+  src: url("../assets/fonts/VictorMono-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* --- surfaces -------------------------------------------------------- */
+  --ccdv-bg: #b2b2b2;      /* page ground                                  */
+  --ccdv-panel: #cacac8;   /* masthead + band bodies + light sections      */
+  --ccdv-ink: #202020;     /* type, dark sections, footer                  */
+  --ccdv-light: #d9d9d9;   /* gear centre, footer mark, hex rings          */
+  --ccdv-white: #ffffff;
+
+  /* --- band stripes, top to bottom (Home) ------------------------------ */
+  --ccdv-purple: #8654b3;
+  --ccdv-yellow: #fef36a;
+  --ccdv-red: #f64848;
+  --ccdv-green: #5ae36f;
+  --ccdv-blue: #48a4f6;
+
+  /* --- Studio accents -------------------------------------------------- */
+  --ccdv-purple-card: #a864e2;
+  --ccdv-purple-deep: #5c377c;
+
+  --ccdv-font: "Victor Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}

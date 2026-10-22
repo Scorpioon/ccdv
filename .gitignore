@@ -1,1 +1,6 @@
 /_wrkops/
+/node_modules/
+/.react-router/
+/build/
+/dist/
+*.tsbuildinfo

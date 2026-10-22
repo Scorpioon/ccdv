@@ -1,0 +1,643 @@
+/* CCDV — GF07-C static visual reconstruction of R1.1.
+   ---------------------------------------------------------------------------
+   R1.1 is a fixed 1440-wide artboard (Home 1440x1468, Studio 1440x3209). Every
+   number in this file is the literal coordinate read out of the pinned page
+   exports, expressed in --u, where one --u is one artboard pixel.
+
+   --u is derived from container query units: 1cqw is 1% of .site-shell's
+   inline size, so at a 1440 container --u resolves to exactly 1px and the
+   layout is pixel-faithful; at any other width the whole page scales
+   proportionally rather than reflowing away from the reference. cqw is used
+   instead of vw so the scrollbar cannot push the page into horizontal
+   overflow. */
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html,
+body { margin: 0; padding: 0; }
+
+body {
+  min-width: 320px;
+  background: var(--ccdv-bg);
+  color: var(--ccdv-ink);
+  font-family: var(--ccdv-font);
+  font-weight: 600;
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:where(a, button):focus-visible { outline: calc(3 * var(--u, 1px)) solid #2469ff; outline-offset: calc(3 * var(--u, 1px)); }
+ul { margin: 0; padding: 0; list-style: none; }
+/* 600, not 400: the only face loaded is Victor Mono SemiBold, and leaving the
+   UA's bold on h1/h2 would ask for 700 and get a synthesised bold instead of
+   the verified outline. font-synthesis: none on body is the second lock. */
+h1, h2, p { margin: 0; font-weight: 600; }
+
+/* --- shell ---------------------------------------------------------------
+   GF07-C removes the placeholder shell's clipping and fixed stage height:
+   the pages are 1468 and 3209 tall and must scroll. The Motion coordinator
+   and AnimatePresence are untouched — only the constraints that prevented a
+   full-height page from rendering are gone, which is reversible by restoring
+   overflow/min-height here. */
+.site-shell { min-height: 100vh; container-type: inline-size; }
+.site-stage__route { display: block; }
+main { display: block; outline: none; }
+
+.r11 {
+  --u: calc(1cqw / 14.4);
+  position: relative;
+  width: 100%;
+  background: var(--ccdv-bg);
+  font-size: calc(16 * var(--u));
+  line-height: 1.4;
+}
+
+/* --- masthead ------------------------------------------------------------ */
+.masthead {
+  position: relative;
+  z-index: 5;
+  height: calc(268.12 * var(--u));
+  background: var(--ccdv-panel);
+}
+
+/* gear + stacked pixel block form one identity lockup spanning x24..317 */
+.masthead__mark {
+  position: absolute;
+  left: calc(24 * var(--u));
+  top: calc(24 * var(--u));
+  width: calc(293.03 * var(--u));
+  height: calc(220.12 * var(--u));
+  display: block;
+}
+
+.masthead__gear {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(220 * var(--u));
+  height: calc(220 * var(--u));
+}
+
+.masthead__pixel {
+  position: absolute;
+  left: calc(244 * var(--u));
+  top: 0;
+  width: calc(49.03 * var(--u));
+  height: calc(220.12 * var(--u));
+}
+
+/* GF07-C3 — how every text box below is placed, now on the real R1.1 face.
+   ---------------------------------------------------------------------------
+   HORIZONTAL (unchanged from GF07-C2, and now exact). R1.1 ships text as
+   outlined paths, so the reference gives GLYPH INK, not the text box. Every
+   `left` here is the reference TEXT ORIGIN, recovered from the ink by
+   subtracting the face's own left side bearing. GF07-C2 derived those origins
+   while the face was still provisional; with Victor Mono SemiBold loaded they
+   are confirmed, not approximated — the six emoticon origins reproduce R1.1's
+   measured ink to three decimals. Nothing horizontal changed in GF07-C3.
+
+   VERTICAL. Placement is by BASELINE, not by box top: for a box with `top: T`
+   and `line-height: L`, the baseline sits at
+
+       T + L/2 + 0.386364 * font-size
+
+   The constant is (ascent - descent) / 2 / upem for Victor Mono: hhea and OS/2
+   agree at ascent 1100, descent 250 on a 1100 em, with USE_TYPO_METRICS set so
+   there is no metric ambiguity. It was 0.36 under the provisional face, so
+   EVERY `top` below was re-solved — scaling the sizes alone would have thrown
+   every baseline out by up to 5. lineGap 200 is irrelevant here because no rule
+   uses `line-height: normal`.
+
+   SIZES. Both faces carry a 600 advance, but Victor Mono's em is 1100 against
+   1000, so every size is exactly 11/10 of its GF07-C2 value and every character
+   pitch, wrap width and baseline-to-baseline distance is preserved unchanged.
+   The sizes still trace to measured pitch (font-size = pitch * 11/6); the
+   round ones cross-check against cap height and bracket height to within 0.07%.
+
+   UNDERLINES. R1.1 sits them one stroke lower than the font's own position:
+   0.04545em of extra offset, which is Victor Mono's own 50/1100 em thickness.
+   That single pair of values reproduces all four measured R1.1 underlines
+   exactly — masthead title 7.375 below baseline at 2.950 thick, CC.OS wordmark
+   23.83 at 9.53, links 1.50 at 0.60, action plate 3.00 at 1.20.
+
+   NO letter-spacing anywhere: the provisional-face compensation that was
+   considered in GF07-C2 is moot and must not be reintroduced. */
+
+.masthead__title {
+  position: absolute;
+  left: calc(341.03 * var(--u));
+  top: calc(5.93 * var(--u));              /* baseline 71 */
+  font-size: calc(64.9 * var(--u));
+  line-height: calc(80 * var(--u));        /* second baseline 151 */
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+/* R1.1's broken underline segments are descender skips, which skip-ink
+   reproduces; only the offset and thickness are stated. */
+.masthead__title span {
+  display: block;
+  text-decoration: underline;
+  text-underline-offset: 0.04545em;
+  text-decoration-thickness: 0.04545em;
+}
+
+.masthead__meta {
+  position: absolute;
+  left: calc(341.03 * var(--u));
+  top: calc(188.9 * var(--u));             /* baselines 204 / 224 / 244 */
+  font-size: calc(13.2 * var(--u));
+  line-height: calc(20 * var(--u));
+  white-space: nowrap;
+}
+
+.masthead__meta a {
+  text-decoration: underline;
+  text-underline-offset: 0.04545em;
+  text-decoration-thickness: 0.04545em;
+}
+
+.masthead__lang {
+  position: absolute;
+  left: calc(1336 * var(--u));
+  top: calc(22.3 * var(--u));              /* baseline 34 */
+  font-size: calc(13.2 * var(--u));
+  line-height: 1;
+}
+
+/* the two loose squares on the Home masthead baseline (x933.03 / x1406, y234) */
+.masthead__dot {
+  position: absolute;
+  top: calc(234 * var(--u));
+  width: calc(10 * var(--u));
+  height: calc(10 * var(--u));
+  background: var(--ccdv-ink);
+}
+.masthead__dot--a { left: calc(933.03 * var(--u)); }
+.masthead__dot--b { left: calc(1406 * var(--u)); }
+
+/* --- Studio five-cell masthead -------------------------------------------
+   Cells are contiguous at a 214.89 pitch from x341.031 to x1416, y24..244. */
+.cells { position: absolute; left: calc(341.03 * var(--u)); top: calc(24 * var(--u)); display: flex; }
+
+.cell {
+  position: relative;
+  display: block;
+  width: calc(214.89 * var(--u));
+  height: calc(220 * var(--u));
+  border: calc(1 * var(--u)) solid var(--ccdv-ink);
+  border-right-width: 0;
+}
+.cell:last-child { border-right-width: calc(1 * var(--u)); }
+.cell[aria-current="page"] { background: var(--ccdv-purple-card); }
+.cell[aria-disabled="true"] { cursor: default; }
+
+/* label and dot share the cell's x12.5 in R1.1 — the label only looked
+   indented because 14.36 was its bracket ink rather than its origin. */
+.cell__label {
+  position: absolute;
+  left: calc(12.5 * var(--u));
+  top: calc(10.4 * var(--u));              /* baseline 22.1 from cell top */
+  font-size: calc(13.2 * var(--u));
+  line-height: 1;
+}
+
+.cell__dot {
+  position: absolute;
+  left: calc(12.5 * var(--u));
+  top: calc(198 * var(--u));
+  width: calc(10 * var(--u));
+  height: calc(10 * var(--u));
+  background: var(--ccdv-ink);
+}
+
+.cell__tile {
+  position: absolute;
+  left: calc(28.11 * var(--u));
+  top: calc(30.47 * var(--u));
+  width: calc(159.17 * var(--u));
+  height: calc(159.17 * var(--u));
+}
+
+/* --- Home navigation bands ----------------------------------------------
+   Each band is a 31 stripe over a 177 body. The oversized bracket label is
+   NOT clipped to the body: in the reference the label paths are painted after
+   the band rects, so each label's bracket descends about 28 past the body and
+   over the stripe below. Where that stripe is the dark footer the overlap is
+   invisible (same ink), which is why only the coloured stripes show the notch.
+   z-index keeps that paint order explicit rather than relying on source order. */
+.bands { position: relative; display: block; }
+
+.band { position: relative; display: block; }
+.band__stripe { position: relative; z-index: 1; display: block; height: calc(31 * var(--u)); }
+.band__body {
+  position: relative;
+  z-index: 2;
+  display: block;
+  height: calc(177 * var(--u));
+  background: var(--ccdv-panel);
+}
+
+.band--studio .band__stripe { background: var(--ccdv-purple); }
+.band--work .band__stripe { background: var(--ccdv-yellow); }
+.band--services .band__stripe { background: var(--ccdv-red); }
+.band--products .band__stripe { background: var(--ccdv-green); }
+.band--contact .band__stripe { background: var(--ccdv-blue); }
+
+/* VIS-01. Character pitch across the five labels is 114.3095 (differences of
+   bracket-to-bracket spans at 6/8/9/10 characters all agree), so the size is
+   114.3095 * 11/6 = 209.57. The label baseline sits exactly on the body's
+   bottom edge in all five bands and on the Studio hero — the designer set the
+   labels on the band divider — so the bracket descends 0.132 em past it over
+   the stripe below, which is the notch the reference shows. */
+.band__label {
+  position: absolute;
+  z-index: 3;
+  left: calc(24 * var(--u));               /* origin; ink lands at 53.549 */
+  top: calc(-8.76 * var(--u));             /* baseline 177 = body bottom */
+  font-size: calc(209.57 * var(--u));
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--ccdv-ink);
+}
+
+/* the emoticons share the labels' baseline and are 99: pitch between the two
+   "+" of "+.+" is 53.965, and "P" cap measures 72.000 against the face's
+   0.7273 em cap. */
+.band__suffix {
+  position: absolute;
+  z-index: 3;
+  top: calc(89.25 * var(--u));             /* baseline 177, as the label */
+  font-size: calc(99 * var(--u));
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.band__chevron {
+  position: absolute;
+  z-index: 3;
+  left: calc(1408 * var(--u));
+  top: calc(22.3 * var(--u));              /* baseline 34 */
+  font-size: calc(13.2 * var(--u));        /* "v" x-height measures 7.416 */
+  line-height: 1;
+  color: var(--ccdv-bg);
+}
+
+.band__link { display: block; color: inherit; }
+.band__link[aria-disabled="true"] { cursor: default; }
+
+/* --- footer -------------------------------------------------------------- */
+.footer {
+  position: relative;
+  z-index: 1;
+  height: calc(160 * var(--u));
+  background: var(--ccdv-ink);
+  color: var(--ccdv-light);
+}
+
+/* footer lockup: 26.08 gear then the inline pixel block, x48..191.83 */
+.footer__mark {
+  position: absolute;
+  left: calc(48 * var(--u));
+  top: calc(48 * var(--u));
+  width: calc(143.83 * var(--u));
+  height: calc(26.17 * var(--u));
+  display: block;
+}
+
+.footer__gear {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(26.08 * var(--u));
+  height: calc(26.14 * var(--u));
+}
+
+.footer__pixel {
+  position: absolute;
+  left: calc(29.35 * var(--u));
+  top: 0;
+  width: calc(114.48 * var(--u));
+  height: calc(26.17 * var(--u));
+}
+
+.footer__col {
+  position: absolute;
+  top: calc(43.9 * var(--u));              /* baselines 58 / 76 / 94 / 112 */
+  font-size: calc(13.2 * var(--u));
+  line-height: calc(18 * var(--u));
+  white-space: nowrap;
+}
+.footer__col--a { left: calc(215.83 * var(--u)); }
+.footer__col--b { left: calc(470.83 * var(--u)); }
+.footer__col--c { left: calc(581.83 * var(--u)); }
+
+.footer__col a {
+  text-decoration: underline;
+  text-underline-offset: 0.04545em;
+  text-decoration-thickness: 0.04545em;
+}
+
+/* --- Studio sections -----------------------------------------------------
+   Heights are the literal rect heights from pages_studio.svg and sum to
+   3208.12 with the masthead, so the page flows without absolute positioning. */
+.section { position: relative; display: block; }
+.section--stripe { height: calc(31 * var(--u)); background: var(--ccdv-purple); }
+.section--hero { height: calc(177 * var(--u)); background: var(--ccdv-panel); }
+/* copy on the two dark sections is #B2B2B2 in R1.1, not the panel grey */
+.section--intro { height: calc(392 * var(--u)); background: var(--ccdv-ink); color: var(--ccdv-bg); }
+.section--cards { height: calc(389 * var(--u)); background: var(--ccdv-panel); }
+/* GF07-D: both panels keep the reference's fixed expanded height (389 / 289)
+   — their children are position:absolute, so an auto/measured height would
+   collapse to zero. overflow:hidden is required, not cosmetic: it is what
+   clips the content away when height transitions to 0, and what stops
+   .clip-rows + .section::before (the group-closing rule) from painting over
+   an empty box. transition-duration is zeroed globally under
+   prefers-reduced-motion, so no separate reduced-motion branch is needed here. */
+.section--columns {
+  height: calc(389 * var(--u));
+  background: var(--ccdv-panel);
+  overflow: hidden;
+  transition: height 0.32s ease;
+}
+.section--wrkops {
+  height: calc(289 * var(--u));
+  background: var(--ccdv-ink);
+  color: var(--ccdv-bg);
+  overflow: hidden;
+  transition: height 0.32s ease;
+}
+.section--columns[data-collapsed="true"],
+.section--wrkops[data-collapsed="true"] { height: 0; }
+.section--ccos { height: calc(692 * var(--u)); background: var(--ccdv-purple); color: var(--ccdv-ink); }
+
+/* Studio hero reuses the Home band-label treatment inside the 177 body. */
+.section--hero .band__label { z-index: 3; }
+
+/* "collapse" is 13.2: the two l of "collapse" are 7.19 apart. */
+.hero__watermark,
+.clip-row__watermark {
+  position: absolute;
+  left: calc(1358 * var(--u));
+  z-index: 4;
+  font-size: calc(13.2 * var(--u));
+  line-height: 1;
+  color: var(--ccdv-bg);
+}
+.hero__watermark { top: calc(22.3 * var(--u)); }      /* baseline 34 */
+.clip-row__watermark { top: calc(23.3 * var(--u)); }  /* baseline 35 */
+
+/* GF07-D: the indicator is state, not a button — it must never win the click
+   over the full-row toggle beneath it, even where it visually overlaps it. */
+.clip-row__chevron,
+.clip-row__watermark { pointer-events: none; }
+
+/* VIS-05 sibling. Pitch 19.1875 -> 32, baselines 43 apart, paragraphs 98
+   apart. The wrap width had to come down from 740: at 32 the reference's
+   third line is exactly "tools and human centered experiences." (37 cells,
+   ending at 751.04), which only breaks that way for a width under 38 cells. */
+.intro__copy {
+  position: absolute;
+  left: calc(48 * var(--u));
+  top: calc(38.9 * var(--u));              /* first baseline 74 */
+  width: calc(720 * var(--u));
+  font-size: calc(35.2 * var(--u));        /* advance still 19.2 */
+  line-height: calc(43 * var(--u));
+}
+.intro__copy p + p { margin-top: calc(55 * var(--u)); }
+
+.intro__figure {
+  position: absolute;
+  left: calc(960.26 * var(--u));
+  top: calc(48.31 * var(--u));
+  width: calc(255.88 * var(--u));
+  height: calc(295.46 * var(--u));
+}
+
+/* --- Studio principle cards ---------------------------------------------- */
+.cards { position: absolute; left: calc(48 * var(--u)); top: calc(48 * var(--u)); display: flex; gap: calc(48 * var(--u)); }
+
+.card {
+  position: relative;
+  width: calc(300 * var(--u));
+  height: calc(293 * var(--u));
+  background: var(--ccdv-purple-card);
+}
+
+/* Both entries start at the card's own x, not inset: the 2.17 and 2.88 of
+   GF07-C were bracket and "W" ink. Label pitch is 8.3945 over the 19 advances
+   of "[ Our own toolbelt ]" -> 14. */
+.card__label {
+  position: absolute;
+  left: 0;
+  top: calc(-2.65 * var(--u));             /* baseline 11 from card top */
+  font-size: calc(15.4 * var(--u));
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* VIS-02. Pitch between the two "o" of "our own" is 14.3905, and the baselines
+   are 32 apart, against the 16/23 GF07-C estimated. The 290 wrap width is kept
+   and the advance is still 14.4, so this reproduces R1.1's breaks on all four
+   cards exactly (16/16/20/14/16/20/16 cells on the second card, measured and
+   matched). */
+.card__body {
+  position: absolute;
+  left: 0;
+  top: calc(51.8 * var(--u));              /* first baseline 78 from card top */
+  width: calc(290 * var(--u));
+  font-size: calc(26.4 * var(--u));
+  line-height: calc(32 * var(--u));
+}
+
+/* VIS-05 — the same four entries repeated further down with no card fill.
+   Label baseline 59 and first body baseline 126 below the section top; the
+   label's static line box is its own line-height, so the two stack. */
+.columns { position: absolute; left: calc(48 * var(--u)); top: calc(45.35 * var(--u)); display: flex; gap: calc(48 * var(--u)); transition: opacity 0.32s ease; }
+.columns .card { background: none; height: auto; }
+.columns .card__label { position: static; }
+.columns .card__body { position: static; margin-top: calc(39.05 * var(--u)); }
+.section--columns[data-collapsed="true"] .columns { opacity: 0; }
+
+/* --- Studio clipped heading rows ----------------------------------------
+   VIS-03. These rows are NOT bare page ground: in pages_studio.svg each row
+   is a filled #CACAC8 path (masked, so it reads as a gap in the rect stack and
+   was missed when only <rect> elements were enumerated), the same panel grey
+   as the sections above and below. The band of darker ground the comparison
+   shows is the defect, not the reference. Only these four rows change; the
+   page ground, the dark sections, the purple bands and the cards are already
+   correct and are left alone.
+
+   The rows are 98, 98, 97 and 97 tall — not a uniform 97.67 — with a 1 rule
+   on each row's top edge and one closing the triple group at 1581.12. */
+.clip-rows { position: relative; display: block; background: var(--ccdv-panel); }
+.clip-rows--triple { height: calc(293 * var(--u)); }
+.clip-rows--single { height: calc(97 * var(--u)); }
+
+.clip-row { position: relative; display: block; height: calc(98 * var(--u)); }
+.clip-rows--triple .clip-row:nth-child(3) { height: calc(97 * var(--u)); }
+.clip-rows--single .clip-row { height: calc(97 * var(--u)); }
+
+.clip-row::before {
+  content: "";
+  position: absolute;
+  z-index: 4;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: calc(1 * var(--u));
+  background: var(--ccdv-ink);
+}
+
+/* 99 confirmed two ways (bracket-to-bracket over the 16 advances of
+   "[Designer to dev]" gives a 53.965 pitch; the bracket's own 98.10 ink height
+   against the face's 0.9909 em bracket gives 99.0), on the same origin grid as
+   the band labels — 24, not the 37.95 bracket ink. */
+.clip-row__label {
+  position: absolute;
+  z-index: 3;
+  left: calc(24 * var(--u));
+  top: calc(9.25 * var(--u));              /* baseline 97 from row top */
+  font-size: calc(99 * var(--u));
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* GF07-D disclosure control. Same text metrics as .clip-row__label above, but
+   sized to the full row (not shrink-wrapped to the glyphs) so the whole row
+   is the hit area, not just the bracketed text. The text position is then
+   reproduced with padding instead of left/top, landing on the identical
+   pixel origin. */
+.clip-row__toggle {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  display: block;
+  text-align: left;
+  padding: calc(9.25 * var(--u)) 0 0 calc(24 * var(--u));
+  font-size: calc(99 * var(--u));
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.clip-row__chevron {
+  position: absolute;
+  z-index: 4;
+  left: calc(1408 * var(--u));
+  top: calc(23.3 * var(--u));              /* baseline 35 */
+  font-size: calc(13.2 * var(--u));
+  line-height: 1;
+  color: var(--ccdv-bg);                   /* #B2B2B2 on the panel row */
+}
+
+.clip-rows + .section::before {
+  content: "";
+  position: absolute;
+  z-index: 4;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: calc(1 * var(--u));
+  background: var(--ccdv-ink);
+}
+
+/* --- Studio WRKOPS + CC.OS ----------------------------------------------- */
+.wrkops__copy {
+  position: absolute;
+  left: calc(48 * var(--u));
+  top: calc(79.4 * var(--u));              /* first baseline 114.5 */
+  width: calc(700 * var(--u));
+  font-size: calc(35.2 * var(--u));
+  line-height: calc(43 * var(--u));
+  transition: opacity 0.32s ease;
+}
+
+.wrkops__figure {
+  position: absolute;
+  left: calc(916.65 * var(--u));
+  top: calc(48 * var(--u));
+  width: calc(343.08 * var(--u));
+  height: calc(396.16 * var(--u));
+  transition: opacity 0.32s ease;
+}
+
+.section--wrkops[data-collapsed="true"] .wrkops__copy,
+.section--wrkops[data-collapsed="true"] .wrkops__figure { opacity: 0; }
+
+.ccos__figure {
+  position: absolute;
+  left: calc(58.28 * var(--u));
+  top: calc(72.5 * var(--u));
+  width: calc(132.9 * var(--u));
+  height: calc(153.46 * var(--u));
+}
+
+/* left is already the origin here and stays: R1.1's own underline runs
+   233.458..805.084, exactly five 114.325 advances, which pins both the origin
+   and the size independently of the band labels. The rule measures 9.53 thick
+   at 23.83 below the baseline, which the shared 0.04545em pair reproduces. */
+.ccos__wordmark {
+  position: absolute;
+  left: calc(233.46 * var(--u));
+  top: calc(40.2 * var(--u));              /* baseline 225.96 */
+  font-size: calc(209.57 * var(--u));
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: underline;
+  text-underline-offset: 0.04545em;
+  text-decoration-thickness: 0.04545em;
+}
+
+/* 740 is kept — the advance is unchanged at 19.2, so it still reproduces
+   R1.1's five breaks exactly. */
+.ccos__copy {
+  position: absolute;
+  left: calc(48 * var(--u));
+  top: calc(311.4 * var(--u));             /* first baseline 346.5 */
+  width: calc(740 * var(--u));
+  font-size: calc(35.2 * var(--u));
+  line-height: calc(43 * var(--u));
+}
+
+/* same size as the card copy: "Read dev notes →" is 16 characters and R1.1's
+   underline spans 48..278.259, i.e. 16 x 14.4. Its baseline sits on the white
+   plate's bottom edge, which the padding puts it on. */
+.ccos__action {
+  position: absolute;
+  left: calc(48 * var(--u));
+  top: calc(590.5 * var(--u));
+  width: calc(231 * var(--u));
+  height: calc(29 * var(--u));
+  background: var(--ccdv-white);
+  color: var(--ccdv-ink);
+  font-size: calc(26.4 * var(--u));
+  line-height: calc(29 * var(--u));
+  text-align: left;
+  padding-top: calc(4.3 * var(--u));       /* baseline 29 = plate bottom */
+  text-decoration: underline;
+  text-underline-offset: 0.04545em;
+  text-decoration-thickness: 0.04545em;
+}
+
+.ccos__dot {
+  position: absolute;
+  left: calc(1382 * var(--u));
+  top: calc(609.5 * var(--u));
+  width: calc(10 * var(--u));
+  height: calc(10 * var(--u));
+  background: var(--ccdv-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0s !important;
+    animation-duration: 0s !important;
+  }
+}

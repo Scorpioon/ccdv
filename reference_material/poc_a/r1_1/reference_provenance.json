@@ -1,0 +1,86 @@
+{
+  "schema": "ccdv.gf06-c2.design-references-intake.v1",
+  "project": "CCDV",
+  "mode": "REFERENCE_ONLY_NOT_PUBLISHABLE",
+  "task_id": "t_20261019_gf05poca01",
+  "source_operator_bundle": "ccdv_gf06b2_r4_poca_windows_encoding_corrected_gated_20261020_v0_1",
+  "source_operator_bundle_sha256": "59bdad0341680eec46cac655b23e4018776e03370f04fd3dc1bdd00fa5bc8675",
+  "source_archive": "webdesign_r1_1(1).zip",
+  "source_archive_sha256": "6052bcf96b1ff85df9a236412d58921bfe90beaa5fb0013755bf8d898400f6f0",
+  "reference_count": 8,
+  "no_app_asset_mapping": true,
+  "native_fig_included": false,
+  "source_files": [
+    {
+      "source_member": "references/r1_1_original/pages_index_home.svg",
+      "target_relative": "reference_material/poc_a/r1_1/references/r1_1_original/pages_index_home.svg",
+      "sha256": "762b8e64496332f7b992b526f78d4328f278631ad0967f2be7a2d0c15fa8c329",
+      "size": 282641,
+      "origin": "R1.1 source export",
+      "reference_role": "READ_ONLY_COMPOSITION_REFERENCE"
+    },
+    {
+      "source_member": "references/r1_1_original/pages_index_home.png",
+      "target_relative": "reference_material/poc_a/r1_1/references/r1_1_original/pages_index_home.png",
+      "sha256": "55855bdd05c2a1f2b702803fa8b0b5909ac8a7d5af5bbc1eb1bd606f5e862623",
+      "size": 104470,
+      "origin": "R1.1 source export",
+      "reference_role": "READ_ONLY_COMPOSITION_REFERENCE"
+    },
+    {
+      "source_member": "references/r1_1_original/pages_studio.svg",
+      "target_relative": "reference_material/poc_a/r1_1/references/r1_1_original/pages_studio.svg",
+      "sha256": "82df1aee0d8f3300e9d2b6832d2112521bfe61df7144fb66cab9fcba3d0d1c68",
+      "size": 1276983,
+      "origin": "R1.1 source export",
+      "reference_role": "READ_ONLY_COMPOSITION_REFERENCE"
+    },
+    {
+      "source_member": "references/r1_1_original/pages_studio.png",
+      "target_relative": "reference_material/poc_a/r1_1/references/r1_1_original/pages_studio.png",
+      "sha256": "51361e7eecd6d7449291ef7ffd3d498bec42dd764fec93ae44658e8647a4326f",
+      "size": 353062,
+      "origin": "R1.1 source export",
+      "reference_role": "READ_ONLY_COMPOSITION_REFERENCE"
+    },
+    {
+      "source_member": "references/r1_1_original/CCDV_OnlyLogo.svg",
+      "target_relative": "reference_material/poc_a/r1_1/references/r1_1_original/CCDV_OnlyLogo.svg",
+      "sha256": "884bc662a00765d056503c6b1af6eaada92d96c6fd235a86911cd04939bfac48",
+      "size": 1778,
+      "origin": "R1.1 source export",
+      "reference_role": "LOGO_SOURCE_CANDIDATE_NOT_YET_MAPPED"
+    },
+    {
+      "source_member": "references/r1_1_original/CCDV_Logo+Horizontal_Type.svg",
+      "target_relative": "reference_material/poc_a/r1_1/references/r1_1_original/CCDV_Logo+Horizontal_Type.svg",
+      "sha256": "77b3c944a99b10c9c3aa10a78c529938a453e7d657e92a30f6e7b34f2ac807af",
+      "size": 7340,
+      "origin": "R1.1 source export",
+      "reference_role": "LOGO_SOURCE_CANDIDATE_NOT_YET_MAPPED"
+    },
+    {
+      "source_member": "references/review/CCDV_HOME_CANONICAL_R1_1.png",
+      "target_relative": "reference_material/poc_a/r1_1/references/review/CCDV_HOME_CANONICAL_R1_1.png",
+      "sha256": "730be25903dedfbfbc5f53f8dda870ad36e3518dcfa79d72fe042b4816c04d24",
+      "size": 115979,
+      "origin": "canonical review image",
+      "reference_role": "READ_ONLY_COMPOSITION_REFERENCE"
+    },
+    {
+      "source_member": "references/review/CCDV_STUDIO_CANONICAL_R1_1.png",
+      "target_relative": "reference_material/poc_a/r1_1/references/review/CCDV_STUDIO_CANONICAL_R1_1.png",
+      "sha256": "8ad4a1df9e4eb810f278325e8183506f0f83414a6760616c40e5c3f186452e5f",
+      "size": 388774,
+      "origin": "canonical review image",
+      "reference_role": "READ_ONLY_COMPOSITION_REFERENCE"
+    }
+  ],
+  "usage": "Temporary local read-only visual references for Claude Code inspection; not copied into app/public, no publication/canonical design change.",
+  "constraints": [
+    "Do not modify these bytes",
+    "No asset integration without separate authority",
+    "No archived repository access",
+    "Do not assume page SVGs are final web assets"
+  ]
+}
