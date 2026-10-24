@@ -193,7 +193,14 @@ main { display: block; outline: none; }
   border-right-width: 0;
 }
 .cell:last-child { border-right-width: calc(1 * var(--u)); }
-.cell[aria-current="page"] { background: var(--ccdv-purple-card); }
+/* GF08-A2: the active cell's fill is the one thing that differs between
+   Studio/Work/Services' otherwise-identical five-cell nav (confirmed against
+   all three pages' own SVGs — purple/yellow/red respectively), so it is
+   scoped per masthead variant instead of the single unscoped rule GF07-C
+   shipped when Studio was the only non-Home masthead there was. */
+.masthead--studio .cell[aria-current="page"] { background: var(--ccdv-purple-card); }
+.masthead--work .cell[aria-current="page"] { background: var(--ccdv-yellow); }
+.masthead--services .cell[aria-current="page"] { background: var(--ccdv-red); }
 .cell[aria-disabled="true"] { cursor: default; }
 
 /* label and dot share the cell's x12.5 in R1.1 — the label only looked
@@ -631,6 +638,170 @@ main { display: block; outline: none; }
   height: calc(10 * var(--u));
   background: var(--ccdv-ink);
 }
+
+/* === GF08-A2 — Work + Services ===========================================
+   Visual-first per CLAUDE.md's GF08-A2 product priority: section rhythm and
+   macro layout trace to the literal rect heights in pages_work.svg /
+   pages_services.svg (noted inline below); internal arrangement inside each
+   section uses normal flow (flex) rather than exhaustive per-glyph absolute
+   positioning the way GF07-C did for Home/Studio — fine motion and sub-pixel
+   polish are GF09's, not this movement's. */
+
+.r11--work .section--stripe { background: var(--ccdv-yellow); }
+.r11--services .section--stripe { background: var(--ccdv-red); }
+
+/* Services' intro is 165 tall, not Studio's 392 — only the height differs;
+   the dark-ink / #B2B2B2-copy treatment is inherited unchanged from the
+   base .section--intro rule. */
+.r11--services .section--intro { height: calc(165 * var(--u)); }
+
+.section--work-explorer {
+  height: calc(527 * var(--u));
+  background: var(--ccdv-panel);
+  padding: calc(48 * var(--u)) calc(48 * var(--u)) 0;
+}
+.section--services-panel { height: calc(707 * var(--u)); background: var(--ccdv-panel); padding: calc(48 * var(--u)); }
+
+/* --- Work filters (`WRK-DEC-001/002`) ------------------------------------- */
+.work-filters { display: flex; justify-content: space-between; align-items: flex-start; font-size: calc(20 * var(--u)); }
+
+.filter-group { position: relative; display: flex; gap: calc(16 * var(--u)); }
+.filter-group--end { justify-content: flex-end; }
+
+.filter-group__option { position: relative; z-index: 1; white-space: nowrap; padding: calc(4 * var(--u)) 0; }
+
+/* GF08-A4 CORRECTION 01: Year is a disabled group until real per-project
+   year data exists (work.tsx) — dimmed and cursor: default so it does not
+   read as a live control, same muted idiom already used for
+   `.work-preview__note`'s "[ preview unavailable ]" state. */
+.filter-group--disabled { opacity: 0.5; }
+.filter-group--disabled .filter-group__option { cursor: default; }
+
+/* the one moving highlight per group (`WRK-DEC-001/002`); left/width are set
+   inline by FilterGroup from measured option geometry. */
+.filter-group__highlight {
+  position: absolute;
+  z-index: 0;
+  top: calc(3 * var(--u));
+  height: calc(11 * var(--u));
+  background: var(--ccdv-white);
+  transition: left 0.2s ease, width 0.2s ease;
+}
+
+/* --- Work project list + preview (`WRK-DEC-003/004/006`) ------------------ */
+.work-layout { display: flex; gap: calc(48 * var(--u)); margin-top: calc(40 * var(--u)); }
+.work-layout__list { flex: 1 1 auto; min-width: 0; }
+
+.project-list__empty { font-size: calc(20 * var(--u)); }
+
+.project-row { border-top: calc(1 * var(--u)) solid var(--ccdv-ink); }
+.project-row:first-child { border-top: none; }
+
+.project-row__button {
+  display: flex;
+  align-items: center;
+  gap: calc(8 * var(--u));
+  width: 100%;
+  padding: calc(22 * var(--u)) 0;
+  font-size: calc(20 * var(--u));
+  text-align: left;
+}
+
+/* the moving "white arrow inside a black box" (`WRK-DEC-004`); the box
+   always reserves its width so row text does not reflow as it moves, but
+   only paints once a row is actually active. */
+.project-row__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(16 * var(--u));
+  height: calc(18 * var(--u));
+  font-size: calc(13.2 * var(--u));
+}
+.project-row__arrow--active { background: var(--ccdv-ink); color: var(--ccdv-white); }
+.project-row__name { flex: 1 1 auto; }
+.project-row__name--underline { text-decoration: underline; text-underline-offset: 0.15em; }
+
+.project-row__tags { display: flex; align-items: center; gap: calc(8 * var(--u)); font-size: calc(13.2 * var(--u)); }
+.project-row__tag { background: var(--ccdv-white); padding: calc(2 * var(--u)) calc(6 * var(--u)); }
+.project-row__wip { background: var(--ccdv-yellow); padding: calc(2 * var(--u)) calc(6 * var(--u)); }
+
+/* honest no-preview state, same geometry for all six rows — see work.tsx */
+.work-preview {
+  flex: 0 0 calc(666.5 * var(--u));
+  aspect-ratio: 666.5 / 327.5;
+  border: calc(0.5 * var(--u)) solid var(--ccdv-ink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(8 * var(--u));
+  text-align: center;
+}
+.work-preview__name { font-size: calc(20 * var(--u)); }
+.work-preview__note { font-size: calc(16 * var(--u)); color: var(--ccdv-ink); opacity: 0.6; }
+
+/* --- Services categories (`SVC-DEC-001`) ----------------------------------
+   Pitch between the five bottom-left dots is a uniform 268.7 across all five
+   cells (`pages_services.svg`), so the row is five equal flex cells rather
+   than individually measured widths. */
+.svc-categories { display: flex; }
+
+.svc-category {
+  position: relative;
+  flex: 1 1 0;
+  height: calc(266 * var(--u));
+  border: calc(1 * var(--u)) solid var(--ccdv-ink);
+  border-left-width: 0;
+  text-align: left;
+  padding: calc(12 * var(--u));
+}
+.svc-category:first-child { border-left-width: calc(1 * var(--u)); }
+.svc-category--active { background: var(--ccdv-red); }
+
+.svc-category__label { font-size: calc(16 * var(--u)); white-space: nowrap; }
+.svc-category__dot {
+  position: absolute;
+  left: calc(12 * var(--u));
+  bottom: calc(12 * var(--u));
+  width: calc(10 * var(--u));
+  height: calc(10 * var(--u));
+  background: var(--ccdv-ink);
+}
+
+/* --- Services detail panel (`SVC-DEC-002/003/004`) ------------------------ */
+.svc-detail { display: flex; border: calc(1 * var(--u)) solid var(--ccdv-ink); border-top: 0; }
+
+.svc-detail__blocks {
+  position: relative;
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: calc(8 * var(--u));
+  padding: calc(24 * var(--u));
+  font-size: calc(20 * var(--u));
+}
+.svc-detail__block { text-align: left; }
+
+/* #D9D9D9, same token as the gear/hex "light" accent — sourced directly off
+   the right pane's own fill in pages_services.svg. */
+.svc-detail__description {
+  position: relative;
+  flex: 1 1 0;
+  background: var(--ccdv-light);
+  padding: calc(24 * var(--u));
+  font-size: calc(16 * var(--u));
+}
+
+.svc-detail__dot {
+  position: absolute;
+  left: calc(24 * var(--u));
+  bottom: calc(24 * var(--u));
+  width: calc(10 * var(--u));
+  height: calc(10 * var(--u));
+  background: var(--ccdv-ink);
+}
+.svc-detail__dot--accent { background: var(--ccdv-red); }
 
 @media (prefers-reduced-motion: reduce) {
   *,

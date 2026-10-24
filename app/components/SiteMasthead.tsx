@@ -1,22 +1,44 @@
+import type { ReactNode } from "react";
 import { Link } from "react-router";
 import { useTransitionLink } from "./GlobalShell";
 import { GearMark } from "./marks/GearMark";
 import { CcdvPixelMark } from "./marks/CcdvPixelMark";
 import { StudioWheelTile } from "./marks/StudioWheelTile";
+import { WorkGearTile } from "./marks/WorkGearTile";
+import { ServicesArrowTile } from "./marks/ServicesArrowTile";
 
-/* R1.1 gives the two pages different mastheads on a shared 268.12 band:
-   Home carries the wordmark, contact lines and two loose squares; Studio
-   replaces all of that with five nav cells, the first of which is filled and
-   holds the wheel tile. Only the identity lockup is common. */
+/* R1.1 gives Home one masthead and every other page the shared five-cell nav
+   (Studio, Work and Services each export their own copy of it with a
+   different cell filled and a different tile inside that cell — confirmed
+   identical cell geometry across all three pages' SVGs). Only the identity
+   lockup is common with Home. */
 
-/* Work, Services, Products and Contact exist in R1.1 but have no route in this
-   build, and GF07-C does not authorise inventing URLs. They render as present
-   but inert affordances rather than as links to nowhere. */
+/* Work, Services, Products and Contact exist in R1.1 but Products/Contact
+   have no route in this build, and GF07-C does not authorise inventing URLs.
+
+   GF08-A4 CORRECTION 02 (supersedes the GF08-A2 "all five stay inert" note
+   above): Studio/Work/Services are now the three *implemented* sections, so
+   their cells route to one another — only Products/Contact (no route yet)
+   stay present-but-inert. A plain `react-router` `Link` is used rather than
+   `useTransitionLink`, deliberately: the transition coordinator's
+   `TransitionTarget` union is narrowly `"/" | "/studio"` and this movement
+   must not widen it or give the masthead new page-transition choreography —
+   see NavBand's identical reasoning for its own Work/Services links. */
 const CELLS = ["[Studio]", "[Work]", "[Services]", "[Products]", "[Contact]"] as const;
+const CELL_ROUTES: Partial<Record<number, string>> = { 0: "/studio", 1: "/work", 2: "/services" };
 
-export function SiteMasthead({ variant }: { variant: "home" | "studio" }) {
+type SectionVariant = "studio" | "work" | "services";
+
+const SECTION_NAV: Record<SectionVariant, { index: number; Tile: (props: { className?: string }) => ReactNode }> = {
+  studio: { index: 0, Tile: StudioWheelTile },
+  work: { index: 1, Tile: WorkGearTile },
+  services: { index: 2, Tile: ServicesArrowTile },
+};
+
+export function SiteMasthead({ variant }: { variant: "home" | SectionVariant }) {
   const link = useTransitionLink();
   const isHome = variant === "home";
+  const nav = !isHome ? SECTION_NAV[variant as SectionVariant] : null;
 
   const mark = (
     <>
@@ -26,7 +48,7 @@ export function SiteMasthead({ variant }: { variant: "home" | "studio" }) {
   );
 
   return (
-    <header className="masthead">
+    <header className={`masthead masthead--${variant}`}>
       {isHome ? (
         <span className="masthead__mark" aria-current="page">
           {mark}
@@ -59,7 +81,23 @@ export function SiteMasthead({ variant }: { variant: "home" | "studio" }) {
       ) : (
         <nav className="cells" aria-label="Sections">
           {CELLS.map((label, i) => {
-            const current = i === 0;
+            const current = i === nav!.index;
+            const Tile = nav!.Tile;
+            const to = CELL_ROUTES[i];
+            const content = (
+              <>
+                <span className="cell__label">{label}</span>
+                {current && <Tile className="cell__tile" />}
+                <span className="cell__dot" aria-hidden="true" />
+              </>
+            );
+            if (!current && to) {
+              return (
+                <Link key={label} className="cell" to={to}>
+                  {content}
+                </Link>
+              );
+            }
             return (
               <span
                 key={label}
@@ -67,9 +105,7 @@ export function SiteMasthead({ variant }: { variant: "home" | "studio" }) {
                 aria-current={current ? "page" : undefined}
                 aria-disabled={current ? undefined : "true"}
               >
-                <span className="cell__label">{label}</span>
-                {current && <StudioWheelTile className="cell__tile" />}
-                <span className="cell__dot" aria-hidden="true" />
+                {content}
               </span>
             );
           })}

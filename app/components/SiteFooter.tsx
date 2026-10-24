@@ -1,19 +1,30 @@
+import { Link } from "react-router";
 import { GearMark } from "./marks/GearMark";
 import { CcdvPixelMark } from "./marks/CcdvPixelMark";
 
-/* Identical on Home and Studio — verified by the footer block in
-   pages_studio.svg matching footer.svg coordinate for coordinate (gear at
-   y53.2, text rows at +59.74/77.74/95.74/113.74, columns at x217.69/472.69/
-   583.69).
+/* Identical on Home, Studio, Work and Services — the Studio-era coordinate
+   match against footer.svg (gear at y53.2, text rows at +59.74/77.74/95.74/
+   113.74, columns at x217.69/472.69/583.69) stands; Work/Services were
+   checked at the rect level (160-tall dark footer rect at the expected
+   page-bottom offset in both pages_work.svg and pages_services.svg) and by
+   direct visual comparison of pages_work.png / pages_services.png, not by
+   re-deriving every inner coordinate a second time.
 
    The gear is #CACAC8 and the pixel block #D9D9D9 here, and the gear's centre
    is knocked out in the footer's own ink rather than being light — that is
    what the reference does, so it is transcribed rather than normalised.
 
-   Link text is reproduced verbatim from R1.1 and is editorially provisional;
-   none of these destinations is routed in this build, so they are inert. */
+   Link text is reproduced verbatim from R1.1 and is editorially provisional.
+   Work and Services now route; Products and Contact stay inert plain text
+   until GF08-B gives them real destinations — this is the one shared
+   component where that split is visible, so it is per-item, not per-column. */
 
-const COLUMN_B = ["[ Work ]", "[ Services ]", "[ Products ]", "[ Contact ]"];
+const COLUMN_B: { label: string; to?: string }[] = [
+  { label: "[ Work ]", to: "/work" },
+  { label: "[ Services ]", to: "/services" },
+  { label: "[ Products ]" },
+  { label: "[ Contact ]" },
+];
 const COLUMN_C = ["[ Privacy ]", "[ Terms of use ]", "[ Legal ]", "[ Onlyfans ]"];
 
 export function SiteFooter() {
@@ -35,7 +46,7 @@ export function SiteFooter() {
 
       <div className="footer__col footer__col--b">
         {COLUMN_B.map((item) => (
-          <div key={item}>{item}</div>
+          <div key={item.label}>{item.to ? <Link to={item.to}>{item.label}</Link> : item.label}</div>
         ))}
       </div>
 

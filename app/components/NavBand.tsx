@@ -14,7 +14,7 @@ export interface NavBandProps {
   label: string;
   suffix: string;
   suffixLeft: number;
-  /** only Studio is routed in this build; the rest are inert affordances */
+  /** Studio, Work and Services are routed in this build; Products/Contact stay inert */
   routed?: boolean;
 }
 
@@ -36,12 +36,23 @@ export function NavBand({ slug, label, suffix, suffixLeft, routed = false }: Nav
     </>
   );
 
+  // Studio keeps the motion-coordinated link `go()` already knows how to
+  // animate (its TransitionTarget union is deliberately narrow — see
+  // transitionCoordinator.ts, untouched by GF08-A). Work and Services are
+  // plain route links: GF09 owns extending page-transition choreography
+  // beyond Home<->Studio, not this movement.
   return (
     <li className={`band band--${slug}`}>
       {routed ? (
-        <Link className="band__link" {...link("/studio")}>
-          {inner}
-        </Link>
+        slug === "studio" ? (
+          <Link className="band__link" {...link("/studio")}>
+            {inner}
+          </Link>
+        ) : (
+          <Link className="band__link" to={`/${slug}`}>
+            {inner}
+          </Link>
+        )
       ) : (
         <span className="band__link" aria-disabled="true">
           {inner}
