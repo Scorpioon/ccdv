@@ -6,6 +6,8 @@ import { CcdvPixelMark } from "./marks/CcdvPixelMark";
 import { StudioWheelTile } from "./marks/StudioWheelTile";
 import { WorkGearTile } from "./marks/WorkGearTile";
 import { ServicesArrowTile } from "./marks/ServicesArrowTile";
+import { ProductsMarkTile } from "./marks/ProductsMarkTile";
+import { ContactMarkTile } from "./marks/ContactMarkTile";
 
 /* R1.1 gives Home one masthead and every other page the shared five-cell nav
    (Studio, Work and Services each export their own copy of it with a
@@ -13,26 +15,35 @@ import { ServicesArrowTile } from "./marks/ServicesArrowTile";
    identical cell geometry across all three pages' SVGs). Only the identity
    lockup is common with Home. */
 
-/* Work, Services, Products and Contact exist in R1.1 but Products/Contact
-   have no route in this build, and GF07-C does not authorise inventing URLs.
+/* Work, Services, Products and Contact exist in R1.1.
 
    GF08-A4 CORRECTION 02 (supersedes the GF08-A2 "all five stay inert" note
-   above): Studio/Work/Services are now the three *implemented* sections, so
-   their cells route to one another — only Products/Contact (no route yet)
-   stay present-but-inert. A plain `react-router` `Link` is used rather than
-   `useTransitionLink`, deliberately: the transition coordinator's
-   `TransitionTarget` union is narrowly `"/" | "/studio"` and this movement
-   must not widen it or give the masthead new page-transition choreography —
-   see NavBand's identical reasoning for its own Work/Services links. */
+   above): Studio/Work/Services are the three sections GF08-A implemented.
+   GF08-B adds Products/Contact to this same routed set — see CLAUDE.md
+   §0/§6; CCOS and the six subsystem leaves stay a separate, unrouted
+   surface reached only by Products' own card 01 link, not from this nav.
+   A plain `react-router` `Link` is used rather than `useTransitionLink`,
+   deliberately: the transition coordinator's `TransitionTarget` union is
+   narrowly `"/" | "/studio"` and this movement must not widen it or give
+   the masthead new page-transition choreography — see NavBand's identical
+   reasoning for its own Work/Services/Products/Contact links. */
 const CELLS = ["[Studio]", "[Work]", "[Services]", "[Products]", "[Contact]"] as const;
-const CELL_ROUTES: Partial<Record<number, string>> = { 0: "/studio", 1: "/work", 2: "/services" };
+const CELL_ROUTES: Partial<Record<number, string>> = {
+  0: "/studio",
+  1: "/work",
+  2: "/services",
+  3: "/products",
+  4: "/contact",
+};
 
-type SectionVariant = "studio" | "work" | "services";
+type SectionVariant = "studio" | "work" | "services" | "products" | "contact";
 
 const SECTION_NAV: Record<SectionVariant, { index: number; Tile: (props: { className?: string }) => ReactNode }> = {
   studio: { index: 0, Tile: StudioWheelTile },
   work: { index: 1, Tile: WorkGearTile },
   services: { index: 2, Tile: ServicesArrowTile },
+  products: { index: 3, Tile: ProductsMarkTile },
+  contact: { index: 4, Tile: ContactMarkTile },
 };
 
 export function SiteMasthead({ variant }: { variant: "home" | SectionVariant }) {

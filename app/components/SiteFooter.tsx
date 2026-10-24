@@ -15,15 +15,13 @@ import { CcdvPixelMark } from "./marks/CcdvPixelMark";
    what the reference does, so it is transcribed rather than normalised.
 
    Link text is reproduced verbatim from R1.1 and is editorially provisional.
-   Work and Services now route; Products and Contact stay inert plain text
-   until GF08-B gives them real destinations — this is the one shared
-   component where that split is visible, so it is per-item, not per-column. */
+   All four footer nav entries route as of GF08-B. */
 
 const COLUMN_B: { label: string; to?: string }[] = [
   { label: "[ Work ]", to: "/work" },
   { label: "[ Services ]", to: "/services" },
-  { label: "[ Products ]" },
-  { label: "[ Contact ]" },
+  { label: "[ Products ]", to: "/products" },
+  { label: "[ Contact ]", to: "/contact" },
 ];
 const COLUMN_C = ["[ Privacy ]", "[ Terms of use ]", "[ Legal ]", "[ Onlyfans ]"];
 

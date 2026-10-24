@@ -49,5 +49,12 @@
   --ccdv-purple-card: #a864e2;
   --ccdv-purple-deep: #5c377c;
 
+  /* --- CCOS subsystem rail, sampled from pages_products_ccos.svg's own six
+     gradient stops; KAIA/PANOPTES/KAIRON reuse the band-stripe purple/blue/
+     green above (confirmed identical hex), WRKOPS/AETHERNOS/KRON are new --- */
+  --ccdv-ccos-grey: #545454;
+  --ccdv-rose: #b35464;
+  --ccdv-ochre: #b38b54;
+
   --ccdv-font: "Victor Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
 }

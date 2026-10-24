@@ -14,7 +14,7 @@ export interface NavBandProps {
   label: string;
   suffix: string;
   suffixLeft: number;
-  /** Studio, Work and Services are routed in this build; Products/Contact stay inert */
+  /** Studio, Work, Services, Products and Contact are all routed in this build */
   routed?: boolean;
 }
 

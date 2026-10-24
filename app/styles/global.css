@@ -803,6 +803,253 @@ main { display: block; outline: none; }
 }
 .svc-detail__dot--accent { background: var(--ccdv-red); }
 
+/* === GF08-B — Products + Contact + CCOS ==================================
+   Same visual-first discipline as GF08-A2: macro section rhythm from the
+   literal rect heights in pages_products.svg / pages_contact.svg /
+   pages_products_ccos.svg (noted inline below), internal arrangement by
+   normal flow (flex) rather than exhaustive absolute positioning. */
+
+.r11--products .section--stripe { background: var(--ccdv-green); }
+.r11--contact .section--stripe { background: var(--ccdv-blue); }
+
+.masthead--products .cell[aria-current="page"] { background: var(--ccdv-green); }
+.masthead--contact .cell[aria-current="page"] { background: var(--ccdv-blue); }
+
+/* --- Products card rail (`PRD-011`-`017`) --------------------------------
+   569 tall, matching pages_products.svg's own card-section rect; four equal
+   299-wide cards on a 48 gap, the literal card width/gap/height read off
+   that same source (347.5-48.5=299, 396.5-347.5=49≈48, 1027.62-555.622≈472). */
+.section--products-cards {
+  height: calc(569 * var(--u));
+  background: var(--ccdv-panel);
+  display: flex;
+  align-items: flex-start;
+  gap: calc(48 * var(--u));
+  padding: calc(48.5 * var(--u)) calc(48 * var(--u)) 0;
+}
+
+.product-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: calc(299 * var(--u));
+  height: calc(472 * var(--u));
+  border: calc(1 * var(--u)) solid var(--ccdv-ink);
+  border-top-right-radius: calc(24.5 * var(--u));
+  padding-top: calc(22 * var(--u));
+  font-size: calc(15.4 * var(--u));
+}
+
+.product-card:not(.product-card--active) { opacity: 0.4; }
+.product-card--active { cursor: pointer; }
+
+.product-card__index { align-self: flex-start; margin-left: calc(24 * var(--u)); white-space: nowrap; }
+
+.product-card__art {
+  flex: 1 1 auto;
+  width: calc(132 * var(--u));
+  margin-top: calc(24 * var(--u));
+}
+
+.product-card__label { margin-top: calc(24 * var(--u)); margin-bottom: calc(24 * var(--u)); white-space: nowrap; }
+
+/* --- Contact directory (`CTC-010`-`024`) ---------------------------------
+   571 tall, matching pages_contact.svg's own directory-section rect. */
+.section--contact-directory { height: calc(571 * var(--u)); background: var(--ccdv-panel); padding: calc(48 * var(--u)); }
+
+.contact-directory { display: flex; justify-content: space-between; gap: calc(48 * var(--u)); height: 100%; }
+
+.contact-directory__brand { display: flex; flex-direction: column; justify-content: space-between; flex: 0 0 calc(700 * var(--u)); }
+.contact-directory__anchor { width: calc(10 * var(--u)); height: calc(10 * var(--u)); background: var(--ccdv-ink); }
+
+.contact-directory__identity { margin: calc(24 * var(--u)) 0; }
+.contact-directory__caption { font-size: calc(13.2 * var(--u)); margin: 0 0 calc(12 * var(--u)); }
+
+.identity-mark__gear { display: inline-block; width: calc(130 * var(--u)); height: calc(130 * var(--u)); vertical-align: middle; }
+.identity-mark__pixel { display: inline-block; width: calc(29 * var(--u)); height: calc(130 * var(--u)); margin-left: calc(14 * var(--u)); vertical-align: middle; }
+.contact-directory__ccdv { display: flex; align-items: center; }
+
+.identity-mark__rings { display: block; width: calc(220 * var(--u)); height: calc(140 * var(--u)); }
+.identity-mark__word {
+  display: block;
+  font-size: calc(48 * var(--u));
+  line-height: calc(48 * var(--u));
+  text-transform: uppercase;
+  margin-top: calc(8 * var(--u));
+}
+.contact-directory__collapse { display: block; }
+
+.contact-directory__groups { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between; font-size: calc(16 * var(--u)); }
+.contact-directory__group { margin-bottom: calc(16 * var(--u)); }
+.contact-directory__group-heading { margin: 0 0 calc(12 * var(--u)); }
+
+.contact-directory__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: calc(8 * var(--u)) 0;
+  border-bottom: calc(0.5 * var(--u)) solid var(--ccdv-ink);
+}
+.contact-directory__tag { opacity: 0.6; }
+.contact-directory__value--pending { text-decoration: none; }
+.contact-directory__value:not(.contact-directory__value--pending) {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.contact-directory__legal {
+  display: flex;
+  gap: calc(32 * var(--u));
+  margin-top: calc(16 * var(--u));
+  font-size: calc(13.2 * var(--u));
+  opacity: 0.8;
+}
+.contact-directory__version { margin-left: auto; }
+
+/* === CCOS hub (`/products/ccos`) =========================================
+   Own page, own header — see CcosHub's note on why it does not reuse
+   SiteMasthead. Dark from the top through the icon rail (1413.92 in the
+   source), matching .ccos-hub__header + .ccos-hub__hero sharing one
+   unbroken --ccdv-ink background rather than two separately measured
+   rects. */
+.r11--ccos { background: var(--ccdv-ink); }
+
+.ccos-hub__header,
+.ccos-hub__hero {
+  position: relative;
+  background: var(--ccdv-ink);
+  color: var(--ccdv-bg);
+}
+
+.ccos-hub__header {
+  padding: calc(24 * var(--u)) calc(24 * var(--u)) calc(48 * var(--u));
+}
+
+.ccos-hub__mark { display: inline-flex; align-items: center; }
+.ccos-hub__gear { width: calc(130 * var(--u)); height: calc(130 * var(--u)); }
+.ccos-hub__pixel { width: calc(29 * var(--u)); height: calc(130 * var(--u)); margin-left: calc(14 * var(--u)); }
+
+.ccos-hub__title {
+  margin: calc(16 * var(--u)) 0 0 calc(165 * var(--u));
+  font-size: calc(38 * var(--u));
+  line-height: calc(46 * var(--u));
+}
+.ccos-hub__title span { display: block; text-decoration: underline; text-underline-offset: 0.08em; }
+
+.ccos-hub__meta {
+  margin: calc(16 * var(--u)) 0 0 calc(165 * var(--u));
+  font-size: calc(13.2 * var(--u));
+  line-height: calc(20 * var(--u));
+}
+.ccos-hub__meta a { text-decoration: underline; text-underline-offset: 0.08em; }
+
+.ccos-hub__watermark {
+  position: absolute;
+  top: calc(24 * var(--u));
+  right: calc(32 * var(--u));
+  font-size: calc(13.2 * var(--u));
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.ccos-hub__dot { position: absolute; top: calc(30 * var(--u)); width: calc(10 * var(--u)); height: calc(10 * var(--u)); background: var(--ccdv-light); }
+.ccos-hub__dot--a { right: calc(300 * var(--u)); }
+.ccos-hub__dot--b { right: calc(180 * var(--u)); }
+.ccos-hub__dot--c { right: calc(60 * var(--u)); }
+
+.ccos-hub__hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: calc(16 * var(--u)) calc(48 * var(--u)) calc(64 * var(--u));
+}
+
+.ccos-hub__hero-icon { width: calc(90 * var(--u)); height: auto; }
+
+.ccos-hub__wordmark {
+  font-size: calc(96 * var(--u));
+  line-height: 1;
+  margin: calc(16 * var(--u)) 0 calc(24 * var(--u));
+  text-decoration: underline;
+  text-underline-offset: 0.08em;
+}
+
+.ccos-hub__intro {
+  max-width: calc(760 * var(--u));
+  font-size: calc(20 * var(--u));
+  line-height: calc(28 * var(--u));
+}
+
+.ccos-hub__chevron { font-size: calc(16 * var(--u)); margin: calc(24 * var(--u)) 0; display: block; }
+
+.ccos-rail { display: flex; gap: calc(23 * var(--u)); list-style: none; margin: calc(16 * var(--u)) 0 0; padding: 0; }
+.ccos-rail__item { display: flex; flex-direction: column; align-items: center; gap: calc(6 * var(--u)); }
+.ccos-rail__icon { width: calc(90 * var(--u)); height: auto; }
+.ccos-rail__name { font-size: calc(10 * var(--u)); opacity: 0.7; white-space: nowrap; }
+
+.ccos-hub__rail-caption {
+  margin-top: calc(16 * var(--u));
+  font-size: calc(16 * var(--u));
+  text-decoration: underline;
+  text-underline-offset: 0.08em;
+}
+
+/* --- CCOS detail section (`PCC-013`) -------------------------------------
+   Heights read off pages_products_ccos.svg: 31 stripe, 177 strip, 31
+   light stripe, 392 overview, 31 light stripe, 366 columns, 31 light
+   stripe, 366 lists — collapsing .ccos-detail__body (392+31+366+31+366 =
+   1186) to 0 reuses Studio's own data-collapsed height-transition pattern
+   rather than inventing a new one. */
+.ccos-detail__lead-stripe { background: var(--ccdv-ink); }
+.section--stripe--light { background: var(--ccdv-light); }
+
+.ccos-detail__strip { position: relative; display: flex; align-items: center; padding: 0 calc(48 * var(--u)); }
+.ccos-detail__wordmark { font-size: calc(96 * var(--u)); line-height: 1; margin: 0; }
+.ccos-detail__version { font-size: calc(48 * var(--u)); margin-left: calc(32 * var(--u)); }
+.ccos-detail__toggle {
+  position: absolute;
+  top: calc(16 * var(--u));
+  right: calc(32 * var(--u));
+  font-size: calc(13.2 * var(--u));
+  opacity: 0.6;
+}
+
+.ccos-detail__body { height: calc(1186 * var(--u)); overflow: hidden; transition: height 0.32s ease; }
+.ccos-detail[data-collapsed="true"] .ccos-detail__body { height: 0; }
+
+.ccos-detail__overview {
+  position: relative;
+  height: calc(392 * var(--u));
+  background: var(--ccdv-ink);
+  color: var(--ccdv-bg);
+  padding: calc(48 * var(--u));
+}
+.ccos-detail__overview-statement { font-size: calc(26 * var(--u)); margin: 0 0 calc(24 * var(--u)); }
+.ccos-detail__overview-list { list-style: none; margin: 0; padding: 0; font-size: calc(22 * var(--u)); line-height: calc(36 * var(--u)); }
+.ccos-detail__overview-icon {
+  position: absolute;
+  right: calc(96 * var(--u));
+  top: calc(60 * var(--u));
+  width: calc(110 * var(--u));
+  height: auto;
+}
+
+.ccos-detail__columns,
+.ccos-detail__lists {
+  height: calc(366 * var(--u));
+  background: var(--ccdv-panel);
+  display: flex;
+  padding: calc(40 * var(--u)) calc(48 * var(--u));
+  gap: calc(48 * var(--u));
+}
+.ccos-detail__column,
+.ccos-detail__list { flex: 1 1 0; }
+.ccos-detail__column-heading { font-size: calc(16 * var(--u)); margin: 0 0 calc(16 * var(--u)); opacity: 0.7; }
+.ccos-detail__column-body { font-size: calc(18 * var(--u)); line-height: calc(26 * var(--u)); margin: 0; }
+.ccos-detail__list ul { list-style: none; margin: 0; padding: 0; font-size: calc(18 * var(--u)); line-height: calc(28 * var(--u)); }
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
