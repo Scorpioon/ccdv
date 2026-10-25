@@ -985,9 +985,10 @@ main { display: block; outline: none; }
 .ccos-hub__chevron { font-size: calc(16 * var(--u)); margin: calc(24 * var(--u)) 0; display: block; }
 
 .ccos-rail { display: flex; gap: calc(23 * var(--u)); list-style: none; margin: calc(16 * var(--u)) 0 0; padding: 0; }
-.ccos-rail__item { display: flex; flex-direction: column; align-items: center; gap: calc(6 * var(--u)); }
+.ccos-rail__link { display: flex; flex-direction: column; align-items: center; gap: calc(6 * var(--u)); }
 .ccos-rail__icon { width: calc(90 * var(--u)); height: auto; }
 .ccos-rail__name { font-size: calc(10 * var(--u)); opacity: 0.7; white-space: nowrap; }
+.ccos-rail__item[data-active="true"] .ccos-rail__name { opacity: 1; text-decoration: underline; text-underline-offset: 0.15em; }
 
 .ccos-hub__rail-caption {
   margin-top: calc(16 * var(--u));
@@ -1049,6 +1050,57 @@ main { display: block; outline: none; }
 .ccos-detail__column-heading { font-size: calc(16 * var(--u)); margin: 0 0 calc(16 * var(--u)); opacity: 0.7; }
 .ccos-detail__column-body { font-size: calc(18 * var(--u)); line-height: calc(26 * var(--u)); margin: 0; }
 .ccos-detail__list ul { list-style: none; margin: 0; padding: 0; font-size: calc(18 * var(--u)); line-height: calc(28 * var(--u)); }
+
+/* === CCOS subsystem leaf pages (GF08-C2) =================================
+   `CcosSystemDetail`, the shared template behind the six
+   `/products/ccos/{wrkops,kaia,aethernos,panoptes,kron,kairon}` routes.
+   Reuses `.ccos-hub__*`/`.ccos-rail*`/`.ccos-detail__{lead-stripe,strip,
+   wordmark,version,toggle,columns,column*,lists,list}` unchanged — none of
+   those rules are edited above this block. Everything here is additive and
+   scoped under `.ccos-sysdetail`, so it can only ever affect these six
+   leaves, never the hub's own `CcosHub`/`CcosDetailPanel` instance.
+
+   Per-system values arrive as inline custom properties set by
+   `CcosSystemDetail` from `app/data/ccosSystems.ts`:
+     --ccos-sys-color     one of the six existing --ccdv-* theme tokens
+     --ccos-sys-text      ink (colored panels) or bg (WRKOPS's dark panel)
+     --ccos-body-units    .ccos-sysdetail__body height (1057 WRKOPS, 1014 the
+                           other five — see CcosSystemData.bodyHeightUnits)
+     --ccos-overview-units .ccos-sysdetail__overview height (263 / 220) */
+
+.ccos-sysdetail .ccos-hub__header,
+.ccos-sysdetail .ccos-hub__hero {
+  background: var(--ccos-sys-color, var(--ccdv-ink));
+  color: var(--ccos-sys-text, var(--ccdv-bg));
+}
+
+.ccos-sysdetail__overview {
+  position: relative;
+  height: calc(var(--ccos-overview-units, 220) * var(--u));
+  background: var(--ccdv-ink);
+  color: var(--ccdv-bg);
+  padding: calc(48 * var(--u));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+/* Vertically centers the icon within whatever overview height this system
+   carries, rather than hardcoding a top offset tuned for one fixed height
+   (the hub's own 392u panel is a different, untouched rule above). 127u is
+   the icon's own rendered height at the fixed 110u width (HexCube's
+   255.873:295.456 aspect ratio). */
+.ccos-sysdetail__overview .ccos-detail__overview-icon {
+  position: absolute;
+  right: calc(96 * var(--u));
+  top: calc((var(--ccos-overview-units, 220) - 127) / 2 * var(--u));
+  width: calc(110 * var(--u));
+  height: auto;
+}
+
+.ccos-sysdetail__body { height: calc(var(--ccos-body-units, 1014) * var(--u)); overflow: hidden; }
+
+.ccos-sysdetail__stripe--accent { background: var(--ccos-sys-color); }
+.ccos-sysdetail__lists--accent { background: var(--ccos-sys-color); }
 
 @media (prefers-reduced-motion: reduce) {
   *,
