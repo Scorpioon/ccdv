@@ -1,11 +1,10 @@
-import { GearMark } from "./GearMark";
-import { CcdvPixelMark } from "./CcdvPixelMark";
+import { CcdvLongMark } from "./CcdvLongMark";
 
 /* Contact's two oversized directory identities (`CTC-012`, `CTC-014`).
 
-   CCDV: the same gear + stacked pixel-block lockup used everywhere else on
-   the site, at directory scale — one identity, reused rather than redrawn,
-   per GearMark/CcdvPixelMark's own "one outline, scaled" design.
+   CCDV: the long-format lockup (CCDV_Long.svg, gear + horizontal pixel
+   wordmark), approved for CTC-012 in GF09-A2 D4. Inert: no anchor, no
+   handler (`CTC-DEC-004`).
 
    Collapse Creative: pages_contact.svg's own mark is two overlapping ring
    forms with a wordmark beneath. The two rings are reproduced geometrically
@@ -20,8 +19,7 @@ import { CcdvPixelMark } from "./CcdvPixelMark";
 export function CcdvIdentityMark({ className }: { className?: string }) {
   return (
     <span className={className} aria-hidden="true">
-      <GearMark className="identity-mark__gear" fill="#202020" dotFill="#D9D9D9" />
-      <CcdvPixelMark variant="stack" className="identity-mark__pixel" fill="#202020" />
+      <CcdvLongMark className="identity-mark__long" />
     </span>
   );
 }

@@ -866,8 +866,9 @@ main { display: block; outline: none; }
 .contact-directory__identity { margin: calc(24 * var(--u)) 0; }
 .contact-directory__caption { font-size: calc(13.2 * var(--u)); margin: 0 0 calc(12 * var(--u)); }
 
-.identity-mark__gear { display: inline-block; width: calc(130 * var(--u)); height: calc(130 * var(--u)); vertical-align: middle; }
-.identity-mark__pixel { display: inline-block; width: calc(29 * var(--u)); height: calc(130 * var(--u)); margin-left: calc(14 * var(--u)); vertical-align: middle; }
+/* CCDV_Long lockup (507x93) at the pages_contact.svg CTC-012 scale of
+   1.2866: 652.3 x 119.7. */
+.identity-mark__long { display: block; width: calc(652.3 * var(--u)); height: auto; aspect-ratio: 507 / 93; }
 .contact-directory__ccdv { display: flex; align-items: center; }
 
 .identity-mark__rings { display: block; width: calc(220 * var(--u)); height: calc(140 * var(--u)); }
@@ -892,6 +893,13 @@ main { display: block; outline: none; }
   border-bottom: calc(0.5 * var(--u)) solid var(--ccdv-ink);
 }
 .contact-directory__tag { opacity: 0.6; }
+/* White highlight behind the five values (CTC-016/017/019-021); box is the
+   reference's ~6 wide padding x 18 high (pages_contact.svg). Underline
+   stays link-only, below. */
+.contact-directory__value {
+  background: var(--ccdv-white);
+  padding: calc(1 * var(--u)) calc(6 * var(--u));
+}
 .contact-directory__value--pending { text-decoration: none; }
 .contact-directory__value:not(.contact-directory__value--pending) {
   text-decoration: underline;
