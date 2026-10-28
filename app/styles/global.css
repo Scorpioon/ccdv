@@ -294,6 +294,15 @@ main { display: block; outline: none; }
   color: var(--ccdv-bg);
 }
 
+/* GF09-C (FBI-014/015): on Home the stripe crosses OVER the label and
+   emoticon that overrun the band above. .band__body is a stacking context at
+   z 2 and carries the label (z 3 inside it), so that overflow painted above
+   the next band's stripe (z 1). Dropping Home's body to z 0 puts the whole
+   body — and its overflow — beneath every stripe; the glyph geometry,
+   overflow and any later hover reveal are untouched. Home only: other routes
+   do not use .band__body. */
+.r11--home .band__body { z-index: 0; }
+
 .band__link { display: block; color: inherit; }
 .band__link[aria-disabled="true"] { cursor: default; }
 
@@ -648,6 +657,12 @@ main { display: block; outline: none; }
    polish are GF09's, not this movement's. */
 
 .r11--work .section--stripe { background: var(--ccdv-yellow); }
+/* GF09-C (FBI-032): the hero's [Work] / +.+ sit at z 3 in the page context
+   and overrun onto the stripe below. Raising only Work's two stripes to z 4
+   (above the labels; still under the masthead's z 5, and the watermark at
+   z 4 never overlaps a stripe) lets the yellow bands cross over the hero
+   contents without any opaque overlay. */
+.r11--work .section--stripe { z-index: 4; }
 .r11--services .section--stripe { background: var(--ccdv-red); }
 
 /* Services' intro is 165 tall, not Studio's 392 — only the height differs;
