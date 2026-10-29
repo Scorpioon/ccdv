@@ -1,0 +1,121 @@
+# CCDV Pages release workflow (GF09-D).
+#
+# Lives in the DISTRIBUTION branch (pages-release) of the public repository.
+# It deploys an already-compiled site/ directory. It does not install, build or
+# fetch anything, and it never touches the CCDV development repository.
+#
+# Manual only. The two inputs must match the staged release receipt:
+#   expected_sha              40-hex source commit recorded in site/release.json
+#   expected_manifest_sha256  64-hex SHA256 of site/release-manifest.sha256
+#
+# NOTE (GF09-D2): action majors follow the OPERATOR-verified upstream release
+# listings of 2026-10-29 (checkout v7.0.1, upload-pages-artifact v5.0.0,
+# deploy-pages v5.0.1). They are NOT pinned to commit SHAs: no verified SHA
+# evidence was available offline and none is invented. The OPERATOR may pin
+# SHAs from the upstream release pages before the first run.
+
+name: ccdv-pages
+
+on:
+  workflow_dispatch:
+    inputs:
+      expected_sha:
+        description: "Approved source commit SHA (40 hex)"
+        required: true
+        type: string
+      expected_manifest_sha256:
+        description: "SHA256 of site/release-manifest.sha256 (64 hex)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  verify-and-package:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout distribution branch
+        uses: actions/checkout@v7
+        with:
+          repository: ${{ github.repository }}
+          persist-credentials: false
+
+      - name: Verify release identity and inventory
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ inputs.expected_sha }}
+          EXPECTED_MANIFEST: ${{ inputs.expected_manifest_sha256 }}
+        run: |
+          set -euo pipefail
+          export LC_ALL=C
+
+          # Only the distribution branch may be released from.
+          [ "$GITHUB_REF" = "refs/heads/pages-release" ] || { echo "ref is $GITHUB_REF, expected refs/heads/pages-release"; exit 1; }
+
+          [[ "$EXPECTED_SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "bad expected_sha"; exit 1; }
+          [[ "$EXPECTED_MANIFEST" =~ ^[0-9a-f]{64}$ ]] || { echo "bad expected_manifest_sha256"; exit 1; }
+          cd site
+          test -f release.json
+          test -f release-manifest.sha256
+          test -f index.html
+          test -f 404.html
+
+          actual_sha="$(jq -r '.sourceCommit' release.json)"
+          rec_manifest="$(jq -r '.manifestSha256' release.json)"
+          file_manifest="$(sha256sum release-manifest.sha256 | cut -d' ' -f1)"
+          echo "release.json sourceCommit : $actual_sha"
+          echo "release.json manifest     : $rec_manifest"
+          echo "manifest file sha256      : $file_manifest"
+          [ "$actual_sha" = "$EXPECTED_SHA" ] || { echo "source commit mismatch"; exit 1; }
+          [ "$rec_manifest" = "$EXPECTED_MANIFEST" ] || { echo "release.json manifest mismatch"; exit 1; }
+          [ "$file_manifest" = "$EXPECTED_MANIFEST" ] || { echo "manifest file mismatch"; exit 1; }
+
+          # Every listed file must hash as recorded (sha256sum format: "<64 hex>  <path>").
+          sha256sum --check --strict --quiet release-manifest.sha256
+
+          # The set of files present must equal the set listed: nothing extra, nothing
+          # missing, no duplicate lines. Only the two release metadata files (at the
+          # site root) are outside the manifest.
+          cut -c 67- release-manifest.sha256 | sort > "$RUNNER_TEMP/listed.txt"
+          find . -type f ! -path ./release.json ! -path ./release-manifest.sha256 | sed 's|^\./||' | sort > "$RUNNER_TEMP/present.txt"
+          diff -u "$RUNNER_TEMP/listed.txt" "$RUNNER_TEMP/present.txt" || { echo "site/ files differ from the manifest listing"; exit 1; }
+
+          # SPA deep-link fallback must be the app shell itself.
+          cmp index.html 404.html
+
+          # Fail closed on private or development material or links. Captured first:
+          # a `find | grep -q` pipeline under pipefail can miss a match on SIGPIPE.
+          forbidden="$(find . \( -type l -o -name '.claude' -o -name '_wrkops' -o -name 'work_assets' \
+               -o -name 'reference_material' -o -name 'node_modules' -o -name '.git' \
+               -o -name '*.map' -o -name '.env*' -o -name '*.pem' -o -name '*.key' \
+               -o -name '*.ps1' -o -name '*.py' \) -print)"
+          if [ -n "$forbidden" ]; then
+            echo "forbidden entry found under site/:"; echo "$forbidden"; exit 1
+          fi
+          echo "release identity OK"
+
+      - name: Upload Pages artifact (site/ only)
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+
+  deploy:
+    needs: verify-and-package
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
