@@ -1,32 +1,41 @@
 import { useId, useState } from "react";
+import type { CSSProperties } from "react";
 import { SiteMasthead } from "../components/SiteMasthead";
 import { SiteFooter } from "../components/SiteFooter";
 import { ClippedHeading } from "../components/ClippedHeading";
-import { PrincipleCard, PRINCIPLES } from "../components/PrincipleCard";
+import { PrincipleCardStatic, PrincipleSelectCard } from "../components/PrincipleCard";
 import { HexCube } from "../components/marks/HexCube";
+import { STUDIO_PRINCIPLES } from "../data/studioPrinciples";
 
 export function meta() {
   return [{ title: "CCDV — Studio" }];
 }
 
-/* Studio is a 3209-tall artboard. The section heights below are the literal
-   rect heights from pages_studio.svg and sum with the 268.12 masthead to
-   3208.12, so the page flows without absolute section positioning:
+/* Studio flows from the masthead down: 31 stripe · 177 hero · intro · 31
+   stripe · four CP squares · four FAN rows (each followed by its own panel) ·
+   CC.OS · footer. The fixed artboard heights of R1.1 (392 intro, 389 cards,
+   692 CC.OS) are kept as minimums; the corrected editorial copy is longer
+   than the draft it replaces, so those sections grow with their text.
 
-     268.12 masthead · 31 stripe · 177 hero · 392 intro · 31 stripe ·
-     389 cards · 293 heading rows · 389 columns · 97 heading row ·
-     289 WRKOPS · 692 CC.OS · 160 footer
+   GF09-E (FBI-017/018) — Core Principles state model (STD-DEC-012..016):
 
-   All copy is verbatim R1.1 and editorially provisional, typos included. */
+     selected   0..3 | null   the open fan; null = all four closed (initial)
+     hovered    0..3 | null   pointer is over a CP square (mouse/pen only)
+     focused    0..3 | null   keyboard focus (:focus-visible) is on a CP square
+
+   Clicking CPn or FANn toggles `selected` between n and null, so one square
+   is selected exactly when one fan is open. Hover and focus never touch
+   `selected`; they only move the single lilac square, whose target is
+   hovered ?? focused ?? selected, and which is not drawn when that is null. */
 export default function Studio() {
-  // GF07-D: the two rows with reference panel content (B1-a leaves the other
-  // two, [Designer to dev] and [Core principle 2], static — no content exists
-  // for them). Independent booleans, both default open per R1.1's drawn state;
-  // no exclusivity, no route-level behaviour.
-  const [collaborativeOpen, setCollaborativeOpen] = useState(true);
-  const [wrkopsOpen, setWrkopsOpen] = useState(true);
-  const columnsPanelId = useId();
-  const wrkopsPanelId = useId();
+  const [selected, setSelected] = useState<number | null>(null);
+  const [hovered, setHovered] = useState<number | null>(null);
+  const [focused, setFocused] = useState<number | null>(null);
+  const baseId = useId();
+
+  const lilac = hovered ?? focused ?? selected;
+  const toggle = (index: number) => setSelected((current) => (current === index ? null : index));
+  const panelId = (index: number) => `${baseId}-fan-${index}`;
 
   return (
     <div className="r11 r11--studio">
@@ -50,12 +59,16 @@ export default function Studio() {
       <section className="section section--intro">
         <div className="intro__copy">
           <p>
-            Collapse: Dev Unit is a technical studio spezialized in developing tools and human
-            centered experiences.
+            Collapse Creative Dev. Unit is a technical studio working across design, software
+            development and applied research.
           </p>
           <p>
-            We meet at the intersection between technical implementation, ux/ui design and
-            creativity.
+            Our background is in visual design and digital experiences. Today, we use that knowledge
+            to build web applications, custom tools and software around how people actually work.
+          </p>
+          <p>
+            We approach development through the interface, the underlying logic and the people who
+            will use it.
           </p>
         </div>
         <HexCube
@@ -70,69 +83,93 @@ export default function Studio() {
       <div className="section section--stripe" />
 
       <section className="section section--cards" aria-label="Core principles">
-        <div className="cards">
-          {PRINCIPLES.map((entry) => (
-            <PrincipleCard key={entry.label} {...entry} />
+        {/* The pointer region is the whole row of squares, gaps included, so the
+            lilac square glides between squares instead of vanishing in the gap
+            and is only released when the pointer leaves all four. */}
+        <div
+          className="cards"
+          onPointerLeave={() => setHovered(null)}
+          onBlur={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget)) setFocused(null);
+          }}
+        >
+          {lilac !== null && (
+            <span
+              className="cards__lilac"
+              style={{ "--i": lilac } as CSSProperties}
+              aria-hidden="true"
+            />
+          )}
+          {STUDIO_PRINCIPLES.map((principle, index) => (
+            <PrincipleSelectCard
+              key={principle.key}
+              label={principle.label}
+              body={principle.summary}
+              selected={selected === index}
+              panelId={panelId(index)}
+              onSelect={() => toggle(index)}
+              onPointerEnter={(event) => {
+                if (event.pointerType !== "touch") setHovered(index);
+              }}
+              onFocus={(event) => {
+                if (event.currentTarget.matches(":focus-visible")) setFocused(index);
+              }}
+            />
           ))}
         </div>
       </section>
 
-      <div className="clip-rows clip-rows--triple">
-        <ClippedHeading label="[Designer to dev]" chevron />
-        <ClippedHeading label="[Core principle 2]" chevron />
-        <ClippedHeading
-          label="[Collaborative approach]"
-          expanded={collaborativeOpen}
-          onToggle={() => setCollaborativeOpen((open) => !open)}
-          panelId={columnsPanelId}
-        />
+      <div className="fans">
+        {STUDIO_PRINCIPLES.map((principle, index) => {
+          const open = selected === index;
+          return (
+            <div className="fan" key={principle.fanKey} data-tone={principle.fanTone}>
+              <ClippedHeading
+                label={principle.fanLabel}
+                expanded={open}
+                onToggle={() => toggle(index)}
+                panelId={panelId(index)}
+              />
+              <div
+                id={panelId(index)}
+                className="fan__panel"
+                role="region"
+                aria-label={principle.fanLabel}
+                data-open={open}
+                aria-hidden={open ? undefined : "true"}
+              >
+                <div className="fan__inner">
+                  <div className="fan__body">
+                    <div className="fan__copy">
+                      {principle.fanBody.map((paragraph) => (
+                        <p key={paragraph}>{paragraph}</p>
+                      ))}
+                    </div>
+                    {principle.fanSteps && (
+                      <div className="columns">
+                        {principle.fanSteps.map((step) => (
+                          <PrincipleCardStatic key={step.label} {...step} />
+                        ))}
+                      </div>
+                    )}
+                    {principle.fanTone === "ink" && (
+                      <HexCube
+                        className="fan__figure"
+                        variant="ring"
+                        gradientFrom="#FFFFFF"
+                        gradientTo="#8654B3"
+                        lineColor="#D9D9D9"
+                        outerFill="#D9D9D9"
+                        middleFill="#202020"
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
-
-      <section
-        id={columnsPanelId}
-        className="section section--columns"
-        data-collapsed={!collaborativeOpen}
-        aria-hidden={collaborativeOpen ? undefined : "true"}
-      >
-        <div className="columns">
-          {PRINCIPLES.map((entry) => (
-            <PrincipleCard key={entry.label} {...entry} />
-          ))}
-        </div>
-      </section>
-
-      <div className="clip-rows clip-rows--single">
-        <ClippedHeading
-          label="[Build with Wrkops™]"
-          expanded={wrkopsOpen}
-          onToggle={() => setWrkopsOpen((open) => !open)}
-          panelId={wrkopsPanelId}
-        />
-      </div>
-
-      <section
-        id={wrkopsPanelId}
-        className="section section--wrkops"
-        data-collapsed={!wrkopsOpen}
-        aria-hidden={wrkopsOpen ? undefined : "true"}
-      >
-        <div className="wrkops__copy">
-          <p>
-            Our daily operation manager.
-            <br />
-            A suite made for ai-assisted-human-ownership development.
-          </p>
-        </div>
-        <HexCube
-          className="wrkops__figure"
-          variant="ring"
-          gradientFrom="#FFFFFF"
-          gradientTo="#8654B3"
-          lineColor="#D9D9D9"
-          outerFill="#D9D9D9"
-          middleFill="#202020"
-        />
-      </section>
 
       <section className="section section--ccos" aria-labelledby="ccos-title">
         <HexCube
@@ -146,10 +183,18 @@ export default function Studio() {
         <h2 className="ccos__wordmark" id="ccos-title">
           CC.OS
         </h2>
-        <p className="ccos__copy">
-          Collapse Creative OS sits at the center of our daily operations. Together with WrkOps and
-          other core systems we operate and create our own projects, tools and client work.
-        </p>
+        <div className="ccos__copy">
+          <p>We build tools for the way we work.</p>
+          <p>
+            CC.OS is the developing software environment behind our studio. Its components address
+            different parts of our operations, including work management, project intelligence,
+            information, security and business coordination.
+          </p>
+          <p>
+            We use these projects to explore new ways of connecting software, automation and AI with
+            everyday work.
+          </p>
+        </div>
         <span className="ccos__action" aria-disabled="true">
           Read dev notes →
         </span>

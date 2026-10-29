@@ -10,7 +10,21 @@
    GF07-D: a row becomes a real disclosure control only when `onToggle` is
    supplied. Rows with no associated panel content (B1-a) keep calling this
    with just `chevron`/`watermark` and get byte-identical output to before —
-   the indicator is then author-chosen, not state-derived. */
+   the indicator is then author-chosen, not state-derived.
+
+   GF09-E: the 99 size fits 24 characters before the label reaches the
+   indicator column (x1358); the corrected editorial labels run to 28. Longer
+   labels are scaled down by `--fit` (CSS recomputes the baseline offset from
+   it); labels of 24 or fewer are untouched. */
+
+import type { CSSProperties } from "react";
+
+const FIT_CHARS = 24;
+
+function fitStyle(label: string): CSSProperties | undefined {
+  const fit = Math.min(1, FIT_CHARS / label.length);
+  return fit < 1 ? ({ "--fit": fit.toFixed(4) } as CSSProperties) : undefined;
+}
 
 export interface ClippedHeadingProps {
   label: string;
@@ -40,6 +54,7 @@ export function ClippedHeading({
             aria-expanded={isExpanded}
             aria-controls={panelId}
             onClick={onToggle}
+            style={fitStyle(label)}
           >
             {label}
           </button>
@@ -59,7 +74,9 @@ export function ClippedHeading({
 
   return (
     <div className="clip-row">
-      <h2 className="clip-row__label">{label}</h2>
+      <h2 className="clip-row__label" style={fitStyle(label)}>
+        {label}
+      </h2>
       {chevron && (
         <span className="clip-row__chevron" aria-hidden="true">
           v

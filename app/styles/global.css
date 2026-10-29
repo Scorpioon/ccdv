@@ -366,30 +366,27 @@ main { display: block; outline: none; }
 .section--hero { height: calc(177 * var(--u)); background: var(--ccdv-panel); }
 /* copy on the two dark sections is #B2B2B2 in R1.1, not the panel grey */
 .section--intro { height: calc(392 * var(--u)); background: var(--ccdv-ink); color: var(--ccdv-bg); }
-.section--cards { height: calc(389 * var(--u)); background: var(--ccdv-panel); }
-/* GF07-D: both panels keep the reference's fixed expanded height (389 / 289)
-   — their children are position:absolute, so an auto/measured height would
-   collapse to zero. overflow:hidden is required, not cosmetic: it is what
-   clips the content away when height transitions to 0, and what stops
-   .clip-rows + .section::before (the group-closing rule) from painting over
-   an empty box. transition-duration is zeroed globally under
-   prefers-reduced-motion, so no separate reduced-motion branch is needed here. */
-.section--columns {
-  height: calc(389 * var(--u));
+/* GF09-E: the reference heights (392 intro / 389 cards / 692 CC.OS) become
+   minimums. The corrected Studio copy is longer than the R1.1 draft, and the
+   children of these sections are now in flow, so the section grows with its
+   text instead of clipping it. Intro is shared with Services (which sets its
+   own 165 height below), so only Studio's is overridden here. */
+.r11--studio .section--intro {
+  height: auto;
+  min-height: calc(392 * var(--u));
+  padding: calc(38.9 * var(--u)) 0 calc(48 * var(--u)) calc(48 * var(--u));
+}
+.section--cards {
+  min-height: calc(389 * var(--u));
+  padding: calc(48 * var(--u));
   background: var(--ccdv-panel);
-  overflow: hidden;
-  transition: height 0.32s ease;
 }
-.section--wrkops {
-  height: calc(289 * var(--u));
-  background: var(--ccdv-ink);
-  color: var(--ccdv-bg);
-  overflow: hidden;
-  transition: height 0.32s ease;
+.section--ccos {
+  min-height: calc(692 * var(--u));
+  padding: calc(311.4 * var(--u)) calc(48 * var(--u)) calc(72 * var(--u));
+  background: var(--ccdv-purple);
+  color: var(--ccdv-ink);
 }
-.section--columns[data-collapsed="true"],
-.section--wrkops[data-collapsed="true"] { height: 0; }
-.section--ccos { height: calc(692 * var(--u)); background: var(--ccdv-purple); color: var(--ccdv-ink); }
 
 /* Studio hero reuses the Home band-label treatment inside the 177 body. */
 .section--hero .band__label { z-index: 3; }
@@ -425,6 +422,17 @@ main { display: block; outline: none; }
   line-height: calc(43 * var(--u));
 }
 .intro__copy p + p { margin-top: calc(55 * var(--u)); }
+/* GF09-E: Studio's intro copy is three longer paragraphs. Same type, same
+   first baseline (the section's padding-top replaces `top`), a wider measure
+   that still stops short of the figure at 960, and in-flow so the section
+   height follows the text. */
+.r11--studio .intro__copy {
+  position: relative;
+  left: auto;
+  top: auto;
+  width: calc(840 * var(--u));
+}
+.r11--studio .intro__copy p + p { margin-top: calc(43 * var(--u)); }
 
 .intro__figure {
   position: absolute;
@@ -435,13 +443,39 @@ main { display: block; outline: none; }
 }
 
 /* --- Studio principle cards ---------------------------------------------- */
-.cards { position: absolute; left: calc(48 * var(--u)); top: calc(48 * var(--u)); display: flex; gap: calc(48 * var(--u)); }
+/* GF09-E: the cards carry no fill. The single lilac square (STD-DEC-005/015/
+   016) is one element behind them: it is mounted only while it has a target
+   (hover, keyboard focus or the selected card), so with every fan closed and
+   the pointer away nothing lilac exists. It is as tall as the row, so it
+   always covers the whole of the card it sits behind, however long that
+   card's copy runs. Moving between targets is a transform transition, a
+   re-mount (hidden -> shown) just fades in. Both durations are zeroed under
+   prefers-reduced-motion by the global rule at the end of this file. */
+.cards { position: relative; display: flex; gap: calc(48 * var(--u)); }
+
+.cards__lilac {
+  position: absolute;
+  z-index: 0;
+  left: 0;
+  top: 0;
+  width: calc(300 * var(--u));
+  height: 100%;
+  background: var(--ccdv-purple-card);
+  transform: translateX(calc(var(--i, 0) * 348 * var(--u)));
+  transition: transform 0.32s ease;
+  animation: cards-lilac-in 0.2s ease;
+  pointer-events: none;
+}
+@keyframes cards-lilac-in { from { opacity: 0; } }
 
 .card {
   position: relative;
+  z-index: 1;
+  display: block;
   width: calc(300 * var(--u));
-  height: calc(293 * var(--u));
-  background: var(--ccdv-purple-card);
+  min-height: calc(293 * var(--u));
+  padding: calc(51.8 * var(--u)) 0 calc(24 * var(--u));
+  text-align: left;
 }
 
 /* Both entries start at the card's own x, not inset: the 2.17 and 2.88 of
@@ -462,22 +496,25 @@ main { display: block; outline: none; }
    cards exactly (16/16/20/14/16/20/16 cells on the second card, measured and
    matched). */
 .card__body {
-  position: absolute;
-  left: 0;
-  top: calc(51.8 * var(--u));              /* first baseline 78 from card top */
+  display: block;                          /* first baseline 78 from card top (card padding) */
   width: calc(290 * var(--u));
   font-size: calc(26.4 * var(--u));
   line-height: calc(32 * var(--u));
 }
+.card__para { display: block; }
+.card__para + .card__para { margin-top: calc(32 * var(--u)); }
 
-/* VIS-05 — the same four entries repeated further down with no card fill.
-   Label baseline 59 and first body baseline 126 below the section top; the
-   label's static line box is its own line-height, so the two stack. */
-.columns { position: absolute; left: calc(48 * var(--u)); top: calc(45.35 * var(--u)); display: flex; gap: calc(48 * var(--u)); transition: opacity 0.32s ease; }
-.columns .card { background: none; height: auto; }
-.columns .card__label { position: static; }
-.columns .card__body { position: static; margin-top: calc(39.05 * var(--u)); }
-.section--columns[data-collapsed="true"] .columns { opacity: 0; }
+/* GF09-E: the CP squares are real buttons. Keyboard focus gets the global
+   :focus-visible outline; the lilac preview for it is driven from the page. */
+.card--select { cursor: pointer; }
+
+/* The step columns inside a fan panel — the R1.1 "plain text columns on the
+   panel" treatment: no fill, label then body stacked in flow. Label baseline
+   59 and first body baseline 126 below the block top. */
+.columns { display: flex; gap: calc(48 * var(--u)); padding: calc(45.35 * var(--u)) calc(48 * var(--u)) calc(48 * var(--u)); }
+.columns .card { min-height: 0; padding: 0; }
+.columns .card__label { position: static; display: block; }
+.columns .card__body { margin-top: calc(39.05 * var(--u)); }
 
 /* --- Studio clipped heading rows ----------------------------------------
    VIS-03. These rows are NOT bare page ground: in pages_studio.svg each row
@@ -489,14 +526,85 @@ main { display: block; outline: none; }
    correct and are left alone.
 
    The rows are 98, 98, 97 and 97 tall — not a uniform 97.67 — with a 1 rule
-   on each row's top edge and one closing the triple group at 1581.12. */
-.clip-rows { position: relative; display: block; background: var(--ccdv-panel); }
-.clip-rows--triple { height: calc(293 * var(--u)); }
-.clip-rows--single { height: calc(97 * var(--u)); }
+   on each row's top edge.
+
+   GF09-E: each row now sits in a `.fan` together with the panel it controls,
+   so an open panel opens in place under its own row and pushes the later rows
+   down (STD-DEC-012); the row order never changes. */
+.fans { display: block; background: var(--ccdv-panel); }
+.fan { position: relative; display: block; background: var(--ccdv-panel); }
 
 .clip-row { position: relative; display: block; height: calc(98 * var(--u)); }
-.clip-rows--triple .clip-row:nth-child(3) { height: calc(97 * var(--u)); }
-.clip-rows--single .clip-row { height: calc(97 * var(--u)); }
+.fan:nth-child(n + 3) .clip-row { height: calc(97 * var(--u)); }
+
+/* A fan panel animates 0 -> content height with the grid-rows trick, since
+   its content is no longer a fixed artboard height. The inner box clips (the
+   closing rule and the dark panel must not leak at height 0) and is also made
+   non-focusable/non-visible once closed, after the collapse has played. */
+.fan__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.32s ease;
+}
+.fan__panel[data-open="true"] { grid-template-rows: 1fr; }
+
+.fan__inner {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  transition: visibility 0s 0.32s;
+}
+.fan__panel[data-open="true"] .fan__inner { visibility: visible; transition-delay: 0s; }
+
+/* the rule that closes the row above, as the old `.clip-rows + .section` did */
+.fan__inner::before {
+  content: "";
+  position: absolute;
+  z-index: 4;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: calc(1 * var(--u));
+  background: var(--ccdv-ink);
+}
+
+.fan__body {
+  position: relative;
+  opacity: 0;
+  transition: opacity 0.32s ease;
+}
+.fan__panel[data-open="true"] .fan__body { opacity: 1; }
+
+.fan__copy {
+  width: calc(900 * var(--u));
+  padding: calc(45.35 * var(--u)) calc(48 * var(--u)) calc(48 * var(--u));
+  font-size: calc(26.4 * var(--u));
+  line-height: calc(32 * var(--u));
+}
+.fan__copy p + p { margin-top: calc(32 * var(--u)); }
+/* the columns block follows the copy directly, so it drops its own top gap */
+.fan__copy + .columns { padding-top: 0; }
+
+/* FAN04 (WRKOPS) is the dark panel with the ring cube, as .section--wrkops was.
+   Its copy is the larger 35.2 / 43 setting used on the other dark sections. */
+.fan[data-tone="ink"] .fan__panel { background: var(--ccdv-ink); color: var(--ccdv-bg); }
+.fan[data-tone="ink"] .fan__body { min-height: calc(289 * var(--u)); }
+.fan[data-tone="ink"] .fan__copy {
+  width: calc(790 * var(--u));
+  padding-top: calc(79.4 * var(--u));      /* first baseline 114.5 */
+  font-size: calc(35.2 * var(--u));
+  line-height: calc(43 * var(--u));
+}
+.fan[data-tone="ink"] .fan__copy p + p { margin-top: calc(43 * var(--u)); }
+
+.fan__figure {
+  position: absolute;
+  left: calc(916.65 * var(--u));
+  top: calc(48 * var(--u));
+  width: calc(343.08 * var(--u));
+  height: calc(396.16 * var(--u));
+}
 
 .clip-row::before {
   content: "";
@@ -517,8 +625,11 @@ main { display: block; outline: none; }
   position: absolute;
   z-index: 3;
   left: calc(24 * var(--u));
-  top: calc(9.25 * var(--u));              /* baseline 97 from row top */
-  font-size: calc(99 * var(--u));
+  /* baseline 97 from row top. 9.25 = 97 - 87.75, the ascent share of the 99
+     face; --fit (set by ClippedHeading for labels over 24 characters, else
+     1) scales the size and moves the offset so the baseline stays at 97. */
+  top: calc((97 - 87.75 * var(--fit, 1)) * var(--u));
+  font-size: calc(99 * var(--fit, 1) * var(--u));
   line-height: 1;
   white-space: nowrap;
 }
@@ -534,8 +645,8 @@ main { display: block; outline: none; }
   inset: 0;
   display: block;
   text-align: left;
-  padding: calc(9.25 * var(--u)) 0 0 calc(24 * var(--u));
-  font-size: calc(99 * var(--u));
+  padding: calc((97 - 87.75 * var(--fit, 1)) * var(--u)) 0 0 calc(24 * var(--u));
+  font-size: calc(99 * var(--fit, 1) * var(--u));
   line-height: 1;
   white-space: nowrap;
 }
@@ -550,40 +661,7 @@ main { display: block; outline: none; }
   color: var(--ccdv-bg);                   /* #B2B2B2 on the panel row */
 }
 
-.clip-rows + .section::before {
-  content: "";
-  position: absolute;
-  z-index: 4;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: calc(1 * var(--u));
-  background: var(--ccdv-ink);
-}
-
-/* --- Studio WRKOPS + CC.OS ----------------------------------------------- */
-.wrkops__copy {
-  position: absolute;
-  left: calc(48 * var(--u));
-  top: calc(79.4 * var(--u));              /* first baseline 114.5 */
-  width: calc(700 * var(--u));
-  font-size: calc(35.2 * var(--u));
-  line-height: calc(43 * var(--u));
-  transition: opacity 0.32s ease;
-}
-
-.wrkops__figure {
-  position: absolute;
-  left: calc(916.65 * var(--u));
-  top: calc(48 * var(--u));
-  width: calc(343.08 * var(--u));
-  height: calc(396.16 * var(--u));
-  transition: opacity 0.32s ease;
-}
-
-.section--wrkops[data-collapsed="true"] .wrkops__copy,
-.section--wrkops[data-collapsed="true"] .wrkops__figure { opacity: 0; }
-
+/* --- Studio CC.OS --------------------------------------------------------- */
 .ccos__figure {
   position: absolute;
   left: calc(58.28 * var(--u));
@@ -610,22 +688,22 @@ main { display: block; outline: none; }
 
 /* 740 is kept — the advance is unchanged at 19.2, so it still reproduces
    R1.1's five breaks exactly. */
+/* GF09-E: in flow below the absolutely placed figure and wordmark. The
+   section's padding-top is the old `top` (first baseline 346.5), so the first
+   line does not move; three paragraphs now follow it, so the section grows. */
 .ccos__copy {
-  position: absolute;
-  left: calc(48 * var(--u));
-  top: calc(311.4 * var(--u));             /* first baseline 346.5 */
   width: calc(740 * var(--u));
   font-size: calc(35.2 * var(--u));
   line-height: calc(43 * var(--u));
 }
+.ccos__copy p + p { margin-top: calc(43 * var(--u)); }
 
 /* same size as the card copy: "Read dev notes →" is 16 characters and R1.1's
    underline spans 48..278.259, i.e. 16 x 14.4. Its baseline sits on the white
    plate's bottom edge, which the padding puts it on. */
 .ccos__action {
-  position: absolute;
-  left: calc(48 * var(--u));
-  top: calc(590.5 * var(--u));
+  display: block;
+  margin-top: calc(56 * var(--u));
   width: calc(231 * var(--u));
   height: calc(29 * var(--u));
   background: var(--ccdv-white);
@@ -642,7 +720,7 @@ main { display: block; outline: none; }
 .ccos__dot {
   position: absolute;
   left: calc(1382 * var(--u));
-  top: calc(609.5 * var(--u));
+  bottom: calc(72.5 * var(--u));           /* was top 609.5 of the 692 section */
   width: calc(10 * var(--u));
   height: calc(10 * var(--u));
   background: var(--ccdv-ink);
