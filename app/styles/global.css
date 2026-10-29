@@ -1125,6 +1125,26 @@ main { display: block; outline: none; }
 .ccos-sysdetail__stripe--accent { background: var(--ccos-sys-color); }
 .ccos-sysdetail__lists--accent { background: var(--ccos-sys-color); }
 
+/* GF09-D — mobile-only notice (mounted in root.tsx, outside .site-shell, so
+   --u is not defined here: sizes are plain px on purpose). No breakpoint
+   convention existed in this file; 767px is the conventional phone/tablet cut.
+   Ink on --ccdv-light is ~11:1. In flow, not fixed: nothing is covered. */
+.mobile-notice { display: none; }
+
+@media (max-width: 767px) {
+  .mobile-notice {
+    display: block;
+    margin: 0;
+    padding: 8px 12px;
+    background: var(--ccdv-light);
+    color: var(--ccdv-ink);
+    border-bottom: 1px solid var(--ccdv-ink);
+    font-size: 13px;
+    line-height: 1.4;
+    text-align: left;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
