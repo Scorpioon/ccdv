@@ -18,6 +18,14 @@
 html,
 body { margin: 0; padding: 0; }
 
+/* GF09-F CORR03 — hide the native DOCUMENT scrollbar only; scrolling (wheel,
+   touch, keys, anchors, focus reveal) is untouched. `html` is the viewport
+   scroller, so nested scroll containers keep their own scrollbars. The
+   standard property covers Chrome 121+; the pseudo-element covers older
+   Chromium/WebKit. No overflow:hidden, no gutter reservation. */
+html { scrollbar-width: none; }
+html::-webkit-scrollbar { display: none; }
+
 body {
   min-width: 320px;
   background: var(--ccdv-bg);
@@ -1016,86 +1024,188 @@ main { display: block; outline: none; }
    rects. */
 .r11--ccos { background: var(--ccdv-ink); }
 
+/* GF09-F (FBI-034/038): geometry re-solved against the seven R1.1 SVGs
+   (pages_products_ccos.svg + the six page_products_ccos_*.svg — all share
+   one header and one hero, 1440 wide). The header is the Home masthead's own
+   lockup/title/meta geometry (see .masthead__* above, same face and the same
+   0.04545em underline pair) moved down 48: gear x24 y72 (220), pixel block
+   x268 (49.03 x 220.12), title origin x341.03 with baselines 119 / 199 at
+   64.9 / 80, meta baselines 252 / 272 / 292, three loose squares at y282
+   (x933.03 / 1145.52 / 1406), "collapse" baseline 82 ending at x1416. Header
+   and hero together are one unbroken block to y1413.92: header 316.12 +
+   hero 1097.8. Hero children are placed by baseline in page coordinates
+   less the header's 316.12, with the same baseline rule the masthead block
+   documents (T + L/2 + 0.386364 * font-size). The colour of the hub's own
+   text is #D9D9D9 in every hub hero path (leaves override it below). */
 .ccos-hub__header,
 .ccos-hub__hero {
   position: relative;
   background: var(--ccdv-ink);
-  color: var(--ccdv-bg);
+  color: var(--ccdv-light);
 }
 
-.ccos-hub__header {
-  padding: calc(24 * var(--u)) calc(24 * var(--u)) calc(48 * var(--u));
-}
+.ccos-hub__header { height: calc(316.12 * var(--u)); }
 
-.ccos-hub__mark { display: inline-flex; align-items: center; }
-.ccos-hub__gear { width: calc(130 * var(--u)); height: calc(130 * var(--u)); }
-.ccos-hub__pixel { width: calc(29 * var(--u)); height: calc(130 * var(--u)); margin-left: calc(14 * var(--u)); }
+.ccos-hub__mark {
+  position: absolute;
+  left: calc(24 * var(--u));
+  top: calc(72 * var(--u));
+  width: calc(293.03 * var(--u));
+  height: calc(220.12 * var(--u));
+  display: block;
+}
+.ccos-hub__gear { position: absolute; left: 0; top: 0; width: calc(220 * var(--u)); height: calc(220 * var(--u)); }
+.ccos-hub__pixel { position: absolute; left: calc(244 * var(--u)); top: 0; width: calc(49.03 * var(--u)); height: calc(220.12 * var(--u)); }
 
 .ccos-hub__title {
-  margin: calc(16 * var(--u)) 0 0 calc(165 * var(--u));
-  font-size: calc(38 * var(--u));
-  line-height: calc(46 * var(--u));
+  position: absolute;
+  left: calc(341.03 * var(--u));
+  top: calc(53.93 * var(--u));             /* baseline 119 */
+  margin: 0;
+  font-size: calc(64.9 * var(--u));
+  line-height: calc(80 * var(--u));        /* second baseline 199 */
+  white-space: nowrap;
 }
-.ccos-hub__title span { display: block; text-decoration: underline; text-underline-offset: 0.08em; }
+.ccos-hub__title span {
+  display: block;
+  text-decoration: underline;
+  text-underline-offset: 0.04545em;
+  text-decoration-thickness: 0.04545em;
+}
 
 .ccos-hub__meta {
-  margin: calc(16 * var(--u)) 0 0 calc(165 * var(--u));
+  position: absolute;
+  left: calc(341.03 * var(--u));
+  top: calc(236.9 * var(--u));             /* baselines 252 / 272 / 292 */
+  margin: 0;
   font-size: calc(13.2 * var(--u));
   line-height: calc(20 * var(--u));
+  white-space: nowrap;
 }
-.ccos-hub__meta a { text-decoration: underline; text-underline-offset: 0.08em; }
+.ccos-hub__meta a {
+  text-decoration: underline;
+  text-underline-offset: 0.04545em;
+  text-decoration-thickness: 0.04545em;
+}
 
 .ccos-hub__watermark {
   position: absolute;
-  top: calc(24 * var(--u));
-  right: calc(32 * var(--u));
+  top: calc(70.3 * var(--u));              /* baseline 82 */
+  right: calc(24 * var(--u));              /* ink ends x1415 */
   font-size: calc(13.2 * var(--u));
+  line-height: 1;
   opacity: 0.6;
   pointer-events: none;
 }
 
-.ccos-hub__dot { position: absolute; top: calc(30 * var(--u)); width: calc(10 * var(--u)); height: calc(10 * var(--u)); background: var(--ccdv-light); }
-.ccos-hub__dot--a { right: calc(300 * var(--u)); }
-.ccos-hub__dot--b { right: calc(180 * var(--u)); }
-.ccos-hub__dot--c { right: calc(60 * var(--u)); }
+.ccos-hub__dot { position: absolute; top: calc(282 * var(--u)); width: calc(10 * var(--u)); height: calc(10 * var(--u)); background: var(--ccdv-light); }
+.ccos-hub__dot--a { left: calc(933.03 * var(--u)); }
+.ccos-hub__dot--b { left: calc(1145.52 * var(--u)); }
+.ccos-hub__dot--c { left: calc(1406 * var(--u)); }
 
-.ccos-hub__hero {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: calc(16 * var(--u)) calc(48 * var(--u)) calc(64 * var(--u));
+.ccos-hub__hero { height: calc(1097.8 * var(--u)); text-align: center; }
+
+/* 132.9 x 153.46 at x653.55 y364 (page) */
+.ccos-hub__hero-icon {
+  position: absolute;
+  left: calc(653.55 * var(--u));
+  top: calc(47.88 * var(--u));
+  width: calc(132.9 * var(--u));
+  height: auto;
 }
 
-.ccos-hub__hero-icon { width: calc(90 * var(--u)); height: auto; }
-
+/* five characters at the 114.3095 pitch = 209.57, as the Home/Studio CC.OS
+   wordmark; baseline 702.46, underline 9.53 thick at 23.83 below it */
 .ccos-hub__wordmark {
-  font-size: calc(96 * var(--u));
+  position: absolute;
+  left: 0;
+  top: calc(200.58 * var(--u));
+  width: 100%;
+  margin: 0;
+  font-size: calc(209.57 * var(--u));
   line-height: 1;
-  margin: calc(16 * var(--u)) 0 calc(24 * var(--u));
   text-decoration: underline;
-  text-underline-offset: 0.08em;
+  text-underline-offset: 0.04545em;
+  text-decoration-thickness: 0.04545em;
 }
 
+/* 740 wide, 35.2 / 43 — the same measure as the Studio CC.OS copy; first
+   baseline 800.5, five lines (the wrap points match R1.1's) */
 .ccos-hub__intro {
-  max-width: calc(760 * var(--u));
-  font-size: calc(20 * var(--u));
-  line-height: calc(28 * var(--u));
+  position: absolute;
+  left: calc(350 * var(--u));
+  top: calc(449.28 * var(--u));
+  width: calc(740 * var(--u));
+  margin: 0;
+  font-size: calc(35.2 * var(--u));
+  line-height: calc(43 * var(--u));
+}
+/* GF09-F: the hub intro is two paragraphs (lead + body, 2 + 4 lines at this
+   measure); the 12 gap keeps the last baseline (~1027.5) clear of the `v`
+   block at y1044.46. Leaves still use a single <p class="ccos-hub__intro">. */
+.ccos-hub__intro p { margin: 0; }
+.ccos-hub__intro p + p { margin-top: calc(12 * var(--u)); }
+
+/* R1.1 draws the marker as a 15 x 29 white block at x712.5 y1044.46 holding
+   an ink "v" (baseline 1073.46, 26.4) with a 1.2 underline */
+.ccos-hub__chevron {
+  position: absolute;
+  left: calc(712.5 * var(--u));
+  top: calc(728.34 * var(--u));
+  width: calc(15 * var(--u));
+  height: calc(29 * var(--u));
+  box-sizing: border-box;
+  padding-top: calc(5.6 * var(--u));
+  background: var(--ccdv-white);
+  color: var(--ccdv-ink);
+  font-size: calc(26.4 * var(--u));
+  line-height: calc(26.4 * var(--u));
+  text-align: left;
+  text-decoration: underline;
+  text-underline-offset: 0.04545em;
+  text-decoration-thickness: 0.04545em;
 }
 
-.ccos-hub__chevron { font-size: calc(16 * var(--u)); margin: calc(24 * var(--u)) 0; display: block; }
+/* rail: six 132.9 x 153.46 icons from x244.907 at a 163.457 pitch (gap
+   30.557), top y1145.46 — the icons carry no R1.1 text, so the names are
+   visually hidden (still the links' accessible text) */
+.ccos-rail {
+  position: absolute;
+  left: calc(244.91 * var(--u));
+  top: calc(829.34 * var(--u));
+  display: flex;
+  gap: calc(30.56 * var(--u));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ccos-rail__link { position: relative; display: block; }
+.ccos-rail__icon { display: block; width: calc(132.9 * var(--u)); height: auto; }
+.ccos-rail__name {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+/* leaves only (`data-state` is unset on the hub): the five non-current
+   systems are R1.1's <g opacity="0.2"> groups */
+.ccos-rail__item[data-state="inactive"] .ccos-rail__icon { opacity: 0.2; }
 
-.ccos-rail { display: flex; gap: calc(23 * var(--u)); list-style: none; margin: calc(16 * var(--u)) 0 0; padding: 0; }
-.ccos-rail__link { display: flex; flex-direction: column; align-items: center; gap: calc(6 * var(--u)); }
-.ccos-rail__icon { width: calc(90 * var(--u)); height: auto; }
-.ccos-rail__name { font-size: calc(10 * var(--u)); opacity: 0.7; white-space: nowrap; }
-.ccos-rail__item[data-active="true"] .ccos-rail__name { opacity: 1; text-decoration: underline; text-underline-offset: 0.15em; }
-
+/* "<SYSTEM> [version]": 26.4, baseline 1341.9, 1.2 underline */
 .ccos-hub__rail-caption {
-  margin-top: calc(16 * var(--u));
-  font-size: calc(16 * var(--u));
+  position: absolute;
+  left: 0;
+  top: calc(1002.4 * var(--u));
+  width: 100%;
+  margin: 0;
+  font-size: calc(26.4 * var(--u));
+  line-height: calc(26.4 * var(--u));
   text-decoration: underline;
-  text-underline-offset: 0.08em;
+  text-underline-offset: 0.04545em;
+  text-decoration-thickness: 0.04545em;
 }
 
 /* --- CCOS detail section (`PCC-013`) -------------------------------------
@@ -1149,8 +1259,60 @@ main { display: block; outline: none; }
 .ccos-detail__column,
 .ccos-detail__list { flex: 1 1 0; }
 .ccos-detail__column-heading { font-size: calc(16 * var(--u)); margin: 0 0 calc(16 * var(--u)); opacity: 0.7; }
-.ccos-detail__column-body { font-size: calc(18 * var(--u)); line-height: calc(26 * var(--u)); margin: 0; }
+.ccos-detail__column-body { font-size: calc(18 * var(--u)); line-height: calc(26 * var(--u)); margin: 0; white-space: pre-line; }
 .ccos-detail__list ul { list-style: none; margin: 0; padding: 0; font-size: calc(18 * var(--u)); line-height: calc(28 * var(--u)); }
+
+/* GF09-F (FBI-039) — hub strip + overview, hub only (`.ccos-detail--hub` is
+   set by CcosDetailPanel alone; leaves keep the rules above). Measured from
+   pages_products_ccos.svg, in strip/overview-local units:
+   - "[CC.OS]" is a Home-band label: 209.57, origin 24 (ink lands at 53.55),
+     baseline on the strip's bottom edge, bracket overrunning the 177 strip
+     (y1441.76..1649.56) in ink over the dark stripe above/overview below;
+   - "0.3.0" is 99 (the .band__suffix size) on that same baseline, ink at
+     x852.78 (origin 848.9 less the digit's side bearing);
+   - overview statement / list: 35.2 / 43, origin 48, baselines 74.44 and
+     172.0 (+43 each), #B2B2B2;
+   - overview icon: the scale-1 HexCube itself, 255.87 wide at x960.26,
+     y1670.22 (48.3 below the overview's top). */
+.ccos-detail--hub .ccos-detail__strip { display: block; padding: 0; }
+.ccos-detail--hub .ccos-detail__wordmark {
+  position: absolute;
+  z-index: 3;
+  left: calc(24 * var(--u));
+  top: calc(-8.76 * var(--u));
+  font-size: calc(209.57 * var(--u));
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--ccdv-ink);
+}
+.ccos-detail--hub .ccos-detail__version {
+  position: absolute;
+  z-index: 3;
+  left: calc(848.9 * var(--u));
+  top: calc(89.25 * var(--u));
+  margin: 0;
+  font-size: calc(99 * var(--u));
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--ccdv-ink);
+}
+.ccos-detail--hub .ccos-detail__overview { padding: 0; }
+.ccos-detail--hub .ccos-detail__overview-statement,
+.ccos-detail--hub .ccos-detail__overview-list {
+  position: absolute;
+  left: calc(48 * var(--u));
+  margin: 0;
+  font-size: calc(35.2 * var(--u));
+  line-height: calc(43 * var(--u));
+  white-space: nowrap;
+}
+.ccos-detail--hub .ccos-detail__overview-statement { top: calc(39.34 * var(--u)); }
+.ccos-detail--hub .ccos-detail__overview-list { top: calc(136.9 * var(--u)); }
+.ccos-detail--hub .ccos-detail__overview-icon {
+  right: calc(223.87 * var(--u));
+  top: calc(48.3 * var(--u));
+  width: calc(255.87 * var(--u));
+}
 
 /* === CCOS subsystem leaf pages (GF08-C2) =================================
    `CcosSystemDetail`, the shared template behind the six
@@ -1175,6 +1337,10 @@ main { display: block; outline: none; }
   color: var(--ccos-sys-text, var(--ccdv-bg));
 }
 
+/* GF09-F: the three loose squares are ink on the tinted leaves (set per
+   system by CcosSystemDetail, light on WRKOPS as before) */
+.ccos-sysdetail .ccos-hub__dot { background: var(--ccos-sys-dot, var(--ccdv-light)); }
+
 .ccos-sysdetail__overview {
   position: relative;
   height: calc(var(--ccos-overview-units, 220) * var(--u));
@@ -1198,7 +1364,13 @@ main { display: block; outline: none; }
   height: auto;
 }
 
-.ccos-sysdetail__body { height: calc(var(--ccos-body-units, 1014) * var(--u)); overflow: hidden; }
+/* GF09-F: the columns band is min-height 366 and grows with its copy, so the
+   body is natural height (its parts sum to --ccos-body-units unless the band
+   grows) and nothing is clipped. The columns keep their 300-wide flex share. */
+.ccos-sysdetail__body { min-height: calc(var(--ccos-body-units, 1014) * var(--u)); }
+.ccos-sysdetail .ccos-detail__columns { height: auto; min-height: calc(366 * var(--u)); }
+/* an empty overview list keeps its 36 line so the statement does not move */
+.ccos-sysdetail .ccos-detail__overview-list:empty { height: calc(36 * var(--u)); }
 
 .ccos-sysdetail__stripe--accent { background: var(--ccos-sys-color); }
 .ccos-sysdetail__lists--accent { background: var(--ccos-sys-color); }

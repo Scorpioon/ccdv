@@ -58,10 +58,15 @@ export function CcosHub() {
         <h2 className="ccos-hub__wordmark" id="ccos-hero-title">
           CC.OS
         </h2>
-        <p className="ccos-hub__intro">
-          Collapse Creative OS sits at the center of our daily operations. Together with WrkOps and
-          other core systems we operate and create our own projects, tools and client work.
-        </p>
+        {/* GF09-F: copys_v2.txt, "Collapse Creative Operating System" block —
+            the lead line and the first paragraph, verbatim (two paragraphs). */}
+        <div className="ccos-hub__intro">
+          <p>The operating environment behind our own work.</p>
+          <p>
+            CC.OS is an evolving system of tools, protocols and interfaces developed to support
+            projects across Collapse Creative Dev. Unit.
+          </p>
+        </div>
         <span className="ccos-hub__chevron" aria-hidden="true">
           v
         </span>

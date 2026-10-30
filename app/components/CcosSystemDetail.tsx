@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { GearMark } from "./marks/GearMark";
 import { CcdvPixelMark } from "./marks/CcdvPixelMark";
 import { HexCube } from "./marks/HexCube";
+import { CcosLeafHeroIcon } from "./marks/CcosArtwork";
 import { CcosSystemRail } from "./CcosSystemRail";
 import type { CcosSystemData } from "../data/ccosSystems";
 
@@ -21,15 +22,21 @@ import type { CcosSystemData } from "../data/ccosSystems";
    the title-strip `collapse` control is a `Link` back to `/products/ccos`
    (CLAUDE.md §8 / OPERATOR-approved plain route navigation), not a toggle. */
 
-const HERO_ICON_OUTER = "#202020";
-const HERO_ICON_LINE = "#D9D9D9";
 const OVERVIEW_ICON_OUTER = "#D9D9D9";
 const OVERVIEW_ICON_MIDDLE = "#202020";
 
 export function CcosSystemDetail({ system }: { system: CcosSystemData }) {
+  /* GF09-F (FBI-034): on the five tinted leaves R1.1 draws the identity
+     lockup, header text and the three loose squares in ink (#202020) with a
+     light gear hole (#D9D9D9). WRKOPS keeps the light-on-grey treatment the
+     page already shipped with (its own hero colours are a separate finding). */
+  const darkMark = system.heroTextColor === "var(--ccdv-ink)";
+  const markFill = darkMark ? "#202020" : "#D9D9D9";
+  const markHole = darkMark ? "#D9D9D9" : "#202020";
   const style = {
     "--ccos-sys-color": system.themeColor,
     "--ccos-sys-text": system.heroTextColor,
+    "--ccos-sys-dot": markFill,
     "--ccos-body-units": system.bodyHeightUnits,
     "--ccos-overview-units": system.overviewHeightUnits,
   } as CSSProperties;
@@ -45,8 +52,8 @@ export function CcosSystemDetail({ system }: { system: CcosSystemData }) {
     <div className="ccos-sysdetail" style={style}>
       <header className="ccos-hub__header">
         <Link to="/" className="ccos-hub__mark" aria-label="CCDV — Home">
-          <GearMark className="ccos-hub__gear" fill="#D9D9D9" dotFill="#202020" />
-          <CcdvPixelMark variant="stack" className="ccos-hub__pixel" fill="#D9D9D9" />
+          <GearMark className="ccos-hub__gear" fill={markFill} dotFill={markHole} />
+          <CcdvPixelMark variant="stack" className="ccos-hub__pixel" fill={markFill} />
         </Link>
 
         <h1 className="ccos-hub__title">
@@ -71,14 +78,7 @@ export function CcosSystemDetail({ system }: { system: CcosSystemData }) {
       </header>
 
       <section className="ccos-hub__hero" aria-labelledby={`ccos-${system.id}-hero-title`}>
-        <HexCube
-          className="ccos-hub__hero-icon"
-          variant="solid"
-          gradientFrom="#FFFFFF"
-          gradientTo={system.themeColor}
-          outerFill={HERO_ICON_OUTER}
-          lineColor={HERO_ICON_LINE}
-        />
+        <CcosLeafHeroIcon className="ccos-hub__hero-icon" gradientTo={system.themeColor} />
         <h2 className="ccos-hub__wordmark" id={`ccos-${system.id}-hero-title`}>
           CC.OS
         </h2>
@@ -153,7 +153,7 @@ export function CcosSystemDetail({ system }: { system: CcosSystemData }) {
               </ul>
             </div>
             <div className="ccos-detail__list">
-              <p className="ccos-detail__column-heading">[ Roadmap ]</p>
+              <p className="ccos-detail__column-heading">{system.roadmapHeading ?? "[ Roadmap ]"}</p>
               <ul>
                 {system.roadmap.map((item, i) => (
                   <li key={i}>{item}</li>

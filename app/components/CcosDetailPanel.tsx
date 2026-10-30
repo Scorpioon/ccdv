@@ -18,7 +18,13 @@ import { CcosOverviewIcon } from "./marks/CcosArtwork";
    placeholder text/values, explicitly NOT verified release facts
    (`PCC` "Important version disclaimer" in the decision matrix). The top
    header's own `collapse` (`PCC-006`) is a separate, still-undecided
-   control and is not wired to this one. */
+   control and is not wired to this one.
+
+   GF09-F (FBI-039): strip and overview fidelity are hub-only CSS under
+   `.ccos-detail--hub` (the leaves share the base `.ccos-detail__*` rules and
+   are untouched). The strip label reads "[CC.OS]" with ASCII brackets, as the
+   hub SVG and the Home band labels do; the toggle's state, label and
+   behaviour are unchanged. */
 
 const DETAIL_COLUMNS = [
   {
@@ -30,7 +36,8 @@ const DETAIL_COLUMNS = [
     body: "We put care into creating systems that gives ownership over automated tasks, leverages cognitive fatigue of repeating tasks.",
   },
   { heading: "[ Version details ]", body: "v. 1.9.0" },
-  { heading: "[ Release ]", body: "2027" },
+  // GF09-F: "2027" has no editorial source; neutral dash, column kept.
+  { heading: "[ Release ]", body: "-" },
 ];
 
 const OVERVIEW_LINES = ["Law Protocols", "Suite compatibility", "Control", "Overview", "Architecture"];
@@ -40,11 +47,11 @@ export function CcosDetailPanel() {
   const [expanded, setExpanded] = useState(true);
 
   return (
-    <div className="ccos-detail" data-collapsed={!expanded}>
+    <div className="ccos-detail ccos-detail--hub" data-collapsed={!expanded}>
       <div className="section section--stripe ccos-detail__lead-stripe" />
 
       <section className="section section--hero ccos-detail__strip">
-        <h2 className="ccos-detail__wordmark">⌈CC.OS⌉</h2>
+        <h2 className="ccos-detail__wordmark">[CC.OS]</h2>
         <span className="ccos-detail__version">0.3.0</span>
         <button
           type="button"

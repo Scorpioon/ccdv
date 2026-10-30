@@ -27,17 +27,31 @@ const INNER =
 const Y_UPPER = "M985.952 613.049L1088.19 672.157L1190.43 613.049";
 const Y_STEM = "M1088.19 672.157V790.103";
 
-export type HexCubeVariant = "interior" | "ring" | "solid";
+/* GF09-F thin CCOS family (KRON, KAIRON): R1.1 draws the middle ring as a
+   stroked hexagon about 0.7 viewBox units inside MIDDLE (half-width 101.60,
+   half-height 117.35 against MIDDLE's 102.30 / 118.12) over a filled light
+   outer hexagon. Re-expressed here in this file's scale-1 coordinates. */
+const THIN_MIDDLE =
+  "M1189.79 613.467V730.847L1088.19 789.507L986.59 730.847V613.467L1088.19 554.807L1189.79 613.467Z";
+
+export type HexCubeVariant = "interior" | "ring" | "solid" | "thin";
 
 export interface HexCubeProps {
   /** interior = thin outlines (intro) · ring = light outer ring (WRKOPS) ·
-   *  solid = filled outer hexagon (CC.OS) */
+   *  solid = filled outer hexagon (CC.OS) · thin = light outer hexagon with a
+   *  fine stroked middle ring (CCOS KRON / KAIRON) */
   variant?: HexCubeVariant;
   gradientFrom: string;
   gradientTo: string;
   lineColor?: string;
   outerFill?: string;
   middleFill?: string;
+  /** Stroke width of the Y (and, by default, of the stroked rings), in this
+   *  file's scale-1 viewBox units. 1.2 is the Studio value; the CCOS pages
+   *  draw heavier/finer lines at a smaller on-screen scale. */
+  lineWidth?: number;
+  /** Stroke width of the stroked rings when it differs from the Y's. */
+  ringWidth?: number;
   className?: string;
 }
 
@@ -48,6 +62,8 @@ export function HexCube({
   lineColor = "#D9D9D9",
   outerFill = "#D9D9D9",
   middleFill = "#202020",
+  lineWidth = 1.2,
+  ringWidth = lineWidth,
   className,
 }: HexCubeProps) {
   // React's generated ids carry delimiter characters that are not safe inside
@@ -83,17 +99,17 @@ export function HexCube({
         d={OUTER}
         fill={stroked ? "none" : outerFill}
         stroke={stroked ? lineColor : "none"}
-        strokeWidth={stroked ? 1.2 : undefined}
+        strokeWidth={stroked ? ringWidth : undefined}
       />
       <path
-        d={MIDDLE}
+        d={variant === "thin" ? THIN_MIDDLE : MIDDLE}
         fill={variant === "ring" ? middleFill : "none"}
-        stroke={stroked ? lineColor : "none"}
-        strokeWidth={stroked ? 1.2 : undefined}
+        stroke={stroked || variant === "thin" ? lineColor : "none"}
+        strokeWidth={stroked || variant === "thin" ? ringWidth : undefined}
       />
       <path d={INNER} fill={`url(#${gradientId})`} />
-      <path d={Y_UPPER} fill="none" stroke={lineColor} strokeWidth={1.2} />
-      <path d={Y_STEM} fill="none" stroke={lineColor} strokeWidth={1.2} />
+      <path d={Y_UPPER} fill="none" stroke={lineColor} strokeWidth={lineWidth} />
+      <path d={Y_STEM} fill="none" stroke={lineColor} strokeWidth={lineWidth} />
     </svg>
   );
 }
