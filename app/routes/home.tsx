@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useLocation, useNavigationType } from "react-router";
 import { SiteMasthead } from "../components/SiteMasthead";
 import { SiteFooter } from "../components/SiteFooter";
 import { NavBand } from "../components/NavBand";
@@ -23,7 +25,23 @@ const BANDS = [
   { slug: "contact", label: "[Contact]", suffix: "<3", suffixLeft: 1065, routed: true },
 ] as const;
 
+/* GF09-G D2.1: Work's `collapse` link pushes "/" with `state.from === "work"`.
+   Only that PUSH arrival focuses the Work band's own link; focus() without
+   preventScroll lets the browser bring it into view. POP (Back/Forward/
+   reload), direct loads and any other Home entry never match. The effect is
+   keyed on location.key and holds no cross-instance flag, so it stays
+   idempotent if the route node mounts more than once during the swap. */
 export default function Home() {
+  const location = useLocation();
+  const navigationType = useNavigationType();
+  const fromWork =
+    navigationType === "PUSH" && (location.state as { from?: unknown } | null)?.from === "work";
+
+  useEffect(() => {
+    if (!fromWork) return;
+    document.getElementById("band-link-work")?.focus();
+  }, [fromWork, location.key]);
+
   return (
     <div className="r11 r11--home">
       <SiteMasthead variant="home" />

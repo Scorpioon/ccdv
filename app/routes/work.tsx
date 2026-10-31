@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Link } from "react-router";
 import { SiteMasthead } from "../components/SiteMasthead";
 import { SiteFooter } from "../components/SiteFooter";
 import { FilterGroup } from "../components/FilterGroup";
@@ -59,9 +60,14 @@ export default function Work() {
         <span className="band__suffix" style={{ left: "calc(722 * var(--u))" }}>
           +.+
         </span>
-        <span className="hero__watermark" aria-hidden="true">
+        <Link
+          className="hero__watermark"
+          to="/"
+          state={{ from: "work" }}
+          aria-label="collapse — back to Home"
+        >
           collapse
-        </span>
+        </Link>
       </section>
 
       <div className="section section--stripe" />

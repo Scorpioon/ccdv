@@ -412,6 +412,9 @@ main { display: block; outline: none; }
 .hero__watermark { top: calc(22.3 * var(--u)); }      /* baseline 34 */
 .clip-row__watermark { top: calc(23.3 * var(--u)); }  /* baseline 35 */
 
+/* GF09-G: Work's `collapse` is a real link; the shared rule above is untouched. */
+.r11--work a.hero__watermark { text-decoration: none; }
+
 /* GF07-D: the indicator is state, not a button — it must never win the click
    over the full-row toggle beneath it, even where it visually overlaps it. */
 .clip-row__chevron,

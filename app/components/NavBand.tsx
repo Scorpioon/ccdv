@@ -45,11 +45,11 @@ export function NavBand({ slug, label, suffix, suffixLeft, routed = false }: Nav
     <li className={`band band--${slug}`}>
       {routed ? (
         slug === "studio" ? (
-          <Link className="band__link" {...link("/studio")}>
+          <Link className="band__link" id={`band-link-${slug}`} {...link("/studio")}>
             {inner}
           </Link>
         ) : (
-          <Link className="band__link" to={`/${slug}`}>
+          <Link className="band__link" id={`band-link-${slug}`} to={`/${slug}`}>
             {inner}
           </Link>
         )
