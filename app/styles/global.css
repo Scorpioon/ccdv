@@ -845,6 +845,85 @@ main { display: block; outline: none; }
 .work-preview__name { font-size: calc(20 * var(--u)); }
 .work-preview__note { font-size: calc(16 * var(--u)); color: var(--ccdv-ink); opacity: 0.6; }
 
+/* --- GF09-H: Work view selector + Mosaic (`FBI-020/021`) -------------------
+   `data-view` on the explorer section picks the view by CSS alone; both views
+   stay mounted. List (the default) is untouched: 527u explorer, same rows. The
+   Type group only gives up the width the selector occupies, at the same row
+   height (the buttons share the filter options' font-size and 4u padding). */
+.work-filters__end { display: flex; align-items: flex-start; gap: calc(24 * var(--u)); }
+
+.view-selector { display: flex; gap: calc(8 * var(--u)); }
+.view-selector__button {
+  --view-icon: #8c8c8c;
+  display: inline-flex;
+  align-items: center;
+  gap: calc(6 * var(--u));
+  padding: calc(4 * var(--u)) 0;
+  white-space: nowrap;
+}
+.view-selector__button--active { --view-icon: var(--ccdv-ink); }
+.view-selector__icon { height: calc(14 * var(--u)); width: auto; fill: var(--view-icon); }
+
+/* Mosaic: hidden unless selected. Three equal tracks; cards alternate 1+2, then
+   2+1, in source order (row-major). The explorer grows with the content and the
+   footer follows in flow; 527u stays a floor. */
+.work-mosaic { display: none; }
+.work-mosaic__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: calc(24 * var(--u));
+}
+.work-mosaic__card { display: flex; flex-direction: column; gap: calc(18 * var(--u)); min-width: 0; grid-column: span 1; }
+.work-mosaic__card:nth-child(4n + 2),
+.work-mosaic__card:nth-child(4n + 3) { grid-column: span 2; }
+
+.work-mosaic__media {
+  display: block;
+  width: 100%;
+  height: calc(610 * var(--u));
+  object-fit: cover;
+  border: calc(0.5 * var(--u)) solid var(--ccdv-ink);
+  box-sizing: border-box;
+}
+/* typography-only fallback: sourced name only; narrow cards yellow, wide cards ink */
+.work-mosaic__media--type {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(24 * var(--u));
+  background: var(--ccdv-yellow);
+  color: var(--ccdv-ink);
+  text-align: center;
+}
+.work-mosaic__card:nth-child(4n + 2) .work-mosaic__media--type,
+.work-mosaic__card:nth-child(4n + 3) .work-mosaic__media--type { background: var(--ccdv-ink); color: var(--ccdv-bg); }
+.work-mosaic__title { font-size: calc(48 * var(--u)); line-height: 1.1; overflow-wrap: anywhere; }
+.work-mosaic__title::before { content: "[ "; }
+.work-mosaic__title::after { content: " ]"; }
+
+.work-mosaic__caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(8 * var(--u));
+  font-size: calc(20 * var(--u));
+}
+.work-mosaic__name { min-width: 0; overflow-wrap: anywhere; }
+
+.section--work-explorer[data-view="mosaic"] { height: auto; min-height: calc(527 * var(--u)); padding-bottom: calc(48 * var(--u)); }
+.section--work-explorer[data-view="mosaic"] .work-layout { display: none; }
+.section--work-explorer[data-view="mosaic"] .work-mosaic { display: block; margin-top: calc(40 * var(--u)); }
+
+/* <=767px: List only, whatever the desktop choice was. CSS-only (no hidden /
+   aria-hidden / matchMedia), so the List stays in the accessibility tree and
+   the desktop choice comes back when the viewport widens. */
+@media (max-width: 767px) {
+  .view-selector { display: none; }
+  .section--work-explorer[data-view="mosaic"] { height: calc(527 * var(--u)); min-height: 0; padding-bottom: 0; }
+  .section--work-explorer[data-view="mosaic"] .work-layout { display: flex; }
+  .section--work-explorer[data-view="mosaic"] .work-mosaic { display: none; }
+}
+
 /* --- Services categories (`SVC-DEC-001`) ----------------------------------
    Pitch between the five bottom-left dots is a uniform 268.7 across all five
    cells (`pages_services.svg`), so the row is five equal flex cells rather

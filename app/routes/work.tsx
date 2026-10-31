@@ -4,6 +4,8 @@ import { SiteMasthead } from "../components/SiteMasthead";
 import { SiteFooter } from "../components/SiteFooter";
 import { FilterGroup } from "../components/FilterGroup";
 import { ProjectList, type WorkProject } from "../components/ProjectList";
+import { ProjectMosaic } from "../components/ProjectMosaic";
+import { ViewSelector, type WorkView } from "../components/ViewSelector";
 
 export function meta() {
   return [{ title: "CCDV — Work" }];
@@ -38,6 +40,9 @@ const DEFAULT_PREVIEW_ID = PROJECTS[0].id;
 export default function Work() {
   const [type, setType] = useState<string | null>(null);
   const [previewId, setPreviewId] = useState<string>(DEFAULT_PREVIEW_ID);
+  /* Desktop view choice only. Both views stay mounted and CSS shows one
+     (`data-view`), so <=767px can force List without any viewport state. */
+  const [view, setView] = useState<WorkView>("list");
 
   const filtered = useMemo(
     () => PROJECTS.filter((project) => !type || project.typeFilter === type),
@@ -72,10 +77,13 @@ export default function Work() {
 
       <div className="section section--stripe" />
 
-      <section className="section section--work-explorer" aria-label="Work projects">
+      <section className="section section--work-explorer" aria-label="Work projects" data-view={view}>
         <div className="work-filters">
           <FilterGroup label="Year" options={YEARS} value={null} onChange={() => {}} align="start" disabled />
-          <FilterGroup label="Type" options={TYPES} value={type} onChange={setType} align="end" />
+          <div className="work-filters__end">
+            <FilterGroup label="Type" options={TYPES} value={type} onChange={setType} align="end" />
+            <ViewSelector value={view} onChange={setView} />
+          </div>
         </div>
 
         <div className="work-layout">
@@ -88,6 +96,8 @@ export default function Work() {
             <p className="work-preview__note">[ preview unavailable ]</p>
           </div>
         </div>
+
+        <ProjectMosaic projects={filtered} />
       </section>
 
       <SiteFooter />
