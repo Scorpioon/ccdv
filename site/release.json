@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "project": "ccdv",
-  "sourceCommit": "fd464accf20850eedf9031ca93070f2a3f4e1fa7",
+  "sourceCommit": "4e0151b96728527cea3db9be0ab92b6d96864757",
   "sourceBranch": "main",
-  "sourceCommitTime": "2026-10-31T04:12:22+01:00",
-  "stagedAtUtc": "2026-10-31T11:21:57.7178909Z",
+  "sourceCommitTime": "2026-11-01T12:25:22+01:00",
+  "stagedAtUtc": "2026-11-01T11:25:24.9771930Z",
   "manifestAlgorithm": "sha256",
   "manifestFile": "release-manifest.sha256",
-  "manifestSha256": "6f329e683b26a49557281829d205f186a90d84d1f4765eed05f5e4e0d143864b",
+  "manifestSha256": "b17965659b88e27ac5dc5ad31b976377220e0a8faa01e302bd24feb9cf91f642",
   "manifestFileCount": 28,
   "hosting": "domain-root only (assets are root-absolute)",
   "spaFallback": "404.html is a byte copy of index.html"
