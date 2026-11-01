@@ -193,8 +193,8 @@ if (-not $Execute) {
 
 # ---- the single authorization -----------------------------------------------
 Write-Host ''
-$answer = Read-Host "Authorize this publication to ${Repo}? Type Y to proceed (anything else aborts)"
-if ($answer -cne 'Y') { Write-Host 'Not authorized. Aborted; nothing changed.'; exit 1 }
+$answer = Read-Host "Authorize this publication to ${Repo}? Type Y/y to proceed (anything else aborts)"
+if (-not ($answer -ceq 'Y' -or $answer -ceq 'y')) { Write-Host 'Not authorized. Aborted; nothing changed.'; exit 1 }
 
 $null = New-Item -ItemType Directory -Path $Receipts -Force
 $Journal.status = 'IN_PROGRESS'; $Journal['preRemoteSha'] = $preSha; $Journal['preLegacySha'] = $legacySha; $Journal['pagesBefore'] = $pagesBefore
