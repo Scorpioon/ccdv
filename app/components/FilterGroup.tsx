@@ -19,7 +19,12 @@ import { useLayoutEffect, useRef, useState } from "react";
    `disabled` semantics: no hover/focus preview, no highlight ever renders, no
    click reaches `onChange`. This must not read as a working filter that
    happens to do nothing, so the group itself carries `aria-disabled` and its
-   accessible name says so. */
+   accessible name says so.
+
+   MTG02 CORR02: `disabledOptions` is an optional per-option variant of the
+   same idea. Listed options render a native `disabled` button (out of the Tab
+   order, no focus/hover preview, no click) while the rest of the group stays
+   live. Omitted, behavior is identical to before. */
 
 export interface FilterGroupProps {
   label: string;
@@ -28,6 +33,7 @@ export interface FilterGroupProps {
   onChange: (value: string | null) => void;
   align?: "start" | "end";
   disabled?: boolean;
+  disabledOptions?: readonly string[];
 }
 
 export function FilterGroup({
@@ -37,6 +43,7 @@ export function FilterGroup({
   onChange,
   align = "start",
   disabled = false,
+  disabledOptions,
 }: FilterGroupProps) {
   const [hovered, setHovered] = useState<string | null>(null);
   const displayed = disabled ? null : hovered ?? value;
@@ -74,7 +81,8 @@ export function FilterGroup({
         />
       )}
       {options.map((option) => {
-        const selected = !disabled && value === option;
+        const optionDisabled = disabled || (disabledOptions?.includes(option) ?? false);
+        const selected = !optionDisabled && value === option;
         return (
           <button
             key={option}
@@ -83,12 +91,12 @@ export function FilterGroup({
               buttonRefs.current[option] = node;
             }}
             className="filter-group__option"
-            disabled={disabled}
-            aria-pressed={disabled ? undefined : selected}
-            onMouseEnter={disabled ? undefined : () => setHovered(option)}
-            onFocus={disabled ? undefined : () => setHovered(option)}
-            onBlur={disabled ? undefined : () => setHovered(null)}
-            onClick={disabled ? undefined : () => onChange(selected ? null : option)}
+            disabled={optionDisabled}
+            aria-pressed={optionDisabled ? undefined : selected}
+            onMouseEnter={optionDisabled ? undefined : () => setHovered(option)}
+            onFocus={optionDisabled ? undefined : () => setHovered(option)}
+            onBlur={optionDisabled ? undefined : () => setHovered(null)}
+            onClick={optionDisabled ? undefined : () => onChange(selected ? null : option)}
           >
             [ {option} ]
           </button>

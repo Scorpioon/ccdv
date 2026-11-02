@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import type { WorkProject } from "./ProjectList";
 
 /* Work's Mosaic view (`CCDV-FBI-021`, media contract PARTIAL). Presentational
@@ -5,9 +6,10 @@ import type { WorkProject } from "./ProjectList";
    collection, in the same source order, that the List renders — so there is no
    second data source and no second filter state.
 
-   Cards are deliberately NOT interactive: no link, no button, no tabIndex, no
-   handler (Workcase is FBI-022, out of scope). Each card is a media area plus a
-   caption below it (name, type tag, WIP).
+   Cards are noninteractive EXCEPT a project that carries `href` (authentic
+   Workcase data, MTG02): its card content is wrapped in one real <Link>; the
+   <li>, grid spans and card geometry are unchanged. Each card is a media area
+   plus a caption below it (name, type tag, WIP).
 
    No project media exists in the workspace, so the media area is a
    typography-only composition built from the project's own sourced name; it
@@ -21,9 +23,11 @@ export type MosaicProject = WorkProject & {
 
 export interface ProjectMosaicProps {
   projects: MosaicProject[];
+  /** called just before a Workcase link navigates (lets Work save its scroll) */
+  onCaseNavigate?: () => void;
 }
 
-export function ProjectMosaic({ projects }: ProjectMosaicProps) {
+export function ProjectMosaic({ projects, onCaseNavigate }: ProjectMosaicProps) {
   return (
     <div className="work-mosaic">
       {projects.length === 0 ? (
@@ -32,24 +36,37 @@ export function ProjectMosaic({ projects }: ProjectMosaicProps) {
         </p>
       ) : (
         <ul className="work-mosaic__grid" aria-label="Projects">
-          {projects.map((project) => (
-            <li key={project.id} className="work-mosaic__card">
-              {project.media ? (
-                <img className="work-mosaic__media" src={project.media.src} alt={project.media.alt} />
-              ) : (
-                <div className="work-mosaic__media work-mosaic__media--type" aria-hidden="true">
-                  <span className="work-mosaic__title">{project.name}</span>
+          {projects.map((project) => {
+            const content = (
+              <>
+                {project.media ? (
+                  <img className="work-mosaic__media" src={project.media.src} alt={project.media.alt} />
+                ) : (
+                  <div className="work-mosaic__media work-mosaic__media--type" aria-hidden="true">
+                    <span className="work-mosaic__title">{project.name}</span>
+                  </div>
+                )}
+                <div className="work-mosaic__caption">
+                  <span className="work-mosaic__name">{project.name}</span>
+                  <span className="project-row__tags">
+                    <span className="project-row__tag">{project.tag}</span>
+                    {project.wip && <span className="project-row__wip">(WIP)</span>}
+                  </span>
                 </div>
-              )}
-              <div className="work-mosaic__caption">
-                <span className="work-mosaic__name">{project.name}</span>
-                <span className="project-row__tags">
-                  <span className="project-row__tag">{project.tag}</span>
-                  {project.wip && <span className="project-row__wip">(WIP)</span>}
-                </span>
-              </div>
-            </li>
-          ))}
+              </>
+            );
+            return (
+              <li key={project.id} className="work-mosaic__card">
+                {project.href ? (
+                  <Link to={project.href} className="work-mosaic__link" onClick={onCaseNavigate}>
+                    {content}
+                  </Link>
+                ) : (
+                  content
+                )}
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>

@@ -759,10 +759,16 @@ main { display: block; outline: none; }
    base .section--intro rule. */
 .r11--services .section--intro { height: calc(165 * var(--u)); }
 
+/* MTG02 CORR01 FB001: was a fixed `height: 527u` (GF09-H / pages_work.svg).
+   With box-sizing: border-box the six List rows (6 x ~72u) + filters + 40u gap
+   + 48u top padding need ~561u, so the rows overflowed the box and the footer
+   (the next sibling, z-index 1) painted over the last one. 527u is now a floor;
+   the section grows with its content and the footer follows in flow, with the
+   same 48u bottom clearance Mosaic already uses. Footer CSS is untouched. */
 .section--work-explorer {
-  height: calc(527 * var(--u));
+  min-height: calc(527 * var(--u));
   background: var(--ccdv-panel);
-  padding: calc(48 * var(--u)) calc(48 * var(--u)) 0;
+  padding: calc(48 * var(--u)) calc(48 * var(--u)) calc(48 * var(--u));
 }
 .section--services-panel { height: calc(707 * var(--u)); background: var(--ccdv-panel); padding: calc(48 * var(--u)); }
 
@@ -910,7 +916,7 @@ main { display: block; outline: none; }
 }
 .work-mosaic__name { min-width: 0; overflow-wrap: anywhere; }
 
-.section--work-explorer[data-view="mosaic"] { height: auto; min-height: calc(527 * var(--u)); padding-bottom: calc(48 * var(--u)); }
+.section--work-explorer[data-view="mosaic"] { min-height: calc(527 * var(--u)); padding-bottom: calc(48 * var(--u)); }
 .section--work-explorer[data-view="mosaic"] .work-layout { display: none; }
 .section--work-explorer[data-view="mosaic"] .work-mosaic { display: block; margin-top: calc(40 * var(--u)); }
 
@@ -919,7 +925,7 @@ main { display: block; outline: none; }
    the desktop choice comes back when the viewport widens. */
 @media (max-width: 767px) {
   .view-selector { display: none; }
-  .section--work-explorer[data-view="mosaic"] { height: calc(527 * var(--u)); min-height: 0; padding-bottom: 0; }
+  .section--work-explorer[data-view="mosaic"] { min-height: calc(527 * var(--u)); padding-bottom: calc(48 * var(--u)); }
   .section--work-explorer[data-view="mosaic"] .work-layout { display: flex; }
   .section--work-explorer[data-view="mosaic"] .work-mosaic { display: none; }
 }
@@ -1485,4 +1491,169 @@ main { display: block; outline: none; }
     transition-duration: 0s !important;
     animation-duration: 0s !important;
   }
+}
+
+/* --- MTG02: Work -> Workcase links (`CCDV-FBI-022`) -------------------------
+   Narrow additions only. A linked List row reuses `.project-row__button`
+   unchanged (an <a> in place of the <button>); a linked Mosaic card wraps its
+   existing media + caption in one <a> that reproduces the card's own column.
+   Non-case rows/cards get none of this. */
+.project-row__button--link { text-decoration: none; color: inherit; }
+
+.work-mosaic__link {
+  display: flex;
+  flex-direction: column;
+  gap: calc(18 * var(--u));
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+.work-mosaic__link:hover .work-mosaic__name { text-decoration: underline; text-underline-offset: 0.15em; }
+
+/* MTG02 CORR02: options FilterGroup renders natively `disabled` (Work's Year
+   options with no records) keep the dimmed, non-interactive look. State comes
+   from the control itself, not from option position. */
+.work-filters .filter-group__option:disabled {
+  opacity: 0.5;
+  color: inherit;
+  cursor: default;
+}
+
+/* the results area is a programmatic focus target (Workcase Year/Type link) */
+.section--work-explorer:focus { outline: none; }
+
+/* --- MTG02: Workcase (`/work/:slug`) ----------------------------------------
+   Proportions are read off pages_workcase.png (1520 wide) and rescaled to the
+   1440 artboard (x0.947): yellow title band ~120, ink dividers ~26, hero photo
+   ~696 x 494 beside a ~744 metadata panel, showcase screenshots inset ~8. Only
+   existing tokens are used. All rules are scoped under .r11--workcase. */
+.r11--workcase .workcase-band {
+  position: relative;
+  height: calc(120 * var(--u));
+  background: var(--ccdv-yellow);
+}
+
+/* title baseline sits on the band's bottom edge, as .band__label does:
+   baseline = top + L/2 + 0.386364 * font-size  (L = font-size = 90) */
+.r11--workcase .workcase-title {
+  position: absolute;
+  z-index: 3;
+  left: calc(24 * var(--u));
+  top: calc(40.2 * var(--u));
+  display: flex;
+  align-items: baseline;
+  gap: 0.55em;
+  font-size: calc(90 * var(--u));
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--ccdv-ink);
+}
+.r11--workcase .workcase-title__slug { margin: 0; font-size: inherit; line-height: inherit; }
+.r11--workcase .workcase-title__sep { margin: 0 -0.55em; }
+
+.r11--workcase .workcase-rule { height: calc(26 * var(--u)); background: var(--ccdv-ink); }
+
+.r11--workcase .workcase-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 48.2fr) minmax(0, 51.8fr);
+  background: var(--ccdv-panel);
+}
+.r11--workcase .workcase-summary__photo { height: calc(494 * var(--u)); overflow: hidden; }
+.r11--workcase .workcase-summary__photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+.r11--workcase .workcase-summary__panel {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  padding: calc(69 * var(--u)) calc(48 * var(--u));
+}
+/* no hero photo supplied: the metadata panel takes the full row */
+.r11--workcase .workcase-summary > .workcase-summary__panel:first-child { grid-column: 1 / -1; }
+
+.r11--workcase .workcase-meta {
+  width: 100%;
+  margin: 0;
+  border: calc(0.5 * var(--u)) solid var(--ccdv-ink);
+  font-size: calc(13.2 * var(--u));
+}
+.r11--workcase .workcase-meta__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(16 * var(--u));
+  min-height: calc(62 * var(--u));
+  padding: 0 calc(22 * var(--u));
+  border-top: calc(0.5 * var(--u)) solid var(--ccdv-ink);
+}
+.r11--workcase .workcase-meta__row:first-child { border-top: 0; }
+.r11--workcase .workcase-meta dt,
+.r11--workcase .workcase-meta dd { margin: 0; }
+.r11--workcase .workcase-meta dd { text-align: right; overflow-wrap: anywhere; }
+.r11--workcase .workcase-meta__row--text { flex-direction: column; align-items: flex-start; justify-content: center; padding-top: calc(20 * var(--u)); padding-bottom: calc(20 * var(--u)); }
+.r11--workcase .workcase-meta__row--text dd { text-align: left; }
+/* unsourced value: neutral, same muted idiom as `.work-preview__note` */
+.r11--workcase .workcase-pending { opacity: 0.6; }
+.r11--workcase .workcase-meta__year {
+  background: var(--ccdv-yellow);
+  padding: calc(2 * var(--u)) calc(6 * var(--u));
+  text-decoration: underline;
+}
+.r11--workcase .workcase-meta__type {
+  background: var(--ccdv-white);
+  padding: calc(2 * var(--u)) calc(6 * var(--u));
+  text-decoration: underline;
+}
+
+.r11--workcase .workcase-media {
+  display: flex;
+  flex-direction: column;
+  gap: calc(8 * var(--u));
+  padding: calc(8 * var(--u));
+  background: var(--ccdv-panel);
+}
+.r11--workcase .workcase-media img { display: block; width: 100%; height: auto; }
+
+.r11--workcase .workcase-details { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: calc(8 * var(--u)); }
+/* Indetail slots: ~298u tall in R1.1 (178/2000 of the 3532 export), lighter
+   (--ccdv-light) than the page panel, thin ink border. */
+.r11--workcase .workcase-details__col {
+  min-height: calc(298 * var(--u));
+  padding: calc(20 * var(--u));
+  border: calc(0.5 * var(--u)) solid var(--ccdv-ink);
+  background: var(--ccdv-light);
+  font-size: calc(13.2 * var(--u));
+}
+.r11--workcase .workcase-details__col h2 { margin-bottom: calc(12 * var(--u)); font-size: inherit; }
+
+/* <=767px: the same hierarchy, reflowed. --u is ~0.26px here, so sizes that
+   must stay legible/tappable are given in px. Title band and metadata stack;
+   the three return controls keep their own padded hit areas. */
+@media (max-width: 767px) {
+  .r11--workcase .workcase-band { height: auto; min-height: 96px; padding: 34px 12px 8px; }
+  .r11--workcase .workcase-title {
+    position: static;
+    flex-wrap: wrap;
+    align-items: baseline;
+    font-size: min(7vw, 40px);
+    white-space: normal;
+  }
+  .r11--workcase .workcase-title a { display: inline-block; padding: 6px 4px; }
+  .r11--workcase .hero__watermark { top: 10px; left: auto; right: 12px; font-size: 13px; padding: 6px 4px; }
+  .r11--workcase .workcase-rule { height: 12px; }
+  .r11--workcase .workcase-summary { grid-template-columns: minmax(0, 1fr); }
+  .r11--workcase .workcase-summary__photo { height: auto; aspect-ratio: 4 / 3; }
+  .r11--workcase .workcase-summary__panel,
+  .r11--workcase .workcase-summary__photo:first-child + .workcase-summary__panel { grid-column: 1; padding: 16px 12px; }
+  .r11--workcase .workcase-meta { font-size: 14px; }
+  .r11--workcase .workcase-meta__row { min-height: 48px; padding: 8px 14px; }
+  .r11--workcase .workcase-meta__type,
+  .r11--workcase .workcase-meta__year { padding: 2px 6px; }
+  .r11--workcase .workcase-media { gap: 8px; padding: 8px; }
+  .r11--workcase .workcase-details { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .r11--workcase .workcase-details__col { min-height: 0; padding: 14px; font-size: 14px; }
 }
