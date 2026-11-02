@@ -1,76 +1,71 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import type { ServiceCategory } from "../data/servicesContent";
 
-/* Services' nested ServiceBlock selector + bound description (`SVC-DEC-002
-   `–`004`). Only the category shown active in R1.1 (`Experience`) has a
-   visible content state — three identically-worded placeholder blocks and
-   one placeholder description, per `SVC-DEC-005` ("names and descriptions
-   are placeholders"). The other four categories have no sourced content at
-   all, so rather than inventing four sets of distinct names (forbidden by
-   this task's scope), every category reuses that same verbatim placeholder
-   triad: it is the one approved placeholder pattern, reproduced rather than
-   multiplied into invented variations.
+/* Services' nested service selector + bound description (`SVC-DEC-002/004`).
 
-   GF08-A4R1 CORRECTION: `services.tsx` now supplies one distinct, stably-
-   identified `ServiceBlockContent` record per category+index (see that
-   file's `SERVICES_CONTENT`) instead of one flat `description` string
-   shared by every block. This component reads `active.description` off the
-   selected record, so the right pane is mechanically a function of BOTH the
-   active category (which record set `blocks` is) and the active block
-   (`selectedIndex` into it) — satisfying `SVC-DEC-004`'s "keyed to BOTH"
-   requirement at the binding level, without the visible text changing: all
-   records still carry the one sourced placeholder label/description
-   verbatim (`SVC-DEC-005`), just as distinct entries rather than aliases of
-   each other. `categoryId` (not `categoryLabel`) drives the block-reset
-   effect, since it is the stable identity the reset should key off; the
-   label is kept only for the accessible group name. `data-category-id` /
-   `data-active-block-id` / `data-block-id` expose that identity for
-   verification without touching layout — no class or visible markup
-   changed. */
+   One panel per SELECTED category (never 5 x 3 panels). `category.services`
+   is rendered as-is, so the row count is whatever the data holds.
 
-export interface ServiceBlockContent {
-  id: string;
-  label: string;
-  description: string;
-}
+   State model (MTG03 D1/D4, supersedes `SVC-DEC-003`'s "brackets = active"):
+   - hover / keyboard focus -> `[ brackets ]`, purely CSS (`:hover`,
+     `:focus-visible`), so they vanish on mouse-leave and never commit;
+   - selection -> `aria-pressed` + a provisional red square marker
+     (D16, final persistent cue still pending OPERATOR visual decision).
+
+   Selection is stored as a service id. Ids are category-scoped, so after a
+   category change the stored id matches nothing and the first service of the
+   new category is active — no effect, no stale frame, no cross-category
+   bleed. Returning to a category restores its last selected service. */
 
 export interface ServiceDetailPanelProps {
-  categoryId: string;
-  categoryLabel: string;
-  blocks: ServiceBlockContent[];
+  category: ServiceCategory;
   panelId?: string;
 }
 
-export function ServiceDetailPanel({ categoryId, categoryLabel, blocks, panelId }: ServiceDetailPanelProps) {
-  const [selectedIndex, setSelectedIndex] = useState(0);
-
-  useEffect(() => {
-    setSelectedIndex(0);
-  }, [categoryId]);
-
-  const active = blocks[selectedIndex] ?? blocks[0];
+export function ServiceDetailPanel({ category, panelId }: ServiceDetailPanelProps) {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const { services } = category;
+  const active = services.find((service) => service.id === selectedId) ?? services[0];
 
   return (
-    <div id={panelId} className="svc-detail" data-category-id={categoryId} data-active-block-id={active?.id}>
-      <div className="svc-detail__blocks" role="group" aria-label={`${categoryLabel} service blocks`}>
-        {blocks.map((block, index) => {
-          const isActive = index === selectedIndex;
+    <div id={panelId} className="svc-detail" data-category-id={category.id} data-active-service-id={active?.id}>
+      <div className="svc-detail__blocks" role="group" aria-label={`${category.label} services`}>
+        {services.map((service) => {
+          const selected = service.id === active?.id;
           return (
             <button
-              key={block.id}
+              key={service.id}
               type="button"
-              aria-pressed={isActive}
-              data-block-id={block.id}
+              aria-pressed={selected}
+              data-service-id={service.id}
               className="svc-detail__block"
-              onClick={() => setSelectedIndex(index)}
+              onClick={() => setSelectedId(service.id)}
             >
-              {isActive ? `[ ${block.label} ]` : block.label}
+              <span className="svc-detail__mark" aria-hidden="true" />
+              <span className="svc-detail__bracket" aria-hidden="true">
+                [&nbsp;
+              </span>
+              <span className="svc-detail__label">{service.label}</span>
+              <span className="svc-detail__bracket" aria-hidden="true">
+                &nbsp;]
+              </span>
             </button>
           );
         })}
         <span className="svc-detail__dot" aria-hidden="true" />
       </div>
-      <div className="svc-detail__description">
-        <p>{active?.description}</p>
+      <div className="svc-detail__description" aria-live="polite">
+        {active ? (
+          <>
+            <p className="svc-detail__context">
+              [ {category.label} / {active.label} ]
+            </p>
+            <p>{active.description}</p>
+            {active.pending ? (
+              <p className="svc-detail__pending">[ pending ] · content slot {active.id}</p>
+            ) : null}
+          </>
+        ) : null}
         <span className="svc-detail__dot svc-detail__dot--accent" aria-hidden="true" />
       </div>
     </div>
