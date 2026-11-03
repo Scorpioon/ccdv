@@ -38,7 +38,10 @@ body {
 
 a { color: inherit; text-decoration: none; }
 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
-:where(a, button):focus-visible { outline: calc(3 * var(--u, 1px)) solid #2469ff; outline-offset: calc(3 * var(--u, 1px)); }
+/* MTG05 FBI-013: --u is ~0.22px at 320 and ~0.27px at 390, so the 3u ring fell
+   under 1px on phones. Floor it at 2px; at >=667px the 3u value already
+   exceeds 2px, so desktop rendering is unchanged. */
+:where(a, button):focus-visible { outline: max(2px, calc(3 * var(--u, 1px))) solid #2469ff; outline-offset: max(2px, calc(3 * var(--u, 1px))); }
 ul { margin: 0; padding: 0; list-style: none; }
 /* 600, not 400: the only face loaded is Victor Mono SemiBold, and leaving the
    UA's bold on h1/h2 would ask for 700 and get a synthesised bold instead of
@@ -1386,7 +1389,25 @@ main { display: block; outline: none; }
 }
 
 .ccos-detail__body { height: calc(1186 * var(--u)); overflow: hidden; transition: height 0.32s ease; }
-.ccos-detail[data-collapsed="true"] .ccos-detail__body { height: 0; }
+/* MTG05 FBI-013: once collapsed, the body is also removed from the accessibility
+   tree and tab order, after the height collapse has played (same pattern as
+   `.fan__inner`). Expanding makes it visible immediately. */
+.ccos-detail[data-collapsed="true"] .ccos-detail__body { height: 0; visibility: hidden; transition: height 0.32s ease, visibility 0s 0.32s; }
+
+/* MTG05 FBI-013: the CCOS `collapse` control is ~3px tall at phone widths.
+   Additive, layout-neutral hit area (the control is already absolutely
+   positioned, so it is the containing block); touch only, ≥44px. */
+@media (max-width: 767px) {
+  .ccos-detail__toggle::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(100%, 44px);
+    height: 44px;
+    transform: translate(-50%, -50%);
+  }
+}
 
 .ccos-detail__overview {
   position: relative;

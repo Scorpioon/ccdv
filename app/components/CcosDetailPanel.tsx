@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { CcosOverviewIcon } from "./marks/CcosArtwork";
 
 /* The CCOS detail section (`PCC-013`, `PCC-DEC-002`). Initial state is
@@ -45,6 +45,7 @@ const PLACEHOLDER_ITEMS = ["-", "-", "-", "-"];
 
 export function CcosDetailPanel() {
   const [expanded, setExpanded] = useState(true);
+  const bodyId = useId();
 
   return (
     <div className="ccos-detail ccos-detail--hub" data-collapsed={!expanded}>
@@ -57,6 +58,7 @@ export function CcosDetailPanel() {
           type="button"
           className="ccos-detail__toggle"
           aria-expanded={expanded}
+          aria-controls={bodyId}
           aria-label={expanded ? "Collapse CCOS detail" : "Expand CCOS detail"}
           onClick={() => setExpanded((value) => !value)}
         >
@@ -64,7 +66,7 @@ export function CcosDetailPanel() {
         </button>
       </section>
 
-      <div className="ccos-detail__body">
+      <div className="ccos-detail__body" id={bodyId}>
         <section className="section ccos-detail__overview">
           <p className="ccos-detail__overview-statement">CCOS is out daily work system.</p>
           <ul className="ccos-detail__overview-list">
