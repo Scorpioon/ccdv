@@ -770,7 +770,11 @@ main { display: block; outline: none; }
   background: var(--ccdv-panel);
   padding: calc(48 * var(--u)) calc(48 * var(--u)) calc(48 * var(--u));
 }
-.section--services-panel { height: calc(707 * var(--u)); background: var(--ccdv-panel); padding: calc(48 * var(--u)); }
+/* MTG04 CORR01: the 707u artboard height is a floor-less reference, not a cap.
+   Expanded 3-paragraph copy needs more than the old 707u budget, so the section
+   sizes to its content (the footer follows in normal flow) and the lower detail
+   box carries its own minimum height instead. */
+.section--services-panel { height: auto; background: var(--ccdv-panel); padding: calc(48 * var(--u)); }
 
 /* --- Work filters (`WRK-DEC-001/002`) ------------------------------------- */
 .work-filters { display: flex; justify-content: space-between; align-items: flex-start; font-size: calc(20 * var(--u)); }
@@ -959,7 +963,12 @@ main { display: block; outline: none; }
 }
 
 /* --- Services detail panel (`SVC-DEC-002/003/004`) ------------------------ */
-.svc-detail { display: flex; border: calc(1 * var(--u)) solid var(--ccdv-ink); border-top: 0; }
+.svc-detail {
+  display: flex;
+  min-height: calc(380 * var(--u));
+  border: calc(1 * var(--u)) solid var(--ccdv-ink);
+  border-top: 0;
+}
 
 .svc-detail__blocks {
   position: relative;
@@ -1002,8 +1011,10 @@ main { display: block; outline: none; }
   position: relative;
   flex: 1 1 0;
   background: var(--ccdv-light);
-  padding: calc(24 * var(--u));
+  /* bottom padding keeps the last line (Focus) clear of the red D16 dot */
+  padding: calc(24 * var(--u)) calc(24 * var(--u)) calc(64 * var(--u));
   font-size: calc(16 * var(--u));
+  line-height: 1.5;
 }
 
 .svc-detail__dot {
@@ -1019,6 +1030,8 @@ main { display: block; outline: none; }
 .svc-detail__description p + p { margin-top: calc(12 * var(--u)); }
 .svc-detail__context { font-size: calc(12 * var(--u)); }
 .svc-detail__pending { font-size: calc(12 * var(--u)); }
+.svc-detail__focus { font-size: calc(12 * var(--u)); overflow-wrap: anywhere; }
+.svc-detail__description .svc-detail__focus { margin-top: calc(20 * var(--u)); }
 
 /* <=767px: --u is ~0.26px here, so the 5-cell row, split panel and fixed
    707u section height would be unreadable; reflow with px sizes. Categories
@@ -1035,13 +1048,15 @@ main { display: block; outline: none; }
   .svc-category:first-child { border-left-width: 1px; }
   .svc-category__label { font-size: 14px; white-space: normal; }
   .svc-category__dot { left: 10px; bottom: 10px; width: 8px; height: 8px; }
-  .svc-detail { flex-direction: column; margin-top: 1px; border-top-width: 1px; }
+  .svc-detail { flex-direction: column; min-height: 0; margin-top: 1px; border-top-width: 1px; }
   .svc-detail__blocks { gap: 0; padding: 12px 12px 36px; font-size: 18px; }
   .svc-detail__block { min-height: 44px; }
   .svc-detail__mark { width: 8px; height: 8px; margin-right: 10px; }
   .svc-detail__description { padding: 16px 12px 36px; font-size: 14px; min-height: 140px; }
   .svc-detail__description p + p { margin-top: 10px; }
+  .svc-detail__description .svc-detail__focus { margin-top: 16px; }
   .svc-detail__context,
+  .svc-detail__focus,
   .svc-detail__pending { font-size: 12px; }
   .svc-detail__dot { left: 12px; bottom: 12px; width: 8px; height: 8px; }
 }

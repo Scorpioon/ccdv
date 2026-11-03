@@ -12,6 +12,11 @@ import type { ServiceCategory } from "../data/servicesContent";
    - selection -> `aria-pressed` + a provisional red square marker
      (D16, final persistent cue still pending OPERATOR visual decision).
 
+   Right pane (MTG04): context line, approved description (one <p> per
+   paragraph, MTG04 CORR01), then the typed `focus` pair as
+   `[ Focus ] · first / second`. `[ pending ]` renders only for
+   a record whose `pending` flag is true; none of the 15 sourced records is.
+
    Selection is stored as a service id. Ids are category-scoped, so after a
    category change the stored id matches nothing and the first service of the
    new category is active — no effect, no stale frame, no cross-category
@@ -60,7 +65,12 @@ export function ServiceDetailPanel({ category, panelId }: ServiceDetailPanelProp
             <p className="svc-detail__context">
               [ {category.label} / {active.label} ]
             </p>
-            <p>{active.description}</p>
+            {active.paragraphs.map((paragraph, index) => (
+              <p key={`${active.id}-${index}`}>{paragraph}</p>
+            ))}
+            <p className="svc-detail__focus">
+              [ Focus ] · {active.focus[0]} / {active.focus[1]}
+            </p>
             {active.pending ? (
               <p className="svc-detail__pending">[ pending ] · content slot {active.id}</p>
             ) : null}
