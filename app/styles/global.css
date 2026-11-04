@@ -1747,3 +1747,156 @@ main { display: block; outline: none; }
   .r11--workcase .workcase-details { grid-template-columns: minmax(0, 1fr); gap: 8px; }
   .r11--workcase .workcase-details__col { min-height: 0; padding: 14px; font-size: 14px; }
 }
+
+/* --- MTG05 R4-B01: Studio scroll choreography (`CCDV-FBI-040..047`) ----------
+   Everything below is scoped to `.r11--studio`; Services, CCOS and the other
+   routes that share `.card`, `.columns`, `.clip-row` and `.ccos__*` are not
+   touched. Sizes are read off FB_R4_5/6/7: the SVG artboards are 1440 wide
+   (1u = 1px; the 2000px PNG shows 1.389px per u). Measured: strip ~58, row
+   pitch ~49, heading ~35, card copy ~20 on a 27 line, intro copy unchanged at
+   35.2 (same 19.2 advance as before). No token is added or changed. */
+.r11--studio { --studio-strip-h: calc(58 * var(--u)); }
+
+/* keyboard focus must never land under the sticky strip */
+.r11--studio :where(a, button) { scroll-margin-top: calc(var(--studio-strip-h) + 12px); }
+
+.studio-strip {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+  height: var(--studio-strip-h);
+  overflow: hidden;
+  background: var(--ccdv-purple);
+  transition: background-color 0.32s ease;
+}
+.studio-strip[data-stage="stage"] { background: var(--ccdv-purple-card); }
+.studio-strip__label {
+  position: absolute;
+  left: calc(24 * var(--u));
+  top: calc(10 * var(--u));                /* baseline ~47, bracket clipped by the strip */
+  font-size: calc(41 * var(--u));
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--ccdv-ink);
+}
+.studio-strip__suffix {
+  position: absolute;
+  left: calc(224 * var(--u));
+  top: calc(31 * var(--u));
+  font-size: calc(17 * var(--u));
+  line-height: 1;
+  color: var(--ccdv-ink);
+}
+.studio-strip__collapse {
+  position: absolute;
+  right: calc(24 * var(--u));
+  top: calc(14 * var(--u));
+  padding: 6px 8px;
+  font-size: calc(13.2 * var(--u));
+  line-height: 1;
+  color: var(--ccdv-bg);
+}
+.studio-strip__collapse:hover { text-decoration: underline; text-underline-offset: 0.2em; }
+
+/* black intro: fills the first view under the strip, then scrolls away */
+.studio-intro {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(48 * var(--u));
+  min-height: max(calc(392 * var(--u)), calc(100vh - var(--studio-strip-h)));
+  min-height: max(calc(392 * var(--u)), calc(100svh - var(--studio-strip-h)));
+  padding: calc(72 * var(--u)) calc(160 * var(--u)) calc(72 * var(--u)) calc(48 * var(--u));
+  background: var(--ccdv-ink);
+  color: var(--ccdv-bg);
+}
+.studio-intro__copy {
+  width: calc(840 * var(--u));
+  max-width: 100%;
+  font-size: calc(35.2 * var(--u));
+  line-height: calc(43 * var(--u));
+}
+.studio-intro__copy p + p { margin-top: calc(43 * var(--u)); }
+.studio-intro__figure { flex: none; width: calc(256 * var(--u)); }
+.studio-hex { display: block; width: 100%; height: auto; }
+
+/* the accordion stage: strip + selected-first headers + four squares */
+.studio-stage { background: var(--ccdv-panel); }
+.studio-stage__stack { display: block; border-bottom: calc(1 * var(--u)) solid var(--ccdv-ink); }
+.r11--studio .section--cards {
+  min-height: 0;
+  padding: calc(40 * var(--u)) calc(48 * var(--u)) calc(48 * var(--u));
+}
+.r11--studio .card { min-height: 0; padding: calc(38 * var(--u)) 0 calc(12 * var(--u)); }
+.r11--studio .card__label { font-size: calc(14 * var(--u)); }
+.r11--studio .card__body { font-size: calc(20 * var(--u)); line-height: calc(27 * var(--u)); }
+.r11--studio .card__para + .card__para { margin-top: calc(27 * var(--u)); }
+.r11--studio .columns { padding: 0 calc(48 * var(--u)) calc(28 * var(--u)); }
+.r11--studio .columns .card { padding: 0; }
+.r11--studio .columns .card__body { margin-top: calc(14 * var(--u)); font-size: calc(19 * var(--u)); line-height: calc(26 * var(--u)); }
+
+.r11--studio .fan .clip-row { height: calc(49 * var(--u)); }
+.r11--studio .clip-row__toggle {
+  padding: calc(6 * var(--u)) 0 0 calc(24 * var(--u));
+  font-size: calc(35 * var(--u));
+}
+.r11--studio .clip-row__chevron,
+.r11--studio .clip-row__watermark { top: calc(14 * var(--u)); }
+
+.r11--studio .fan__copy {
+  width: auto;
+  columns: 2;
+  column-gap: calc(48 * var(--u));
+  padding: calc(28 * var(--u)) calc(48 * var(--u)) calc(20 * var(--u));
+  font-size: calc(20 * var(--u));
+  line-height: calc(27 * var(--u));
+}
+.r11--studio .fan__copy p { break-inside: avoid; margin: 0 0 calc(27 * var(--u)); }
+.r11--studio .fan__copy p:last-child { margin-bottom: 0; }
+.r11--studio .fan__copy + .columns { padding-top: calc(8 * var(--u)); }
+.r11--studio .fan[data-tone="ink"] .fan__body { min-height: 0; }
+
+/* Build with WrkOps™: the long exception. Ground runs ink -> lilac with --wo
+   (0..1, set from scroll); type flips with --wo-text. Without color-mix the
+   panel simply stays black with light type, which is still legible. */
+.wo {
+  position: relative;
+  background: var(--ccdv-ink);
+  color: var(--ccdv-bg);
+  background: color-mix(in srgb, var(--ccdv-ink), var(--ccdv-purple) calc(var(--wo, 0) * 100%));
+  color: color-mix(in srgb, var(--ccdv-bg), var(--ccdv-ink) calc(var(--wo-text, 0) * 100%));
+  font-size: calc(30 * var(--u));
+  line-height: calc(38 * var(--u));
+}
+.wo__lead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(72 * var(--u)) calc(160 * var(--u)) calc(48 * var(--u)) calc(48 * var(--u));
+}
+.wo__lead p { width: calc(790 * var(--u)); max-width: 100%; }
+.wo__cube { flex: none; width: calc(260 * var(--u)); }
+.wo__explain { padding: calc(72 * var(--u)) calc(48 * var(--u)); }
+.wo__explain p { width: calc(790 * var(--u)); max-width: 100%; }
+.wo__explain p + p { margin-top: calc(38 * var(--u)); }
+.wo__ccos { position: relative; padding: calc(72 * var(--u)) calc(48 * var(--u)) calc(96 * var(--u)); }
+.wo__ccos-head { display: flex; align-items: center; gap: calc(36 * var(--u)); }
+.wo__ccos-cube { width: calc(100 * var(--u)); flex: none; }
+.r11--studio .wo .ccos__wordmark {
+  position: static;
+  font-size: calc(140 * var(--u));
+}
+.wo__ccos-copy { width: calc(740 * var(--u)); max-width: 100%; margin-top: calc(48 * var(--u)); }
+.wo__ccos-copy p + p { margin-top: calc(38 * var(--u)); }
+.wo .ccos__action { margin-top: calc(48 * var(--u)); color: var(--ccdv-ink); }
+/* reduced motion: no scroll-linked colour; CC.OS sits on its lilac plate */
+.wo[data-reduced="true"] .wo__ccos { background: var(--ccdv-purple); color: var(--ccdv-ink); }
+
+/* progressive reveals: hidden start state only while motion is armed */
+.r11--studio[data-motion="on"] [data-reveal] {
+  opacity: 0;
+  transform: translateY(calc(18 * var(--u)));
+  transition: opacity 0.6s ease var(--rd, 0s), transform 0.6s ease var(--rd, 0s);
+}
+.r11--studio[data-motion="on"] [data-reveal][data-seen="true"] { opacity: 1; transform: none; }
