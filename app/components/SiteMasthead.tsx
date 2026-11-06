@@ -51,15 +51,31 @@ export function SiteMasthead({ variant }: { variant: "home" | SectionVariant }) 
   const isHome = variant === "home";
   const nav = !isHome ? SECTION_NAV[variant as SectionVariant] : null;
 
+  /* MTG05 R4-B02 (FBI-048): the Studio masthead collapses with scroll. Its
+     compact state swaps the stacked pixel block for the inline lockup (FB_R4_2),
+     so that variant is rendered too; both are driven by `--mh-p` (0..1) set by
+     the Studio route. Only Studio gets it, and with --mh-p unset it is the
+     full-size masthead. */
+  const collapsing = variant === "studio";
+
   const mark = (
     <>
-      <GearMark className="masthead__gear" fill="#202020" dotFill="#D9D9D9" />
-      <CcdvPixelMark variant="stack" className="masthead__pixel" fill="#202020" />
+      {/* Studio: the centre disc matches the #F2F2F2 light surface (feedback
+          "change white"); the other routes keep #D9D9D9. */}
+      <GearMark
+        className="masthead__gear"
+        fill="#1A1A1A"
+        dotFill={collapsing ? "#F2F2F2" : "#D9D9D9"}
+      />
+      <CcdvPixelMark variant="stack" className="masthead__pixel" fill="#1A1A1A" />
+      {collapsing && (
+        <CcdvPixelMark variant="inline" className="masthead__pixel-inline" fill="#1A1A1A" />
+      )}
     </>
   );
 
   return (
-    <header className={`masthead masthead--${variant}`}>
+    <header className={`masthead masthead--${variant}${collapsing ? " masthead--collapsing" : ""}`}>
       {isHome ? (
         <span className="masthead__mark" aria-current="page">
           {mark}

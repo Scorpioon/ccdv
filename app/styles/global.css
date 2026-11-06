@@ -1757,20 +1757,22 @@ main { display: block; outline: none; }
    35.2 (same 19.2 advance as before). No token is added or changed. */
 .r11--studio { --studio-strip-h: calc(58 * var(--u)); }
 
-/* keyboard focus must never land under the sticky strip */
-.r11--studio :where(a, button) { scroll-margin-top: calc(var(--studio-strip-h) + 12px); }
+/* keyboard focus must never land under the sticky strip (R4-B02: nor under the
+   compact masthead above it, once the collapsing header is armed) */
+.r11--studio :where(a, button) { scroll-margin-top: calc(var(--studio-stick-h, var(--studio-strip-h)) + 12px); }
 
 .studio-strip {
   position: sticky;
-  top: 0;
+  top: var(--studio-strip-top, 0px);
   z-index: 6;
   height: var(--studio-strip-h);
   overflow: hidden;
-  background: var(--ccdv-purple);
-  transition: background-color 0.32s ease;
+  background: var(--ccdv-purple-card);
 }
-.studio-strip[data-stage="stage"] { background: var(--ccdv-purple-card); }
-.studio-strip__label {
+/* R4-B07 (B07-01): label and :P are one inline title group on a shared
+   baseline, so :P follows the closing bracket instead of sitting at a fixed
+   x (which left a ~48u gap: the label advance is 0.545em, not 0.6em). */
+.studio-strip__title {
   position: absolute;
   left: calc(24 * var(--u));
   top: calc(10 * var(--u));                /* baseline ~47, bracket clipped by the strip */
@@ -1780,61 +1782,121 @@ main { display: block; outline: none; }
   color: var(--ccdv-ink);
 }
 .studio-strip__suffix {
-  position: absolute;
-  left: calc(224 * var(--u));
-  top: calc(31 * var(--u));
+  margin-left: calc(8 * var(--u));
   font-size: calc(17 * var(--u));
   line-height: 1;
   color: var(--ccdv-ink);
 }
-.studio-strip__collapse {
-  position: absolute;
-  right: calc(24 * var(--u));
-  top: calc(14 * var(--u));
-  padding: 6px 8px;
-  font-size: calc(13.2 * var(--u));
-  line-height: 1;
-  color: var(--ccdv-bg);
-}
-.studio-strip__collapse:hover { text-decoration: underline; text-underline-offset: 0.2em; }
 
-/* black intro: fills the first view under the strip, then scrolls away */
+/* R4-B03 (B03-01/03/04/05): hero, intro and approach, in that order.
+   Hero: full lilac, 610u under the 268u masthead footprint so the black edge
+   starts at 878u as in FB_R4_5. It is sticky inside `.studio-top`, so the black
+   intro (painted above it) slides over it instead of pushing it away. */
+.studio-top { position: relative; }
+.studio-hero {
+  position: sticky;
+  top: 0;
+  z-index: 0;
+  /* B04-02: ends on the [Studio] baseline (label top 242 + 207/2 + 0.386364 *
+     207 = 425.5), so the black intro's top edge is the baseline and clips the
+     brackets and the :P suffix below it. */
+  height: calc(425.5 * var(--u));
+  background: var(--ccdv-purple-card);
+  color: var(--ccdv-ink);
+}
+.studio-hero__label {
+  position: absolute;
+  left: calc(24 * var(--u));
+  top: calc(242 * var(--u));               /* B04-01: 24 less, like the masthead */
+  font-size: calc(207 * var(--u));
+  line-height: 1;
+  white-space: nowrap;
+}
+.studio-hero__suffix {
+  position: absolute;
+  /* B05-02: one title group. `[Studio]` ends at x~927 (8 x 112.9 from x24); the
+     suffix starts just after it with its baseline (top + 53.5 + 0.386 x 107 =
+     top + 94.8) 12u above the hero edge at 425.5, so the black edge never
+     crops it. */
+  left: calc(936 * var(--u));
+  top: calc(318.7 * var(--u));
+  font-size: calc(107 * var(--u));
+  line-height: 1;
+}
+
+/* Black intro: three beats, alternating sides (text/cube, orbit/text, text/gear
+   as in FB_R4_6). Each beat is its own stretch of scroll. */
 .studio-intro {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: calc(48 * var(--u));
-  min-height: max(calc(392 * var(--u)), calc(100vh - var(--studio-strip-h)));
-  min-height: max(calc(392 * var(--u)), calc(100svh - var(--studio-strip-h)));
-  padding: calc(72 * var(--u)) calc(160 * var(--u)) calc(72 * var(--u)) calc(48 * var(--u));
+  z-index: 2;
+  /* B05-01: black breathing interval before the first beat. The lead-in is a
+     fraction of the viewport height, so it is scroll distance, not a timer. */
+  padding: max(calc(96 * var(--u)), 55vh) calc(48 * var(--u)) calc(96 * var(--u));
+  padding-top: max(calc(96 * var(--u)), 55svh);
   background: var(--ccdv-ink);
   color: var(--ccdv-bg);
+  /* R4-B07 (B07-03): Figma large narrative text is 28 (was 35.2u, ~37px in the
+     OPERATOR's browser at a ~1520 container). --u is 1px at a 1440 container,
+     so 28u is 28px at the 1440 reference and scales with --u elsewhere. Line
+     height keeps the old 43/35.2 ratio (34u). Not 28pt (37.33px). */
+  font-size: calc(28 * var(--u));
+  line-height: calc(34 * var(--u));
 }
-.studio-intro__copy {
-  width: calc(840 * var(--u));
-  max-width: 100%;
-  font-size: calc(35.2 * var(--u));
-  line-height: calc(43 * var(--u));
+.studio-beat {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  /* R4-B06: more scroll runway per beat (was 62svh / 560u) */
+  min-height: clamp(calc(340 * var(--u)), 88svh, calc(780 * var(--u)));
 }
-.studio-intro__copy p + p { margin-top: calc(43 * var(--u)); }
-.studio-intro__figure { flex: none; width: calc(256 * var(--u)); }
+/* R4-B07-CORR01-A: figures sit on the centre of their HALF of the page (360u /
+   1080u at 1440), not of the padded column (384u / 1056u). The beat grid is
+   widened by the intro's side padding (`--studio-pad`, 48u) so its two cells
+   are exactly the page halves 0..720 and 720..1440 (centres W/4 and 3W/4 at any
+   width). The text keeps its edges by taking the padding back on its outer
+   side: left text spans 48..720, right text 720..1392, as before. */
+.studio-beat {
+  --studio-pad: calc(48 * var(--u));
+  margin-inline: calc(-1 * var(--studio-pad));
+}
+.studio-beat__text { max-width: calc(720 * var(--u)); padding-left: var(--studio-pad); }
+.studio-beat[data-side="right"] .studio-beat__text { padding-left: 0; padding-right: var(--studio-pad); }
+.studio-beat__figure { justify-self: center; width: calc(256 * var(--u)); }
+.studio-beat[data-side="right"] .studio-beat__text { order: 2; }
+.studio-beat[data-side="right"] .studio-beat__figure { order: 1; }
+.studio-art { display: block; width: 100%; height: auto; overflow: visible; }
 .studio-hex { display: block; width: 100%; height: auto; }
 
-/* the accordion stage: strip + selected-first headers + four squares */
+/* Approach: the lilac strip heads the principles/accordion region and pins
+   under the compact masthead while that region scrolls. */
+.studio-approach { position: relative; z-index: 2; }
+
+/* the accordion stage: four squares + four rows */
 .studio-stage { background: var(--ccdv-panel); }
-.studio-stage__stack { display: block; border-bottom: calc(1 * var(--u)) solid var(--ccdv-ink); }
+/* B04-05: strip + stage own the viewport once the strip is pinned under the
+   compact masthead: the stage is the viewport minus that stick height, the four
+   squares take the free space and the closed rows sit at its bottom. Open rows
+   simply make the stage taller. */
+.studio-stage__stack {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - var(--studio-stick-h, var(--studio-strip-h)));
+  min-height: calc(100svh - var(--studio-stick-h, var(--studio-strip-h)));
+  border-bottom: calc(1 * var(--u)) solid var(--ccdv-ink);
+}
+.studio-stage__stack > .fan { flex: none; }
 .r11--studio .section--cards {
+  flex: 1 0 auto;
   min-height: 0;
   padding: calc(40 * var(--u)) calc(48 * var(--u)) calc(48 * var(--u));
 }
-.r11--studio .card { min-height: 0; padding: calc(38 * var(--u)) 0 calc(12 * var(--u)); }
+.r11--studio .card { min-height: 0; padding: calc(40 * var(--u)) 0 calc(12 * var(--u)); }  /* B07-03: 38 -> 40 (4-grid) */
 .r11--studio .card__label { font-size: calc(14 * var(--u)); }
 .r11--studio .card__body { font-size: calc(20 * var(--u)); line-height: calc(27 * var(--u)); }
 .r11--studio .card__para + .card__para { margin-top: calc(27 * var(--u)); }
 .r11--studio .columns { padding: 0 calc(48 * var(--u)) calc(28 * var(--u)); }
 .r11--studio .columns .card { padding: 0; }
-.r11--studio .columns .card__body { margin-top: calc(14 * var(--u)); font-size: calc(19 * var(--u)); line-height: calc(26 * var(--u)); }
+.r11--studio .columns .card__body { margin-top: calc(16 * var(--u)); font-size: calc(19 * var(--u)); line-height: calc(26 * var(--u)); }
 
 .r11--studio .fan .clip-row { height: calc(49 * var(--u)); }
 .r11--studio .clip-row__toggle {
@@ -1866,8 +1928,10 @@ main { display: block; outline: none; }
   color: var(--ccdv-bg);
   background: color-mix(in srgb, var(--ccdv-ink), var(--ccdv-purple) calc(var(--wo, 0) * 100%));
   color: color-mix(in srgb, var(--ccdv-bg), var(--ccdv-ink) calc(var(--wo-text, 0) * 100%));
-  font-size: calc(30 * var(--u));
-  line-height: calc(38 * var(--u));
+  /* R4-B07 (B07-03): same 28u / 34u as the black intro (was 30u / 38u). The
+     CC.OS wordmark and the "Read dev notes" link set their own sizes. */
+  font-size: calc(28 * var(--u));
+  line-height: calc(34 * var(--u));
 }
 .wo__lead {
   display: flex;
@@ -1879,8 +1943,8 @@ main { display: block; outline: none; }
 .wo__cube { flex: none; width: calc(260 * var(--u)); }
 .wo__explain { padding: calc(72 * var(--u)) calc(48 * var(--u)); }
 .wo__explain p { width: calc(790 * var(--u)); max-width: 100%; }
-.wo__explain p + p { margin-top: calc(38 * var(--u)); }
-.wo__ccos { position: relative; padding: calc(72 * var(--u)) calc(48 * var(--u)) calc(96 * var(--u)); }
+.wo__explain p + p { margin-top: calc(34 * var(--u)); }
+.wo__ccos { position: relative; padding: calc(48 * var(--u)) calc(48 * var(--u)) calc(96 * var(--u)); }
 .wo__ccos-head { display: flex; align-items: center; gap: calc(36 * var(--u)); }
 .wo__ccos-cube { width: calc(100 * var(--u)); flex: none; }
 .r11--studio .wo .ccos__wordmark {
@@ -1888,15 +1952,352 @@ main { display: block; outline: none; }
   font-size: calc(140 * var(--u));
 }
 .wo__ccos-copy { width: calc(740 * var(--u)); max-width: 100%; margin-top: calc(48 * var(--u)); }
-.wo__ccos-copy p + p { margin-top: calc(38 * var(--u)); }
+.wo__ccos-copy p + p { margin-top: calc(34 * var(--u)); }
 .wo .ccos__action { margin-top: calc(48 * var(--u)); color: var(--ccdv-ink); }
 /* reduced motion: no scroll-linked colour; CC.OS sits on its lilac plate */
 .wo[data-reduced="true"] .wo__ccos { background: var(--ccdv-purple); color: var(--ccdv-ink); }
 
-/* progressive reveals: hidden start state only while motion is armed */
+/* progressive reveals (fallback where scroll timelines are missing): hidden
+   start state only while motion is armed. R4-B02: slower and eased, so a reveal
+   reads as a settle rather than a pop. */
 .r11--studio[data-motion="on"] [data-reveal] {
   opacity: 0;
-  transform: translateY(calc(18 * var(--u)));
-  transition: opacity 0.6s ease var(--rd, 0s), transform 0.6s ease var(--rd, 0s);
+  transform: translateY(calc(28 * var(--u)));
+  transition:
+    opacity 0.9s cubic-bezier(0.22, 0.61, 0.36, 1) var(--rd, 0s),
+    transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1) var(--rd, 0s);
 }
 .r11--studio[data-motion="on"] [data-reveal][data-seen="true"] { opacity: 1; transform: none; }
+
+/* --- MTG05 R4-B02: Studio public QA corrections (`CCDV-FBI-048..055`) --------
+   Studio only, apart from the one deliberate global token override below. */
+
+/* FBI-051: the global light surface. `--ccdv-panel` (tokens.css, loaded before
+   this file) is the page/section surface behind masthead, bands, panels and
+   cards. Only that token moves, from #CACAC8 to #F2F2F2. NOT touched: `--ccdv-bg`
+   (#B2B2B2, used as light type on ink), `--ccdv-white`, `--ccdv-light` and every
+   literal white/#CACAC8 fill inside the artwork marks. Needs cross-route QA. */
+:root { --ccdv-panel: #f2f2f2; }
+
+/* FBI-048/049: collapsing + sticky header. Armed only by JS (`data-collapse`),
+   so without it the masthead keeps its original full-size, scroll-away form.
+   --mh-p (0..1) is scrollY over the collapse distance; the header shrinks by
+   exactly the distance scrolled while an equal margin holds its flow footprint
+   at full height, so content never moves faster than the page and the header's
+   bottom edge always meets the strip. */
+.r11--studio {
+  --mh-full: calc(244.12 * var(--u));          /* R4-B04: 12u padding, was 268.12 */
+  --mh-compact: calc(88 * var(--u));           /* was 112 */
+  --mh-range: calc(156.12 * var(--u));
+  --mh-h: calc(var(--mh-full) - var(--mh-p, 0) * var(--mh-range));
+}
+.r11--studio[data-collapse="on"] {
+  --studio-strip-top: var(--mh-h);
+  --studio-stick-h: calc(var(--mh-compact) + var(--studio-strip-h));
+}
+/* R4-B05: --mh-p is 0 (state A) or 1 (state B) at rest and only moves between
+   them in a time-based animation run from studio.tsx; the layout below is
+   unchanged. */
+.r11--studio[data-collapse="on"] .masthead--collapsing {
+  position: sticky;
+  top: 0;
+  z-index: 7;
+  height: var(--mh-h);
+  margin-bottom: calc(var(--mh-full) - var(--mh-h));
+}
+
+/* B03-01/02: the masthead starts full lilac (the hero's own colour, so there is
+   no seam under it) and turns into the compact white one as the black edge
+   pushes it. Active cell: #F2F2F2 -> ink, its label and dot following. The
+   fallback lines first are for browsers without color-mix(). */
+.masthead--collapsing {
+  --cell-h: calc((220 - 156 * var(--mh-p, 0)) * var(--u));
+  --mh-keep: calc((1 - var(--mh-p, 0)) * 100%);
+  background: var(--ccdv-purple-card);
+  background: color-mix(in srgb, var(--ccdv-purple-card) var(--mh-keep), var(--ccdv-panel));
+}
+.masthead--collapsing .cell[aria-current="page"] {
+  background: var(--ccdv-panel);
+  background: color-mix(in srgb, var(--ccdv-panel) var(--mh-keep), var(--ccdv-ink));
+  color: var(--ccdv-ink);
+  color: color-mix(in srgb, var(--ccdv-ink) var(--mh-keep), var(--ccdv-panel));
+}
+.masthead--collapsing .cell[aria-current="page"] .cell__dot {
+  background: var(--ccdv-ink);
+  background: color-mix(in srgb, var(--ccdv-ink) var(--mh-keep), var(--ccdv-purple-card));
+}
+.masthead--collapsing { height: calc(244.12 * var(--u)); }
+.masthead--collapsing .masthead__mark {
+  left: calc(12 * var(--u));                   /* B04-01: 24 -> 12 */
+  top: calc(12 * var(--u));
+  width: calc((293.03 + 60 * var(--mh-p, 0)) * var(--u));
+  height: calc((220.12 - 156.12 * var(--mh-p, 0)) * var(--u));
+}
+.masthead--collapsing .masthead__gear {
+  transform: scale(calc(1 - 0.7091 * var(--mh-p, 0)));
+  transform-origin: 0 0;
+}
+.masthead--collapsing .masthead__pixel { opacity: clamp(0, calc(1 - var(--mh-p, 0) * 2.5), 1); }
+.masthead--collapsing .masthead__pixel-inline {
+  position: absolute;
+  left: calc(73 * var(--u));
+  top: 0;
+  width: calc(280 * var(--u));
+  height: calc(64 * var(--u));
+  opacity: clamp(0, calc((var(--mh-p, 0) - 0.5) * 2.5), 1);
+  pointer-events: none;
+}
+/* B04-01: 12u on every side. Cells run from 329.03 (full) / 418 (compact) to
+   x1428, so the width is (1428 - left) / 5. */
+.masthead--collapsing .cells {
+  top: calc(12 * var(--u));
+  left: calc((329.03 + 88.97 * var(--mh-p, 0)) * var(--u));
+}
+.masthead--collapsing .cell {
+  width: calc((219.79 - 17.79 * var(--mh-p, 0)) * var(--u));
+  height: var(--cell-h);
+}
+.masthead--collapsing .cell__dot { top: calc(var(--cell-h) - 22 * var(--u)); }
+/* B04-04: inactive squares are stroke-only; only the active cell stays filled */
+.masthead--collapsing .cell:not([aria-current="page"]) .cell__dot {
+  box-sizing: border-box;
+  background: transparent;
+  border: calc(1 * var(--u)) solid var(--ccdv-ink);
+}
+.masthead--collapsing .cell__tile {
+  opacity: clamp(0, calc(1 - var(--mh-p, 0) * 3), 1);
+  pointer-events: none;
+}
+
+/* FBI-049: belt and braces. If a sub-pixel gap ever opens between stacked
+   Studio surfaces, it shows ink, not the light page ground. */
+.r11--studio { background: var(--ccdv-ink); }
+
+/* B03-07 / B03-08. tokens.css is outside the allowlist, so both are overrides
+   here (global.css loads after it, root.tsx:3-4):
+   - dark ground: `--ccdv-ink` #202020 -> #1A1A1A. It is the one token used for
+     dark sections, the footer AND dark type on light surfaces, so all of those
+     move together.
+   - lilac: `--ccdv-purple` #8654B3 (stripes, CCOS accents, active tiles) ->
+     #A864E2, equal to `--ccdv-purple-card`, which is already #A864E2.
+   Literal #202020 / #8654B3 in the other components' SVG props and fills are
+   NOT reachable from here and stay as they were. */
+:root {
+  --ccdv-ink: #1a1a1a;
+  --ccdv-purple: #a864e2;
+}
+
+/* FBI-050: scroll-tied intro. Only where CSS scroll timelines exist and motion
+   is allowed; elsewhere (and without JS) the paragraphs are simply there. */
+@keyframes studio-beat-in {
+  from { opacity: 0; transform: translateY(calc(40 * var(--u))); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes studio-rise {
+  from { opacity: 0; transform: translateY(calc(32 * var(--u))); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes studio-cube-in {
+  from { opacity: 0; transform: scale(0.88); }
+  to { opacity: 1; transform: none; }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* R4-B06: a slow start, a peak and a long soft landing (the OPERATOR's
+       sketch), over a longer entry range; nothing animates on exit, so a
+       revealed beat stays revealed. */
+    .studio-beat__text {
+      animation: studio-beat-in var(--studio-ease-env) both;
+      animation-timeline: view();
+      animation-range: entry 5% entry 100%;
+    }
+    .studio-beat__figure {
+      animation: studio-cube-in var(--studio-ease-env) both;
+      animation-timeline: view();
+      animation-range: entry 15% entry 105%;
+    }
+    /* FBI-055: WrkOps reveals follow scroll distance and reverse with it */
+    .r11--studio[data-motion="on"] [data-reveal] {
+      opacity: 1;
+      transform: none;
+      transition: none;
+      animation: studio-rise var(--studio-ease-env) both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 100%;
+    }
+  }
+}
+
+/* The fan's clip must not be a scroll container, or `view()` timelines of the
+   content inside would bind to it instead of the page. `clip` clips the same
+   way (the earlier `hidden` stays as the fallback). */
+.r11--studio .fan__inner { overflow: hidden; overflow: clip; }
+
+/* FBI-052: the squares are plain text blocks now */
+.r11--studio .cards .card { cursor: default; }
+
+/* FBI-054 (kept in B03): closed rows grow their label a touch on hover and
+   keyboard focus. Scale, not font-size, so nothing reflows and the hit area (the
+   whole row) never changes. The open row toggles closed again (B03-06). */
+.r11--studio .clip-row__text {
+  display: inline-block;
+  transform-origin: 0 50%;
+  transition: transform 0.28s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.r11--studio .clip-row__toggle[aria-expanded="false"]:focus-visible .clip-row__text {
+  transform: scale(1.04);
+}
+@media (hover: hover) {
+  .r11--studio .clip-row__toggle[aria-expanded="false"]:hover .clip-row__text {
+    transform: scale(1.04);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .r11--studio .clip-row__toggle[aria-expanded="false"]:focus-visible .clip-row__text,
+  .r11--studio .clip-row__toggle[aria-expanded="false"]:hover .clip-row__text {
+    transform: none;
+  }
+}
+
+/* --- MTG05 R4-B06: Studio Approach disclosure, WrkOps chapter, motion -------
+   Studio only. */
+.r11--studio {
+  /* ease-out with a long tail, for disclosures and reveals */
+  --studio-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  /* scroll-tied envelope: slow in, soft long landing (OPERATOR sketch) */
+  --studio-ease-env: cubic-bezier(0.5, 0, 0.1, 1);
+}
+
+/* B06-02 / B06-04: the strip is a button. Same box, label and :P as before. */
+.studio-strip__heading { margin: 0; font: inherit; }
+.studio-strip__toggle {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.studio-strip__toggle:focus-visible {
+  outline: 2px solid var(--ccdv-ink);
+  outline-offset: -4px;
+}
+/* explicit open/closed affordance: v closed, flipped when open */
+.studio-strip__chevron {
+  position: absolute;
+  right: calc(24 * var(--u));
+  top: calc(22 * var(--u));
+  font-size: calc(13.2 * var(--u));
+  line-height: 1;
+  color: var(--ccdv-ink);
+  transition: transform 0.45s var(--studio-ease);
+}
+.studio-strip[data-open="true"] .studio-strip__chevron { transform: rotate(180deg); }
+
+.studio-wrkops { position: relative; z-index: 2; }
+
+/* Group disclosure: grid track 0fr -> 1fr (no display:none mid-animation, no
+   measured heights), content fades and rises. Closed content is also
+   visibility:hidden after the collapse, so it leaves the tab order and the
+   accessibility tree; aria-hidden is set on the same element. */
+.studio-disc {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.55s var(--studio-ease);
+}
+.studio-disc[data-open="true"] { grid-template-rows: 1fr; }
+.studio-disc__inner {
+  min-height: 0;
+  overflow: hidden;
+  overflow: clip;
+  visibility: hidden;
+  transition: visibility 0s 0.55s;
+}
+.studio-disc[data-open="true"] > .studio-disc__inner { visibility: visible; transition-delay: 0s; }
+.studio-disc__body {
+  opacity: 0;
+  transform: translateY(calc(18 * var(--u)));
+  transition:
+    opacity 0.45s var(--studio-ease) 0.05s,
+    transform 0.55s var(--studio-ease) 0.05s;
+}
+.studio-disc[data-open="true"] > .studio-disc__inner > .studio-disc__body {
+  opacity: 1;
+  transform: none;
+}
+
+/* child rows: same rise on opening, a touch slower than before */
+.r11--studio .fan__panel { transition: grid-template-rows 0.5s var(--studio-ease); }
+.r11--studio .fan__inner { transition: visibility 0s 0.5s; }
+.r11--studio .fan__body {
+  transform: translateY(calc(14 * var(--u)));
+  transition:
+    opacity 0.45s var(--studio-ease) 0.05s,
+    transform 0.5s var(--studio-ease) 0.05s;
+}
+.r11--studio .fan__panel[data-open="true"] .fan__body { transform: none; }
+
+/* B06-05 / R4-B07 (B07-04): WrkOps beats get the intro's runway (same clamp as
+   `.studio-beat`), so each text beat holds as long as the black intro's. */
+.wo__lead { min-height: clamp(calc(340 * var(--u)), 88svh, calc(780 * var(--u))); }
+.wo__explain {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: clamp(calc(340 * var(--u)), 88svh, calc(780 * var(--u)));
+}
+
+/* B07-04: the WrkOps reveals use the intro's envelope (same keyframes, easing
+   and entry range as `.studio-beat__text` / `__figure`), only where scroll
+   timelines and motion exist; the cube scales in like the intro figures. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .r11--studio[data-motion="on"] .wo [data-reveal] {
+      animation-name: studio-beat-in;
+      animation-range: entry 5% entry 100%;
+    }
+    .r11--studio[data-motion="on"] .wo .wo__cube[data-reveal] {
+      animation-name: studio-cube-in;
+      animation-range: entry 15% entry 105%;
+    }
+  }
+}
+
+/* --- MTG05 R4-B07-CORR01-B: the three accordion row headings ----------------
+   rest -> held -> covered, with native sticky only. Each row is sticky inside
+   its own `.fan` (row + panel), under the Approach strip. A closed fan is just
+   its row, so there is nothing to stick to and every closed row rests fully
+   readable in place. While a row's panel is open the row is held under the
+   strip as the panel scrolls beneath it; at the end of the fan it is pushed out
+   as the next fan's row arrives, which is opaque (panel ground) and takes over
+   the same line, so headings never stack. Strip is z 6, row 5, panel content
+   below; the row has no animation, so it cannot freeze half way. Without
+   `overflow: clip` (older engines) the ancestor clip disables sticky and the
+   rows simply stay in flow. */
+.r11--studio .fan .clip-row {
+  position: sticky;
+  top: calc(var(--studio-strip-top, 0px) + var(--studio-strip-h));
+  z-index: 5;
+  background: var(--ccdv-panel);
+}
+
+/* reduced motion: immediate, readable states */
+@media (prefers-reduced-motion: reduce) {
+  .studio-disc,
+  .studio-disc__inner,
+  .studio-disc__body,
+  .studio-strip__chevron,
+  .r11--studio .fan__panel,
+  .r11--studio .fan__inner,
+  .r11--studio .fan__body {
+    transition: none;
+  }
+  .studio-disc__body,
+  .r11--studio .fan__body { transform: none; }
+}

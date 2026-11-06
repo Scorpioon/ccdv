@@ -2,6 +2,9 @@ import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
 import { GlobalShell } from "./components/GlobalShell";
 import "./styles/tokens.css";
 import "./styles/global.css";
+export function links() {
+  return [{ rel: "icon", type: "image/svg+xml", href: "/ccdv-gear-favicon.svg" }];
+}
 export default function Root() {
   return (
     <html lang="en">

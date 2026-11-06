@@ -56,7 +56,9 @@ export function ClippedHeading({
             onClick={onToggle}
             style={fitStyle(label)}
           >
-            {label}
+            {/* the label is wrapped so hover/focus can scale the text alone
+                without changing the row's hit area */}
+            <span className="clip-row__text">{label}</span>
           </button>
         </h2>
         {isExpanded ? (
