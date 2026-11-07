@@ -318,19 +318,34 @@ main { display: block; outline: none; }
 .band__link[aria-disabled="true"] { cursor: default; }
 
 /* --- footer -------------------------------------------------------------- */
+/* STUDIO-RESP T1 (C04): the absolute columns are now a grid in normal flow,
+   so rem floors below 1440 can never make them overlap. The tracks reproduce
+   the 1440 x positions exactly, independent of glyph widths: 48 padding,
+   mark track 143.83 + 24 = 167.83 (col a at 215.83), col a track 255 (col b
+   at 470.83), col b track 111 (col c at 581.83). A track only grows past its
+   1440 width when its content (plus the 16px right padding) is wider, which
+   happens below 1440 once the label floor applies. Phone stacking is in the
+   STUDIO-RESP T1 block at the end of this file. Shared by all 14 routes. */
 .footer {
   position: relative;
   z-index: 1;
-  height: calc(160 * var(--u));
+  display: grid;
+  grid-template-columns:
+    calc(167.83 * var(--u))
+    minmax(calc(255 * var(--u)), max-content)
+    minmax(calc(111 * var(--u)), max-content)
+    max-content;
+  align-items: start;
+  min-height: calc(160 * var(--u));
+  padding: 0 0 calc(24 * var(--u)) calc(48 * var(--u));
   background: var(--ccdv-ink);
   color: var(--ccdv-light);
 }
 
 /* footer lockup: 26.08 gear then the inline pixel block, x48..191.83 */
 .footer__mark {
-  position: absolute;
-  left: calc(48 * var(--u));
-  top: calc(48 * var(--u));
+  position: relative;
+  margin-top: calc(48 * var(--u));
   width: calc(143.83 * var(--u));
   height: calc(26.17 * var(--u));
   display: block;
@@ -352,16 +367,14 @@ main { display: block; outline: none; }
   height: calc(26.17 * var(--u));
 }
 
+/* floors are inert at 1440 (13.2 >= 12, 18 >= 18) */
 .footer__col {
-  position: absolute;
-  top: calc(43.9 * var(--u));              /* baselines 58 / 76 / 94 / 112 */
-  font-size: calc(13.2 * var(--u));
-  line-height: calc(18 * var(--u));
+  margin-top: calc(43.9 * var(--u));       /* baselines 58 / 76 / 94 / 112 */
+  padding-right: 1rem;
+  font-size: max(0.75rem, calc(13.2 * var(--u)));
+  line-height: max(1.125rem, calc(18 * var(--u)));
   white-space: nowrap;
 }
-.footer__col--a { left: calc(215.83 * var(--u)); }
-.footer__col--b { left: calc(470.83 * var(--u)); }
-.footer__col--c { left: calc(581.83 * var(--u)); }
 
 .footer__col a {
   text-decoration: underline;
@@ -1976,8 +1989,9 @@ main { display: block; outline: none; }
    this file) is the page/section surface behind masthead, bands, panels and
    cards. Only that token moves, from #CACAC8 to #F2F2F2. NOT touched: `--ccdv-bg`
    (#B2B2B2, used as light type on ink), `--ccdv-white`, `--ccdv-light` and every
-   literal white/#CACAC8 fill inside the artwork marks. Needs cross-route QA. */
-:root { --ccdv-panel: #f2f2f2; }
+   literal white/#CACAC8 fill inside the artwork marks. Needs cross-route QA.
+   STUDIO-RESP T1 (C03): the value now lives in tokens.css; this override is
+   removed with zero rendered delta. */
 
 /* FBI-048/049: collapsing + sticky header. Armed only by JS (`data-collapse`),
    so without it the masthead keeps its original full-size, scroll-away form.
@@ -2081,11 +2095,9 @@ main { display: block; outline: none; }
    - lilac: `--ccdv-purple` #8654B3 (stripes, CCOS accents, active tiles) ->
      #A864E2, equal to `--ccdv-purple-card`, which is already #A864E2.
    Literal #202020 / #8654B3 in the other components' SVG props and fills are
-   NOT reachable from here and stay as they were. */
-:root {
-  --ccdv-ink: #1a1a1a;
-  --ccdv-purple: #a864e2;
-}
+   NOT reachable from here and stay as they were.
+   STUDIO-RESP T1 (C03): both values now live in tokens.css; this override is
+   removed with zero rendered delta. */
 
 /* FBI-050: scroll-tied intro. Only where CSS scroll timelines exist and motion
    is allowed; elsewhere (and without JS) the paragraphs are simply there. */
@@ -2301,3 +2313,416 @@ main { display: block; outline: none; }
   .studio-disc__body,
   .r11--studio .fan__body { transform: none; }
 }
+
+/* === STUDIO-RESP T1 — responsive Studio, UI-first (t_20261107_studiot1) =====
+   Everything from here to the end marker is the T1 layout proposal. Blocks:
+     T1-0  all widths   open-row chevron parity (ClippedHeading data-expanded)
+     T1-1  >=768        rem floors, written as max(rem, N*u): inert at 1440
+     T1-2  768-1023     tablet reflow (2x2 tiles/steps, 1-column panel copy)
+     T1-3  768-1023 coarse pointer: 44px compact cells, strip and rows
+     T1-4  <=767        phone composition (masthead, hero, beats, stage, rows,
+                        WrkOps, CC.OS, shared footer stack)
+     T1-5  <=767 nav families: M3 (590-767) and M1 (<406, 3+2 cells)
+   Not here (T2): masthead unpin (X1a), row-hold gating, short-height policy,
+   any MH_* / WO_* or motion change. The rAF/IO hooks are not touched; the
+   per-layout --mh-full / --mh-compact / --mh-range values below are what the
+   existing A/B footprint and stick offsets already read. */
+
+/* T1-0. Desktop shows the watermark on the open row and the chevron on closed
+   rows, as before; phones (T1-4) show the chevron on every row. */
+.clip-row[data-expanded="true"] .clip-row__chevron { display: none; }
+
+/* T1-1. Floors (C01). Each max() picks the u value at 1440 (and above), so the
+   1440 composition is unchanged; below ~1024 type and targets stop shrinking. */
+@media (min-width: 768px) {
+  .r11--studio {
+    --studio-strip-h: max(calc(58 * var(--u)), 2.5rem);
+    --studio-row-h: max(calc(49 * var(--u)), 2.25rem);
+  }
+
+  .masthead--collapsing .cell__label { font-size: max(0.75rem, calc(13.2 * var(--u))); }
+  .masthead--collapsing .cell__tile { top: max(calc(30.47 * var(--u)), 1.25rem); }
+
+  /* strip contents move down by half of whatever the floor adds to the strip */
+  .studio-strip__title {
+    top: calc(10 * var(--u) + (var(--studio-strip-h) - 58 * var(--u)) / 2);
+    font-size: max(1.5rem, calc(41 * var(--u)));
+  }
+  .studio-strip__suffix { font-size: max(calc(1.5rem * 17 / 41), calc(17 * var(--u))); }
+  .studio-strip__chevron {
+    top: calc(22 * var(--u) + (var(--studio-strip-h) - 58 * var(--u)) / 2);
+    font-size: max(0.75rem, calc(13.2 * var(--u)));
+  }
+
+  .studio-intro,
+  .wo {
+    font-size: max(1.125rem, calc(28 * var(--u)));
+    line-height: max(1.375rem, calc(34 * var(--u)));
+  }
+
+  .r11--studio .card__label { font-size: max(0.75rem, calc(14 * var(--u))); }
+  .r11--studio .card__body {
+    font-size: max(1rem, calc(20 * var(--u)));
+    line-height: max(1.35rem, calc(27 * var(--u)));
+  }
+  .r11--studio .card__para + .card__para { margin-top: max(1.35rem, calc(27 * var(--u))); }
+  .r11--studio .columns .card__body {
+    font-size: max(1rem, calc(19 * var(--u)));
+    line-height: max(1.375rem, calc(26 * var(--u)));
+  }
+  .r11--studio .fan__copy {
+    font-size: max(1rem, calc(20 * var(--u)));
+    line-height: max(1.35rem, calc(27 * var(--u)));
+  }
+  .r11--studio .fan__copy p { margin-bottom: max(1.35rem, calc(27 * var(--u))); }
+
+  .r11--studio .fan .clip-row { height: var(--studio-row-h); }
+  .r11--studio .clip-row__toggle {
+    padding-top: calc(6 * var(--u) + (var(--studio-row-h) - 49 * var(--u)) / 2);
+    font-size: max(1.5rem, calc(35 * var(--u)));
+  }
+  .r11--studio .clip-row__chevron,
+  .r11--studio .clip-row__watermark {
+    top: calc(14 * var(--u) + (var(--studio-row-h) - 49 * var(--u)) / 2);
+    font-size: max(0.75rem, calc(13.2 * var(--u)));
+  }
+
+  /* hairlines stay at least one CSS px */
+  .r11--studio .clip-row::before,
+  .r11--studio .fan__inner::before { height: max(1px, calc(1 * var(--u))); }
+  .studio-stage__stack { border-bottom-width: max(1px, calc(1 * var(--u))); }
+}
+
+/* T1-2. Tablet: the desktop composition is kept (masthead, hero, two-column
+   beats on the page halves, WrkOps rows); only blocks that become cramped at
+   half the artboard reflow. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .r11--studio .cards { flex-wrap: wrap; row-gap: 2rem; }
+  .r11--studio .cards .card { width: calc((100% - 48 * var(--u)) / 2); }
+  .r11--studio .card__body { width: auto; }
+
+  .r11--studio .columns { flex-wrap: wrap; row-gap: 1.5rem; }
+  .r11--studio .columns .card { width: calc((100% - 48 * var(--u)) / 2); }
+
+  /* one column with a readable measure (two would be ~40 characters wide) */
+  .r11--studio .fan__copy { columns: auto; }
+  .r11--studio .fan__copy p { max-width: 38rem; }
+
+  /* at 1358u the floored "collapse" would run past the right edge */
+  .r11--studio .clip-row__watermark { left: auto; right: calc(24 * var(--u)); }
+
+  /* the plate follows its text once the 16px floor outgrows 231u */
+  .wo .ccos__action {
+    width: max-content;
+    height: 1.0985em;                        /* 29 / 26.4, as at 1440 */
+    font-size: max(1rem, calc(26.4 * var(--u)));
+    line-height: 1.0985em;
+    padding-top: 0.1629em;                   /* 4.3 / 26.4: baseline on the plate edge */
+  }
+}
+
+/* T1-3. Touch tablets: compact cells, strips and rows reach 44px. */
+@media (min-width: 768px) and (max-width: 1023px) and (pointer: coarse) {
+  .r11--studio {
+    --studio-strip-h: max(calc(58 * var(--u)), 2.75rem);
+    --studio-row-h: max(calc(49 * var(--u)), 2.75rem);
+    --mh-compact: calc(max(calc(64 * var(--u)), 2.75rem) + 24 * var(--u));
+    --mh-range: calc(var(--mh-full) - var(--mh-compact));
+  }
+  .masthead--collapsing { --cell-h: max(calc((220 - 156 * var(--mh-p, 0)) * var(--u)), 2.75rem); }
+}
+
+/* T1-4. Phones. Composed in px/rem on a 16px gutter, not scaled from 1440.
+   Heights of the masthead states (P2-2): M2 (406-589) is the default here,
+   M3 and M1 adjust it in T1-5. */
+@media (max-width: 767px) {
+  .r11--studio {
+    font-size: var(--ccdv-t-body-m);
+    --studio-strip-h: 48px;
+    --mh-full: 144px;                        /* 12 + mark 64 + 12 + cells 44 + 12 */
+    --mh-compact: 100px;                     /* 8 + mark 32 + 8 + cells 44 + 8 */
+    --mh-range: 44px;
+  }
+
+  /* Masthead: the lockup row over a full-width row of five equal cells. Both
+     states are positions derived from --mh-p, exactly as on desktop. */
+  .masthead--collapsing {
+    --mm-mark-top: calc(12px - 4px * var(--mh-p, 0));
+    --mm-nav-top: calc(88px - 40px * var(--mh-p, 0));
+    --mm-nav-shift: 0px;
+    height: var(--mh-full);
+  }
+  /* A: gear 64 + 7 + stacked mark 14.26 (85.25 wide); B: gear 32 + 4.5 +
+     inline mark 140 (176.5 wide), the desktop ratios at 64/32 px */
+  .masthead--collapsing .masthead__mark {
+    left: var(--ccdv-gutter-m);
+    top: var(--mm-mark-top);
+    width: calc(85.25px + 91.25px * var(--mh-p, 0));
+    height: calc(64px - 32px * var(--mh-p, 0));
+  }
+  .masthead--collapsing .masthead__mark::after {
+    content: "";
+    position: absolute;
+    inset: -6px 0;                           /* 44px tall link in state B */
+  }
+  .masthead--collapsing .masthead__gear {
+    width: 64px;
+    height: 64px;
+    transform: scale(calc(1 - 0.5 * var(--mh-p, 0)));
+  }
+  .masthead--collapsing .masthead__pixel { left: 71px; width: 14.26px; height: 64px; }
+  .masthead--collapsing .masthead__pixel-inline { left: 36.5px; width: 140px; height: 32px; }
+
+  .masthead--collapsing .cells {
+    left: calc(var(--ccdv-gutter-m) + var(--mm-nav-shift) * var(--mh-p, 0));
+    right: var(--ccdv-gutter-m);
+    top: var(--mm-nav-top);
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-auto-rows: var(--ccdv-tap);
+  }
+  /* equal cells sharing 1px rules: each cell after the first in its row
+     overlaps the previous one's border */
+  .masthead--collapsing .cell {
+    width: auto;
+    height: auto;
+    border: 1px solid var(--ccdv-ink);
+  }
+  .masthead--collapsing .cell + .cell { margin-left: -1px; }
+  .masthead--collapsing .cell__label { left: 6px; top: 6px; font-size: 0.75rem; }
+  .masthead--collapsing .cell__dot { left: 6px; top: auto; bottom: 6px; width: 8px; height: 8px; }
+  .masthead--collapsing .cell:not([aria-current="page"]) .cell__dot { border-width: 1px; }
+  .masthead--collapsing .cell__tile { display: none; }
+
+  /* Hero: [Studio] and :P as one baseline group under the A footprint. The
+     size is fallback-font safe (PF-5: 5.51 = 10 glyph advances at 0.61em) and
+     the hero still ends on the title baseline, so the black edge cuts it. */
+  .studio-hero {
+    --hero-f: min(calc((100cqw - 40px) / 5.51), 110px);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    height: calc(var(--mh-full) + 0.886364 * var(--hero-f));
+    padding: var(--mh-full) var(--ccdv-gutter-m) 0;
+    overflow-x: clip;
+  }
+  .studio-hero__label { position: static; font-size: var(--hero-f); }
+  .studio-hero__suffix {
+    position: relative;
+    left: auto;
+    top: calc(-0.058 * var(--hero-f));       /* baseline 12/207 of the title above the edge */
+    font-size: calc(0.516908 * var(--hero-f)); /* 107 / 207 */
+  }
+
+  /* Intro: a short black lead-in, then each beat is text over its centred
+     drawing, one beat per ~two-thirds of a screen. */
+  .studio-intro {
+    padding: 30vh var(--ccdv-gutter-m) 48px;
+    padding-top: 30svh;
+    font-size: var(--ccdv-t-narrative-m);
+    line-height: 1.3;
+  }
+  .studio-beat {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 48px;
+    min-height: 70vh;
+    min-height: 70svh;
+    margin-inline: 0;
+  }
+  .studio-beat__text,
+  .studio-beat[data-side="right"] .studio-beat__text { max-width: none; padding: 0; order: 0; }
+  .studio-beat[data-side="right"] .studio-beat__figure { order: 0; }
+  .studio-beat__figure { align-self: center; width: clamp(144px, 55%, 256px); }
+  .wo__cube { align-self: center; width: clamp(144px, 55%, 256px); }
+
+  /* hairlines would fall to ~0.1px at phone scale */
+  .r11--studio .studio-art :is(path, circle),
+  .r11--studio .studio-hex path {
+    vector-effect: non-scaling-stroke;
+    stroke-width: 0.75px;
+  }
+
+  /* Chapter strips: 48px buttons, title sized so it never clips during the
+     font swap (F03-b: 20 glyphs at 0.61em + 46.5px of insets and :P). */
+  .studio-strip__title {
+    left: var(--ccdv-gutter-m);
+    top: calc(50% - 0.5em);
+    font-size: min(1.5rem, calc((100cqw - 46.5px) / 12.2));
+  }
+  .studio-strip__suffix { margin-left: 8px; font-size: 0.41463em; } /* 17 / 41 */
+  .studio-strip__chevron {
+    right: var(--ccdv-gutter-m);
+    top: calc(50% - 0.375rem);
+    font-size: 0.75rem;
+  }
+
+  /* Approach stage: content-height, four principles as one readable column */
+  .studio-stage__stack { min-height: 0; border-bottom-width: 1px; }
+  .r11--studio .section--cards { padding: 32px var(--ccdv-gutter-m) 40px; }
+  .r11--studio .cards { flex-direction: column; gap: 32px; }
+  .r11--studio .card { width: auto; padding: 0; }
+  .r11--studio .card__label {
+    position: static;
+    display: block;
+    font-size: var(--ccdv-t-label-m);
+    line-height: 1.4;
+  }
+  .r11--studio .card__body {
+    width: auto;
+    margin-top: 8px;
+    font-size: var(--ccdv-t-body-m);
+    line-height: 1.5;
+  }
+  .r11--studio .card__para + .card__para { margin-top: 1.5em; }
+
+  /* Rows (F02): the toggle is in flow so a two-line heading grows the row;
+     no font shrink; chevron in the right gutter on the first line. */
+  .r11--studio .fan .clip-row { height: auto; min-height: 48px; }
+  .r11--studio .clip-row__toggle {
+    position: relative;
+    inset: auto;
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 8px 32px 8px var(--ccdv-gutter-m);
+    font-size: var(--ccdv-t-row-m);
+    line-height: 1.2;
+    white-space: normal;
+  }
+  .r11--studio .clip-row__chevron {
+    left: auto;
+    right: var(--ccdv-gutter-m);
+    top: 18px;
+    font-size: 0.75rem;
+    transition: transform 0.45s var(--studio-ease);
+  }
+  .r11--studio .clip-row[data-expanded="true"] .clip-row__chevron {
+    display: block;
+    transform: rotate(180deg);
+  }
+  .r11--studio .clip-row__watermark { display: none; }
+  .r11--studio .clip-row::before,
+  .r11--studio .fan__inner::before { height: 1px; }
+
+  .r11--studio .fan__copy {
+    columns: auto;
+    padding: 24px var(--ccdv-gutter-m);
+    font-size: var(--ccdv-t-body-m);
+    line-height: 1.5;
+  }
+  .r11--studio .fan__copy p { margin-bottom: 1.5em; }
+  .r11--studio .fan__copy + .columns { padding-top: 0; }
+  .r11--studio .columns { flex-direction: column; gap: 24px; padding: 0 var(--ccdv-gutter-m) 32px; }
+  .r11--studio .columns .card { width: auto; }
+  .r11--studio .columns .card__body {
+    margin-top: 8px;
+    font-size: var(--ccdv-t-body-m);
+    line-height: 1.5;
+  }
+
+  /* WrkOps: the same text-over-drawing beats as the intro */
+  .wo { font-size: var(--ccdv-t-narrative-m); line-height: 1.3; }
+  .wo__lead {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    gap: 48px;
+    min-height: 70vh;
+    min-height: 70svh;
+    padding: 64px var(--ccdv-gutter-m) 48px;
+  }
+  .wo__lead p,
+  .wo__explain p { width: auto; }
+  .wo__explain {
+    min-height: 70vh;
+    min-height: 70svh;
+    padding: 48px var(--ccdv-gutter-m);
+  }
+  .wo__explain p + p { margin-top: 1.3em; }
+
+  /* CC.OS: 48px cube + wordmark (fallback-safe: 5 glyphs at 0.61em + 96px) */
+  .wo__ccos { padding: 64px var(--ccdv-gutter-m) 72px; }
+  .wo__ccos-head { gap: 16px; }
+  .wo__ccos-cube { width: 48px; }
+  .r11--studio .wo .ccos__wordmark {
+    margin: 0;
+    font-size: min(4.5rem, calc((100cqw - 96px) / 3.05));
+  }
+  .wo__ccos-copy { width: auto; margin-top: 32px; }
+  .wo__ccos-copy p + p { margin-top: 1.3em; }
+  .wo .ccos__action {
+    position: relative;
+    width: max-content;
+    height: 1.0985em;
+    margin-top: 40px;
+    font-size: var(--ccdv-t-body-m);
+    line-height: 1.0985em;
+    padding-top: 0.1629em;
+  }
+  .wo .ccos__action::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: var(--ccdv-tap);
+    transform: translateY(-50%);
+  }
+  .wo .ccos__dot { left: auto; right: var(--ccdv-gutter-m); bottom: 32px; width: 8px; height: 8px; }
+
+  /* Shared footer (all routes): lockup, address column, then the two link
+     columns side by side as 44px rows. The lockup keeps its 1440 size. */
+  .footer {
+    grid-template-columns: max-content max-content;
+    grid-template-areas:
+      "mark mark"
+      "a a"
+      "b c";
+    column-gap: 32px;
+    row-gap: 24px;
+    min-height: 0;
+    padding: 40px var(--ccdv-gutter-m) 48px;
+  }
+  .footer__mark { --u: 1px; grid-area: mark; margin-top: 0; }
+  .footer__col {
+    margin-top: 0;
+    padding-right: 0;
+    font-size: var(--ccdv-t-label-m);
+    line-height: 1.5rem;
+  }
+  .footer__col--a { grid-area: a; }
+  .footer__col--b { grid-area: b; }
+  .footer__col--c { grid-area: c; }
+  .footer__col--b > div,
+  .footer__col--c > div,
+  .footer__col--b a {
+    display: flex;
+    align-items: center;
+    min-height: var(--ccdv-tap);
+  }
+}
+
+/* T1-5. Nav families inside the phone range (P2-2; em so they follow the
+   user's default font size). */
+/* M3, 590-767: in state B the inline lockup and the five cells share one
+   60px bar; the cells slide right as the mark shrinks. */
+@media (min-width: 36.875em) and (max-width: 767px) {
+  .r11--studio { --mh-compact: 60px; --mh-range: 84px; }
+  .masthead--collapsing {
+    --mm-mark-top: calc(12px + 2px * var(--mh-p, 0));
+    --mm-nav-top: calc(88px - 80px * var(--mh-p, 0));
+    --mm-nav-shift: 184.5px;                 /* inline lockup 176.5 + 8 */
+  }
+}
+/* M1, under 406: equal cells do not fit five across, so 3 + 2 on a six-column
+   grid (DOM order kept, no empty slot). */
+@media (max-width: 767px) and (max-width: 25.37em) {
+  .r11--studio { --mh-full: 188px; --mh-compact: 144px; }
+  .masthead--collapsing .cells { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .masthead--collapsing .cell { grid-column: span 2; }
+  .masthead--collapsing .cell:nth-child(n + 4) { grid-column: span 3; margin-top: -1px; }
+  .masthead--collapsing .cell:nth-child(4) { margin-left: 0; }
+}
+/* === end STUDIO-RESP T1 ===================================================== */

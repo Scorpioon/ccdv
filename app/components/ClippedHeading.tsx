@@ -45,8 +45,12 @@ export function ClippedHeading({
 }: ClippedHeadingProps) {
   if (onToggle) {
     const isExpanded = expanded === true;
+    /* STUDIO-RESP T1 (O08): the chevron is always rendered and `data-expanded`
+       mirrors the state for CSS only. At >=768 CSS hides the chevron while the
+       row is open, so desktop still shows the watermark OR the chevron as
+       before; on phones the watermark is hidden and the chevron flips. */
     return (
-      <div className="clip-row">
+      <div className="clip-row" data-expanded={isExpanded}>
         <h2>
           <button
             type="button"
@@ -61,15 +65,14 @@ export function ClippedHeading({
             <span className="clip-row__text">{label}</span>
           </button>
         </h2>
-        {isExpanded ? (
+        {isExpanded && (
           <span className="clip-row__watermark" aria-hidden="true">
             collapse
           </span>
-        ) : (
-          <span className="clip-row__chevron" aria-hidden="true">
-            v
-          </span>
         )}
+        <span className="clip-row__chevron" aria-hidden="true">
+          v
+        </span>
       </div>
     );
   }

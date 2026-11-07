@@ -32,14 +32,19 @@
 
 :root {
   /* --- surfaces -------------------------------------------------------- */
+  /* STUDIO-RESP T1 (C03): panel, ink and purple are folded in from the
+     MTG05 R4-B02/B03 :root overrides that global.css used to carry
+     (#CACAC8 -> #F2F2F2, #202020 -> #1A1A1A, #8654B3 -> #A864E2). Those were
+     already the effective values on every route, so the fold has no rendered
+     delta; literal hexes inside the artwork marks are untouched. */
   --ccdv-bg: #b2b2b2;      /* page ground                                  */
-  --ccdv-panel: #cacac8;   /* masthead + band bodies + light sections      */
-  --ccdv-ink: #202020;     /* type, dark sections, footer                  */
+  --ccdv-panel: #f2f2f2;   /* masthead + band bodies + light sections      */
+  --ccdv-ink: #1a1a1a;     /* type, dark sections, footer                  */
   --ccdv-light: #d9d9d9;   /* gear centre, footer mark, hex rings          */
   --ccdv-white: #ffffff;
 
   /* --- band stripes, top to bottom (Home) ------------------------------ */
-  --ccdv-purple: #8654b3;
+  --ccdv-purple: #a864e2;
   --ccdv-yellow: #fef36a;
   --ccdv-red: #f64848;
   --ccdv-green: #5ae36f;
@@ -57,4 +62,15 @@
   --ccdv-ochre: #b38b54;
 
   --ccdv-font: "Victor Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+
+  /* --- STUDIO-RESP T1: phone (<=767) sizes ------------------------------
+     rem/px only: --u is not defined at :root, so nothing here may use it.
+     cqw is resolved where the token is used (inside .site-shell). Applied
+     on Studio selectors and the shared footer only (global.css). */
+  --ccdv-gutter-m: 16px;
+  --ccdv-tap: 44px;
+  --ccdv-t-narrative-m: clamp(1.125rem, 0.875rem + 1.25cqw, 1.25rem);   /* 18 -> 20 */
+  --ccdv-t-row-m: clamp(1.25rem, 1rem + 1.25cqw, 1.5rem);               /* 20 -> 24 */
+  --ccdv-t-body-m: 1rem;
+  --ccdv-t-label-m: 0.8125rem;
 }
