@@ -6,6 +6,8 @@ import { SiteFooter } from "../components/SiteFooter";
 import { ClippedHeading } from "../components/ClippedHeading";
 import { PrincipleCardStatic } from "../components/PrincipleCard";
 import { HexCube } from "../components/marks/HexCube";
+import { StudioMobileMenu } from "../components/StudioMobileMenu";
+import { StudioMobileOrbit } from "../components/marks/StudioMobileOrbit";
 import { useMotionPolicy } from "../motion/reducedMotion";
 import { STUDIO_PRINCIPLES } from "../data/studioPrinciples";
 
@@ -429,6 +431,9 @@ export default function Studio() {
 
   return (
     <div className="r11 r11--studio" ref={rootRef}>
+      {/* M1: operator-designed phone header + menu; hidden from 768px up, where
+          the masthead below stays as is (and is hidden on phones). */}
+      <StudioMobileMenu />
       <SiteMasthead variant="studio" />
 
       <div className="studio-top">
@@ -436,6 +441,7 @@ export default function Studio() {
             the black intro slides over it. B04-02: the hero ends at the
             baseline of [Studio], so the black edge cuts the brackets there. */}
         <section className="studio-hero" aria-labelledby="studio-hero">
+          <StudioMobileOrbit className="studio-hero__orbit" />
           <h1 className="studio-hero__label" id="studio-hero">
             [Studio]
           </h1>

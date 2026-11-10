@@ -2726,3 +2726,178 @@ main { display: block; outline: none; }
   .masthead--collapsing .cell:nth-child(4) { margin-left: 0; }
 }
 /* === end STUDIO-RESP T1 ===================================================== */
+
+/* === STUDIO-RESP M1 — operator-designed mobile hero + menu ===================
+   Frame 322 (closed) / Frame 331 (open), 390x844 artboard, /studio only. The
+   supplied frames replace the T1 phone masthead (3+2 cells) on this route; from
+   768px up nothing below applies and the desktop composition is untouched. The
+   new bar and panel are siblings of the page content inside `.r11--studio`;
+   the panel is sticky (not fixed: the shell's container-type would make a fixed
+   box follow the whole page) with a negative bottom margin, so opening it never
+   changes the layout under it. No script writes the scroll position. */
+.smm__bar,
+.smm__panel,
+.studio-hero__orbit { display: none; }
+
+@media (max-width: 767px) {
+  /* the route's own notice would push the designed bar down */
+  body:has(.r11--studio) .mobile-notice { display: none; }
+
+  /* the T1 masthead is replaced; its sticky-header variables collapse to the
+     50px bar so the chapter strips still pin right under it */
+  .r11--studio .masthead--studio { display: none; }
+  .r11--studio {
+    --mh-full: 50px;
+    --mh-compact: 50px;
+    --mh-range: 0px;
+  }
+
+  .smm__bar {
+    position: sticky;
+    top: 0;
+    z-index: 21;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    height: 50px;
+    padding: 0 12px;
+    background: var(--ccdv-panel);
+  }
+  .smm__bar[data-open="true"] { background: var(--ccdv-ink); }
+
+  /* 26px gear inside a 44px-wide target, optically on the 12px gutter */
+  .smm__toggle {
+    display: grid;
+    place-items: center;
+    width: var(--ccdv-tap);
+    height: 50px;
+    margin: 0 0 0 -9px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+  }
+  .smm__gear { display: block; width: 26px; height: 26px; }
+  .smm__home { display: flex; align-items: center; height: 50px; padding-left: 12px; }
+  .smm__pixel { display: block; width: 114.5px; height: 26.17px; }
+  .smm__toggle:focus-visible,
+  .smm__home:focus-visible { outline: 2px solid var(--ccdv-purple-card); outline-offset: -2px; }
+
+  .smm__panel:not([hidden]) {
+    position: sticky;
+    top: 50px;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    height: calc(100vh - 50px);
+    height: calc(100svh - 50px);
+    margin-bottom: calc(50px - 100vh);
+    margin-bottom: calc(50px - 100svh);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--ccdv-panel);
+    color: var(--ccdv-ink);
+    font-size: 16px;
+    line-height: 1;
+  }
+  .smm__panel ul { margin: 0; padding: 0; list-style: none; }
+  .smm__panel a { color: inherit; text-decoration: none; }
+  .smm__panel a:focus-visible { outline: 2px solid var(--ccdv-purple-card); outline-offset: 2px; }
+
+  /* five outlined rows; the current one is ink with a lilac square */
+  .smm__routes { display: grid; gap: 12px; padding: 12px 12px 0; flex: none; }
+  .smm__route {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    min-height: var(--ccdv-tap);
+    padding: 0 16px;
+    border: 1px solid var(--ccdv-ink);
+  }
+  .smm__square {
+    box-sizing: border-box;
+    width: 8px;
+    height: 8px;
+    border: 1px solid currentColor;
+  }
+  .smm__route[aria-current="page"] {
+    background: var(--ccdv-ink);
+    color: var(--ccdv-panel);
+  }
+  .smm__route[aria-current="page"] .smm__square {
+    border-color: var(--ccdv-purple-card);
+    background: var(--ccdv-purple-card);
+  }
+
+  /* CC.OS: heading, then six names in two columns on a 33px pitch */
+  .smm__ccos {
+    flex: none;
+    margin: 18px 12px 12px;
+    padding: 14px 0 8px;
+    border-block: 1px solid var(--ccdv-ink);
+  }
+  .smm__ccos-title { margin: 0 0 10px; font-size: 16px; font-weight: inherit; line-height: 22px; }
+  .smm__systems { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .smm__system { position: relative; display: block; height: 33px; line-height: 33px; }
+  .smm__system::after { content: ""; position: absolute; inset: -6px 0; }  /* 44px target */
+
+  /* dark contact / legal block: fills what is left of the viewport */
+  .smm__foot {
+    box-sizing: border-box;
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 70px;
+    padding: 18px 12px;
+    background: var(--ccdv-ink);
+    color: var(--ccdv-panel);
+    font-size: 12px;
+    line-height: 22px;
+    text-align: center;
+  }
+  .smm__contact a { position: relative; text-decoration: underline; text-underline-offset: 3px; }
+  .smm__contact a::after { content: ""; position: absolute; inset: -11px -4px; }
+
+  /* Hero: lilac from under the 50px bar to a black edge 75px above the bottom
+     of a 844px screen; [Studio] is large and sits on that edge (baseline = edge,
+     so the black cuts the brackets). Size: 66px at 390, 54px at 320, from the
+     container width (fallback-font safe: 8 glyphs at 0.61em still fit). */
+  .studio-hero {
+    --hero-f: clamp(44px, 16.9cqw, 84px);
+    top: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    box-sizing: border-box;
+    height: max(calc(100vh - 125px), 420px);
+    height: max(calc(100svh - 125px), 420px);
+    padding: 0 var(--ccdv-gutter-m);
+    overflow: clip;
+  }
+  .studio-hero__label {
+    position: relative;
+    z-index: 1;
+    margin: 0 0 calc(-0.114 * var(--hero-f));   /* baseline on the hero's bottom edge */
+  }
+  .studio-hero__suffix { display: none; }
+
+  /* orbit: 84.3% wide (328.8 of 390), centre 45.8% down the lilac area */
+  .studio-hero__orbit {
+    position: absolute;
+    left: 50%;
+    top: 45.84%;
+    display: block;
+    width: min(84.3%, 420px);
+    height: auto;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+}
+/* === end STUDIO-RESP M1 ===================================================== */
