@@ -26,8 +26,9 @@ import { CcosSystemIcon, type CcosIconFamily } from "./marks/CcosArtwork";
 
    GF09-F (FBI-035/036/037):
    - hub (no `activeId`): all six icons at full colour, no inactive state;
-   - `family`: WRKOPS/KAIA/AETHERNOS/PANOPTES use the bold white-rim /
-     black-interior icon, KRON/KAIRON the thin one (see CcosSystemIcon);
+   - `family`: WRKOPS/KAIA/AETHERNOS use the bold white-rim /
+     black-interior icon, PANOPTES/KRON/KAIRON the thin one (see CcosSystemIcon;
+     PANOPTES moved to thin by operator request, M1 amendment A2);
    - leaf (`activeId` set): the current system keeps its native colour, the
      other five carry `data-state="inactive"`, which global.css renders at
      opacity 0.2 — R1.1 wraps exactly five artwork groups in
@@ -50,7 +51,7 @@ export const CCOS_SYSTEMS: CcosSystem[] = [
   { id: "wkrops", name: "WRKOPS", color: "#545454", route: "/products/ccos/wrkops", family: "bold" },
   { id: "kaia", name: "KAIA", color: "#8654B3", route: "/products/ccos/kaia", family: "bold" },
   { id: "athernos", name: "AETHERNOS", color: "#B35464", route: "/products/ccos/aethernos", family: "bold" },
-  { id: "panoptes", name: "PANOPTES", color: "#48A4F6", route: "/products/ccos/panoptes", family: "bold" },
+  { id: "panoptes", name: "PANOPTES", color: "#48A4F6", route: "/products/ccos/panoptes", family: "thin" },
   { id: "kron", name: "KRON", color: "#B38B54", route: "/products/ccos/kron", family: "thin" },
   { id: "kairon", name: "KAIRON", color: "#5AE36F", route: "/products/ccos/kairon", family: "thin" },
 ];
