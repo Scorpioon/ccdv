@@ -13,9 +13,126 @@ const RING_A =
 const RING_B =
   "M215.446 409.878C214.607 410.367 213.766 410.855 212.922 411.342C212.079 411.829 211.236 412.314 210.393 412.795M220.446 406.939C222.123 405.945 223.788 404.949 225.441 403.951M230.407 400.926C232.063 399.908 233.708 398.888 235.338 397.867M240.251 394.764C241.897 393.715 243.529 392.665 245.145 391.615M250.004 388.43C251.628 387.356 253.235 386.281 254.825 385.208M259.633 381.932C261.244 380.823 262.837 379.715 264.411 378.61M269.149 375.246C270.736 374.107 272.302 372.97 273.846 371.838M278.502 368.382C280.073 367.203 281.619 366.028 283.139 364.859M287.729 361.282C289.271 360.065 290.785 358.853 292.268 357.649M296.754 353.954C298.265 352.69 299.742 351.435 301.182 350.191M305.544 346.353C307.018 345.032 308.449 343.724 309.834 342.431M314.038 338.417C315.462 337.024 316.829 335.651 318.138 334.299M322.107 330.065C323.452 328.58 324.72 327.124 325.907 325.7M329.531 321.117C330.751 319.48 331.849 317.893 332.82 316.361M335.671 311.277C336.596 309.35 337.271 307.536 337.684 305.846M337.974 300.085C337.784 299.112 337.453 298.208 336.974 297.38C336.496 296.552 335.88 295.813 335.132 295.162M329.997 292.532C328.327 292.045 326.419 291.722 324.288 291.56M318.459 291.487C316.647 291.562 314.723 291.72 312.696 291.958M306.915 292.805C305.088 293.121 303.194 293.491 301.235 293.913M295.584 295.234C293.758 295.691 291.885 296.189 289.967 296.725M284.389 298.359C282.576 298.912 280.729 299.497 278.848 300.113M273.343 301.972C271.545 302.597 269.72 303.248 267.87 303.925M262.427 305.962C260.643 306.645 258.837 307.35 257.011 308.077M251.618 310.264C249.845 310.995 248.055 311.747 246.248 312.518M240.928 314.822C239.175 315.593 237.408 316.381 235.628 317.186M230.346 319.607C228.602 320.417 226.846 321.243 225.08 322.084M219.838 324.609C218.114 325.45 216.38 326.305 214.638 327.174M209.45 329.789C207.732 330.664 206.008 331.552 204.276 332.453M199.132 335.156C197.433 336.058 195.727 336.972 194.017 337.898M188.915 340.686C187.224 341.618 185.529 342.562 183.829 343.517M178.784 346.378C177.942 346.86 177.099 347.344 176.255 347.832C175.411 348.319 174.57 348.807 173.731 349.295M168.731 352.234C167.054 353.228 165.389 354.225 163.736 355.222M158.771 358.247C157.114 359.266 155.47 360.285 153.839 361.306M148.926 364.409C147.28 365.458 145.648 366.508 144.032 367.558M139.173 370.743C137.55 371.818 135.942 372.892 134.352 373.965M129.544 377.241C127.933 378.351 126.34 379.458 124.766 380.564M120.028 383.928C118.441 385.067 116.875 386.203 115.331 387.335M110.675 390.791C109.104 391.97 107.558 393.145 106.038 394.314M101.448 397.891C99.9056 399.109 98.3921 400.32 96.9087 401.524M92.4229 405.22C90.9116 406.484 89.4355 407.738 87.9955 408.983M83.6327 412.821C82.1588 414.141 80.7285 415.449 79.3431 416.742M75.1391 420.757C73.7154 422.149 72.3481 423.522 71.0389 424.875M67.0696 429.109C65.7246 430.593 64.4573 432.049 63.2701 433.473M59.646 438.056C58.4262 439.693 57.3283 441.28 56.357 442.812M53.5056 447.897C52.5807 449.823 51.9058 451.637 51.493 453.327M51.2029 459.088C51.3926 460.062 51.7244 460.965 52.2026 461.793C52.6809 462.622 53.2971 463.36 54.0454 464.012M59.1798 466.641C60.8498 467.128 62.7582 467.451 64.8891 467.613M70.718 467.686C72.5306 467.611 74.4536 467.453 76.4811 467.215M82.2624 466.369C84.0892 466.053 85.9835 465.683 87.9417 465.26M93.5931 463.94C95.419 463.482 97.292 462.985 99.2097 462.448M104.788 460.814C106.601 460.261 108.448 459.676 110.329 459.06M115.834 457.201C117.632 456.576 119.457 455.925 121.307 455.248M126.75 453.211C128.535 452.528 130.34 451.823 132.167 451.096M137.559 448.91C139.332 448.178 141.122 447.427 142.929 446.656M148.249 444.351C150.002 443.58 151.769 442.792 153.549 441.987M158.831 439.566C160.576 438.756 162.331 437.93 164.097 437.089M169.339 434.564C171.063 433.723 172.797 432.868 174.54 431.999M179.727 429.385C181.445 428.51 183.169 427.621 184.901 426.721M190.045 424.017C191.745 423.115 193.45 422.201 195.16 421.276M200.262 418.488C201.953 417.555 203.648 416.611 205.348 415.657";
 
+/* M1-A1 (operator amendment): subtle motion. Each dashed ring is read as a great
+   circle of the sphere (R = the outer circle's radius). Orthographic projection
+   of a circle with unit normal n is an ellipse with semi-major R, semi-minor
+   R*|n.z| and its major axis perpendicular to (n.x, n.y). The two normals below
+   are fitted to the operator's rings (A: minor 101.7 / R = 0.62, axis level; B:
+   axis -29 deg, minor ~37). Each normal is then tilted by a few incommensurate
+   sines (periods ~3-10 s, all zero at t = 0), so the motion is gyroscope-like
+   and does not visibly repeat, and at t = 0 it equals the supplied drawing.
+   The verbatim paths stay in the markup as the server render and the
+   reduced-motion drawing; they are swapped for the ellipses only while the
+   motion runs, and the loop pauses off-screen. The outer circle and the two axes
+   never move. Attributes are written straight to the DOM (no React state). */
+import { useEffect, useRef } from "react";
+import { useMotionPolicy } from "../../motion/reducedMotion";
+
+const CX = 194.585;
+const CY = 379.587;
+const R = 163.897;
+const DASH = "5.5 6.5"; // round caps add ~1 -> about the source's 6.5 on / 5.5 off
+
+type Vec = [number, number, number];
+type Wave = [amp: number, freq: number];
+
+const RINGS: { n0: Vec; alpha: Wave[]; beta: Wave[]; slide: number }[] = [
+  {
+    n0: [0, 0.784, 0.62],
+    alpha: [[0.42, 0.9], [0.16, 1.7]],
+    beta: [[0.35, 0.65], [0.14, 1.45]],
+    slide: 6,
+  },
+  {
+    n0: [0.472, 0.852, 0.226],
+    alpha: [[0.5, 0.75], [0.18, 1.55]],
+    beta: [[0.45, 1.05], [0.15, 0.83]],
+    slide: -4.5,
+  },
+];
+
+const wave = (waves: Wave[], t: number) => waves.reduce((sum, [a, w]) => sum + a * Math.sin(w * t), 0);
+
+function place(ellipse: SVGEllipseElement, ring: (typeof RINGS)[number], t: number) {
+  const a = wave(ring.alpha, t);
+  const b = wave(ring.beta, t);
+  const [x, y, z] = ring.n0;
+  // Rx(a), then Ry(b)
+  const y1 = y * Math.cos(a) - z * Math.sin(a);
+  const z1 = y * Math.sin(a) + z * Math.cos(a);
+  const nx = x * Math.cos(b) + z1 * Math.sin(b);
+  const nz = -x * Math.sin(b) + z1 * Math.cos(b);
+  const angle = (Math.atan2(y1, nx) * 180) / Math.PI + 90;
+  ellipse.setAttribute("ry", Math.max(0.5, R * Math.abs(nz)).toFixed(2));
+  ellipse.setAttribute("transform", `rotate(${angle.toFixed(2)} ${CX} ${CY})`);
+  ellipse.setAttribute("stroke-dashoffset", (t * ring.slide).toFixed(2));
+}
+
 export function StudioMobileOrbit({ className }: { className?: string }) {
+  const { reduced } = useMotionPolicy();
+  const svgRef = useRef<SVGSVGElement>(null);
+  const pathRefs = useRef<(SVGPathElement | null)[]>([]);
+  const ellipseRefs = useRef<(SVGEllipseElement | null)[]>([]);
+
+  useEffect(() => {
+    const svg = svgRef.current;
+    const paths = pathRefs.current;
+    const ellipses = ellipseRefs.current;
+    if (!svg || reduced || ellipses.some((e) => !e)) return;
+
+    let frame = 0;
+    let visible = true;
+    let clock = 0; // seconds of running time, so a pause never makes a jump
+    let last = 0;
+
+    const show = (motion: boolean) => {
+      paths.forEach((p) => p?.setAttribute("visibility", motion ? "hidden" : "visible"));
+      ellipses.forEach((e) => e?.setAttribute("visibility", motion ? "visible" : "hidden"));
+    };
+    const tick = (now: number) => {
+      clock += Math.min(0.1, (now - last) / 1000);
+      last = now;
+      RINGS.forEach((ring, i) => place(ellipses[i]!, ring, clock));
+      frame = requestAnimationFrame(tick);
+    };
+    const start = () => {
+      if (frame) return;
+      last = performance.now();
+      show(true);
+      frame = requestAnimationFrame(tick);
+    };
+    const stop = () => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = 0;
+    };
+
+    const observer =
+      typeof IntersectionObserver === "undefined"
+        ? null
+        : new IntersectionObserver(([entry]) => {
+            visible = entry.isIntersecting;
+            if (visible) start();
+            else stop();
+          });
+    if (observer) observer.observe(svg);
+    else start();
+
+    return () => {
+      observer?.disconnect();
+      stop();
+      show(false);
+    };
+  }, [reduced]);
+
+  const ring = (i: number) => ({
+    ref: (node: SVGEllipseElement | null) => {
+      ellipseRefs.current[i] = node;
+    },
+  });
+
   return (
     <svg
+      ref={svgRef}
       className={className}
       viewBox="30.1719 215.1719 328.826 328.826"
       fill="none"
@@ -23,8 +140,23 @@ export function StudioMobileOrbit({ className }: { className?: string }) {
       focusable="false"
     >
       <circle cx="194.585" cy="379.587" r="163.897" stroke={INK} strokeWidth={1.03292} />
-      <path d={RING_A} stroke={INK} strokeWidth={1.03292} strokeLinecap="round" />
-      <path d={RING_B} stroke={INK} strokeWidth={1.03292} strokeLinecap="round" />
+      <path ref={(n) => { pathRefs.current[0] = n; }} d={RING_A} stroke={INK} strokeWidth={1.03292} strokeLinecap="round" />
+      <path ref={(n) => { pathRefs.current[1] = n; }} d={RING_B} stroke={INK} strokeWidth={1.03292} strokeLinecap="round" />
+      {[0, 1].map((i) => (
+        <ellipse
+          key={i}
+          {...ring(i)}
+          cx={CX}
+          cy={CY}
+          rx={R}
+          ry={R * RINGS[i].n0[2]}
+          visibility="hidden"
+          stroke={INK}
+          strokeWidth={1.03292}
+          strokeLinecap="round"
+          strokeDasharray={DASH}
+        />
+      ))}
       <line x1="195.102" y1="215.174" x2="195.102" y2="544" stroke={INK} strokeWidth={1.03292} />
       <line x1="358.996" y1="379.889" x2="30.1699" y2="379.889" stroke={INK} strokeWidth={0.591414} />
     </svg>

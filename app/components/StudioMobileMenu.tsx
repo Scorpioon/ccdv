@@ -100,16 +100,17 @@ export function StudioMobileMenu() {
         <Link className="smm__home" to="/" aria-label="CCDV — Home" onClick={close}>
           <CcdvPixelMark variant="inline" className="smm__pixel" fill={ink} />
         </Link>
-      </header>
 
-      <nav
-        ref={panelRef}
-        id={panelId}
-        className="smm__panel"
-        aria-label="Menu"
-        hidden={!open}
-        onKeyDown={trapTab}
-      >
+        {/* The panel lives inside the sticky bar and hangs from its bottom edge
+            (absolute), so it needs no fixed/sticky tricks of its own and adds no
+            page height. */}
+        <nav
+          ref={panelRef}
+          id={panelId}
+          className="smm__panel"
+          aria-label="Menu"
+          hidden={!open}
+        >
         <ul className="smm__routes">
           {ROUTES.map(({ label, to }) => {
             const current = to === "/studio";
@@ -158,7 +159,8 @@ export function StudioMobileMenu() {
           </ul>
           <div className="smm__year">[ © 2026 ]</div>
         </div>
-      </nav>
+        </nav>
+      </header>
     </>
   );
 }
