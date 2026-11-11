@@ -150,7 +150,13 @@ export function StudioMobileMenu() {
         </section>
 
         <div className="smm__foot">
+          {/* identity row, as in the resp2 footer panel: the gear and the pixel mark */}
+          <div className="smm__brand" aria-hidden="true">
+            <GearMark className="smm__foot-gear" fill={LIGHT} dotFill={INK} />
+            <CcdvPixelMark variant="inline" className="smm__pixel" fill={LIGHT} />
+          </div>
           <div className="smm__contact">
+            <div>[ COLLAPSE CREATIVE : DEV UNIT ]</div>
             <div>[ hello[@]collapsecreative.com ]</div>
             <div>
               [ Part of <a href="https://collapsecreative.com">collapsecreative.com</a> ]

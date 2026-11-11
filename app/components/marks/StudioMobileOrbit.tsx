@@ -13,92 +13,168 @@ const RING_A =
 const RING_B =
   "M215.446 409.878C214.607 410.367 213.766 410.855 212.922 411.342C212.079 411.829 211.236 412.314 210.393 412.795M220.446 406.939C222.123 405.945 223.788 404.949 225.441 403.951M230.407 400.926C232.063 399.908 233.708 398.888 235.338 397.867M240.251 394.764C241.897 393.715 243.529 392.665 245.145 391.615M250.004 388.43C251.628 387.356 253.235 386.281 254.825 385.208M259.633 381.932C261.244 380.823 262.837 379.715 264.411 378.61M269.149 375.246C270.736 374.107 272.302 372.97 273.846 371.838M278.502 368.382C280.073 367.203 281.619 366.028 283.139 364.859M287.729 361.282C289.271 360.065 290.785 358.853 292.268 357.649M296.754 353.954C298.265 352.69 299.742 351.435 301.182 350.191M305.544 346.353C307.018 345.032 308.449 343.724 309.834 342.431M314.038 338.417C315.462 337.024 316.829 335.651 318.138 334.299M322.107 330.065C323.452 328.58 324.72 327.124 325.907 325.7M329.531 321.117C330.751 319.48 331.849 317.893 332.82 316.361M335.671 311.277C336.596 309.35 337.271 307.536 337.684 305.846M337.974 300.085C337.784 299.112 337.453 298.208 336.974 297.38C336.496 296.552 335.88 295.813 335.132 295.162M329.997 292.532C328.327 292.045 326.419 291.722 324.288 291.56M318.459 291.487C316.647 291.562 314.723 291.72 312.696 291.958M306.915 292.805C305.088 293.121 303.194 293.491 301.235 293.913M295.584 295.234C293.758 295.691 291.885 296.189 289.967 296.725M284.389 298.359C282.576 298.912 280.729 299.497 278.848 300.113M273.343 301.972C271.545 302.597 269.72 303.248 267.87 303.925M262.427 305.962C260.643 306.645 258.837 307.35 257.011 308.077M251.618 310.264C249.845 310.995 248.055 311.747 246.248 312.518M240.928 314.822C239.175 315.593 237.408 316.381 235.628 317.186M230.346 319.607C228.602 320.417 226.846 321.243 225.08 322.084M219.838 324.609C218.114 325.45 216.38 326.305 214.638 327.174M209.45 329.789C207.732 330.664 206.008 331.552 204.276 332.453M199.132 335.156C197.433 336.058 195.727 336.972 194.017 337.898M188.915 340.686C187.224 341.618 185.529 342.562 183.829 343.517M178.784 346.378C177.942 346.86 177.099 347.344 176.255 347.832C175.411 348.319 174.57 348.807 173.731 349.295M168.731 352.234C167.054 353.228 165.389 354.225 163.736 355.222M158.771 358.247C157.114 359.266 155.47 360.285 153.839 361.306M148.926 364.409C147.28 365.458 145.648 366.508 144.032 367.558M139.173 370.743C137.55 371.818 135.942 372.892 134.352 373.965M129.544 377.241C127.933 378.351 126.34 379.458 124.766 380.564M120.028 383.928C118.441 385.067 116.875 386.203 115.331 387.335M110.675 390.791C109.104 391.97 107.558 393.145 106.038 394.314M101.448 397.891C99.9056 399.109 98.3921 400.32 96.9087 401.524M92.4229 405.22C90.9116 406.484 89.4355 407.738 87.9955 408.983M83.6327 412.821C82.1588 414.141 80.7285 415.449 79.3431 416.742M75.1391 420.757C73.7154 422.149 72.3481 423.522 71.0389 424.875M67.0696 429.109C65.7246 430.593 64.4573 432.049 63.2701 433.473M59.646 438.056C58.4262 439.693 57.3283 441.28 56.357 442.812M53.5056 447.897C52.5807 449.823 51.9058 451.637 51.493 453.327M51.2029 459.088C51.3926 460.062 51.7244 460.965 52.2026 461.793C52.6809 462.622 53.2971 463.36 54.0454 464.012M59.1798 466.641C60.8498 467.128 62.7582 467.451 64.8891 467.613M70.718 467.686C72.5306 467.611 74.4536 467.453 76.4811 467.215M82.2624 466.369C84.0892 466.053 85.9835 465.683 87.9417 465.26M93.5931 463.94C95.419 463.482 97.292 462.985 99.2097 462.448M104.788 460.814C106.601 460.261 108.448 459.676 110.329 459.06M115.834 457.201C117.632 456.576 119.457 455.925 121.307 455.248M126.75 453.211C128.535 452.528 130.34 451.823 132.167 451.096M137.559 448.91C139.332 448.178 141.122 447.427 142.929 446.656M148.249 444.351C150.002 443.58 151.769 442.792 153.549 441.987M158.831 439.566C160.576 438.756 162.331 437.93 164.097 437.089M169.339 434.564C171.063 433.723 172.797 432.868 174.54 431.999M179.727 429.385C181.445 428.51 183.169 427.621 184.901 426.721M190.045 424.017C191.745 423.115 193.45 422.201 195.16 421.276M200.262 418.488C201.953 417.555 203.648 416.611 205.348 415.657";
 
-/* M1-A1 (operator amendment): subtle motion. Each dashed ring is read as a great
-   circle of the sphere (R = the outer circle's radius). Orthographic projection
-   of a circle with unit normal n is an ellipse with semi-major R, semi-minor
-   R*|n.z| and its major axis perpendicular to (n.x, n.y). The two normals below
-   are fitted to the operator's rings (A: minor 101.7 / R = 0.62, axis level; B:
-   axis -29 deg, minor ~37). Each normal is then tilted by a few incommensurate
-   sines (periods ~3-10 s, all zero at t = 0), so the motion is gyroscope-like
-   and does not visibly repeat, and at t = 0 it equals the supplied drawing.
-   The verbatim paths stay in the markup as the server render and the
-   reduced-motion drawing; they are swapped for the ellipses only while the
-   motion runs, and the loop pauses off-screen. The outer circle and the two axes
-   never move. Attributes are written straight to the DOM (no React state). */
+/* M1-A1 (operator amendment): subtle motion; R1-FB002-09: the same drawing is
+   now a sphere you can turn.
+
+   Each dashed ring is a great circle of the sphere (R = the outer circle's
+   radius). Orthographic projection of a circle with unit normal n is an ellipse
+   with semi-major R, semi-minor R*|n.z| and its major axis perpendicular to
+   (n.x, n.y). The two normals below are fitted to the operator's rings (A: minor
+   101.7 / R = 0.62, axis level; B: axis -29 deg, minor ~37). The sphere's
+   orientation is M = wobble(t) * drag: `wobble` is a few incommensurate sines
+   (bounded, all zero at t = 0, so the pose at rest is the supplied drawing) and
+   `drag` is what the pointer/keys have turned it by, a full rotation matrix with
+   no limit. The rings and the two axes (the "+") are all rotated by M, so they
+   turn as one object. The outer circle never moves. The verbatim paths stay in
+   the markup as the server render and the reduced-motion drawing; they are
+   swapped for the ellipses only once the sphere is drawn by the loop or by a
+   drag. The loop pauses off-screen. Attributes are written straight to the DOM
+   (no React state). */
 import { useEffect, useRef } from "react";
+import type { RefObject } from "react";
 import { useMotionPolicy } from "../../motion/reducedMotion";
 
-const CX = 194.585;
-const CY = 379.587;
-const R = 163.897;
-const DASH = "5.5 6.5"; // round caps add ~1 -> about the source's 6.5 on / 5.5 off
+export type Vec3 = [number, number, number];
+export type Mat3 = [number, number, number, number, number, number, number, number, number];
 
-type Vec = [number, number, number];
-type Wave = [amp: number, freq: number];
-
-const RINGS: { n0: Vec; alpha: Wave[]; beta: Wave[]; slide: number }[] = [
-  {
-    n0: [0, 0.784, 0.62],
-    alpha: [[0.42, 0.9], [0.16, 1.7]],
-    beta: [[0.35, 0.65], [0.14, 1.45]],
-    slide: 6,
-  },
-  {
-    n0: [0.472, 0.852, 0.226],
-    alpha: [[0.5, 0.75], [0.18, 1.55]],
-    beta: [[0.45, 1.05], [0.15, 0.83]],
-    slide: -4.5,
-  },
+export const IDENT: Mat3 = [1, 0, 0, 0, 1, 0, 0, 0, 1];
+export const rotX = (a: number): Mat3 => {
+  const c = Math.cos(a), s = Math.sin(a);
+  return [1, 0, 0, 0, c, -s, 0, s, c];
+};
+export const rotY = (a: number): Mat3 => {
+  const c = Math.cos(a), s = Math.sin(a);
+  return [c, 0, s, 0, 1, 0, -s, 0, c];
+};
+export const rotZ = (a: number): Mat3 => {
+  const c = Math.cos(a), s = Math.sin(a);
+  return [c, -s, 0, s, c, 0, 0, 0, 1];
+};
+export const mul = (a: Mat3, b: Mat3): Mat3 => {
+  const r = new Array<number>(9);
+  for (let i = 0; i < 3; i++) {
+    for (let j = 0; j < 3; j++) r[i * 3 + j] = a[i * 3] * b[j] + a[i * 3 + 1] * b[3 + j] + a[i * 3 + 2] * b[6 + j];
+  }
+  return r as Mat3;
+};
+export const apply = (m: Mat3, v: Vec3): Vec3 => [
+  m[0] * v[0] + m[1] * v[1] + m[2] * v[2],
+  m[3] * v[0] + m[4] * v[1] + m[5] * v[2],
+  m[6] * v[0] + m[7] * v[1] + m[8] * v[2],
 ];
 
-const wave = (waves: Wave[], t: number) => waves.reduce((sum, [a, w]) => sum + a * Math.sin(w * t), 0);
+const smoothRamp = (value: number) => {
+  const v = Math.min(1, Math.max(0, value));
+  return v * v * (3 - 2 * v);
+};
 
-function place(ellipse: SVGEllipseElement, ring: (typeof RINGS)[number], t: number) {
-  const a = wave(ring.alpha, t);
-  const b = wave(ring.beta, t);
-  const [x, y, z] = ring.n0;
-  // Rx(a), then Ry(b)
-  const y1 = y * Math.cos(a) - z * Math.sin(a);
-  const z1 = y * Math.sin(a) + z * Math.cos(a);
-  const nx = x * Math.cos(b) + z1 * Math.sin(b);
-  const nz = -x * Math.sin(b) + z1 * Math.cos(b);
-  const angle = (Math.atan2(y1, nx) * 180) / Math.PI + 90;
-  ellipse.setAttribute("ry", Math.max(0.5, R * Math.abs(nz)).toFixed(2));
-  ellipse.setAttribute("transform", `rotate(${angle.toFixed(2)} ${CX} ${CY})`);
-  ellipse.setAttribute("stroke-dashoffset", (t * ring.slide).toFixed(2));
+/* The idle sway of a rigid sphere: three bounded sine sums about z, x and y
+   (peak about 9, 7 and 8 degrees), a 1.5 s ramp from the rest pose, and an
+   optional gain and lag for a part that should follow the main body later and
+   wider (the Build gyro's ring). Never accumulates: it is a pose, not a speed. */
+export function wobble(t: number, gain = 1, lag = 0): Mat3 {
+  const k = smoothRamp(t / 1.5) * gain;
+  const u = t - lag;
+  const z = 0.16 * (0.6 * Math.sin(0.37 * u) + 0.3 * Math.sin(0.61 * u) + 0.1 * Math.sin(0.97 * u));
+  const x = 0.12 * (0.7 * Math.sin(0.53 * u) + 0.3 * Math.sin(0.89 * u));
+  const y = 0.14 * (0.6 * Math.sin(0.43 * u) + 0.4 * Math.sin(0.83 * u));
+  return mul(rotZ(k * z), mul(rotX(k * x), rotY(k * y)));
 }
 
-export function StudioMobileOrbit({ className }: { className?: string }) {
-  const { reduced } = useMotionPolicy();
-  const svgRef = useRef<SVGSVGElement>(null);
-  const pathRefs = useRef<(SVGPathElement | null)[]>([]);
-  const ellipseRefs = useRef<(SVGEllipseElement | null)[]>([]);
+/* Ellipse that a circle of radius `r`, normal `n`, centred `offset` along n from
+   (cx, cy), projects to. Used for great circles (offset 0) and for latitude
+   circles. */
+export function ringEllipse(n: Vec3, cx: number, cy: number, r: number, offset = 0) {
+  const x = cx + offset * n[0];
+  const y = cy + offset * n[1];
+  return {
+    cx: x,
+    cy: y,
+    rx: r,
+    ry: Math.max(0.4, r * Math.abs(n[2])),
+    angle: (Math.atan2(n[1], n[0]) * 180) / Math.PI + 90,
+  };
+}
+export function writeEllipse(el: SVGEllipseElement | null, g: ReturnType<typeof ringEllipse>) {
+  if (!el) return;
+  el.setAttribute("cx", g.cx.toFixed(2));
+  el.setAttribute("cy", g.cy.toFixed(2));
+  el.setAttribute("rx", g.rx.toFixed(2));
+  el.setAttribute("ry", g.ry.toFixed(2));
+  el.setAttribute("transform", `rotate(${g.angle.toFixed(2)} ${g.cx.toFixed(2)} ${g.cy.toFixed(2)})`);
+}
+/* a diameter along screen-projected direction v, `half` long when v is in the plane */
+export function axisLine(v: Vec3, cx: number, cy: number, half: number) {
+  return { x1: cx - half * v[0], y1: cy - half * v[1], x2: cx + half * v[0], y2: cy + half * v[1] };
+}
+export function writeLine(el: SVGLineElement | null, g: ReturnType<typeof axisLine>) {
+  if (!el) return;
+  el.setAttribute("x1", g.x1.toFixed(2));
+  el.setAttribute("y1", g.y1.toFixed(2));
+  el.setAttribute("x2", g.x2.toFixed(2));
+  el.setAttribute("y2", g.y2.toFixed(2));
+}
+
+export interface SphereMotion {
+  reduced: boolean;
+  /** pointer / touch drag and arrow keys turn the sphere */
+  interactive: boolean;
+  /** called with the user's accumulated rotation and the idle clock (0 under
+      reduced motion); writes the whole figure */
+  draw: (drag: Mat3, clock: number) => void;
+  /** puts the verbatim drawing back */
+  rest: () => void;
+}
+
+const DRAG_RAD_PER_PX = 0.011; // about 520 px for a full turn
+const KEY_STEP = (12 * Math.PI) / 180;
+
+/* One driver per figure.
+   Idle: a rAF loop that runs only while the figure is on screen and motion is
+   allowed. Drag: pointer events on the figure; the browser keeps vertical page
+   scrolling for touch (CSS `touch-action: pan-y` on `.studio-sphere`), so a
+   finger turns the sphere about its vertical axis and a mouse turns it freely.
+   After release the sphere keeps its pose and its spin dies out exponentially
+   (no snap back). Reduced motion: no loop, no inertia; a drag still turns it, one
+   draw per event. Keyboard: arrow keys turn it 12 degrees. */
+export function useSphereMotion(ref: RefObject<Element | null>, options: SphereMotion) {
+  const latest = useRef(options);
+  latest.current = options;
+  const { reduced, interactive } = options;
 
   useEffect(() => {
-    const svg = svgRef.current;
-    const paths = pathRefs.current;
-    const ellipses = ellipseRefs.current;
-    if (!svg || reduced || ellipses.some((e) => !e)) return;
-
+    const node = ref.current;
+    if (!node) return;
+    let drag: Mat3 = IDENT;
+    let spin: [number, number] = [0, 0]; // rad/s about screen x and y
+    let dragging = false;
+    let pointer = -1;
     let frame = 0;
-    let visible = true;
-    let clock = 0; // seconds of running time, so a pause never makes a jump
+    let clock = 0;
     let last = 0;
+    let lx = 0;
+    let ly = 0;
+    let lt = 0;
 
-    const show = (motion: boolean) => {
-      paths.forEach((p) => p?.setAttribute("visibility", motion ? "hidden" : "visible"));
-      ellipses.forEach((e) => e?.setAttribute("visibility", motion ? "visible" : "hidden"));
+    const draw = () => latest.current.draw(drag, reduced ? 0 : clock);
+    const turn = (rx: number, ry: number) => {
+      drag = mul(mul(rotX(rx), rotY(ry)), drag);
     };
     const tick = (now: number) => {
-      clock += Math.min(0.1, (now - last) / 1000);
+      const dt = Math.min(0.1, Math.max(0, (now - last) / 1000));
       last = now;
-      RINGS.forEach((ring, i) => place(ellipses[i]!, ring, clock));
+      clock += dt;
+      if (!dragging && Math.abs(spin[0]) + Math.abs(spin[1]) > 0.02) {
+        turn(spin[0] * dt, spin[1] * dt);
+        const k = Math.exp(-3 * dt);
+        spin = [spin[0] * k, spin[1] * k];
+      }
+      draw();
       frame = requestAnimationFrame(tick);
     };
     const start = () => {
-      if (frame) return;
+      if (frame || reduced) return;
       last = performance.now();
-      show(true);
       frame = requestAnimationFrame(tick);
     };
     const stop = () => {
@@ -109,40 +185,159 @@ export function StudioMobileOrbit({ className }: { className?: string }) {
     const observer =
       typeof IntersectionObserver === "undefined"
         ? null
-        : new IntersectionObserver(([entry]) => {
-            visible = entry.isIntersecting;
-            if (visible) start();
-            else stop();
-          });
-    if (observer) observer.observe(svg);
+        : new IntersectionObserver(([entry]) => (entry.isIntersecting ? start() : stop()));
+    if (observer) observer.observe(node);
     else start();
+
+    const onDown = (event: Event) => {
+      const e = event as PointerEvent;
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+      dragging = true;
+      pointer = e.pointerId;
+      lx = e.clientX;
+      ly = e.clientY;
+      lt = e.timeStamp;
+      spin = [0, 0];
+      try {
+        node.setPointerCapture(e.pointerId);
+      } catch {
+        /* capture is a convenience */
+      }
+      node.setAttribute("data-dragging", "true");
+    };
+    const onMove = (event: Event) => {
+      const e = event as PointerEvent;
+      if (!dragging || e.pointerId !== pointer) return;
+      const dx = e.clientX - lx;
+      const dy = e.clientY - ly;
+      const dt = Math.max(1, e.timeStamp - lt) / 1000;
+      lx = e.clientX;
+      ly = e.clientY;
+      lt = e.timeStamp;
+      turn(-dy * DRAG_RAD_PER_PX, dx * DRAG_RAD_PER_PX);
+      spin = [
+        spin[0] * 0.6 + ((-dy * DRAG_RAD_PER_PX) / dt) * 0.4,
+        spin[1] * 0.6 + ((dx * DRAG_RAD_PER_PX) / dt) * 0.4,
+      ];
+      if (!frame) draw();
+    };
+    const onUp = (event: Event) => {
+      const e = event as PointerEvent;
+      if (!dragging || e.pointerId !== pointer) return;
+      dragging = false;
+      node.removeAttribute("data-dragging");
+      try {
+        node.releasePointerCapture(e.pointerId);
+      } catch {
+        /* already released */
+      }
+      const speed = Math.hypot(spin[0], spin[1]);
+      if (reduced || e.timeStamp - lt > 80) spin = [0, 0];
+      else if (speed > 8) spin = [(spin[0] * 8) / speed, (spin[1] * 8) / speed];
+    };
+    const onKey = (event: Event) => {
+      const e = event as KeyboardEvent;
+      const step =
+        e.key === "ArrowLeft" ? [0, -KEY_STEP]
+        : e.key === "ArrowRight" ? [0, KEY_STEP]
+        : e.key === "ArrowUp" ? [KEY_STEP, 0]
+        : e.key === "ArrowDown" ? [-KEY_STEP, 0]
+        : null;
+      if (!step) return;
+      e.preventDefault();
+      turn(step[0], step[1]);
+      if (!frame) draw();
+    };
+    if (interactive) {
+      node.addEventListener("pointerdown", onDown);
+      node.addEventListener("pointermove", onMove);
+      node.addEventListener("pointerup", onUp);
+      node.addEventListener("pointercancel", onUp);
+      node.addEventListener("keydown", onKey);
+    }
 
     return () => {
       observer?.disconnect();
       stop();
-      show(false);
+      node.removeEventListener("pointerdown", onDown);
+      node.removeEventListener("pointermove", onMove);
+      node.removeEventListener("pointerup", onUp);
+      node.removeEventListener("pointercancel", onUp);
+      node.removeEventListener("keydown", onKey);
+      node.removeAttribute("data-dragging");
+      latest.current.rest();
     };
-  }, [reduced]);
+  }, [ref, reduced, interactive]);
+}
+
+const CX = 194.585;
+const CY = 379.587;
+const R = 163.897;
+const AXIS_HALF = 164.413;
+const DASH = "5.5 6.5"; // round caps add ~1 -> about the source's 6.5 on / 5.5 off
+
+const RINGS: { n0: Vec3 }[] = [{ n0: [0, 0.784, 0.62] }, { n0: [0.472, 0.852, 0.226] }];
+
+export function StudioMobileOrbit({ className }: { className?: string }) {
+  const { reduced } = useMotionPolicy();
+  const svgRef = useRef<SVGSVGElement>(null);
+  const pathRefs = useRef<(SVGPathElement | null)[]>([]);
+  const ellipseRefs = useRef<(SVGEllipseElement | null)[]>([]);
+  const axisRefs = useRef<(SVGLineElement | null)[]>([]);
+  const shown = useRef(false);
+
+  const show = (motion: boolean) => {
+    shown.current = motion;
+    pathRefs.current.forEach((p) => p?.setAttribute("visibility", motion ? "hidden" : "visible"));
+    ellipseRefs.current.forEach((e) => e?.setAttribute("visibility", motion ? "visible" : "hidden"));
+  };
+
+  useSphereMotion(svgRef, {
+    reduced,
+    interactive: true,
+    draw: (drag, clock) => {
+      if (!shown.current) show(true);
+      const m = mul(wobble(clock), drag);
+      RINGS.forEach((ring, i) => {
+        writeEllipse(ellipseRefs.current[i], ringEllipse(apply(m, ring.n0), CX, CY, R));
+        ellipseRefs.current[i]?.setAttribute("stroke-dashoffset", (clock * (i ? -4.5 : 6)).toFixed(2));
+      });
+      writeLine(axisRefs.current[0], axisLine(apply(m, [0, 1, 0]), 195.102, CY, AXIS_HALF));
+      writeLine(axisRefs.current[1], axisLine(apply(m, [1, 0, 0]), CX, 379.889, AXIS_HALF));
+    },
+    rest: () => {
+      show(false);
+      writeLine(axisRefs.current[0], { x1: 195.102, y1: 215.174, x2: 195.102, y2: 544 });
+      writeLine(axisRefs.current[1], { x1: 358.996, y1: 379.889, x2: 30.1699, y2: 379.889 });
+    },
+  });
 
   const ring = (i: number) => ({
     ref: (node: SVGEllipseElement | null) => {
       ellipseRefs.current[i] = node;
     },
   });
+  const axis = (i: number) => ({
+    ref: (node: SVGLineElement | null) => {
+      axisRefs.current[i] = node;
+    },
+  });
 
   return (
     <svg
       ref={svgRef}
-      className={className}
+      className={`${className ?? ""} studio-sphere`}
       viewBox="30.1719 215.1719 328.826 328.826"
       fill="none"
-      aria-hidden="true"
-      focusable="false"
+      role="group"
+      aria-roledescription="rotatable sphere"
+      aria-label="Orbit drawing. Drag, or use the arrow keys, to turn it."
+      tabIndex={0}
     >
       <circle cx="194.585" cy="379.587" r="163.897" stroke={INK} strokeWidth={1.03292} />
       <path ref={(n) => { pathRefs.current[0] = n; }} d={RING_A} stroke={INK} strokeWidth={1.03292} strokeLinecap="round" />
       <path ref={(n) => { pathRefs.current[1] = n; }} d={RING_B} stroke={INK} strokeWidth={1.03292} strokeLinecap="round" />
-      {[0, 1].map((i) => (
+      {RINGS.map((_, i) => (
         <ellipse
           key={i}
           {...ring(i)}
@@ -157,8 +352,8 @@ export function StudioMobileOrbit({ className }: { className?: string }) {
           strokeDasharray={DASH}
         />
       ))}
-      <line x1="195.102" y1="215.174" x2="195.102" y2="544" stroke={INK} strokeWidth={1.03292} />
-      <line x1="358.996" y1="379.889" x2="30.1699" y2="379.889" stroke={INK} strokeWidth={0.591414} />
+      <line {...axis(0)} x1="195.102" y1="215.174" x2="195.102" y2="544" stroke={INK} strokeWidth={1.03292} />
+      <line {...axis(1)} x1="358.996" y1="379.889" x2="30.1699" y2="379.889" stroke={INK} strokeWidth={0.591414} />
     </svg>
   );
 }
