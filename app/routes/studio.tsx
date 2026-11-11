@@ -1,4 +1,5 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import { WordReveal } from "../components/studio/WordReveal";
 import type { CSSProperties, ReactNode, RefObject } from "react";
 import { Link } from "react-router";
 import { SiteMasthead } from "../components/SiteMasthead";
@@ -146,19 +147,6 @@ const smooth = (value: number) => {
   return v * v * (3 - 2 * v);
 };
 
-/* Phones only; false on the server and until mounted. */
-function useNarrow() {
-  const [narrow, setNarrow] = useState(false);
-  useEffect(() => {
-    const query = window.matchMedia("(max-width: 767px)");
-    const sync = () => setNarrow(query.matches);
-    sync();
-    query.addEventListener("change", sync);
-    return () => query.removeEventListener("change", sync);
-  }, []);
-  return narrow;
-}
-
 /* One rAF driver per figure. `step(clock)` gets the running time in seconds
    (time spent off screen never counts, so leaving and returning never jumps)
    and writes attributes straight to the DOM; it is called once with 0 on mount
@@ -244,20 +232,8 @@ const lineProps = (g: LineGeo) => ({
   x2: g.x2.toFixed(2),
   y2: g.y2.toFixed(2),
 });
-/* the highlight in the lilac block follows where the figure's axis points, so
-   the light reads as responding to the rotation (white over the canonical lilac
-   only; unset = the static default in global.css) */
-const setHighlight = (svg: SVGSVGElement | null, dir: Vec3 | null) => {
-  const block = svg?.parentElement;
-  if (!block) return;
-  if (!dir) {
-    block.style.removeProperty("--hx");
-    block.style.removeProperty("--hy");
-    return;
-  }
-  block.style.setProperty("--hx", `${(50 + 30 * dir[0]).toFixed(1)}%`);
-  block.style.setProperty("--hy", `${(50 + 28 * dir[1]).toFixed(1)}%`);
-};
+/* R2-FB003-01: the white highlight that followed the axis is gone; the gyro
+   block is the flat canonical lilac. */
 
 /* Approach (artboard y 2573..3169). A sphere whose polar axis is the dotted
    needle (60 deg below +x on screen, 13 deg out of the screen: |n.z| = 0.225 is
@@ -292,18 +268,17 @@ function ApproachGyro({ reduced }: { reduced: boolean }) {
   const svgRef = useRef<SVGSVGElement>(null);
   const ringRefs = useRef<(SVGEllipseElement | null)[]>([]);
   const lineRefs = useRef<(SVGLineElement | null)[]>([]);
-  const write = (m: Mat3, live: boolean) => {
+  const write = (m: Mat3) => {
     const g = approachGeometry(m);
     g.rings.forEach((ring, i) => writeEllipse(ringRefs.current[i], ring));
     g.lines.forEach((line, i) => writeLine(lineRefs.current[i], line));
-    setHighlight(svgRef.current, live ? g.dir : null);
   };
 
   useSphereMotion(svgRef, {
     reduced,
     interactive: true,
-    draw: (drag, clock) => write(mul(wobble(clock), drag), true),
-    rest: () => write(IDENT, false),
+    draw: (drag, clock) => write(mul(wobble(clock), drag)),
+    rest: () => write(IDENT),
   });
 
   const rest = approachGeometry(IDENT);
@@ -365,11 +340,19 @@ function ApproachGyro({ reduced }: { reduced: boolean }) {
    it stays a correct see-through cube. Never filled. */
 const BU = { cx: 192.415, cy: 4080.59, r: 164.163 };
 const CUBE_H = 47.15; // half edge: the isometric hexagon's circumradius 77 = 1.633 * H
+/* R2-FB003-11 / E06: the cube's own vertical (face-normal) axis is the sphere's
+   axis. Turned 45 deg about it and tipped 35.26 deg toward the viewer, the cube
+   reads as the source hexagon whose near corner sits on the centre, and its top
+   and bottom face centres lie on the screen-vertical axis. */
 const CUBE_VIEW: Mat3 = [
-  0.70711, -0.70711, 0,
-  0.40825, 0.40825, -0.8165,
-  0.57735, 0.57735, 0.57735,
+  0.70711, 0, 0.70711,
+  -0.40825, 0.8165, 0.40825,
+  -0.57735, -0.57735, 0.57735,
 ];
+/* 1 / 0.8165: stretches the axis so that, at rest, its projected pole meets the
+   circle (as drawn); when turned it shortens like a real pole and the clip keeps
+   it inside the circle */
+const AXIS_REACH = 1.2247;
 const RING_N0: Vec3 = [0.2519, 0.9402, 0.229];
 const CUBE_VERTS: Vec3[] = Array.from({ length: 8 }, (_, i): Vec3 => [
   i & 4 ? CUBE_H : -CUBE_H,
@@ -396,7 +379,16 @@ function buildGeometry(axisPose: Mat3, ringPose: Mat3) {
   const g = mul(axisPose, CUBE_VIEW);
   const verts = CUBE_VERTS.map((v) => apply(g, v));
   const faceZ = CUBE_FACES.map((n) => apply(g, n)[2]);
-  const axis = apply(axisPose, [0, -1, 0]);
+  const up = apply(g, [0, -1, 0]); // the cube's own axis, so the cube and the needle stay one body
+  const segment = (face: Vec3, sign: 1 | -1) => {
+    const p = apply(g, face);
+    return {
+      x1: BU.cx + p[0],
+      y1: BU.cy + p[1],
+      x2: BU.cx + sign * BU.r * AXIS_REACH * up[0],
+      y2: BU.cy + sign * BU.r * AXIS_REACH * up[1],
+    };
+  };
   return {
     edges: CUBE_EDGES.map((e) => ({
       line: {
@@ -407,9 +399,10 @@ function buildGeometry(axisPose: Mat3, ringPose: Mat3) {
       },
       visible: faceZ[e.f1] > 0 || faceZ[e.f2] > 0,
     })),
-    axis: axisLine(axis, BU.cx, BU.cy, BU.r),
+    /* the needle enters the cube at the centre of its top face and leaves at the
+       centre of its bottom face */
+    axes: [segment([0, -CUBE_H, 0], 1), segment([0, CUBE_H, 0], -1)],
     ring: ringEllipse(apply(ringPose, RING_N0), BU.cx, BU.cy, BU.r),
-    dir: axis,
   };
 }
 
@@ -417,25 +410,24 @@ function BuildGyro({ reduced }: { reduced: boolean }) {
   const clip = `bug-${gyroSlug(useId())}`;
   const svgRef = useRef<SVGSVGElement>(null);
   const ringRef = useRef<SVGEllipseElement>(null);
-  const axisRef = useRef<SVGLineElement>(null);
+  const axisRefs = useRef<(SVGLineElement | null)[]>([]);
   const edgeRefs = useRef<(SVGLineElement | null)[]>([]);
-  const write = (axisPose: Mat3, ringPose: Mat3, live: boolean) => {
+  const write = (axisPose: Mat3, ringPose: Mat3) => {
     const g = buildGeometry(axisPose, ringPose);
     writeEllipse(ringRef.current, g.ring);
-    writeLine(axisRef.current, g.axis);
+    g.axes.forEach((axis, i) => writeLine(axisRefs.current[i], axis));
     g.edges.forEach((edge, i) => {
       const node = edgeRefs.current[i];
       writeLine(node, edge.line);
       node?.setAttribute("visibility", edge.visible ? "visible" : "hidden");
     });
-    setHighlight(svgRef.current, live ? g.dir : null);
   };
 
   useSphereMotion(svgRef, {
     reduced,
     interactive: true,
-    draw: (drag, clock) => write(mul(wobble(clock), drag), mul(wobble(clock, 1.8, 0.6), drag), true),
-    rest: () => write(IDENT, IDENT, false),
+    draw: (drag, clock) => write(mul(wobble(clock), drag), mul(wobble(clock, 1.8, 0.6), drag)),
+    rest: () => write(IDENT, IDENT),
   });
 
   const rest = buildGeometry(IDENT, IDENT);
@@ -460,7 +452,16 @@ function BuildGyro({ reduced }: { reduced: boolean }) {
       <circle cx={BU.cx} cy={BU.cy} r={BU.r} {...stroke} />
       <g clipPath={`url(#${clip})`}>
         <ellipse ref={ringRef} {...ellipseProps(rest.ring)} {...stroke} strokeLinecap="round" strokeDasharray={GYRO_DASH} />
-        <line ref={axisRef} {...lineProps(rest.axis)} {...stroke} />
+        {rest.axes.map((axis, i) => (
+          <line
+            key={i}
+            ref={(node) => {
+              axisRefs.current[i] = node;
+            }}
+            {...lineProps(axis)}
+            {...stroke}
+          />
+        ))}
         {rest.edges.map((edge, i) => (
           <line
             key={i}
@@ -717,13 +718,12 @@ function GearConveyor({ reduced }: { reduced: boolean }) {
      · lilac [Studio Approach] strip (sticky within its section)
      · four static principle squares + four accordion rows · footer
 
-   Header (R4-B05, supersedes the black-edge trigger). The masthead is sticky
-   and has two resting states: A, full lilac, and B, compact light. `--mh-p`
-   only travels between 0 (A) and 1 (B) during a short animation; it is never
-   left in between. The black intro first shows an empty breathing interval at
-   A; the switch to B starts when the first intro text nears the viewport
-   (MH_ENTER / MH_LEAVE above). A margin keeps the masthead's flow footprint at
-   full height, so content never moves faster than the page.
+   Header (R1-FB002-01 / R2-FB003-15). The masthead is sticky, full lilac (A) to
+   compact light (B). `--mh-p` is a pure function of where the black intro's top
+   edge is (measured against the masthead's own full and compact heights), so
+   the collapse is glued to the edge and reverses exactly on scroll back. A
+   margin keeps the masthead's flow footprint at full height, so content never
+   moves faster than the page.
    `data-collapse="on"` is set from an effect: without JS the masthead is the
    plain full-size lilac one and scrolls away.
 
@@ -751,7 +751,6 @@ export default function Studio() {
   const [wrkopsOpen, setWrkopsOpen] = useState(true);
   const baseId = useId();
   const { reduced } = useMotionPolicy();
-  const narrow = useNarrow();
 
   const rootRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
@@ -776,7 +775,7 @@ export default function Studio() {
       },
       { threshold: 0.15, rootMargin: "0px 0px -8% 0px" },
     );
-    root.querySelectorAll("[data-reveal]").forEach((node) => observer.observe(node));
+    root.querySelectorAll("[data-reveal], [data-words]").forEach((node) => observer.observe(node));
     root.setAttribute("data-motion", "on");
     return () => {
       observer.disconnect();
@@ -922,6 +921,23 @@ export default function Studio() {
      order and the accessibility tree via visibility, and the row that was
      activated keeps focus. */
   const carouselOpen = selected === null;
+  /* R2-FB003-12: one card at a time, stepped by buttons or Left/Right while the
+     track has focus; the native swipe and the snap stay inside the track */
+  const cardsRef = useRef<HTMLDivElement>(null);
+  const [cardIndex, setCardIndex] = useState(0);
+  const cardStep = () => {
+    const track = cardsRef.current;
+    const [a, b] = track ? [track.children[0], track.children[1]] : [];
+    return a instanceof HTMLElement && b instanceof HTMLElement ? b.offsetLeft - a.offsetLeft : 0;
+  };
+  const goCard = (to: number) => {
+    const track = cardsRef.current;
+    const step = cardStep();
+    if (!track || !step) return;
+    const next = Math.min(STUDIO_PRINCIPLES.length - 1, Math.max(0, to));
+    track.scrollTo({ left: next * step, behavior: reduced ? "auto" : "smooth" });
+    setCardIndex(next);
+  };
   const cardsBlock = (
     <section
       className="section section--cards"
@@ -931,11 +947,22 @@ export default function Studio() {
     >
       <div className="cards__clip">
         <div
+          ref={cardsRef}
           className="cards"
           role="group"
           aria-roledescription="carousel"
           aria-label="Core principles"
-          tabIndex={narrow && carouselOpen ? 0 : undefined}
+          tabIndex={carouselOpen ? 0 : undefined}
+          onScroll={(event) => {
+            const step = cardStep();
+            if (step) setCardIndex(Math.round(event.currentTarget.scrollLeft / step));
+          }}
+          onKeyDown={(event) => {
+            const delta = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
+            if (!delta) return;
+            event.preventDefault();
+            goCard(cardIndex + delta);
+          }}
         >
           {STUDIO_PRINCIPLES.map((principle) => (
             <PrincipleCardStatic
@@ -944,6 +971,29 @@ export default function Studio() {
               body={principle.summary}
             />
           ))}
+        </div>
+        <div className="cards__nav">
+          <button
+            type="button"
+            className="cards__step"
+            aria-label="Previous principle"
+            aria-disabled={cardIndex === 0}
+            onClick={() => goCard(cardIndex - 1)}
+          >
+            [ Prev ]
+          </button>
+          <span className="cards__count" aria-live="polite">
+            [ {cardIndex + 1} / {STUDIO_PRINCIPLES.length} ]
+          </span>
+          <button
+            type="button"
+            className="cards__step"
+            aria-label="Next principle"
+            aria-disabled={cardIndex === STUDIO_PRINCIPLES.length - 1}
+            onClick={() => goCard(cardIndex + 1)}
+          >
+            [ Next ]
+          </button>
         </div>
       </div>
     </section>
@@ -998,19 +1048,19 @@ export default function Studio() {
           intro: text above its drawing on phones, alternating sides from 768px
           (text | drawing, drawing | text, text | drawing). Copy is unchanged. */}
       <div className="wo__beat">
-        <p data-reveal>{woLead}</p>
+        <WordReveal text={woLead} />
         <div className="wo__figure" data-reveal style={delay(0.25)} aria-hidden="true">
           <ThreeCubes reduced={reduced} />
         </div>
       </div>
       <div className="wo__beat" data-side="right">
-        <p data-reveal>{woHow}</p>
+        <WordReveal text={woHow} />
         <div className="wo__figure" data-reveal style={delay(0.25)} aria-hidden="true">
           <WritingDiagram reduced={reduced} />
         </div>
       </div>
       <div className="wo__beat">
-        <p data-reveal>{woDaily}</p>
+        <WordReveal text={woDaily} />
         <div className="wo__figure wo__figure--gears" data-reveal style={delay(0.25)} aria-hidden="true">
           <GearConveyor reduced={reduced} />
         </div>
@@ -1089,10 +1139,10 @@ export default function Studio() {
             applies only where scroll timelines exist and motion is allowed. */}
         <section className="studio-intro" ref={introRef} aria-label="About the studio">
           <div className="studio-beat">
-            <p className="studio-beat__text">
-              Collapse Creative Dev. Unit is a technical studio working across design, software
-              development and applied research.
-            </p>
+            <WordReveal
+              className="studio-beat__text"
+              text="Collapse Creative Dev. Unit is a technical studio working across design, software development and applied research."
+            />
             <div className="studio-beat__figure" aria-hidden="true">
               <HexCube
                 className="studio-hex"
@@ -1105,20 +1155,19 @@ export default function Studio() {
             </div>
           </div>
           <div className="studio-beat" data-side="right">
-            <p className="studio-beat__text">
-              Our background is in visual design and digital experiences. Today, we use that
-              knowledge to build web applications, custom tools and software around how people
-              actually work.
-            </p>
+            <WordReveal
+              className="studio-beat__text"
+              text="Our background is in visual design and digital experiences. Today, we use that knowledge to build web applications, custom tools and software around how people actually work."
+            />
             <div className="studio-beat__figure" aria-hidden="true">
               <OrbitMark />
             </div>
           </div>
           <div className="studio-beat">
-            <p className="studio-beat__text">
-              We approach development through the interface, the underlying logic and the people
-              who will use it.
-            </p>
+            <WordReveal
+              className="studio-beat__text"
+              text="We approach development through the interface, the underlying logic and the people who will use it."
+            />
             <div className="studio-beat__figure" aria-hidden="true">
               <GearOutlineMark />
             </div>
@@ -1146,9 +1195,6 @@ export default function Studio() {
             >
               <span className="studio-strip__title">
                 <span className="studio-strip__label">[Studio Approach]</span>
-                <span className="studio-strip__suffix" aria-hidden="true">
-                  :P
-                </span>
               </span>
               <span className="studio-strip__chevron" aria-hidden="true">
                 v

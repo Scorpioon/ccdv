@@ -131,9 +131,11 @@ const KEY_STEP = (12 * Math.PI) / 180;
 
 /* One driver per figure.
    Idle: a rAF loop that runs only while the figure is on screen and motion is
-   allowed. Drag: pointer events on the figure; the browser keeps vertical page
-   scrolling for touch (CSS `touch-action: pan-y` on `.studio-sphere`), so a
-   finger turns the sphere about its vertical axis and a mouse turns it freely.
+   allowed. Drag (R2-FB003-06): pointer events on the figure, which carries
+   `touch-action: none` (CSS `.studio-sphere`) so a finger, like a mouse, owns
+   BOTH axes of its own drag and the page does not scroll under it; outside the
+   figure the page scrolls natively. One pointer owns the drag (a second finger
+   is ignored); pointerup, pointercancel and lostpointercapture all end it.
    After release the sphere keeps its pose and its spin dies out exponentially
    (no snap back). Reduced motion: no loop, no inertia; a drag still turns it, one
    draw per event. Keyboard: arrow keys turn it 12 degrees. */
@@ -192,6 +194,7 @@ export function useSphereMotion(ref: RefObject<Element | null>, options: SphereM
     const onDown = (event: Event) => {
       const e = event as PointerEvent;
       if (e.pointerType === "mouse" && e.button !== 0) return;
+      if (dragging) return;
       dragging = true;
       pointer = e.pointerId;
       lx = e.clientX;
@@ -253,6 +256,7 @@ export function useSphereMotion(ref: RefObject<Element | null>, options: SphereM
       node.addEventListener("pointermove", onMove);
       node.addEventListener("pointerup", onUp);
       node.addEventListener("pointercancel", onUp);
+      node.addEventListener("lostpointercapture", onUp);
       node.addEventListener("keydown", onKey);
     }
 
@@ -263,6 +267,7 @@ export function useSphereMotion(ref: RefObject<Element | null>, options: SphereM
       node.removeEventListener("pointermove", onMove);
       node.removeEventListener("pointerup", onUp);
       node.removeEventListener("pointercancel", onUp);
+      node.removeEventListener("lostpointercapture", onUp);
       node.removeEventListener("keydown", onKey);
       node.removeAttribute("data-dragging");
       latest.current.rest();

@@ -3,6 +3,7 @@ import type { KeyboardEvent } from "react";
 import { Link } from "react-router";
 import { GearMark } from "./marks/GearMark";
 import { CcdvPixelMark } from "./marks/CcdvPixelMark";
+import { CollapseCreativeMark } from "./marks/ContactIdentityMarks";
 
 /* Operator-designed /studio mobile header + menu (M1: Frame 322 closed, Frame
    331 open; STUDIO_resp1/resp2). Studio only, phones only: both elements are
@@ -150,11 +151,11 @@ export function StudioMobileMenu() {
         </section>
 
         <div className="smm__foot">
-          {/* identity row, as in the resp2 footer panel: the gear and the pixel mark */}
-          <div className="smm__brand" aria-hidden="true">
-            <GearMark className="smm__foot-gear" fill={LIGHT} dotFill={INK} />
-            <CcdvPixelMark variant="inline" className="smm__pixel" fill={LIGHT} />
-          </div>
+          {/* R2-FB003-16: the footer identity is Collapse Creative's mark (not the
+              CCDV mark in the bar), small, in the light ink. The mark's geometry is
+              the site's existing approximation (ContactIdentityMarks.tsx); the
+              original path set is an OPEN item in the R2 report. */}
+          <CollapseCreativeMark className="smm__brand" />
           <div className="smm__contact">
             <div>[ COLLAPSE CREATIVE : DEV UNIT ]</div>
             <div>[ hello[@]collapsecreative.com ]</div>
