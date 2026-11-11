@@ -1956,7 +1956,7 @@ main { display: block; outline: none; }
 .wo__cube { flex: none; width: calc(260 * var(--u)); }
 .wo__explain { padding: calc(72 * var(--u)) calc(48 * var(--u)); }
 .wo__explain p { width: calc(790 * var(--u)); max-width: 100%; }
-.wo__explain p + p { margin-top: calc(34 * var(--u)); }
+.wo__explain p ~ p { margin-top: calc(34 * var(--u)); }  /* R1-FB001: a figure now sits between the two p's */
 .wo__ccos { position: relative; padding: calc(48 * var(--u)) calc(48 * var(--u)) calc(96 * var(--u)); }
 .wo__ccos-head { display: flex; align-items: center; gap: calc(36 * var(--u)); }
 .wo__ccos-cube { width: calc(100 * var(--u)); flex: none; }
@@ -2785,7 +2785,7 @@ main { display: block; outline: none; }
   .smm__toggle:focus-visible,
   .smm__home:focus-visible { outline: 2px solid var(--ccdv-purple-card); outline-offset: -2px; }
 
-  .smm__panel:not([hidden]) {
+  .smm__panel {
     position: absolute;
     top: 100%;
     left: 0;
@@ -2801,7 +2801,28 @@ main { display: block; outline: none; }
     color: var(--ccdv-ink);
     font-size: 16px;
     line-height: 1;
+    /* R1-FB001: closed = lifted, transparent and hidden; the visibility flip
+       waits for the close transition and is immediate on open. */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-14px);
+    transition:
+      opacity 0.28s var(--studio-ease, ease),
+      transform 0.36s var(--studio-ease, ease),
+      visibility 0s linear 0.36s;
   }
+  .smm__panel[data-open="true"] {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: none;
+    transition-delay: 0s;
+  }
+  /* the gear turns a half tooth (22.5deg of the 8-tooth mark) on the same
+     state and the same curve and duration as the panel */
+  .smm__gear { transition: transform 0.36s var(--studio-ease, ease); }
+  .smm__bar[data-open="true"] .smm__gear { transform: rotate(22.5deg); }
   .smm__panel ul { margin: 0; padding: 0; list-style: none; }
   .smm__panel a { color: inherit; text-decoration: none; }
   .smm__panel a:focus-visible { outline: 2px solid var(--ccdv-purple-card); outline-offset: 2px; }
@@ -2902,3 +2923,147 @@ main { display: block; outline: none; }
   }
 }
 /* === end STUDIO-RESP M1 ===================================================== */
+
+/* === STUDIO-RESP R1-FB001 — scroll-reel motion + navigation (/studio) ========
+   t_20261110_studior1. All widths, except the Approach carousel, the menu and the
+   phone figure sizing (<768px). Figures are drawn by studio.tsx from STUDIO_resp3.svg; the
+   header gear/panel pair is in the M1 block above (one `data-open`, one curve).
+   Motion is opt-in: everything animated sits under `no-preference`, and the
+   reduced-motion branch below pins the verbatim drawings. */
+.cards__clip { display: contents; }   /* wrapper is invisible to the existing layouts */
+
+/* All widths (OPERATOR: the slideshow carries over to tablet and desktop; the
+   Approach carousel itself is phones-only, see below). */
+
+/* hero: [Studio] rides up with the page (--tuck, written by studio.tsx) so the
+   black edge never sits over it */
+.studio-hero__label {
+  transform: translateY(calc(-1 * var(--tuck, 0px)));
+  will-change: transform;
+}
+
+/* lilac gyroscope blocks (Approach 390x596, Build 390x596 on the artboard):
+   full-bleed lilac, the drawing centred and capped by the screen height */
+.studio-gyro {
+  display: grid;
+  overflow: clip;
+  background-color: var(--ccdv-purple-card);
+  background-image:
+    radial-gradient(70% 55% at 30% 25%, rgb(255 255 255 / 0.16), transparent 70%),
+    radial-gradient(75% 60% at 75% 80%, rgb(92 55 124 / 0.2), transparent 70%);
+  background-size: 180% 180%, 180% 180%;
+  background-repeat: no-repeat;
+  background-position: 0% 0%, 100% 100%;
+}
+.studio-gyro > .studio-art {
+  max-height: calc(100svh - var(--studio-stick-h, 50px));
+  margin-inline: auto;
+}
+
+/* chapter 2 figures replace the lead cube at every width. Desktop: the lead
+   keeps its text-left / drawing-right row; the other two sit under their text,
+   centred and capped. */
+.wo__cube { display: none; }
+.wo__figure { display: block; overflow: clip; }
+.wo__lead .wo__figure { flex: none; width: calc(400 * var(--u)); }
+.wo__explain .wo__figure { width: min(100%, calc(520 * var(--u))); margin: calc(48 * var(--u)) auto calc(24 * var(--u)); }
+.r11--studio .studio-art.wo-diagram path { vector-effect: none; stroke-width: 0.6px; }
+
+@media (max-width: 767px) {
+
+  /* Approach carousel: the four squares as one horizontal strip (card pitch
+     309.5 on the 390 artboard: 260 + 49.5, first text at x = 50, the next card
+     peeking in). It is shown only while no row is open: the section collapses
+     (grid 1fr -> 0fr) and is visibility:hidden once collapsed. */
+  .r11--studio .section--cards {
+    display: grid;
+    grid-template-rows: 1fr;
+    padding: 0;
+    transition:
+      grid-template-rows 0.45s var(--studio-ease),
+      opacity 0.35s var(--studio-ease) 0.05s;
+  }
+  .r11--studio .section--cards[data-collapsed="true"] {
+    grid-template-rows: 0fr;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      grid-template-rows 0.45s var(--studio-ease),
+      opacity 0.25s var(--studio-ease),
+      visibility 0s linear 0.45s;
+  }
+  .cards__clip { display: block; min-height: 0; overflow: clip; }
+  .r11--studio .cards {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 49.5px;
+    padding: 32px 50px 40px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 50px;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+  .r11--studio .cards::-webkit-scrollbar { display: none; }
+  .r11--studio .cards:focus-visible { outline: 2px solid var(--ccdv-ink); outline-offset: -4px; }
+  .r11--studio .cards .card {
+    flex: 0 0 min(260px, calc(100cqw - 130px));
+    scroll-snap-align: start;
+  }
+
+  /* chapter 2 (WrkOps, black): text, then its drawing, full-bleed so the
+     390 artboard is drawn 1:1 on a 390 screen */
+  .wo__lead .wo__figure,
+  .wo__explain .wo__figure {
+    width: auto;
+    margin: 0 calc(-1 * var(--ccdv-gutter-m));
+  }
+  .wo__explain { justify-content: flex-start; gap: 56px; min-height: 0; }
+}
+
+/* chapter 2 beat 1: the upper cube starts nested, rises when the figure reaches
+   the middle of the screen, then floats (data attributes: ThreeCubes) */
+@media (prefers-reduced-motion: no-preference) {
+  .wo-cubes__top { transition: transform 1.1s var(--studio-ease); }
+  .wo-cubes[data-armed="true"]:not([data-sep="true"]) .wo-cubes__top { transform: translateY(19px); }
+  .wo-cubes[data-sep="true"] .wo-cubes__float {
+    animation: wo-cubes-float 6.4s ease-in-out 1.1s infinite alternate;
+  }
+  .wo-cubes[data-live="false"] .wo-cubes__float { animation-play-state: paused; }
+
+  /* lilac gradients drift slowly; they never carry contrast-critical type */
+  .studio-gyro { animation: studio-lilac-drift 24s ease-in-out infinite alternate; }
+
+  /* black chapter 1: the cube's gradient breathes, the orbit and the gear turn */
+  .studio-beat__figure .studio-hex stop:first-child { animation: studio-hex-a 9s ease-in-out infinite alternate; }
+  .studio-beat__figure .studio-hex stop:last-child { animation: studio-hex-b 11s ease-in-out infinite alternate; }
+  .studio-beat[data-side="right"] .studio-beat__figure .studio-art { animation: studio-spin 48s linear infinite; }
+  .studio-beat:not([data-side]):last-child .studio-beat__figure .studio-art { animation: studio-spin 84s linear infinite; }
+}
+@keyframes wo-cubes-float { from { transform: translateY(0); } to { transform: translateY(-5px); } }
+@keyframes studio-lilac-drift {
+  from { background-position: 0% 0%, 100% 100%; }
+  to { background-position: 100% 70%, 0% 30%; }
+}
+@keyframes studio-hex-a { from { stop-color: #a864e2; } to { stop-color: #c39af0; } }
+@keyframes studio-hex-b { from { stop-color: #5c377c; } to { stop-color: #7d4fae; } }
+@keyframes studio-spin { to { transform: rotate(360deg); } }
+
+/* the figures follow the intro's reveal: text first, then the drawing scales
+   in (same envelope, same entry range as `.wo__cube`) */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .r11--studio[data-motion="on"] .wo .wo__figure[data-reveal] {
+      animation-name: studio-cube-in;
+      animation-range: entry 15% entry 105%;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .smm__panel,
+  .smm__gear,
+  .r11--studio .section--cards,
+  .r11--studio .section--cards[data-collapsed="true"] { transition: none; }
+}
+/* === end STUDIO-RESP R1-FB001 =============================================== */

@@ -104,12 +104,16 @@ export function StudioMobileMenu() {
         {/* The panel lives inside the sticky bar and hangs from its bottom edge
             (absolute), so it needs no fixed/sticky tricks of its own and adds no
             page height. */}
+        {/* R1-FB001: always mounted so it can travel; `data-open` drives the
+            panel's slide/fade and the gear's turn from this one state, and a
+            closed panel is visibility:hidden (out of the tab order and the
+            accessibility tree) once its closing transition has run. */}
         <nav
           ref={panelRef}
           id={panelId}
           className="smm__panel"
           aria-label="Menu"
-          hidden={!open}
+          data-open={open}
         >
         <ul className="smm__routes">
           {ROUTES.map(({ label, to }) => {
