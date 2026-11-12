@@ -3183,3 +3183,416 @@ main { display: block; outline: none; }
   .r11--studio .section--cards[data-collapsed="true"] { transition: none; }
 }
 /* === end STUDIO-RESP R1 FB001 + FB002 ======================================= */
+
+/* === STUDIO R3 — scene recomposition, motion grammar (t_20261112_studior3) ====
+   /studio only. Scenes: cover (.studio-hero), intro, Approach (.ap), Build
+   (.bu), CC.OS (.cs). Components: components/studio/*. Presets here (--sm-*)
+   mirror STUDIO_MOTION in motion/studioMotion.ts. Dead since R3 and left in
+   place for the operator's cleanup pass: .wo*, .studio-gyro, .studio-disc,
+   .fan / .cards studio rules, .studio-strip__toggle / __chevron. */
+.r11--studio {
+  --sm-ease: var(--studio-ease, cubic-bezier(0.22, 0.61, 0.36, 1));
+  --sm-dur-block: 0.7s;
+  --sm-dur-text: 0.6s;
+  --sm-step: 0.12s;
+  --sm-rise: calc(20 * var(--u));
+  --studio-grid: calc(49.66 * var(--u));   /* Figma cell, E20 */
+}
+
+/* P0-02: square grid on the two lilac mega-sections, #1A1A1A at 5% */
+.studio-grid {
+  background-color: var(--ccdv-purple-card);
+  background-image:
+    linear-gradient(rgb(26 26 26 / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(26 26 26 / 0.05) 1px, transparent 1px);
+  background-size: var(--studio-grid) var(--studio-grid);
+}
+@media (max-width: 767px) {
+  .r11--studio { --studio-grid: 32px; --sm-rise: 16px; }
+}
+.studio-lilac { position: relative; z-index: 2; }
+
+/* P0-03: spawn. Hidden only while motion is armed (data-motion, set by
+   useSceneReveal); the transition lives on the seen state, so arming never
+   animates anything away. --i staggers siblings that appear together. */
+.r11--studio[data-motion="on"] [data-spawn]:not([data-seen="true"]) {
+  opacity: 0;
+  transform: translateY(var(--sm-rise));
+}
+.r11--studio[data-motion="on"] [data-spawn][data-seen="true"] {
+  transition:
+    opacity var(--sm-dur-block) var(--sm-ease) calc(var(--i, 0) * var(--sm-step)),
+    transform var(--sm-dur-block) var(--sm-ease) calc(var(--i, 0) * var(--sm-step));
+}
+@keyframes sm-spawn {
+  from { opacity: 0; transform: translateY(var(--sm-rise)); }
+  to { opacity: 1; transform: none; }
+}
+
+/* cover: the sphere is a pause object on every width (R3 M01) */
+@media (min-width: 768px) {
+  .studio-hero__orbit {
+    position: absolute;
+    right: calc(40 * var(--u));
+    top: calc(24 * var(--u));
+    display: block;
+    width: calc(316 * var(--u));
+    height: auto;
+  }
+}
+.studio-hero__orbit:focus-visible { outline: 2px solid var(--ccdv-ink); outline-offset: 2px; }
+
+/* reel: scene starts are proximity snap points (native scroll stays) */
+@media (prefers-reduced-motion: no-preference) {
+  .r11--studio :is(.studio-approach, .bu, .cs) { scroll-snap-align: start; }
+}
+
+/* --- S3 Approach: the black interactive editorial panel -------------------- */
+.ap {
+  --ap-pad: calc(48 * var(--u));
+  padding: calc(40 * var(--u)) var(--ap-pad) calc(96 * var(--u));
+  background: var(--ccdv-ink);
+  color: var(--ccdv-panel);
+  font-size: max(1rem, calc(20 * var(--u)));
+  line-height: 1.4;
+}
+.ap__progress { display: flex; gap: calc(8 * var(--u)); margin-bottom: calc(48 * var(--u)); }
+.ap__seg {
+  flex: 1;
+  height: max(10px, calc(14 * var(--u)));
+  border: 1px solid rgb(242 242 242 / 0.5);
+  transition: background-color 0.45s var(--sm-ease), border-color 0.45s var(--sm-ease);
+}
+.ap__seg[data-active="true"] { background: var(--ccdv-purple-card); border-color: var(--ccdv-purple-card); }
+
+.ap__stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: calc(48 * var(--u));
+  align-items: center;
+}
+.ap__art { min-width: 0; }
+.ap__sphere { display: block; width: 100%; height: auto; overflow: visible; }
+.ap__sphere:focus-visible { outline: 2px solid var(--ccdv-panel); outline-offset: 4px; }
+.ap__outline { stroke: var(--ccdv-panel); stroke-width: 0.8px; vector-effect: non-scaling-stroke; }
+.ap__layer {
+  fill: var(--ccdv-purple-card);
+  fill-opacity: 0;
+  stroke: var(--ccdv-panel);
+  stroke-width: 0.8px;
+  stroke-dasharray: 4 5;
+  vector-effect: non-scaling-stroke;
+  transition: fill-opacity 0.5s var(--sm-ease);
+}
+.ap__layer[data-active="true"] { fill-opacity: 0.92; }
+.ap__axis { stroke: var(--ccdv-panel); stroke-width: 0.6px; vector-effect: non-scaling-stroke; opacity: 0.7; }
+
+.ap__panel { min-width: 0; }
+.ap__slots {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border: 1px solid rgb(242 242 242 / 0.5);
+}
+.ap__slot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--ccdv-tap);
+  padding: 0 12px;
+  border: 0;
+  border-left: 1px solid rgb(242 242 242 / 0.5);
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 0.875rem;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.ap__slot:first-child { border-left: 0; }
+.ap__slot:focus-visible { outline: 2px solid var(--ccdv-panel); outline-offset: -4px; }
+.ap__slot-dot { flex: none; box-sizing: border-box; width: 8px; height: 8px; border: 1px solid currentColor; }
+.ap__slot[aria-selected="true"] { color: var(--ccdv-purple-card); }
+.ap__slot[aria-selected="true"] .ap__slot-dot { background: currentColor; }
+
+.ap__content { margin-top: calc(40 * var(--u)); }
+.ap__title { margin: 0; font: inherit; font-size: max(1.25rem, calc(28 * var(--u))); line-height: 1.25; }
+.ap__copy { margin-top: 1.25em; max-width: 36em; }
+.ap__copy p { margin: 0 0 1em; }
+.ap__copy p:last-child { margin-bottom: 0; }
+.ap__toollets {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: calc(24 * var(--u));
+  margin-top: calc(40 * var(--u));
+  font-size: max(0.8125rem, calc(15 * var(--u)));
+  line-height: 1.45;
+}
+.ap__toollet { min-width: 0; }
+.ap__toollet p { margin: 0; color: rgb(242 242 242 / 0.82); }
+.ap__toollet-label {
+  display: inline-block;
+  margin: 0 0 12px;
+  padding: 2px 8px;
+  background: var(--ccdv-panel);
+  color: var(--ccdv-ink);
+  font: inherit;
+  font-size: 0.75rem;
+}
+/* the slot switch replays the spawn: copy first, then the two cards */
+@media (prefers-reduced-motion: no-preference) {
+  .ap__content > .ap__title { animation: sm-spawn var(--sm-dur-text) var(--sm-ease) both; }
+  .ap__content > .ap__copy { animation: sm-spawn var(--sm-dur-text) var(--sm-ease) 0.12s both; }
+  .ap__toollet { animation: sm-spawn var(--sm-dur-text) var(--sm-ease) both; }
+  .ap__toollet:nth-child(1) { animation-delay: 0.36s; }
+  .ap__toollet:nth-child(2) { animation-delay: 0.48s; }
+}
+@media (max-width: 767px) {
+  .ap { --ap-pad: var(--ccdv-gutter-m); padding: 24px var(--ccdv-gutter-m) 56px; }
+  .ap__progress { gap: 6px; margin-bottom: 24px; }
+  .ap__stage { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  /* the sphere's own box is the only touch-action:none zone; the gutters on
+     both sides stay a scroll escape (open decision: oversized crop, A06) */
+  .ap__art { overflow: clip; }
+  .ap__sphere { width: 100%; }
+  .ap__slots { grid-template-columns: minmax(0, 1fr); }
+  .ap__slot { border-left: 0; border-top: 1px solid rgb(242 242 242 / 0.5); }
+  .ap__slot:first-child { border-top: 0; }
+  .ap__content { margin-top: 28px; }
+  .ap__toollets { grid-template-columns: minmax(0, 1fr); gap: 24px; margin-top: 28px; }
+}
+
+/* --- S4 Build: editorial intro + three active cards ------------------------ */
+.bu {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: calc(48 * var(--u));
+  padding: calc(96 * var(--u)) calc(48 * var(--u)) calc(72 * var(--u));
+  color: var(--ccdv-ink);
+}
+@media (min-width: 1024px) {
+  .bu { grid-template-columns: minmax(0, 0.8fr) minmax(0, 2.2fr); align-items: start; }
+}
+.bu__chip {
+  display: inline-block;
+  margin: 0 0 calc(32 * var(--u));
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--ccdv-ink);
+  color: var(--ccdv-panel);
+  font: inherit;
+  font-size: max(1.125rem, calc(24 * var(--u)));
+  line-height: 1.2;
+}
+.bu__tm { position: relative; top: -0.5em; margin-left: 0.08em; font-size: 0.5em; line-height: 0; }
+.bu__copy { font-size: max(1rem, calc(20 * var(--u))); line-height: 1.45; }
+.bu__copy p { margin: 0 0 1.1em; }
+
+.bu__cards-wrap { min-width: 0; padding-top: calc(24 * var(--u)); border-top: 1px solid var(--ccdv-ink); }
+.bu__cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: calc(24 * var(--u));
+}
+.bu__cards:focus-visible { outline: 2px solid var(--ccdv-ink); outline-offset: 4px; }
+.bu__card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border-radius: max(12px, calc(16 * var(--u)));
+  overflow: clip;
+  background: var(--ccdv-ink);
+}
+.bu__art {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  padding: calc(24 * var(--u));
+  overflow: clip;
+}
+.bu__art > .studio-art { width: 100%; height: auto; max-height: 100%; }
+.bu__caption {
+  flex: 1;
+  padding: 16px;
+  background: var(--ccdv-panel);
+  color: var(--ccdv-ink);
+  font-size: max(0.875rem, calc(16 * var(--u)));
+  line-height: 1.4;
+}
+.bu__caption p { margin: 0; }
+.bu__card-title { margin: 0 0 6px; font: inherit; font-size: 1em; text-decoration: underline; text-underline-offset: 0.2em; }
+.bu__dots { display: none; }
+
+@media (max-width: 767px) {
+  .bu { padding: 64px var(--ccdv-gutter-m) 40px; gap: 32px; }
+  .bu__cards-wrap { padding-top: 24px; }
+  /* exactly one card visible: the track is one card wide, cards snap to it */
+  .bu__cards {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+  .bu__cards::-webkit-scrollbar { display: none; }
+  .bu__card { flex: 0 0 100%; scroll-snap-align: start; }
+  .bu__art { padding: 20px; }
+  .bu__dots { display: flex; justify-content: center; margin-top: 8px; }
+  .bu__dot {
+    position: relative;
+    width: var(--ccdv-tap);
+    height: var(--ccdv-tap);
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .bu__dot::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    box-sizing: border-box;
+    width: 10px;
+    height: 10px;
+    transform: translate(-50%, -50%);
+    border: 1px solid var(--ccdv-ink);
+  }
+  .bu__dot[aria-current="true"]::before { background: var(--ccdv-ink); }
+  .bu__dot:focus-visible { outline: 2px solid var(--ccdv-ink); outline-offset: -6px; }
+}
+
+/* --- S5 CC.OS: connected systems scene ------------------------------------- */
+.cs {
+  --cs-gap: calc(96 * var(--u));
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas:
+    "head copy"
+    "sphere card"
+    ". cta";
+  column-gap: var(--cs-gap);
+  row-gap: calc(48 * var(--u));
+  align-items: center;
+  padding: calc(72 * var(--u)) calc(48 * var(--u)) calc(120 * var(--u));
+  color: var(--ccdv-ink);
+}
+.cs__head { grid-area: head; display: flex; align-items: center; justify-content: center; gap: calc(36 * var(--u)); }
+.cs__cube { width: calc(100 * var(--u)); flex: none; }
+.cs__title {
+  margin: 0;
+  font: inherit;
+  font-size: calc(140 * var(--u));
+  line-height: 1;
+  text-decoration: underline;
+  text-underline-offset: 0.04545em;
+  text-decoration-thickness: 0.04545em;
+}
+.cs__copy { grid-area: copy; font-size: max(1.125rem, calc(24 * var(--u))); line-height: 1.4; }
+.cs__copy p { margin: 0 0 1em; }
+.cs__copy p:last-child { margin-bottom: 0; }
+
+/* structural lines hang on the layout: a rule from the title block down to the
+   sphere's axis, and one from the sphere across the gap to the graph card */
+.cs__sphere {
+  grid-area: sphere;
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.cs__sphere > .studio-sphere { width: min(100%, calc(460 * var(--u))); aspect-ratio: 390 / 364; height: auto; }
+.cs__sphere::before,
+.cs__sphere::after { content: ""; position: absolute; pointer-events: none; }
+.cs__sphere::before {
+  left: 50%;
+  bottom: 100%;
+  height: calc(48 * var(--u));
+  border-left: 1px solid var(--ccdv-ink);
+}
+.cs__sphere::after {
+  top: 50%;
+  left: 100%;
+  width: var(--cs-gap);
+  border-top: 1px solid var(--ccdv-ink);
+}
+.cs__sphere :is(ellipse, line, path, circle) { vector-effect: non-scaling-stroke; stroke-width: 0.9px; }
+
+.cs__card {
+  grid-area: card;
+  justify-self: start;
+  width: min(100%, calc(420 * var(--u)));
+  padding: calc(24 * var(--u));
+  border-radius: max(12px, calc(16 * var(--u)));
+  background: var(--ccdv-ink);
+  color: var(--ccdv-panel);
+}
+.cs__cta {
+  grid-area: cta;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  height: auto;
+  min-height: var(--ccdv-tap);
+  margin-top: 0;
+  padding: 0 12px;
+  font-size: max(1rem, calc(26.4 * var(--u)));
+  line-height: 1.2;
+}
+.cs__cta:focus-visible { outline: 2px solid var(--ccdv-ink); outline-offset: 3px; }
+
+/* CC.OS graph card (M08): nodes and edges appear in CCOS_GRAPH_ORDER */
+.cg__svg { display: block; width: 100%; height: auto; }
+.cg__edge {
+  stroke: var(--ccdv-panel);
+  stroke-width: 0.6px;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  opacity: 0.7;
+  vector-effect: non-scaling-stroke;
+}
+.cg__edge--ring { opacity: 0.4; }
+.cg__node rect { fill: var(--ccdv-panel); }
+.cg__node[data-hub="true"] rect { fill: var(--ccdv-purple-card); }
+.cg__node text { fill: var(--ccdv-panel); font-family: inherit; font-size: 11px; }
+.r11--studio[data-motion="on"] .cg:not([data-seen="true"]) .cg__node { opacity: 0; }
+.r11--studio[data-motion="on"] .cg:not([data-seen="true"]) .cg__edge { stroke-dashoffset: 1; }
+.r11--studio[data-motion="on"] .cg[data-seen="true"] .cg__node {
+  transition: opacity 0.45s var(--sm-ease) calc(var(--i) * var(--cg-step, 0.32s));
+}
+.r11--studio[data-motion="on"] .cg[data-seen="true"] .cg__edge {
+  transition: stroke-dashoffset 0.6s var(--sm-ease) max(0s, calc(var(--i) * var(--cg-step, 0.32s) - 0.2s));
+}
+
+@media (max-width: 1023px) {
+  .cs__sphere::after { display: none; }
+}
+@media (max-width: 767px) {
+  .cs {
+    --cs-gap: 0px;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "head" "copy" "sphere" "card" "cta";
+    row-gap: 32px;
+    padding: 56px var(--ccdv-gutter-m) 72px;
+    align-items: start;
+  }
+  .cs__head { justify-content: flex-start; gap: 16px; }
+  .cs__cube { width: 48px; }
+  .cs__title { font-size: min(4.5rem, calc((100cqw - 96px) / 3.05)); }
+  .cs__sphere > .studio-sphere { width: min(82%, 300px); }
+  .cs__sphere::before { height: 32px; }
+  .cs__card { width: min(100%, 360px); justify-self: center; padding: 20px; }
+  .cs__cta { font-size: var(--ccdv-t-body-m); }
+}
+/* tablet: the sphere and the card stack in one centred column */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .cs {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "head" "copy" "sphere" "card" "cta";
+  }
+  .cs__head { justify-content: flex-start; }
+  .cs__card { justify-self: center; }
+}
+/* === end STUDIO R3 ========================================================= */

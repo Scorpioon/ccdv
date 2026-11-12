@@ -31,7 +31,7 @@ const RING_B =
    drag. The loop pauses off-screen. Attributes are written straight to the DOM
    (no React state). */
 import { useEffect, useRef } from "react";
-import type { RefObject } from "react";
+import type { MutableRefObject, RefObject } from "react";
 import { useMotionPolicy } from "../../motion/reducedMotion";
 
 export type Vec3 = [number, number, number];
@@ -124,6 +124,14 @@ export interface SphereMotion {
   draw: (drag: Mat3, clock: number) => void;
   /** puts the verbatim drawing back */
   rest: () => void;
+  /** R3: filled with a `kick(sx, sy)` handle (rad/s about screen x and y) so a
+      parent can give the sphere a light impulse, e.g. when a slot is switched.
+      A no-op under reduced motion. */
+  control?: MutableRefObject<SphereControl | null>;
+}
+
+export interface SphereControl {
+  kick: (sx: number, sy: number) => void;
 }
 
 const DRAG_RAD_PER_PX = 0.011; // about 520 px for a full turn
@@ -251,6 +259,15 @@ export function useSphereMotion(ref: RefObject<Element | null>, options: SphereM
       turn(step[0], step[1]);
       if (!frame) draw();
     };
+    const control = latest.current.control;
+    if (control) {
+      control.current = {
+        kick: (sx, sy) => {
+          if (reduced) return;
+          spin = [spin[0] + sx, spin[1] + sy];
+        },
+      };
+    }
     if (interactive) {
       node.addEventListener("pointerdown", onDown);
       node.addEventListener("pointermove", onMove);
@@ -270,6 +287,7 @@ export function useSphereMotion(ref: RefObject<Element | null>, options: SphereM
       node.removeEventListener("lostpointercapture", onUp);
       node.removeEventListener("keydown", onKey);
       node.removeAttribute("data-dragging");
+      if (control) control.current = null;
       latest.current.rest();
     };
   }, [ref, reduced, interactive]);
