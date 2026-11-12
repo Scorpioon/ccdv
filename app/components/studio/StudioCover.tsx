@@ -12,8 +12,8 @@
    a square, the sphere, the large [Studio] label, then Whois. One sphere
    component (StudioMobileOrbit) serves both: its geometry is the same drawing.
 
-   The lockup's bottom edge is what reveals the thin masthead (studio.tsx). */
-import type { RefObject } from "react";
+   The thin masthead stays hidden over the whole cover. It is revealed by the
+   Approach section's top edge (studio.tsx, addendum A3). */
 import { GearMark } from "../marks/GearMark";
 import { CcdvPixelMark } from "../marks/CcdvPixelMark";
 import { StudioMobileOrbit } from "../marks/StudioMobileOrbit";
@@ -21,10 +21,10 @@ import { Chip } from "./studioMarks";
 import { INK, LIGHT } from "./artworks";
 import { index } from "../../motion/studioMotion";
 
-export function StudioCover({ lockupRef }: { lockupRef: RefObject<HTMLDivElement | null> }) {
+export function StudioCover() {
   return (
     <section className="cv studio-grid" aria-label="Studio">
-      <div className="cv__lockup" ref={lockupRef}>
+      <div className="cv__lockup">
         <GearMark className="cv__gear" fill={INK} dotFill={LIGHT} />
         <CcdvPixelMark variant="stack" className="cv__pixel" fill={INK} />
         <h1 className="cv__title">

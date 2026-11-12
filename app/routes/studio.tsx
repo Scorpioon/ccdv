@@ -8,7 +8,7 @@ import { BuildScene } from "../components/studio/BuildScene";
 import { CcosScene } from "../components/studio/CcosScene";
 import { StudioConnectors } from "../components/studio/studioMarks";
 import { useMotionPolicy } from "../motion/reducedMotion";
-import { useSceneReveal } from "../motion/studioMotion";
+import { STUDIO_MOTION, useSceneReveal } from "../motion/studioMotion";
 
 export function meta() {
   return [{ title: "CCDV — Studio" }];
@@ -21,8 +21,8 @@ const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffec
 /* Studio page, R3 OPUS CORR01: the V2 originals' sequence of scenes in one
    natively scrolling document (no scroll snap, no nested scroller, no hijack).
 
-     thin masthead (sticky, takes no height; slides in as the cover's lockup
-     leaves, see below)
+     thin masthead (sticky, takes no height; pushed in by the black Approach
+     section's top edge, see below)
      S1  lilac cover     identity lockup, Whois, panoramic sphere      .cv
      S2  black Approach  bars, layered sphere, strip + slots, copy     .ap
      S3  lilac Build     joined chip, copy, three cards                .bu
@@ -35,33 +35,43 @@ const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffec
    motion/studioMotion.ts; the asset/component registry is in the R3 report.
 
    Masthead (OC01-02): only the thin "to be" state exists (E10, CSS). Its
-   position is one geometric response to one edge, the cover lockup's bottom:
-   --nav-in = clamp((navH - lockupBottom) / navH), so the bar is pushed in
-   exactly as the identity it repeats scrolls out, and nothing else (no black
-   boundary, no timer) moves it. Without JS the bar stays tucked away and shows
-   whenever focus is inside it (CSS). Phones keep the operator's M1 bar. */
+   position is one geometric response to one edge. Addendum A3 moved that edge
+   from the cover lockup's bottom to the black Approach section's top:
+   --nav-in = clamp((navH - approachTop) / navH). The bar's lower edge rides the
+   lilac/black boundary, so the bar first appears over the Approach section's
+   empty top band and stays hidden over the whole cover. Scrolling back up over
+   the cover hides it again. Without JS the bar stays tucked away and shows
+   whenever focus is inside it (CSS). Phones keep the operator's M1 bar.
+
+   Addendum A1 (idle hide): once the reader stands still for
+   STUDIO_MOTION.navIdle, `data-nav-idle` on the root slides the bar (thin
+   masthead and phone M1 bar alike) up out of view; the next scroll, either
+   direction, brings it back. The hide uses the CSS `translate` property, so it
+   stacks on the --nav-in transform with its own easing. CSS keeps the bar while
+   it holds focus, the pointer or (phones) the open menu. */
+const NAV_IDLE_MIN_SCROLL = 50; // px: the M1 bar's height; nearer the top the bar stays
 export default function Studio() {
   const { reduced } = useMotionPolicy();
 
   const rootRef = useRef<HTMLDivElement>(null);
-  const lockupRef = useRef<HTMLDivElement>(null);
+  const approachRef = useRef<HTMLElement>(null);
 
   useSceneReveal(rootRef, reduced);
 
   useIsomorphicLayoutEffect(() => {
     const root = rootRef.current;
-    const lockup = lockupRef.current;
+    const approach = approachRef.current;
     const nav = root?.querySelector<HTMLElement>(".masthead--studio");
-    if (!root || !lockup || !nav) return;
+    if (!root || !approach || !nav) return;
     let frame = 0;
     let last = "";
     const update = () => {
       frame = 0;
       // reads
       const navH = nav.offsetHeight;
-      const bottom = lockup.getBoundingClientRect().bottom;
+      const edge = approach.getBoundingClientRect().top;
       // write (navH is 0 on phones, where the bar is not rendered)
-      const p = navH > 0 ? clamp01((navH - bottom) / navH).toFixed(4) : "1";
+      const p = navH > 0 ? clamp01((navH - edge) / navH).toFixed(4) : "1";
       if (p !== last) {
         last = p;
         root.style.setProperty("--nav-in", p);
@@ -81,6 +91,27 @@ export default function Studio() {
     };
   }, []);
 
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    let timer = 0;
+    const settle = () => {
+      timer = 0;
+      if (window.scrollY > NAV_IDLE_MIN_SCROLL) root.setAttribute("data-nav-idle", "");
+    };
+    const onScroll = () => {
+      if (root.hasAttribute("data-nav-idle")) root.removeAttribute("data-nav-idle");
+      window.clearTimeout(timer);
+      timer = window.setTimeout(settle, STUDIO_MOTION.navIdle * 1000);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.clearTimeout(timer);
+      root.removeAttribute("data-nav-idle");
+    };
+  }, []);
+
   return (
     <div className="r11 r11--studio" ref={rootRef}>
       {/* M1: operator-designed phone header + menu; hidden from 768px up, where
@@ -88,9 +119,9 @@ export default function Studio() {
       <StudioMobileMenu />
       <SiteMasthead variant="studio" />
 
-      <StudioCover lockupRef={lockupRef} />
+      <StudioCover />
 
-      <section className="studio-approach" aria-labelledby="studio-approach-title">
+      <section className="studio-approach" aria-labelledby="studio-approach-title" ref={approachRef}>
         <ApproachPanel reduced={reduced} titleId="studio-approach-title" />
       </section>
 

@@ -3251,7 +3251,7 @@ main { display: block; outline: none; }
    One state: light bar, cells 44 tall, 12 padding, mark 44 tall (gear + inline
    pixel mark), cells x307..1428 at 224.2 each. Sticky with a negative margin,
    so it takes no height; it is translated out by (1 - --nav-in), which
-   studio.tsx derives from the cover lockup's bottom edge only. Focus inside
+   studio.tsx derives from the Approach section's top edge only (A3). Focus inside
    the bar always shows it. Phones keep the M1 bar (masthead not rendered). */
 @media (min-width: 768px) {
   .r11--studio .masthead--collapsing {
@@ -3295,7 +3295,19 @@ main { display: block; outline: none; }
   .r11--studio .masthead--collapsing { --cell-h: max(calc(44 * var(--u)), 2.75rem); }
 }
 @media (prefers-reduced-motion: no-preference) {
-  .r11--studio .masthead--collapsing { transition: transform 0.12s linear; }
+  .r11--studio .masthead--collapsing { transition: transform 0.12s linear, translate 0.45s var(--sm-ease); }
+  .r11--studio .smm__bar { transition: translate 0.45s var(--sm-ease); }
+}
+
+/* --- Addendum A1: idle hide ------------------------------------------------
+   studio.tsx sets `data-nav-idle` after 1.5 s without a scroll and clears it on
+   the next one. `translate` is separate from the --nav-in `transform`, so the two
+   stack and ease independently. The bar stays while it holds focus or the
+   pointer (desktop) or while the M1 menu is open (phones; no :hover there, it
+   sticks after a tap). Reduced motion: same states, no slide. */
+.r11--studio[data-nav-idle] .masthead--collapsing:not(:hover):not(:focus-within),
+.r11--studio[data-nav-idle] .smm__bar:not([data-open="true"]):not(:focus-within) {
+  translate: 0 -100%;
 }
 
 /* --- chips (Whois, \\Studio Approach, Toolbelt) ---------------------------- */
@@ -3537,7 +3549,7 @@ main { display: block; outline: none; }
     position: absolute;
     left: calc(48 * var(--u));
     top: calc(902 * var(--u));              /* y2020 */
-    width: calc(648 * var(--u));
+    width: calc(1344 * var(--u));           /* A2: x48..1392, both columns (FB_R4_5: x48..696) */
     height: max(0.5px, calc(0.5 * var(--u)));
     background: var(--ccdv-panel);
   }

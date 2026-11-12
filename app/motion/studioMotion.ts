@@ -20,6 +20,8 @@ export const STUDIO_MOTION = {
   step: { block: 0.12, text: 0.24, art: 0.4 },
   /** sphere impulse on a slot switch, rad/s about screen x and y */
   impulse: { x: 0.9, y: 1.6 },
+  /** seconds without a scroll before the nav bar steps aside (addendum A1) */
+  navIdle: 1.5,
 } as const;
 
 /** fixed reveal order of the CC.OS graph card (E16): centre first, then clockwise */
