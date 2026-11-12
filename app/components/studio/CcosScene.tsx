@@ -1,130 +1,131 @@
-/* CC.OS chapter (R3 M07/M08): a connected systems scene on the lilac ground.
-   Title block, copy, the large cube/axis/ring sphere (the Build gyro, moved
-   here), the seven-node graph card and the dev-notes link. The structural lines
-   are CSS hairlines hung on the sphere and the card (global.css, `.cs__*`), so
-   they follow the layout instead of floating as decoration. */
-import { Link } from "react-router";
-import { HexCube } from "../marks/HexCube";
-import { BuildGyro, LILAC, STROKE } from "./artworks";
-import { CCOS_COPY } from "../../data/studioApproach";
-import { CCOS_GRAPH_ORDER, CCOS_GRAPH_STEP, index } from "../../motion/studioMotion";
-import type { CSSProperties } from "react";
+/* CC.OS chapter (R3 M07/M08, rebuilt in OPUS CORR01 OC01-06/07 from FB_R4_5.svg
+   y2809..3852 and STUDIO_resp3-1.svg y3753..4919).
 
-/* Graph card artboard 300 x 440: CCOS at the centre, the six systems on a
-   hexagon, clockwise from the top. Reveal order is CCOS_GRAPH_ORDER. */
-const NODES: Record<(typeof CCOS_GRAPH_ORDER)[number], { x: number; y: number; side: "t" | "r" | "b" | "l" }> = {
-  CCOS: { x: 150, y: 220, side: "b" },
-  WRK: { x: 150, y: 64, side: "t" },
-  INT: { x: 243, y: 142, side: "r" },
-  ARC: { x: 243, y: 298, side: "r" },
-  TME: { x: 150, y: 376, side: "b" },
-  SEC: { x: 57, y: 298, side: "l" },
-  BIZ: { x: 57, y: 142, side: "l" },
+   Title row (hex mark + underlined CC.OS), copy, the CC.OS globe (desktop only:
+   the mobile original has none), the graph card (black 410 x 571.89, rx 16.44:
+   the seven-node graph, then a light caption capsule) and the light "Read dev
+   notes" chip. The external hairlines that tie this chapter to Build are
+   StudioConnectors (desktop only).
+
+   The graph is the original's: seven nested-hexagon nodes (outer / ring / core
+   with three ticks), CCOS in the centre, INT above, SEC below, WRK and ARC
+   upper left/right, BIZ and TME lower left/right, six spokes from CCOS. It
+   appears in the fixed order CCOS, WRK, INT, ARC, TME, SEC, BIZ; each spoke
+   draws with the node it reaches. */
+import { useId } from "react";
+import type { CSSProperties } from "react";
+import { Link } from "react-router";
+import { CcosGyro } from "./artworks";
+import { CcosHexMark } from "./studioMarks";
+import { CCOS_CAPTION, CCOS_COPY } from "../../data/studioApproach";
+import { CCOS_GRAPH_ORDER, CCOS_GRAPH_STEP, index } from "../../motion/studioMotion";
+
+type NodeName = (typeof CCOS_GRAPH_ORDER)[number];
+
+/* FB_R4_5 node centres; hexagons are pointy-top: outer half-width 43 / half-
+   height 49.65, ring 34.4 / 39.72, core 22.36 / 25.82 (CCOS core 28.58 / 32.76) */
+const NODES: Record<NodeName, { x: number; y: number }> = {
+  CCOS: { x: 1187, y: 3323.125 },
+  WRK: { x: 1069.65, y: 3223.83 },
+  INT: { x: 1187, y: 3175.83 },
+  ARC: { x: 1304.35, y: 3223.83 },
+  TME: { x: 1304.35, y: 3422.42 },
+  SEC: { x: 1187, y: 3470.42 },
+  BIZ: { x: 1069.65, y: 3422.42 },
 };
-const RING = CCOS_GRAPH_ORDER.slice(1);
+/* spokes, verbatim: CCOS outer corner -> the neighbour's facing side */
+const SPOKES: Partial<Record<NodeName, string>> = {
+  WRK: "M1145 3299L1093.5 3260",
+  INT: "M1187 3273.5V3225",
+  ARC: "M1230 3299L1281.5 3260",
+  TME: "M1230 3348L1281.5 3387",
+  SEC: "M1187 3421V3372",
+  BIZ: "M1145 3348L1093.5 3387",
+};
+
+const hex = (x: number, y: number, hw: number, hh: number) =>
+  `M${x} ${y - hh}L${x + hw} ${y - hh / 2}V${y + hh / 2}L${x} ${y + hh}L${x - hw} ${y + hh / 2}V${y - hh / 2}Z`;
+
+function GraphNode({ name }: { name: NodeName }) {
+  const { x, y } = NODES[name];
+  const hub = name === "CCOS";
+  const core = hub ? { hw: 28.58, hh: 32.76 } : { hw: 22.36, hh: 25.82 };
+  /* the three ticks join the ring hexagon's upper corners and lower vertex to
+     the core's, so the core reads as a cube */
+  const ticks = `M${x - 34.29} ${y - 19.83}L${x - core.hw + 0.54} ${y - core.hh / 2 + 0.12}M${x + core.hw - 0.55} ${y - core.hh / 2 + 0.3}L${x + 33.85} ${y - 19.56}M${x} ${y + core.hh - 0.24}V${y + 39.56}`;
+  return (
+    <g className="cg__node" style={index(CCOS_GRAPH_ORDER.indexOf(name))}>
+      <path d={hex(x, y, 43, 49.65)} />
+      <path d={hex(x, y, 34.4, 39.72)} />
+      <path d={hex(x, y, core.hw, core.hh)} />
+      <path className="cg__tick" d={ticks} />
+      <text x={x} y={y + 6.47} textAnchor="middle">
+        {name}
+      </text>
+    </g>
+  );
+}
 
 function CcosGraph() {
-  const at = (name: (typeof CCOS_GRAPH_ORDER)[number]) => CCOS_GRAPH_ORDER.indexOf(name);
-  const label = (name: (typeof CCOS_GRAPH_ORDER)[number]) => {
-    const n = NODES[name];
-    if (n.side === "t") return { x: n.x, y: n.y - 18, anchor: "middle" as const };
-    if (n.side === "b") return { x: n.x, y: n.y + 26, anchor: "middle" as const };
-    if (n.side === "r") return { x: n.x - 0, y: n.y - 18, anchor: "middle" as const };
-    return { x: n.x, y: n.y - 18, anchor: "middle" as const };
-  };
   return (
-    <div className="cg" data-scene style={{ "--cg-step": `${CCOS_GRAPH_STEP}s` } as CSSProperties}>
-      <svg
-        className="cg__svg"
-        viewBox="0 0 300 440"
-        fill="none"
-        role="img"
-        aria-label={`CC.OS system map: ${CCOS_GRAPH_ORDER[0]} connected to ${RING.join(", ")}.`}
-      >
-        {/* spokes: centre to each system, drawn as its node appears */}
-        {RING.map((name) => (
-          <line
+    <svg
+      className="cg"
+      data-scene
+      viewBox="994 3114.18 386 417.892"
+      preserveAspectRatio="xMidYMid slice"
+      fill="none"
+      role="img"
+      aria-label={`CC.OS system map: ${CCOS_GRAPH_ORDER[0]} at the centre, connected to ${CCOS_GRAPH_ORDER.slice(1).join(", ")}.`}
+      style={{ "--cg-step": `${CCOS_GRAPH_STEP}s` } as CSSProperties}
+    >
+      {CCOS_GRAPH_ORDER.map((name) =>
+        SPOKES[name] ? (
+          <path
             key={`spoke-${name}`}
             className="cg__edge"
-            style={index(at(name))}
+            d={SPOKES[name]}
             pathLength={1}
-            x1={NODES.CCOS.x}
-            y1={NODES.CCOS.y}
-            x2={NODES[name].x}
-            y2={NODES[name].y}
+            style={index(CCOS_GRAPH_ORDER.indexOf(name))}
           />
-        ))}
-        {/* ring: each system to the next, the last closing back to the first */}
-        {RING.map((name, i) => {
-          const next = RING[(i + 1) % RING.length];
-          return (
-            <line
-              key={`ring-${name}`}
-              className="cg__edge cg__edge--ring"
-              style={index(at(i === RING.length - 1 ? name : next))}
-              pathLength={1}
-              x1={NODES[name].x}
-              y1={NODES[name].y}
-              x2={NODES[next].x}
-              y2={NODES[next].y}
-            />
-          );
-        })}
-        {CCOS_GRAPH_ORDER.map((name) => {
-          const n = NODES[name];
-          const l = label(name);
-          const hub = name === "CCOS";
-          return (
-            <g key={name} className="cg__node" data-hub={hub} style={index(at(name))}>
-              <rect x={n.x - (hub ? 9 : 6)} y={n.y - (hub ? 9 : 6)} width={hub ? 18 : 12} height={hub ? 18 : 12} />
-              <text x={l.x} y={l.y} textAnchor={l.anchor}>
-                {name}
-              </text>
-            </g>
-          );
-        })}
-      </svg>
-    </div>
+        ) : null,
+      )}
+      {CCOS_GRAPH_ORDER.map((name) => (
+        <GraphNode key={name} name={name} />
+      ))}
+    </svg>
   );
 }
 
 export function CcosScene({ reduced }: { reduced: boolean }) {
+  const markId = `ccm-${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
   return (
     <section className="cs" aria-labelledby="ccos-title" data-scene>
       <div className="cs__head" data-spawn style={index(0)}>
-        <HexCube
-          className="studio-hex cs__cube"
-          variant="solid"
-          gradientFrom="#FFFFFF"
-          gradientTo={LILAC}
-          lineColor="#D9D9D9"
-          outerFill="#1A1A1A"
-          lineWidth={STROKE}
-        />
+        <CcosHexMark id={markId} />
         <h2 className="cs__title" id="ccos-title">
           CC.OS
         </h2>
       </div>
 
-      <div className="cs__copy">
-        {CCOS_COPY.map((text, i) => (
-          <p key={text} data-spawn style={index(i + 1)}>
-            {text}
-          </p>
-        ))}
-      </div>
+      <p className="cs__copy" data-spawn style={index(1)}>
+        {CCOS_COPY}
+      </p>
 
-      <div className="cs__sphere" data-spawn style={index(2)}>
-        <BuildGyro reduced={reduced} tight />
+      <div className="cs__globe-wrap" data-spawn style={index(2)}>
+        <CcosGyro reduced={reduced} />
       </div>
 
       <div className="cs__card" data-spawn style={index(3)}>
-        <CcosGraph />
+        <div className="cs__art">
+          <CcosGraph />
+        </div>
+        <p className="cs__caption">{CCOS_CAPTION}</p>
       </div>
 
-      <Link className="ccos__action cs__cta" to="/products/ccos" data-spawn style={index(4)}>
+      <Link className="cs__cta" to="/products/ccos" data-spawn style={index(4)}>
         Read dev notes <span aria-hidden="true">→</span>
       </Link>
+      <span className="cs__sq" aria-hidden="true" />
     </section>
   );
 }

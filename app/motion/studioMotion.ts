@@ -1,17 +1,21 @@
-/* Studio motion grammar (R3). One place for the timing presets that JS needs and
-   for the one reveal observer every Studio scene shares. The matching CSS
-   presets are the `--sm-*` custom properties on `.r11--studio` (global.css,
-   "STUDIO R3"); the numbers here and there must agree.
+/* Studio motion grammar (R3, kept by OPUS CORR01). One place for the timing
+   presets that JS needs and for the one reveal observer every Studio scene
+   shares. The matching CSS presets are the `--sm-*` custom properties on
+   `.r11--studio` (global.css, "STUDIO R3 OPUS CORR01"); the numbers here and
+   there must agree.
 
-   Grammar: frame (structural line draws) -> block (panel rises) -> text
-   (staggered, subtle) -> artwork (delayed) -> impulse (feedback on interaction).
-   Reduced motion keeps the same order and visibility with no transforms. */
+   Grammar, the info-panel animation's order generalised: frame (hairlines and
+   connectors draw, pathLength 1) -> block (panels rise, staggered by --i) ->
+   text (the keyed Approach copy replays) -> detail (toollets, graph nodes in
+   CCOS_GRAPH_ORDER) -> impulse (feedback on interaction). Nothing locks the
+   viewport; scenes are reached by native scrolling. Reduced motion: nothing is
+   hidden or moved, loops stop, drag still works one step per event. */
 import { useEffect } from "react";
 import type { CSSProperties, RefObject } from "react";
 
 export const STUDIO_MOTION = {
   /** seconds; mirrors --sm-dur-* */
-  dur: { frame: 0.7, block: 0.7, text: 0.6, art: 0.9 },
+  dur: { frame: 1.1, block: 0.7, text: 0.6, art: 0.9 },
   /** extra delay (s) between grammar steps inside one scene */
   step: { block: 0.12, text: 0.24, art: 0.4 },
   /** sphere impulse on a slot switch, rad/s about screen x and y */

@@ -1,13 +1,19 @@
-/* Build with WrkOps™ (R3 M05/M06): a lilac scene with an editorial intro and
-   three active cards that behave as one system: the same shell (black art tile
-   on top, white caption pane below), the same reveal, the same responsive rule.
-   Phones: a one-card-at-a-time swipe carousel (scroll-snap track, three dots,
-   Left/Right on the focused track). From 768px: a plain three-up row, dots
-   hidden. The drawings are the existing artworks, unchanged. */
+/* Build with WrkOps™ (R3 M05/M06, rebuilt in OPUS CORR01 OC01-05 from FB_R4_5.svg
+   y2164..2662 and STUDIO_resp3-1.svg y2636..3705).
+
+   The joined gear/label chip (verbatim silhouette), the intro copy, and three
+   identical black cards 284.67 x 450 (rx 16.44): the figure fills the card and
+   a compact light caption capsule 260.67 x 66 (rx 10) sits 12 inside its lower
+   edge. No card titles, no light lower half (E06/E07/E08). Figures: three
+   cubes, the five-column info panel, the gear conveyor, each in its card
+   window (artworks.tsx BUILD_FRAMES).
+   Desktop: a row at the original's x (CSS). Phones: a one-card-at-a-time
+   carousel (scroll-snap track exactly one card wide, so no card peeks; three
+   dots; Left/Right on the focused track). The page never scrolls sideways. */
 import { useRef, useState } from "react";
 import type { KeyboardEvent, ReactNode } from "react";
-import { WordReveal } from "./WordReveal";
-import { GearConveyor, ThreeCubes, WritingDiagram } from "./artworks";
+import { BUILD_FRAMES, CARD_GEAR_PITCH, GearConveyor, ThreeCubes, WritingDiagram } from "./artworks";
+import { BuildChip } from "./studioMarks";
 import { BUILD_CARDS, BUILD_INTRO } from "../../data/studioApproach";
 import { index } from "../../motion/studioMotion";
 
@@ -16,9 +22,9 @@ export function BuildScene({ reduced }: { reduced: boolean }) {
   const [current, setCurrent] = useState(0);
 
   const art: Record<(typeof BUILD_CARDS)[number]["key"], ReactNode> = {
-    scope: <ThreeCubes reduced={reduced} />,
-    trace: <WritingDiagram reduced={reduced} />,
-    review: <GearConveyor reduced={reduced} />,
+    cubes: <ThreeCubes reduced={reduced} frame={BUILD_FRAMES.cubes} />,
+    panel: <WritingDiagram reduced={reduced} frame={BUILD_FRAMES.panel} />,
+    gear: <GearConveyor reduced={reduced} frame={BUILD_FRAMES.gear} pitch={CARD_GEAR_PITCH} />,
   };
 
   const step = () => {
@@ -43,15 +49,11 @@ export function BuildScene({ reduced }: { reduced: boolean }) {
 
   return (
     <section className="bu" aria-labelledby="studio-build" data-scene>
-      <div className="bu__intro">
-        <h2 className="bu__chip" id="studio-build" data-spawn style={index(0)}>
-          Build with WrkOps<sup className="bu__tm">™</sup>
-        </h2>
-        <div className="bu__copy">
-          {BUILD_INTRO.map((text) => (
-            <WordReveal key={text} text={text} />
-          ))}
-        </div>
+      <BuildChip id="studio-build" />
+      <div className="bu__copy" data-spawn style={index(1)}>
+        {BUILD_INTRO.map((text) => (
+          <p key={text}>{text}</p>
+        ))}
       </div>
 
       <div className="bu__cards-wrap">
@@ -76,15 +78,12 @@ export function BuildScene({ reduced }: { reduced: boolean }) {
               aria-roledescription="slide"
               aria-label={`${i + 1} of ${BUILD_CARDS.length}`}
               data-spawn
-              style={index(i + 1)}
+              style={index(i + 2)}
             >
               <div className="bu__art" aria-hidden="true">
                 {art[card.key]}
               </div>
-              <div className="bu__caption">
-                <h3 className="bu__card-title">{card.title}</h3>
-                <p>{card.caption}</p>
-              </div>
+              <p className="bu__caption">{card.caption}</p>
             </article>
           ))}
         </div>
@@ -94,7 +93,7 @@ export function BuildScene({ reduced }: { reduced: boolean }) {
               key={card.key}
               type="button"
               className="bu__dot"
-              aria-label={`Show card ${i + 1}: ${card.title}`}
+              aria-label={`Show card ${i + 1} of ${BUILD_CARDS.length}`}
               aria-current={current === i ? "true" : undefined}
               onClick={() => go(i)}
             />

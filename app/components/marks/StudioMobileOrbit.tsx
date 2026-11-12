@@ -142,7 +142,9 @@ const KEY_STEP = (12 * Math.PI) / 180;
    allowed. Drag (R2-FB003-06): pointer events on the figure, which carries
    `touch-action: none` (CSS `.studio-sphere`) so a finger, like a mouse, owns
    BOTH axes of its own drag and the page does not scroll under it; outside the
-   figure the page scrolls natively. One pointer owns the drag (a second finger
+   figure the page scrolls natively. R3 CORR01: the figure itself ignores
+   pointers and only its `.studio-sphere__hit` circle takes them, so "the
+   figure" is the drawn circle, not its square box. One pointer owns the drag (a second finger
    is ignored); pointerup, pointercancel and lostpointercapture all end it.
    After release the sphere keeps its pose and its spin dies out exponentially
    (no snap back). Reduced motion: no loop, no inertia; a drag still turns it, one
@@ -358,6 +360,9 @@ export function StudioMobileOrbit({ className }: { className?: string }) {
       tabIndex={0}
     >
       <circle cx="194.585" cy="379.587" r="163.897" stroke={INK} strokeWidth={1.03292} />
+      {/* CORR01: the only part of the figure that takes pointers (CSS), so a
+          drag that starts outside the circle scrolls the page */}
+      <circle className="studio-sphere__hit" cx="194.585" cy="379.587" r="163.897" fill="transparent" />
       <path ref={(n) => { pathRefs.current[0] = n; }} d={RING_A} stroke={INK} strokeWidth={1.03292} strokeLinecap="round" />
       <path ref={(n) => { pathRefs.current[1] = n; }} d={RING_B} stroke={INK} strokeWidth={1.03292} strokeLinecap="round" />
       {RINGS.map((_, i) => (
