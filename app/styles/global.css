@@ -2795,6 +2795,9 @@ main { display: block; outline: none; }
     box-sizing: border-box;
     height: calc(100vh - 50px);
     height: calc(100svh - 50px);
+    /* A5: the visible viewport, whatever the browser toolbars are doing; svh
+       left a strip of page under the panel once the toolbar had collapsed */
+    height: calc(100dvh - 50px);
     overflow-y: auto;
     overscroll-behavior: contain;
     background: var(--ccdv-panel);
@@ -2812,6 +2815,10 @@ main { display: block; outline: none; }
       transform 0.36s var(--studio-ease, ease),
       visibility 0s linear 0.36s;
   }
+  /* A5: an open menu holds the page still; without this the page behind it
+     scrolled (and the panel's overscroll containment only applies while the
+     panel itself overflows) */
+  html:has(.smm__panel[data-open="true"]) { overflow: hidden; }
   .smm__panel[data-open="true"] {
     opacity: 1;
     visibility: visible;
@@ -2887,10 +2894,8 @@ main { display: block; outline: none; }
     text-align: left;
   }
   /* Collapse Creative mark, small, light ink (its paths carry a dark fill) */
-  .smm__brand { display: block; color: var(--ccdv-panel); }
-  .smm__brand .identity-mark__rings { width: 66px; height: 42px; }
-  .smm__brand .identity-mark__rings path { fill: currentColor; }
-  .smm__brand .identity-mark__word { font-size: 10px; line-height: 12px; margin-top: 4px; }
+  /* A5: the 648 x 120 lockup at 146 wide (27 tall), STUDIO_resp2's logo box */
+  .smm__brand { display: block; flex: none; width: 146px; height: auto; aspect-ratio: 648 / 120; color: var(--ccdv-panel); }
   .smm__foot-gear { display: block; width: 26px; height: 26px; }
   .smm__year { align-self: flex-end; margin-top: auto; text-align: right; }
   .smm__contact a { position: relative; text-decoration: underline; text-underline-offset: 3px; }
@@ -3295,19 +3300,30 @@ main { display: block; outline: none; }
   .r11--studio .masthead--collapsing { --cell-h: max(calc(44 * var(--u)), 2.75rem); }
 }
 @media (prefers-reduced-motion: no-preference) {
-  .r11--studio .masthead--collapsing { transition: transform 0.12s linear, translate 0.45s var(--sm-ease); }
-  .r11--studio .smm__bar { transition: translate 0.45s var(--sm-ease); }
+  /* A4: back in 0.22 s, decelerating (the transition of the state reached) */
+  .r11--studio .masthead--collapsing { transition: transform 0.12s linear, translate 0.22s var(--sm-ease); }
+  .r11--studio .smm__bar { transition: translate 0.22s var(--sm-ease); }
 }
 
 /* --- Addendum A1: idle hide ------------------------------------------------
-   studio.tsx sets `data-nav-idle` after 1.5 s without a scroll and clears it on
-   the next one. `translate` is separate from the --nav-in `transform`, so the two
-   stack and ease independently. The bar stays while it holds focus or the
-   pointer (desktop) or while the M1 menu is open (phones; no :hover there, it
-   sticks after a tap). Reduced motion: same states, no slide. */
+   studio.tsx sets `data-nav-idle` after STUDIO_MOTION.navIdle (1.0 s, A4)
+   without a scroll and clears it on the next one. `translate` is separate from
+   the --nav-in `transform`, so the two stack and ease independently. The bar
+   stays while it holds focus or the pointer (desktop) or while the M1 menu is
+   open (phones; no :hover there, it sticks after a tap). Reduced motion: same
+   states, no slide. */
 .r11--studio[data-nav-idle] .masthead--collapsing:not(:hover):not(:focus-within),
 .r11--studio[data-nav-idle] .smm__bar:not([data-open="true"]):not(:focus-within) {
   translate: 0 -100%;
+}
+/* A4: away in 0.3 s, starting soft and accelerating out */
+@media (prefers-reduced-motion: no-preference) {
+  .r11--studio[data-nav-idle] .masthead--collapsing:not(:hover):not(:focus-within) {
+    transition: transform 0.12s linear, translate 0.3s cubic-bezier(0.4, 0, 1, 1);
+  }
+  .r11--studio[data-nav-idle] .smm__bar:not([data-open="true"]):not(:focus-within) {
+    transition: translate 0.3s cubic-bezier(0.4, 0, 1, 1);
+  }
 }
 
 /* --- chips (Whois, \\Studio Approach, Toolbelt) ---------------------------- */
