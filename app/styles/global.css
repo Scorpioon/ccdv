@@ -3862,6 +3862,25 @@ main { display: block; outline: none; }
   .r11--studio .ap { --fit-h: 1046; width: calc(1440 * var(--u)); margin-inline: auto; }
   .r11--studio .studio-lilac { --fit-h: 1200; }
   .r11--studio :is(.bu, .cs, .sc) { left: calc((100% - 1440 * var(--u)) / 2); width: calc(1440 * var(--u)); }
+
+  /* R1 CORR01 round 3 (OPERATOR, spread): the size still fits the height, but
+     the columns reach the screen margins. --gx is the ground beside the frame
+     (0 on wide screens, where nothing changes); the left column moves left by
+     it, the right column right (`translate`, which stacks with the spawn
+     transform); the CC.OS title stays centred. The connectors follow in
+     StudioConnectors (useFrameSpread). */
+  .r11--studio :is(.cv__frame, .ap, .studio-lilac) {
+    --gx: max(0px, calc((100cqw - 1440 * var(--u)) / 2));
+  }
+  .r11--studio :is(.cv__lockup, .cv__whois-col, .cv__sq--d, .ap__bars, .ap__art, .bu .bc, .bu__copy, .cs__globe-wrap) {
+    translate: calc(-1 * var(--gx)) 0;
+  }
+  .r11--studio :is(.cv__label, .cv__sq--a, .cv__sq--b, .cv__sq--c, .cv__sq--e, .cv__orbit, .ap__panel, .bu__cards-wrap, .cs__copy, .cs__card, .cs__cta, .cs__sq) {
+    translate: var(--gx) 0;
+  }
+  /* the Approach rule runs across both spread columns */
+  .r11--studio .ap::after { left: calc(48 * var(--u) - var(--gx)); width: calc(1344 * var(--u) + 2 * var(--gx)); }
+  .r11--studio .sc { overflow: visible; }
 }
 @media (max-width: 1023px) {
   .cv__frame { display: contents; }
@@ -3875,7 +3894,7 @@ main { display: block; outline: none; }
    STUDIO_resp3-1.svg phones, see the STUDIO R3 block above) re-used for the
    Services scenes, in the same units: desktop calc(N * var(--u)) at the 1440
    reference, below 1024px --k (1px at 390, max 1.5px) on a 390k column; --s is
-   the active one. Accent #F64848 (--ccdv-red), ink #1A1A1A, light #F2F2F2,
+   the active one. Accent #FF3E58 (--ccdv-red, round 3; was #F64848), ink #1A1A1A, light #F2F2F2,
    grid ink 5%. Shared markup re-used as is: .chip (+ new red tone), .bc (the
    joined chip), .studio-sphere (pointer/touch ownership), the thin masthead and
    the M1 bar/menu (their Studio-scoped rules are mirrored here, not edited). */
@@ -3926,6 +3945,20 @@ main { display: block; outline: none; }
   }
   .r11--services .sv-ix { --fit-h: 1042; width: calc(1440 * var(--u)); margin-inline: auto; }
   .r11--services .sv-red { --fit-h: 1200; }
+
+  /* round 3 (OPERATOR, spread): as /studio (STUDIO FIT above): the left column
+     moves left and the right column right by --gx, the ground beside the
+     frame, so the scenes reach the screen margins; the Formation figure stays
+     centred and its tether follows (FormationScene, useFrameSpread) */
+  .r11--services :is(.sv-cv__frame, .sv-ix, .sv-red) {
+    --gx: max(0px, calc((100cqw - 1440 * var(--u)) / 2));
+  }
+  .r11--services :is(.sv-cv__lockup, .sv-cv__whatis-col, .sv-cv__sq--d, .sv-ix__head, .sv-ix__art, .sv-ww .bc, .sv-ww__copy, .sv-fm__title, .sv-fm__card--gear, .sv-fm__card--arrow, .sv-fm__sq) {
+    translate: calc(-1 * var(--gx)) 0;
+  }
+  .r11--services :is(.sv-cv__label, .sv-cv__sq--a, .sv-cv__sq--b, .sv-cv__sq--c, .sv-cv__sq--e, .sv-cv__art, .sv-ix__panel, .sv-ww__cards-wrap, .sv-sc, .sv-fm__intro, .sv-fm__card--network, .sv-fm__card--toolmaking) {
+    translate: var(--gx) 0;
+  }
 }
 @media (max-width: 1023px) {
   .sv-cv__frame { display: contents; }
@@ -4497,14 +4530,22 @@ main { display: block; outline: none; }
 /* the selected card: a light ring inside its edge */
 .sv-fm__card[aria-pressed="true"] { box-shadow: inset 0 0 0 max(1px, calc(1 * var(--s))) var(--ccdv-panel); }
 .sv-fm__sq { display: block; width: calc(6.317 * var(--s)); height: calc(6.317 * var(--s)); background: var(--ccdv-ink); }
-/* the one figure -> card tether: the selected one grows once the scramble has
-   landed, the previous one retracts */
-.sv-fm__line { fill: none; stroke: var(--ccdv-ink); stroke-width: 0.8; stroke-dasharray: 1; stroke-dashoffset: 1; }
-.sv-fm__line[data-active="true"] { stroke-dashoffset: 0; }
-.r11--services[data-motion="on"] .sv-fm:not([data-seen="true"]) .sv-fm__line { stroke-dashoffset: 1; }
+/* the one figure -> card tether: the selected one grows once the rain has
+   landed (round 3: about 2 s, was 0.9 s for the scramble), the previous one
+   retracts. The LLM wires (round 3) draw in the same way, one after another,
+   once that figure has landed, and retract when another card is chosen */
+.sv-fm__line,
+.sv-fm__wire { fill: none; stroke: var(--ccdv-ink); stroke-width: 0.8; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.sv-fm__line[data-active="true"],
+.sv-fm__wires[data-active="true"] .sv-fm__wire { stroke-dashoffset: 0; }
+.r11--services[data-motion="on"] .sv-fm:not([data-seen="true"]) :is(.sv-fm__line, .sv-fm__wire) { stroke-dashoffset: 1; }
 @media (prefers-reduced-motion: no-preference) {
-  .sv-fm__line { transition: stroke-dashoffset 0.4s var(--sm-ease); }
-  .sv-fm__line[data-active="true"] { transition: stroke-dashoffset 0.9s var(--sm-ease) 0.9s; }
+  .sv-fm__line,
+  .sv-fm__wire { transition: stroke-dashoffset 0.4s var(--sm-ease); }
+  .sv-fm__line[data-active="true"] { transition: stroke-dashoffset 0.9s var(--sm-ease) 1.8s; }
+  .sv-fm__wires[data-active="true"] .sv-fm__wire {
+    transition: stroke-dashoffset 0.6s var(--sm-ease) calc(2.2s + var(--i, 0) * 0.04s);
+  }
 }
 
 @media (min-width: 1024px) {
@@ -4512,8 +4553,10 @@ main { display: block; outline: none; }
   .sv-fm { position: absolute; left: calc((100% - 1440 * var(--u)) / 2); top: calc(536 * var(--u)); width: calc(1440 * var(--u)); height: calc(1200 * var(--u)); }
   .sv-fm__title { position: absolute; left: calc(48 * var(--u)); top: calc(80 * var(--u)); font-size: calc(120 * var(--u)); }
   .sv-fm__intro { position: absolute; left: calc(1007.8 * var(--u)); top: calc(124 * var(--u)); width: calc(384 * var(--u)); }
-  /* the figure layer: the whole scene (viewBox 0..1536 x 2880..4160) */
+  /* the figure layer: the whole scene (viewBox 0..1536 x 2880..4160); round 3:
+     it draws past the frame's edges, so no cube is cut off at the margins */
   .sv-fm__pile { position: absolute; inset: 0; }
+  .sv-fm__pile .sv-vx { overflow: visible; }
   .sv-fm__card { position: absolute; width: calc(284.667 * var(--u)); }
   .sv-fm__card--gear { left: calc(72.19 * var(--u)); top: calc(484.6 * var(--u)); height: calc(258 * var(--u)); }
   .sv-fm__card--arrow { left: calc(72.19 * var(--u)); top: calc(862.1 * var(--u)); height: calc(242.1 * var(--u)); }
@@ -4574,6 +4617,6 @@ main { display: block; outline: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .r11--services :is(.sv-fm__caption, .sv-fm__line) { transition: none; }
+  .r11--services :is(.sv-fm__caption, .sv-fm__line, .sv-fm__wire) { transition: none; }
 }
 /* === end SERVICES R1 ======================================================== */

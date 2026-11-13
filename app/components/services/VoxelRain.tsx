@@ -99,7 +99,9 @@ const valueAt = (c: Cube, clock: number): [number, number] => {
   const p = c.ease(clamp01((clock - c.t0) / c.dur));
   return [c.from[0] + (c.to[0] - c.from[0]) * p, c.from[1] + (c.to[1] - c.from[1]) * p];
 };
-const sameSlot = (a: VoxelSlot, b: VoxelSlot) => Math.abs(a.x - b.x) < 0.5 && Math.abs(a.y - b.y) < 0.5 && Math.abs(a.s - b.s) < 0.01;
+/* round 3: the colour counts too, so a standing cube never keeps the wrong one */
+const sameSlot = (a: VoxelSlot, b: VoxelSlot) =>
+  Math.abs(a.x - b.x) < 0.5 && Math.abs(a.y - b.y) < 0.5 && Math.abs(a.s - b.s) < 0.01 && !a.ghost === !b.ghost;
 const restCube = (slot: VoxelSlot | null): Cube => ({
   slot,
   from: [0, slot ? 1 : 0],

@@ -46,7 +46,7 @@
   /* --- band stripes, top to bottom (Home) ------------------------------ */
   --ccdv-purple: #a864e2;
   --ccdv-yellow: #fef36a;
-  --ccdv-red: #f64848;
+  --ccdv-red: #ff3e58;     /* Services R1 CORR01 round 3 (OPERATOR); was #f64848 */
   --ccdv-green: #5ae36f;
   --ccdv-blue: #48a4f6;
 

@@ -6,7 +6,9 @@
    Nothing here is redrawn by eye. Sizes come from CSS (global.css, "STUDIO R3
    OPUS CORR01"), which places each mark at its artboard position in --u (desktop)
    or px (phones). */
+import { useRef } from "react";
 import type { CSSProperties, ReactNode } from "react";
+import { useFrameSpread } from "../../motion/frameSpread";
 
 /* The small eight-tooth gear of the chips (Whois, \\Studio Approach, Toolbelt):
    FB_R4_5 Whois chip, box 60..73.19 x 318..331.19. The centre dot is the chip's
@@ -117,19 +119,27 @@ export function CcosHexMark({ id }: { id: string }) {
    the bus under the three cards, the run from card 1 to the CC.OS title row,
    the two arms of that row, and the dev-notes return to the graph card. The SVG
    covers the lilac mega-section exactly (y2164..3900), so these are the
-   original coordinates. Each line draws itself once (pathLength 1). */
-const CONNECTORS = [
-  "M585.5 2661.5V2698M585.5 2698V2858.5M585.5 2698H921.5M921.5 2698V2661.5M921.5 2698H1269V2661.5",
-  "M646.5 2858.5H215V2676",
-  "M1193 2858.5H1391.5V3009",
-  "M1241.5 3709H1042V3672.5",
+   original coordinates. Each line draws itself once (pathLength 1).
+   Services R1 CORR01 round 3 (spread): with the columns spread by g (1440
+   units, useFrameSpread) the cards, the CC.OS copy / card / cta move right and
+   the Build copy left, so the lines follow: the card drops and the bus end at
+   +g, the down-run to the title row stays at x585.5 (never under the centred
+   CC.OS title) and the bus reaches back to it, the run to the copy ends at
+   215 - g, the arm to the CC.OS card at 1391.5 + g. g = 0 is the original. */
+const connectors = (g: number) => [
+  `M${585.5 + g} 2661.5V2698M${921.5 + g} 2661.5V2698M${1269 + g} 2661.5V2698M585.5 2698H${1269 + g}M585.5 2698V2858.5`,
+  `M646.5 2858.5H${215 - g}V2676`,
+  `M1193 2858.5H${1391.5 + g}V3009`,
+  `M${1241.5 + g} 3709H${1042 + g}V3672.5`,
 ];
 
 export function StudioConnectors() {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const g = useFrameSpread(svgRef, 1440);
   return (
-    <svg className="sc" viewBox="0 2164 1440 1736" fill="none" aria-hidden="true" focusable="false" data-scene>
-      {CONNECTORS.map((d, i) => (
-        <path key={d} className="sc__line" d={d} pathLength={1} style={{ "--i": i } as CSSProperties} />
+    <svg ref={svgRef} className="sc" viewBox="0 2164 1440 1736" fill="none" aria-hidden="true" focusable="false" data-scene>
+      {connectors(g).map((d, i) => (
+        <path key={i} className="sc__line" d={d} pathLength={1} style={{ "--i": i } as CSSProperties} />
       ))}
     </svg>
   );
