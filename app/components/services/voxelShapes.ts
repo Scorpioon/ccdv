@@ -4,14 +4,14 @@
    exports (Frame 348..353, Group 336-1 / 388 / 392 / 422 and the SERVICES_v2
    Formation pile all draw the same cube: top vertex at the origin, half width
    37.373, side 43.03, height 85.708), scaled per figure. A formation is a list
-   of slots (top-vertex position, scale, ghost) in drawing order, back to front.
+   of slots (top-vertex position, scale, ghost) in drawing order, back to front
+   (the Formation pile instead lists its cubes by identity, with a depth key).
 
      transcribed  slot positions copied from the export (Frame 351 cluster,
-                  Group 422 network, the SERVICES_v2 pile with its four outline
-                  "ghost" cubes)
+                  the SERVICES_v2 pile with its four outline "ghost" cubes)
      built        isometric grid cells (x, y, z) projected with the same cube
-                  (ring = Group 388, stepped pyramid = Group 392, the Formation
-                  gear and arrow), sorted back to front by x + y + z */
+                  (ring = Group 388, stepped pyramid = Group 392, the pile's
+                  three scrambles), sorted back to front by x + y + z */
 
 export const CUBE_HEX = "M0 0L37.373 21.427L37.336 64.46L0 85.708L-36.874 64.281V21.427Z";
 export const CUBE_Y = "M0 85.708V42.857L37.373 21.427M0 42.857L-36.874 21.427";
@@ -26,6 +26,8 @@ export interface VoxelSlot {
   s: number;
   /** drawn as an outline cube in the ground colour (SERVICES_v2 pile) */
   ghost?: boolean;
+  /** back-to-front key for shapes listed by cube identity (the pile) */
+  d?: number;
 }
 export type VoxelShape = readonly VoxelSlot[];
 
@@ -87,37 +89,52 @@ const PILE_CLUSTER: VoxelShape = shift(
   3354,
   2.0932,
 );
-const PILE_CX = 762.4;
-const PILE_BASE = 4006.4;
-/* Group 422: input, four columns of five, output; drawn at 2x, ends as ghosts */
-const NETWORK_COLS = [308.897, 230.045, 158.084, 76.2171];
-const NETWORK_ROWS = [105.137, 81.8672, 53.8594, 28.0078, 0];
-const PILE_NETWORK: VoxelShape = shift(
-  [
-    [354.147, 52.5664, true],
-    ...NETWORK_COLS.flatMap((x) => NETWORK_ROWS.map((y) => [x, y] as const)),
-    [15.889, 69.8047, true],
-  ],
-  2,
-  PILE_CX - 185.5 * 2,
-  PILE_BASE - 142.1 * 2,
-  0.8617,
-);
-/* a voxel gear: a 5 x 5 ring, one tooth on each side, a ghost core */
-const GEAR: Cell[] = [];
-for (let x = 0; x < 5; x++) for (let y = 0; y < 5; y++) if (x === 0 || y === 0 || x === 4 || y === 4) GEAR.push([x, y, 0]);
-GEAR.push([2, -1, 0], [5, 2, 0], [2, 5, 0], [-1, 2, 0], [2, 2, 0, true]);
-/* a voxel arrow standing on the x/z plane, pointing up and to the right */
-const ARROW: Cell[] = [
-  [0, 0, 0], [1, 0, 1], [2, 0, 2], [3, 0, 3], [5, 0, 3],
-  [4, 0, 4], [5, 0, 4], [3, 0, 5, true], [4, 0, 5], [5, 0, 5],
-];
+/* R1 CORR01 round 2 (OPERATOR): the pile is ONE figure, always the same 15
+   cubes (the drawn ones, with the same four ghosts). A card does not turn it
+   into another drawing; it scrambles the same cubes into another arrangement,
+   spread over the background and leaning toward that card (cubes may pass
+   behind the side cards). Every arrangement lists the cubes by identity (index
+   k is always the same cube, so the ghosts stay the ghosts) and carries its own
+   back-to-front depth `d`. The arrangements sit on the drawn cluster's own
+   isometric lattice (scale 2.0932), cell (0, 0, 0) at (762, 3600). */
+const PILE_S = 2.0932;
+const PILE_GHOSTS = new Set(PILE_CLUSTER.map((c, k) => (c.ghost ? k : -1)));
+const scramble = (cells: readonly (readonly [number, number, number])[]): VoxelShape =>
+  cells.map(([x, y, z], k) => ({
+    x: 762 + (x - y) * HW * PILE_S,
+    y: 3600 + ((x + y) * HH - z * SIDE) * PILE_S,
+    s: PILE_S,
+    ghost: PILE_GHOSTS.has(k),
+    d: x + y + z + z * 0.01,
+  }));
+/* toward Tailored formation (upper left): a ridge running up-left */
+const SCRAMBLE_UL = scramble([
+  [0, 0, 0], [-1, 0, 0], [-2, 0, 0], [-3, 0, 0], [-4, 0, 0],
+  [-4, 0, 1], [-5, 0, 0], [-6, 0, 0], [0, 1, 0], [1, 1, 0],
+  [-2, 1, 0], [-1, 0, 1], [1, 0, 0], [0, 0, 1], [-3, 1, 0],
+]);
+/* toward Keep up with advancements (lower left): a ridge running down-left */
+const SCRAMBLE_LL = scramble([
+  [0, 0, 0], [0, 1, 0], [0, 2, 0], [0, 3, 0], [0, 4, 0],
+  [0, 5, 0], [0, 6, 0], [1, 6, 0], [1, 5, 0], [0, 4, 1],
+  [1, 1, 0], [1, 2, 0], [0, 2, 1], [2, 2, 0], [1, 4, 0],
+]);
+/* toward Understanding LLMs (upper right): a ridge running up-right */
+const SCRAMBLE_UR = scramble([
+  [0, 0, 0], [0, -1, 0], [0, -2, 0], [0, -3, 0], [0, -4, 0],
+  [0, -5, 0], [0, -6, 0], [0, -4, 1], [1, -5, 0], [1, 0, 0],
+  [1, 1, 0], [1, -2, 0], [0, -2, 1], [1, -1, 0], [-1, 0, 0],
+]);
 
 /* one per Formation card, in card order: Tailored formation, Keep up with
-   advancements, Understanding LLMs, Toolmaking Workshops (the drawn pile) */
+   advancements, Understanding LLMs, Toolmaking Workshops (the drawn pile, its
+   depth = the export's drawing order) */
 export const FORMATION_SHAPES: readonly VoxelShape[] = [
-  build(GEAR, 1.5, PILE_CX, PILE_BASE),
-  build(ARROW, 1.35, PILE_CX, PILE_BASE),
-  PILE_NETWORK,
-  PILE_CLUSTER,
+  SCRAMBLE_UL,
+  SCRAMBLE_LL,
+  SCRAMBLE_UR,
+  PILE_CLUSTER.map((c, k) => ({ ...c, d: k })),
 ];
+/* the cube's corners, for anchoring a line on a cube (left / right vertex at
+   the upper or lower edge of the side faces) */
+export const CUBE_CORNERS = { left: -36.874, right: 37.373, upper: 21.427, lower: 64.281 } as const;

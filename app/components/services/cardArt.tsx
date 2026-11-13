@@ -29,7 +29,7 @@
                       ring base (Group 388), then the stepped pyramid built on
                       that base (Group 392) */
 import { useId, useRef } from "react";
-import { GEAR_CORE, GEAR_OUTLINE, LILAC, useVisibleLoop } from "../studio/artworks";
+import { GEAR_CORE, GEAR_OUTLINE, useVisibleLoop } from "../studio/artworks";
 import { ARROW } from "./ArrowTrace";
 import { VoxelRain } from "./VoxelRain";
 import { CUBE_HEX, CUBE_Y, TOOLMAKING_SHAPES } from "./voxelShapes";
@@ -273,7 +273,8 @@ export function GearMeshArt({ reduced }: { reduced: boolean }) {
       <defs>
         <linearGradient id={id} gradientUnits="userSpaceOnUse" x1="148" y1="170" x2="148" y2="126">
           <stop stopColor="#D4D4D4" />
-          <stop offset="1" stopColor={LILAC} />
+          {/* Services: the gear core is the route red (Studio's stays lilac) */}
+          <stop offset="1" style={{ stopColor: "var(--ccdv-red)" }} />
         </linearGradient>
       </defs>
       <g ref={partnerRef} opacity={0} transform={gearAt(GEAR_C.x + GEAR_AWAY, GEAR_C.y, 22.5)}>

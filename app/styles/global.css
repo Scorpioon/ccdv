@@ -3834,6 +3834,40 @@ main { display: block; outline: none; }
 }
 /* === end STUDIO R3 OPUS CORR01 ============================================== */
 
+/* === STUDIO FIT — Services R1 CORR01 addendum (OPERATOR-authorised) ==========
+   The Services fit, applied to /studio: on desktop each scene frame scales so
+   the whole scene fits the screen height (min of the width unit and 100svh /
+   the scene's height in 1440 units), centred, the full-width ground left and
+   right. Wide screens are unchanged (the width unit wins). Size tokens that
+   carry --u are re-declared so they follow the frame. Additive: it overrides
+   only the frame boxes of the R3 block above; phones are untouched.
+     cover     .cv__frame     1118      approach  .ap  1046
+     lilac     .studio-lilac  1200 (CC.OS, the taller of its two scenes);
+               .bu / .cs / .sc are centred on the 1440u frame */
+@media (min-width: 1024px) {
+  .r11--studio :is(.cv__frame, .ap, .studio-lilac) {
+    --u: min(calc(1cqw / 14.4), calc(100svh / var(--fit-h)));
+    --s: var(--u);
+    --t-small: max(11px, calc(13.2 * var(--s)));
+    --sm-rise: calc(16 * var(--u));
+  }
+  .r11--studio .cv { height: auto; }
+  .r11--studio .cv__frame {
+    --fit-h: 1118;
+    position: relative;
+    width: calc(1440 * var(--u));
+    height: calc(1118 * var(--u));
+    margin-inline: auto;
+  }
+  .r11--studio .ap { --fit-h: 1046; width: calc(1440 * var(--u)); margin-inline: auto; }
+  .r11--studio .studio-lilac { --fit-h: 1200; }
+  .r11--studio :is(.bu, .cs, .sc) { left: calc((100% - 1440 * var(--u)) / 2); width: calc(1440 * var(--u)); }
+}
+@media (max-width: 1023px) {
+  .cv__frame { display: contents; }
+}
+/* === end STUDIO FIT ========================================================== */
+
 /* === SERVICES R1 — Studio-grammar scene system (t_20261113_servicesr1) ======
    /services only; every selector below is `.r11--services`-scoped or uses the
    new `sv-` / `chip--red` names, so no other route is reached. Services has no
@@ -3868,6 +3902,33 @@ main { display: block; outline: none; }
     --sm-rise: 16px;
     --sv-grid: 24px;
   }
+}
+
+/* R1 CORR01 fit: on desktop each scene frame scales so the whole scene fits
+   the screen height (min of the width unit and 100svh / the scene's height in
+   1440 units), centred with the full-width ground left and right. The size
+   tokens that carry --u are re-declared so they follow the frame's unit.
+     cover   .sv-cv__frame  1118      index  .sv-ix  1042
+     red     .sv-red        1200 (Formation, the taller of its two scenes) */
+@media (min-width: 1024px) {
+  .r11--services :is(.sv-cv__frame, .sv-ix, .sv-red) {
+    --u: min(calc(1cqw / 14.4), calc(100svh / var(--fit-h)));
+    --s: var(--u);
+    --t-small: max(11px, calc(13.2 * var(--s)));
+    --sm-rise: calc(16 * var(--u));
+  }
+  .r11--services .sv-cv__frame {
+    --fit-h: 1118;
+    position: relative;
+    width: calc(1440 * var(--u));
+    height: calc(1118 * var(--u));
+    margin-inline: auto;
+  }
+  .r11--services .sv-ix { --fit-h: 1042; width: calc(1440 * var(--u)); margin-inline: auto; }
+  .r11--services .sv-red { --fit-h: 1200; }
+}
+@media (max-width: 1023px) {
+  .sv-cv__frame { display: contents; }
 }
 
 .sv-visually-hidden {
@@ -4027,7 +4088,6 @@ main { display: block; outline: none; }
 .sv-cv__whatis strong { font-weight: inherit; -webkit-text-stroke: 0.035em currentColor; }
 
 @media (min-width: 1024px) {
-  .sv-cv { height: calc(1118 * var(--u)); }
   .sv-cv__lockup { position: absolute; left: 0; top: 0; width: 100%; height: calc(270 * var(--u)); }
   .sv-cv__gear { left: calc(48 * var(--u)); top: calc(48 * var(--u)); width: calc(220 * var(--u)); height: calc(220 * var(--u)); }
   .sv-cv__pixel { left: calc(292 * var(--u)); top: calc(48 * var(--u)); width: calc(49.03 * var(--u)); height: calc(220.12 * var(--u)); }
@@ -4290,7 +4350,7 @@ main { display: block; outline: none; }
   /* one canvas (SERVICES_v2 y2308..4160 x 0.9375 = 1736): Work with in its
      top 536 (the Build geometry), Formation in the 1200 below */
   .sv-red { height: calc(1736 * var(--u)); }
-  .sv-ww { position: absolute; left: 0; top: 0; width: 100%; height: calc(536 * var(--u)); }
+  .sv-ww { position: absolute; left: calc((100% - 1440 * var(--u)) / 2); top: 0; width: calc(1440 * var(--u)); height: calc(536 * var(--u)); }
   .sv-ww .bc { position: absolute; left: calc(48 * var(--u)); top: calc(48 * var(--u)); width: calc(317.066 * var(--u)); height: calc(99 * var(--u)); }
   .sv-ww__copy { position: absolute; left: calc(48 * var(--u)); top: calc(190.2 * var(--u)); width: calc(344 * var(--u)); }
   .sv-ww__cards-wrap { position: absolute; left: calc(442 * var(--u)); top: calc(48 * var(--u)); }
@@ -4356,8 +4416,8 @@ main { display: block; outline: none; }
 .sv-ca__ring { stroke: var(--ccdv-panel); stroke-width: 0.6; stroke-dasharray: 4 4; }
 .sv-ca__thread { stroke: var(--ccdv-panel); stroke-width: 0.35; }
 .sv-vx { display: block; width: 100%; height: 100%; }
-.sv-vx path { stroke-width: 0.6px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
-.sv-vx--pile path { stroke-width: 0.8px; }
+.sv-vx defs path { stroke-width: 0.6px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.sv-vx--pile defs path { stroke-width: 0.8px; }
 
 /* --- S4 Formation (R1 CORR01, SERVICES_v2 y2880..4160) ----------------------- */
 .sv-fm__title {
@@ -4389,13 +4449,16 @@ main { display: block; outline: none; }
 }
 /* a 44px tall hit area around the small chip */
 .sv-fm__link::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 44px; transform: translateY(-50%); }
-.sv-fm__pile { pointer-events: none; }
-/* the throw stretch: only a fine pointer may grab a cube (touch never does,
-   so the page scrolls over the pile) */
+/* the figure layer covers the whole scene under the text and the cards; only
+   its cubes take a pointer, and only a fine pointer (the throw stretch); touch
+   never does, so the page scrolls over it */
+.sv-fm__pile,
+.sv-fm__pile .sv-vx { pointer-events: none; }
+.sv-fm :is(.sv-fm__title, .sv-fm__intro, .sv-fm__cards, .sv-fm__card) { z-index: 1; }
+.sv-fm__title,
+.sv-fm__intro { position: relative; }
 @media (hover: hover) and (pointer: fine) {
-  .sv-fm__pile .sv-vx { pointer-events: auto; touch-action: none; }
-  .sv-fm__pile .sv-vx > g > use { cursor: grab; }
-  .sv-fm__pile .sv-vx[data-dragging] { cursor: grabbing; }
+  .sv-fm__pile .sv-vx > g > use { pointer-events: auto; touch-action: none; cursor: grab; }
   .sv-fm__pile .sv-vx[data-dragging] use { cursor: grabbing; }
 }
 .sv-fm__card {
@@ -4434,23 +4497,23 @@ main { display: block; outline: none; }
 /* the selected card: a light ring inside its edge */
 .sv-fm__card[aria-pressed="true"] { box-shadow: inset 0 0 0 max(1px, calc(1 * var(--s))) var(--ccdv-panel); }
 .sv-fm__sq { display: block; width: calc(6.317 * var(--s)); height: calc(6.317 * var(--s)); background: var(--ccdv-ink); }
-/* the one pile -> card connector: the selected one grows, the others retract */
-.sv-fm__links { display: none; }
-.sv-fm__line { stroke: var(--ccdv-ink); stroke-width: 0.8; stroke-dasharray: 1; stroke-dashoffset: 1; }
+/* the one figure -> card tether: the selected one grows once the scramble has
+   landed, the previous one retracts */
+.sv-fm__line { fill: none; stroke: var(--ccdv-ink); stroke-width: 0.8; stroke-dasharray: 1; stroke-dashoffset: 1; }
 .sv-fm__line[data-active="true"] { stroke-dashoffset: 0; }
 .r11--services[data-motion="on"] .sv-fm:not([data-seen="true"]) .sv-fm__line { stroke-dashoffset: 1; }
 @media (prefers-reduced-motion: no-preference) {
   .sv-fm__line { transition: stroke-dashoffset 0.4s var(--sm-ease); }
-  .sv-fm__line[data-active="true"] { transition: stroke-dashoffset 0.9s var(--sm-ease) 0.35s; }
+  .sv-fm__line[data-active="true"] { transition: stroke-dashoffset 0.9s var(--sm-ease) 0.9s; }
 }
 
 @media (min-width: 1024px) {
   /* y536..1736 of the red canvas = SERVICES_v2 y2880..4160 */
-  .sv-fm { position: absolute; left: 0; top: calc(536 * var(--u)); width: 100%; height: calc(1200 * var(--u)); }
+  .sv-fm { position: absolute; left: calc((100% - 1440 * var(--u)) / 2); top: calc(536 * var(--u)); width: calc(1440 * var(--u)); height: calc(1200 * var(--u)); }
   .sv-fm__title { position: absolute; left: calc(48 * var(--u)); top: calc(80 * var(--u)); font-size: calc(120 * var(--u)); }
   .sv-fm__intro { position: absolute; left: calc(1007.8 * var(--u)); top: calc(124 * var(--u)); width: calc(384 * var(--u)); }
-  .sv-fm__pile { position: absolute; left: calc(365.6 * var(--u)); top: calc(393.75 * var(--u)); width: calc(756.6 * var(--u)); height: calc(712.5 * var(--u)); }
-  .sv-fm__links { position: absolute; left: 0; top: 0; display: block; width: 100%; height: 100%; pointer-events: none; }
+  /* the figure layer: the whole scene (viewBox 0..1536 x 2880..4160) */
+  .sv-fm__pile { position: absolute; inset: 0; }
   .sv-fm__card { position: absolute; width: calc(284.667 * var(--u)); }
   .sv-fm__card--gear { left: calc(72.19 * var(--u)); top: calc(484.6 * var(--u)); height: calc(258 * var(--u)); }
   .sv-fm__card--arrow { left: calc(72.19 * var(--u)); top: calc(862.1 * var(--u)); height: calc(242.1 * var(--u)); }
@@ -4470,9 +4533,21 @@ main { display: block; outline: none; }
   /* nine glyphs at 0.6em = 281k inside the 294k column */
   .sv-fm__title { font-size: calc(52 * var(--k)); }
   .sv-fm__intro { margin-top: calc(32 * var(--k)); }
-  /* the pile spans the whole 390k column (the section clips nothing: the
-     viewBox already holds every formation) */
-  .sv-fm__pile { width: calc(390 * var(--k)); aspect-ratio: 807 / 760; margin: calc(24 * var(--k)) 0 0 calc(-48 * var(--k)); }
+  /* the figure across the whole 390k column: a window on the scene's
+     x200..1400 / y3300..4110 (every arrangement), no tethers */
+  .sv-fm__pile {
+    width: calc(390 * var(--k));
+    aspect-ratio: 1200 / 810;
+    overflow: hidden;
+    margin: calc(24 * var(--k)) 0 0 calc(-48 * var(--k));
+  }
+  .sv-fm__pile .sv-vx {
+    width: calc(390 * var(--k) * 1536 / 1200);
+    height: auto;
+    aspect-ratio: 1536 / 1280;
+    margin: calc(-390 * var(--k) * 420 / 1200) 0 0 calc(-390 * var(--k) * 200 / 1200);
+  }
+  .sv-fm__tethers { display: none; }
   .sv-fm__cards {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));

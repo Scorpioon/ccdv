@@ -6,15 +6,20 @@
              LLMs / Toolmaking Workshops (right), each with its own figure and
              loop (cardArt.tsx). A card is a toggle button: it selects the
              formation (aria-pressed); Tab / Enter / Space as any button.
-     pile    VoxelRain on the SERVICES_v2 pile (ink cubes with red edges, the
-             drawn outline cubes as red "ghosts"). It falls in and settles the
-             first time it is on screen, then dissolves and re-forms into the
-             selected card's formation: gear, arrow, network, or the drawn
-             cluster (Toolmaking, selected at first, as drawn).
-     line    one connector, from the pile to the selected card; it grows
-             (pathLength 1 + dashoffset, CSS) and the previous one retracts.
-             The SVG covers the section exactly in SERVICES_v2 units
-             (0..1536 x 2880..4160), so every coordinate is the export's.
+     pile    VoxelRain (morph) on the SERVICES_v2 pile: always ONE figure of
+             the same 15 cubes (ink cubes with red edges, the four drawn
+             outline cubes as red "ghosts"). It rains in once, the first time
+             it is on screen, then stays still; a card scrambles the same
+             cubes into that card's arrangement (voxelShapes.ts), spread over
+             the background and leaning toward the card, passing behind the
+             side cards. Toolmaking (selected at first) is the drawn cluster.
+     line    one tether, from the corner of the figure's cube nearest the
+             selected card, drawn along the cubes' own angles (a vertical run,
+             then the 30 deg edge direction) into the card; it grows once the
+             scramble has landed (pathLength 1 + dashoffset, CSS) and the
+             previous one retracts. The figure's SVG covers the section
+             exactly in SERVICES_v2 units (0..1536 x 2880..4160), under the
+             cards and the text, so every coordinate is the export's.
      throw   (optional stretch, FORMATION_THROW) a mouse or pen can pick up a
              cube, drag it and throw it; it knocks others aside and everything
              springs back into the formation (VoxelRain). Pointer-only extra:
@@ -26,17 +31,54 @@ import type { ReactNode } from "react";
 import { Link } from "react-router";
 import { AdvanceArrowArt, GearMeshArt, NetworkArt, ToolmakingArt } from "./cardArt";
 import { VoxelRain } from "./VoxelRain";
-import { FORMATION_SHAPES } from "./voxelShapes";
+import { CUBE_CORNERS, FORMATION_SHAPES } from "./voxelShapes";
+import type { VoxelShape } from "./voxelShapes";
 import { FORMATION_CARDS, FORMATION_COPY, FORMATION_DEFAULT, FORMATION_LINK, FORMATION_THROW } from "../../data/servicesScenes";
 import { index } from "../../motion/studioMotion";
 
-/* pile edge -> card edge, one per card (card order) */
-const LINKS = [
-  "M491.3 3533H380.64",
-  "M491.3 3712.8H430V3928.7H380.64",
-  "M1033.7 3488.9H1120V3556.1H1207.36",
-  "M1033.7 3794.5H1120V3898.6H1207.36",
-];
+/* the four cards in SERVICES_v2 units (x, y, w, h), card order */
+const CARD_RECTS = [
+  [77, 3396.9, 303.644, 275.219],
+  [77, 3799.58, 303.644, 258.219],
+  [1207.36, 3396.9, 303.644, 318.451],
+  [1207.36, 3739.35, 303.644, 318.451],
+] as const;
+const ISO = 21.427 / 37.373; // the cube edges' slope (30 deg isometric)
+const CLEAR = 24; // a cube corner closer than this to the card is behind it
+
+/* the tether from `shape` to card `card`: from the outer corner of the cube
+   nearest the card, a vertical run (if needed) then the edge-direction
+   diagonal, ending at the card's edge, level with its middle */
+function tether(shape: VoxelShape, card: number) {
+  const [cx, cy, cw, ch] = CARD_RECTS[card];
+  const left = cx < 768;
+  const upper = card === 0 || card === 2;
+  const edge = left ? cx + cw : cx;
+  const mid = cy + ch / 2;
+  let best: { x: number; y: number; gap: number; dist: number } | null = null;
+  for (const c of shape) {
+    const x = c.x + (left ? CUBE_CORNERS.left : CUBE_CORNERS.right) * c.s;
+    const y = c.y + (upper ? CUBE_CORNERS.upper : CUBE_CORNERS.lower) * c.s;
+    const gap = left ? x - edge : edge - x;
+    if (gap < CLEAR) continue;
+    const dist = Math.hypot(gap, y - mid);
+    if (!best || dist < best.dist) best = { x, y, gap, dist };
+  }
+  if (!best) return "";
+  const rise = best.gap * ISO;
+  const want = mid - best.y;
+  let sign = want === 0 ? -1 : Math.sign(want);
+  const run = Math.max(0, Math.abs(want) - rise);
+  let end = best.y + sign * (run + rise);
+  /* a short way: the diagonal alone; keep it on the card, else turn it */
+  if (!run && (end < cy + CLEAR || end > cy + ch - CLEAR)) {
+    sign = -sign;
+    end = best.y + sign * rise;
+  }
+  const y1 = best.y + sign * run;
+  return `M${best.x.toFixed(2)} ${best.y.toFixed(2)}V${y1.toFixed(2)}L${edge} ${end.toFixed(2)}`;
+}
+const TETHERS = FORMATION_SHAPES.map((shape, card) => tether(shape, card));
 
 export function FormationScene({ reduced }: { reduced: boolean }) {
   const [selected, setSelected] = useState(FORMATION_DEFAULT);
@@ -65,19 +107,20 @@ export function FormationScene({ reduced }: { reduced: boolean }) {
           shapes={FORMATION_SHAPES}
           active={selected}
           reduced={reduced}
-          viewBox="390 3300 807 760"
+          viewBox="0 2880 1536 1280"
           tone="pile"
           rain={460}
           enterDelay={0.4}
           throwable={FORMATION_THROW}
-        />
+          morph
+        >
+          <g className="sv-fm__tethers">
+            {TETHERS.map((d, i) => (
+              <path key={i} className="sv-fm__line" d={d} pathLength={1} data-active={selected === i} />
+            ))}
+          </g>
+        </VoxelRain>
       </div>
-
-      <svg className="sv-fm__links" viewBox="0 2880 1536 1280" fill="none" aria-hidden="true" focusable="false">
-        {LINKS.map((d, i) => (
-          <path key={d} className="sv-fm__line" d={d} pathLength={1} data-active={selected === i} />
-        ))}
-      </svg>
 
       {FORMATION_THROW ? (
         <p className="sv-visually-hidden" id="services-formation-drag">

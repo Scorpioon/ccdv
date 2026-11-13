@@ -14,6 +14,11 @@
                when a transition starts (leaving cubes go to the back).
      cycle     (card) after `hold` seconds the next formation of `cycle` is
                set; the clock only runs while the figure is on screen.
+     morph     (pile, R1 CORR01 round 2) the shapes list the SAME cubes by
+               identity: the first formation rains in once, then a new target
+               scrambles them: every cube glides (a lifted spring arc, staggered)
+               from where it is to its slot in the new arrangement, and the
+               stack is re-sorted by the arrangement's depth `d`.
      throw     (pile, optional stretch) a mouse or pen picks one standing cube
                up; it follows the pointer, drawn on top. On release it keeps
                its (capped) velocity on a damped spring back to its slot; a cube
@@ -28,6 +33,7 @@
    React renders the first formation; afterwards the engine owns the cube
    attributes (and React never re-renders the pool). */
 import { useEffect, useId, useRef } from "react";
+import type { ReactNode } from "react";
 import { useVisibleLoop } from "../studio/artworks";
 import { CUBE_HEX, CUBE_Y } from "./voxelShapes";
 import type { VoxelShape, VoxelSlot } from "./voxelShapes";
@@ -55,6 +61,9 @@ const HIT_PUSH = 6;
 const MOVING = 60;
 const HALF_W = 37.373;
 const MID_Y = 42.857;
+/* morph: the stagger between cubes and the upward kick that lifts each glide */
+const MORPH_STAGGER = 0.045;
+const MORPH_LIFT = 420;
 
 interface Cube {
   slot: VoxelSlot | null;
@@ -70,6 +79,10 @@ interface Cube {
   dy: number;
   vx: number;
   vy: number;
+  /* morph: hold the old place until this clock time */
+  wait: number;
+  /* thrown by the pointer: only a dragged or thrown cube hits others */
+  thrown: boolean;
 }
 
 interface Drag {
@@ -99,8 +112,13 @@ const restCube = (slot: VoxelSlot | null): Cube => ({
   dy: 0,
   vx: 0,
   vy: 0,
+  wait: 0,
+  thrown: false,
 });
 const still = (c: Cube) => Math.abs(c.dx) + Math.abs(c.dy) + Math.abs(c.vx) + Math.abs(c.vy) < 0.05;
+/* back-to-front order of a shape: its own order, or its depth keys */
+const depthOrder = (shape: VoxelShape) =>
+  shape.map((_, k) => k).sort((a, b) => (shape[a].d ?? a) - (shape[b].d ?? b));
 
 export function VoxelRain({
   shapes,
@@ -113,6 +131,8 @@ export function VoxelRain({
   enterDelay,
   cycle,
   throwable = false,
+  morph = false,
+  children,
 }: {
   shapes: readonly VoxelShape[];
   /** index of the formation to show (ignored once a cycle runs) */
@@ -132,6 +152,10 @@ export function VoxelRain({
   cycle?: { order: readonly number[]; hold: number };
   /** a mouse / pen can pick a cube up and throw it (see the header) */
   throwable?: boolean;
+  /** the shapes are one set of cubes by identity: scramble, don't re-rain */
+  morph?: boolean;
+  /** drawn under the cubes, in the same viewBox (the pile's tether lines) */
+  children?: ReactNode;
 }) {
   const id = `vx-${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
   const svgRef = useRef<SVGSVGElement>(null);
@@ -204,16 +228,70 @@ export function VoxelRain({
   const snap = (shape: VoxelShape) => {
     const s = sim.current;
     s.cubes = Array.from({ length: pool }, (_, i) => restCube(shape[i] ?? null));
-    s.order = shape.map((_, i) => i);
-    s.lifted = false;
+    s.order = morph ? depthOrder(shape) : shape.map((_, i) => i);
     s.cubes.forEach((c, i) => {
       const node = nodes.current[i];
       if (!node) return;
       if (c.slot) node.setAttribute("href", href(c.slot));
       node.setAttribute("opacity", c.slot ? "1" : "0");
       if (c.slot) writeCube(i, c, [0, 1]);
-      groupRef.current?.appendChild(node);
     });
+    restack();
+  };
+
+  /* morph: the first appearance, cube k falls onto slot k, lowest first */
+  const rainIn = (shape: VoxelShape, clock: number, delay: number) => {
+    const s = sim.current;
+    const rank = new Map(
+      shape
+        .map((_, k) => k)
+        .sort((a, b) => shape[b].y - shape[a].y)
+        .map((k, r) => [k, r] as const),
+    );
+    shape.forEach((slot, k) => {
+      const c = s.cubes[k];
+      Object.assign(c, restCube(slot), {
+        from: [-rain, 0],
+        to: [0, 1],
+        t0: clock + delay + (rank.get(k) ?? 0) * IN_STAGGER,
+        dur: IN_DUR,
+      });
+      nodes.current[k]?.setAttribute("href", href(slot));
+      writeCube(k, c, [-rain, 0]);
+    });
+    s.order = depthOrder(shape);
+    restack();
+  };
+
+  /* morph: scramble the same cubes into `shape`, each from where it is now */
+  const morphTo = (shape: VoxelShape, clock: number) => {
+    const s = sim.current;
+    shape.forEach((slot, k) => {
+      const c = s.cubes[k];
+      if (!c.slot) {
+        Object.assign(c, restCube(slot));
+        return;
+      }
+      const [drop, alpha] = valueAt(c, clock);
+      Object.assign(c, {
+        dx: c.slot.x + c.dx - slot.x,
+        dy: c.slot.y + drop + c.dy - slot.y,
+        from: [0, alpha],
+        to: [0, 1],
+        t0: clock,
+        dur: 0.3,
+        ease: settle,
+        slot,
+        vx: 0,
+        vy: -MORPH_LIFT,
+        wait: clock + k * MORPH_STAGGER,
+        thrown: false,
+        last: "",
+      });
+      nodes.current[k]?.setAttribute("href", href(slot));
+    });
+    s.order = depthOrder(shape);
+    restack();
   };
 
   const retarget = (shape: VoxelShape, clock: number, delay: number) => {
@@ -277,22 +355,23 @@ export function VoxelRain({
   };
 
   /* throw: springs home and hits, one step */
-  const physics = (dt: number) => {
+  const physics = (dt: number, clock: number) => {
     const s = sim.current;
     const dragged = s.drag?.i ?? -1;
     s.cubes.forEach((c, i) => {
-      if (i === dragged || !c.slot || still(c)) return;
+      if (i === dragged || !c.slot || still(c) || clock < c.wait) return;
       c.vx += (-HOME.k * c.dx - HOME.c * c.vx) * dt;
       c.vy += (-HOME.k * c.dy - HOME.c * c.vy) * dt;
       c.dx += c.vx * dt;
       c.dy += c.vy * dt;
-      if (still(c)) Object.assign(c, { dx: 0, dy: 0, vx: 0, vy: 0 });
+      if (still(c)) Object.assign(c, { dx: 0, dy: 0, vx: 0, vy: 0, thrown: false });
     });
-    /* a dragged or fast cube pushes any standing cube it overlaps */
+    /* a dragged or thrown (still fast) cube pushes any standing cube it
+       overlaps; a scramble's gliding cubes never hit each other */
     const centre = (c: Cube) => [c.slot!.x + c.dx, c.slot!.y + c.dy + MID_Y * c.slot!.s] as const;
     s.cubes.forEach((a, i) => {
       if (!a.slot || a.to[1] !== 1) return;
-      if (i !== dragged && Math.hypot(a.vx, a.vy) < MOVING) return;
+      if (i !== dragged && (!a.thrown || Math.hypot(a.vx, a.vy) < MOVING)) return;
       const [ax, ay] = centre(a);
       const ra = HALF_W * HIT_R * a.slot.s;
       s.cubes.forEach((b, j) => {
@@ -322,9 +401,16 @@ export function VoxelRain({
     const s = sim.current;
     if (cycle || active === s.shown || !shapes[active]) return;
     s.shown = active;
-    endDrag(true);
-    if (reduced || !s.started) snap(shapes[active]);
-    else retarget(shapes[active], s.clock, 0);
+    if (reduced || !s.started) {
+      endDrag(true);
+      snap(shapes[active]);
+    } else if (morph) {
+      endDrag(false);
+      morphTo(shapes[active], s.clock);
+    } else {
+      endDrag(true);
+      retarget(shapes[active], s.clock, 0);
+    }
   }, [active, reduced]);
 
   useVisibleLoop(
@@ -339,7 +425,8 @@ export function VoxelRain({
         snap(shapes[s.shown] ?? []);
         if (enterDelay !== undefined) {
           snap([]);
-          retarget(shapes[s.shown] ?? [], clock, enterDelay);
+          if (morph) rainIn(shapes[s.shown] ?? [], clock, enterDelay);
+          else retarget(shapes[s.shown] ?? [], clock, enterDelay);
         }
         if (cycle) s.next = clock + (enterDelay ?? 0) + cycle.hold;
       }
@@ -348,7 +435,7 @@ export function VoxelRain({
         s.shown = cycle.order[s.step];
         s.next = retarget(shapes[s.shown] ?? [], clock, 0) + cycle.hold;
       }
-      if (throwable) physics(dt);
+      if (throwable || morph) physics(dt, clock);
       s.cubes.forEach((c, i) => writeCube(i, c, valueAt(c, clock)));
     },
     () => {
@@ -421,7 +508,7 @@ export function VoxelRain({
         vy = (vy * THROW_MAX) / speed;
       }
       endDrag(reduced);
-      if (!reduced) Object.assign(c, { vx, vy });
+      if (!reduced) Object.assign(c, { vx, vy, thrown: true });
     };
     const onLost = (e: PointerEvent) => {
       if (s.drag && e.pointerId === s.drag.pointer) endDrag(reduced);
@@ -462,6 +549,7 @@ export function VoxelRain({
           <path d={CUBE_Y} stroke="var(--ccdv-ink)" />
         </g>
       </defs>
+      {children}
       <g ref={groupRef}>
         {Array.from({ length: pool }, (_, i) => {
           const slot = first.current[i] ?? null;

@@ -24,49 +24,53 @@ import { index } from "../../motion/studioMotion";
 export function StudioCover() {
   return (
     <section className="cv studio-grid" aria-label="Studio">
-      <div className="cv__lockup">
-        <GearMark className="cv__gear" fill={INK} dotFill={LIGHT} />
-        <CcdvPixelMark variant="stack" className="cv__pixel" fill={INK} />
-        <h1 className="cv__title">
-          <span>Collapse Creative</span> <span>Development Unit</span>
-        </h1>
-        <div className="cv__meta">
-          <div>[ COLLAPSE CREATIVE : DEV UNIT ]</div>
-          <div>[ hello[@]collapsecreative.com ]</div>
-          <div>
-            [ Part of <a href="https://collapsecreative.com">collapsecreative.com</a> ]
+      {/* Services R1 CORR01 addendum (fit): the 1440 x 1118 frame; on desktop
+          it scales to fit the screen height and centres (global.css) */}
+      <div className="cv__frame">
+        <div className="cv__lockup">
+          <GearMark className="cv__gear" fill={INK} dotFill={LIGHT} />
+          <CcdvPixelMark variant="stack" className="cv__pixel" fill={INK} />
+          <h1 className="cv__title">
+            <span>Collapse Creative</span> <span>Development Unit</span>
+          </h1>
+          <div className="cv__meta">
+            <div>[ COLLAPSE CREATIVE : DEV UNIT ]</div>
+            <div>[ hello[@]collapsecreative.com ]</div>
+            <div>
+              [ Part of <a href="https://collapsecreative.com">collapsecreative.com</a> ]
+            </div>
           </div>
         </div>
-      </div>
-      <span className="cv__label" aria-hidden="true">
-        collapse
-      </span>
-      <span className="cv__sq cv__sq--a" aria-hidden="true" />
-      <span className="cv__sq cv__sq--b" aria-hidden="true" />
-      <span className="cv__sq cv__sq--c" aria-hidden="true" />
-      <span className="cv__sq cv__sq--d" aria-hidden="true" />
-      <span className="cv__sq cv__sq--e" aria-hidden="true" />
+        <span className="cv__label" aria-hidden="true">
+          collapse
+        </span>
+        <span className="cv__sq cv__sq--a" aria-hidden="true" />
+        <span className="cv__sq cv__sq--b" aria-hidden="true" />
+        <span className="cv__sq cv__sq--c" aria-hidden="true" />
+        <span className="cv__sq cv__sq--d" aria-hidden="true" />
+        <span className="cv__sq cv__sq--e" aria-hidden="true" />
 
-      <div className="cv__orbit">
-        <StudioMobileOrbit className="cv__sphere" />
-      </div>
+        <div className="cv__orbit">
+          <StudioMobileOrbit className="cv__sphere" />
+        </div>
 
-      {/* phones: the large page label of STUDIO_resp3-1 (desktop shows the
-          identity title above as the page heading instead) */}
-      <h1 className="cv__studio">[Studio]</h1>
+        {/* phones: the large page label of STUDIO_resp3-1 (desktop shows the
+            identity title above as the page heading instead) */}
+        <h1 className="cv__studio">[Studio]</h1>
 
-      <div className="cv__whois-col">
-        <div className="cv__whois" data-spawn style={index(0)}>
-          <Chip tone="ink" as="p" className="cv__chip">
-            {"Whois\\\\"}
-          </Chip>
-          <p>The CCDV. is a technical studio working across design, software development and applied research.</p>
-          <p>
-            Our background <strong>is in visual design and digital experiences.</strong> Today, we use that
-            knowledge to <strong>build web applications</strong>, custom <strong>tools</strong> and{" "}
-            <strong>software</strong> around how people actually work.
-          </p>
-          <p>We approach development and strategy through the interface, the underlying logic and the people who will use it.</p>
+        <div className="cv__whois-col">
+          <div className="cv__whois" data-spawn style={index(0)}>
+            <Chip tone="ink" as="p" className="cv__chip">
+              {"Whois\\\\"}
+            </Chip>
+            <p>The CCDV. is a technical studio working across design, software development and applied research.</p>
+            <p>
+              Our background <strong>is in visual design and digital experiences.</strong> Today, we use that
+              knowledge to <strong>build web applications</strong>, custom <strong>tools</strong> and{" "}
+              <strong>software</strong> around how people actually work.
+            </p>
+            <p>We approach development and strategy through the interface, the underlying logic and the people who will use it.</p>
+          </div>
         </div>
       </div>
     </section>
