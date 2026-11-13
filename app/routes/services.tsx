@@ -5,7 +5,7 @@ import { StudioMobileMenu } from "../components/StudioMobileMenu";
 import { ServicesCover } from "../components/services/ServicesCover";
 import { ServiceIndex } from "../components/services/ServiceIndex";
 import { WorkWithScene } from "../components/services/WorkWithScene";
-import { NextStepScene, ServicesConnectors } from "../components/services/NextStepScene";
+import { FormationScene } from "../components/services/FormationScene";
 import { useMotionPolicy } from "../motion/reducedMotion";
 import { useSceneReveal } from "../motion/studioMotion";
 import { useBoundaryNav, useNavIdle } from "../motion/routeNav";
@@ -22,13 +22,15 @@ export function meta() {
      thin masthead (sticky, takes no height; pushed in by the black Service
      Index's top edge, as Studio A3)
      S1  red cover       identity lockup, Whatis\\, Arrow Trace           .sv-cv
-     S2  black index     bars, 3-disc sphere, categories, services, Focus  .sv-ix
-     S3  red Work with   joined chip, copy, three cards                   .sv-ww
-     S4  red Next step   title, copy, /contact card, /work link           .sv-ns
+     S2  black index     categories + voxel face left, editorial right    .sv-ix
+     S3  red Work with   joined chip, copy, three animated cards          .sv-ww
+     S4  red Formation   title, copy, cube formation, four cards          .sv-fm
      footer
 
-   S3 and S4 share one red mega-section with the square grid, joined on desktop
-   by ServicesConnectors. Service data stays in data/servicesContent.ts (the one
+   R1 CORR01 (SERVICES_v2): S2 is the 15-state voxel index, S3 the Diagnose /
+   intelligence / modular cards, S4 the Formation scene (it replaces R1's Next
+   step). S3 and S4 share one red mega-section with the square grid; S3's cards
+   hang on one desktop bus. Service data stays in data/servicesContent.ts (the one
    canonical source); scene copy is the provisional OPERATOR draft in
    data/servicesScenes.ts. Masthead: as Studio (A1/A3/A4), via
    motion/routeNav.ts; phones get the M1 bar and menu with Services current. */
@@ -54,8 +56,7 @@ export default function Services() {
 
       <div className="sv-red sv-grid">
         <WorkWithScene reduced={reduced} />
-        <NextStepScene />
-        <ServicesConnectors />
+        <FormationScene reduced={reduced} />
       </div>
 
       <SiteFooter />

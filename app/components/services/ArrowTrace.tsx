@@ -16,7 +16,7 @@
    returns after a short hold). Transforms are written to the DOM, no React state. */
 import { useEffect, useRef } from "react";
 
-const ARROW =
+export const ARROW =
   "M176.276 31.3594V162.121H147.118V49.5684L34.7383 161.948L14.1191 141.33L126.293 29.1582H14.1543V0H144.916L176.276 31.3594Z";
 /* centre of the arrow's bounding box (x 14.12..176.28, y 0..162.12) */
 const CX = 95.2;

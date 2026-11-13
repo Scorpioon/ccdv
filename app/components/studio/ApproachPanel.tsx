@@ -28,16 +28,14 @@ import { STUDIO_MOTION, index } from "../../motion/studioMotion";
    1398..1884 is the viewBox. The lit disc is the original's ellipse rx 53.86 /
    ry 242.43 turned by matrix(0.50293 0.864327 -0.867707 0.497075): a great
    circle whose normal projects along (0.503, 0.864) with |n.z| = 53.86 / 242.43. */
-/* SPHERE, sphereGeometry, ellipseProps and lineProps are exported (unchanged)
-   so the Services R1 index sphere reuses this exact geometry. */
-export const SPHERE = { cx: 372, cy: 1641, r: 242.624 };
+const SPHERE = { cx: 372, cy: 1641, r: 242.624 };
 const AXIS_N0: Vec3 = [0.4905, 0.8425, 0.222];
 /* latitude of the outer discs, as a fraction of r along the axis: fitted to the
    original's two dashed discs (bbox centres (279.5, 1488.9) and (455.6, 1793.0),
    widths 295.6) */
 const DISC_AT = [-0.72, 0, 0.72];
 
-export function sphereGeometry(m: Mat3) {
+function sphereGeometry(m: Mat3) {
   const n = apply(m, AXIS_N0);
   return {
     discs: DISC_AT.map((at) =>
@@ -51,14 +49,14 @@ export function sphereGeometry(m: Mat3) {
   };
 }
 
-export const ellipseProps = (g: ReturnType<typeof ringEllipse>) => ({
+const ellipseProps = (g: ReturnType<typeof ringEllipse>) => ({
   cx: g.cx.toFixed(2),
   cy: g.cy.toFixed(2),
   rx: g.rx.toFixed(2),
   ry: g.ry.toFixed(2),
   transform: `rotate(${g.angle.toFixed(2)} ${g.cx.toFixed(2)} ${g.cy.toFixed(2)})`,
 });
-export const lineProps = (g: ReturnType<typeof axisLine>) => ({
+const lineProps = (g: ReturnType<typeof axisLine>) => ({
   x1: g.x1.toFixed(2),
   y1: g.y1.toFixed(2),
   x2: g.x2.toFixed(2),

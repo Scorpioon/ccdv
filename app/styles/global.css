@@ -3903,13 +3903,13 @@ main { display: block; outline: none; }
 }
 
 /* --- keyboard focus: a thin ring in the scene's ink, none after a pointer -- */
-.r11--services :is(.sv-ix__slot, .sv-ix__service, .sv-ww__cards, .sv-ww__dot, .sv-ns__card, .sv-ns__cta, .sv-cv__meta a):focus { outline: none; }
-.r11--services :is(.sv-ix__slot, .sv-ix__service, .sv-ww__cards, .sv-ww__dot, .sv-ns__card, .sv-ns__cta, .sv-cv__meta a):focus-visible {
+.r11--services :is(.sv-ix__slot, .sv-ix__service, .sv-ww__cards, .sv-ww__dot, .sv-fm__card, .sv-fm__link, .sv-cv__meta a):focus { outline: none; }
+.r11--services :is(.sv-ix__slot, .sv-ix__service, .sv-ww__cards, .sv-ww__dot, .sv-fm__card, .sv-fm__link, .sv-cv__meta a):focus-visible {
   outline: 1px solid currentColor;
   outline-offset: 3px;
 }
 .r11--services :is(.sv-ix__slot, .sv-ix__service):focus-visible { outline-offset: -4px; }
-.r11--services .sv-ns__card:focus-visible { outline-color: var(--ccdv-ink); }
+.r11--services .sv-fm__card:focus-visible { outline-color: var(--ccdv-ink); }
 
 /* --- thin masthead (Studio OC01-02 / A1 / A3 / A4, mirrored) -----------------
    SiteMasthead `compact` renders the Studio compact markup; services.tsx sets
@@ -4128,32 +4128,20 @@ main { display: block; outline: none; }
   .sv-arrow .studio-sphere__hit { transform: scale(0.62); transform-box: fill-box; transform-origin: center; }
 }
 
-/* --- S2 Service Index ------------------------------------------------------- */
+/* --- S2 Service Index (R1 CORR01: SERVICES_v2 y1192..2308; index and voxel
+   face left, editorial right) ------------------------------------------------ */
 .sv-index { position: relative; z-index: 2; overflow: clip; background: var(--ccdv-ink); color: var(--ccdv-panel); }
 .sv-ix { position: relative; }
-.sv-ix__bars { display: flex; gap: calc(16 * var(--s)); }
-.sv-ix__mark,
-.sv-ix__bar {
-  box-sizing: border-box;
-  border: max(0.5px, calc(0.5 * var(--s))) solid var(--ccdv-panel);
-  transition: background-color 0.45s var(--sm-ease), border-color 0.45s var(--sm-ease);
-}
-.sv-ix__bar[data-active="true"] { background: var(--ccdv-red); border-color: var(--ccdv-red); }
-.sv-ix__sphere { display: block; width: 100%; height: 100%; overflow: visible; color: var(--ccdv-panel); }
-.sv-ix__line { stroke: var(--ccdv-panel); stroke-width: 0.752677; fill: none; }
-/* the lit disc is the route red itself (no Services source states a blended
-   value; Studio's #823997 is its lilac's rendered color-dodge) */
-.sv-ix__disc {
-  fill: var(--ccdv-red);
-  fill-opacity: 0;
-  stroke: var(--ccdv-panel);
-  stroke-width: 0.752677;
-  stroke-dasharray: 4 4;
-  transition: fill-opacity 0.5s var(--sm-ease);
-}
-.sv-ix__disc[data-active="true"] { fill-opacity: 1; }
-.r11--services[data-motion="on"] .sv-ix:not([data-seen="true"]) .sv-ix__disc { fill-opacity: 0; }
-.sv-ix__axis { stroke: var(--ccdv-panel); stroke-width: 0.752677; stroke-dasharray: 0.75 2.25; }
+/* the voxel face (IndexVoxel): faces and box sides in the route red, the face
+   opacity is the tile's fill (written per frame); hairline edges */
+.sv-ix__art { position: relative; }
+.sv-vf { display: block; width: 100%; height: auto; overflow: visible; }
+.sv-vf__face,
+.sv-vf__side { fill: var(--ccdv-red); stroke: var(--ccdv-red); stroke-width: 0.5; stroke-linejoin: round; }
+.sv-vf__side { stroke-opacity: 0.55; }
+/* the editorial column stays over the face if a lean ever reaches it */
+.sv-ix__panel { position: relative; z-index: 1; }
+.sv-ix__strip { box-sizing: border-box; width: 100%; }
 .sv-ix__head { position: relative; z-index: 1; }
 .sv-ix__title { width: 100%; }
 .sv-ix__slots { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
@@ -4220,48 +4208,34 @@ main { display: block; outline: none; }
 }
 
 @media (min-width: 1024px) {
-  /* the Approach section's geometry (FB_R4_5 y1118..2164): left half bars /
-     sphere / rule, right half panel; five bars in the three-bar span
-     (18 + 16 + 5 x 110 + 4 x 16 = 648) */
+  /* SERVICES_v2 x 0.9375: strip + slots at x48..696 / y143.5, the face
+     648 x 600 at y302.5; the right column at x744 (its strip level with the
+     left one), lead at y287, services from y443; the column may run longer
+     than the face (the section grows) */
   .sv-ix {
     box-sizing: border-box;
-    min-height: calc(1046 * var(--u));
+    min-height: calc(1042 * var(--u));
     padding: calc(143.5 * var(--u)) calc(48 * var(--u)) calc(96 * var(--u)) calc(744 * var(--u));
   }
-  .sv-ix__bars { position: absolute; left: calc(48 * var(--u)); top: calc(143.5 * var(--u)); height: calc(18 * var(--u)); }
-  .sv-ix__mark { width: calc(18 * var(--u)); }
-  .sv-ix__bar { width: calc(110 * var(--u)); }
-  .sv-ix__art { position: absolute; left: calc(129 * var(--u)); top: calc(280 * var(--u)); width: calc(486 * var(--u)); height: calc(486 * var(--u)); }
-  /* the original's rule under the left column only (x48..696, y2020): the
-     right column runs longer than Studio's */
-  .sv-ix::after {
-    content: "";
-    position: absolute;
-    left: calc(48 * var(--u));
-    top: calc(902 * var(--u));
-    width: calc(648 * var(--u));
-    height: max(0.5px, calc(0.5 * var(--u)));
-    background: var(--ccdv-panel);
-  }
+  .sv-ix__head { position: absolute; left: calc(48 * var(--u)); top: calc(143.5 * var(--u)); width: calc(648 * var(--u)); }
+  .sv-ix__art { position: absolute; left: calc(48 * var(--u)); top: calc(302.5 * var(--u)); width: calc(648 * var(--u)); height: calc(600 * var(--u)); }
   .sv-ix__panel { width: calc(648 * var(--u)); }
-  .sv-ix__body { margin-top: calc(64 * var(--u)); }
+  .sv-ix__body { margin-top: calc(122.3 * var(--u)); }
   .sv-ix__lead { font-size: calc(26.4 * var(--u)); line-height: calc(32 * var(--u)); }
-  .sv-ix__services { margin-top: calc(32 * var(--u)); font-size: calc(17.6 * var(--u)); line-height: calc(22 * var(--u)); }
-  .sv-ix__detail { margin-top: calc(32 * var(--u)); }
+  .sv-ix__services { margin-top: calc(92 * var(--u)); font-size: calc(17.6 * var(--u)); line-height: calc(22 * var(--u)); }
+  .sv-ix__detail { margin-top: calc(56 * var(--u)); }
   .sv-ix__copy { font-size: calc(17.6 * var(--u)); line-height: calc(22 * var(--u)); }
   .sv-ix__copy p + p { margin-top: calc(15 * var(--u)); }
   .sv-ix__focus { margin-top: calc(32 * var(--u)); }
 }
 
 @media (max-width: 1023px) {
-  /* the Approach phone order: bars, the sphere wider than the column (the
-     section clips it), the strip + slots over the sphere's foot, then the
-     category content; every slot and service row is a 44px target */
+  /* phones: the same order in one column: strip + slots, the face (column
+     wide), then the editorial strip and the category content; every slot and
+     service row is a 44px target */
   .sv-ix { padding: calc(48 * var(--k)) calc(var(--x0) + 48 * var(--k)); }
-  .sv-ix__mark { display: none; }
-  .sv-ix__bar { flex: 1; height: calc(8 * var(--k)); }
-  .sv-ix__art { width: calc(486 * var(--k)); height: calc(486 * var(--k)); margin-left: calc(-96 * var(--k)); }
-  .sv-ix__head { margin-top: calc(-61 * var(--k)); }
+  .sv-ix__art { margin-top: calc(32 * var(--k)); }
+  .sv-ix__panel { margin-top: calc(48 * var(--k)); }
   .sv-ix__slots { grid-template-columns: minmax(0, 1fr); }
   .sv-ix__slot { height: auto; min-height: 44px; }
   .sv-ix__slot + .sv-ix__slot { border-left-width: max(0.5px, calc(0.5 * var(--k))); border-top-width: 0; }
@@ -4274,7 +4248,6 @@ main { display: block; outline: none; }
   .sv-ix__copy { font-size: max(13px, calc(14 * var(--k))); line-height: 1.5; }
   .sv-ix__copy p + p { margin-top: calc(14 * var(--k)); }
   .sv-ix__focus { margin-top: calc(28 * var(--k)); }
-  .sv-ix__sphere .studio-sphere__hit { transform: scale(0.62); transform-box: fill-box; transform-origin: center; }
 }
 
 /* --- S3 Work with CCDV. ------------------------------------------------------ */
@@ -4294,13 +4267,15 @@ main { display: block; outline: none; }
 }
 .sv-ww__art { position: absolute; inset: 0; }
 .sv-ww__art > .studio-art { width: 100%; height: 100%; }
+/* SERVICES_v2 capsules are 52.6 / 69.6 tall (49.3 / 65.25 here): the capsule
+   grows with its two or three lines */
 .sv-ww__caption {
   position: absolute;
   left: calc(12 * var(--s));
   right: calc(12 * var(--s));
   bottom: calc(12 * var(--s));
   box-sizing: border-box;
-  min-height: calc(66 * var(--s));
+  min-height: calc(49.3 * var(--s));
   margin: 0;
   padding: calc(8.9 * var(--s)) calc(12.25 * var(--s));
   border-radius: calc(10 * var(--s));
@@ -4309,14 +4284,12 @@ main { display: block; outline: none; }
   font-size: var(--t-small);
   line-height: calc(16 * var(--s));
 }
-.sv-ww__step { margin: 0; font: inherit; text-decoration: underline; text-underline-offset: 0.12em; text-decoration-thickness: 0.06em; }
-.sv-ww__caption p { margin: 0; }
 .sv-ww__dots { display: none; }
 
 @media (min-width: 1024px) {
-  /* one canvas: Work with in its top 536 (the Build geometry), Next step in
-     the 700 below, the connectors over both */
-  .sv-red { height: calc(1236 * var(--u)); }
+  /* one canvas (SERVICES_v2 y2308..4160 x 0.9375 = 1736): Work with in its
+     top 536 (the Build geometry), Formation in the 1200 below */
+  .sv-red { height: calc(1736 * var(--u)); }
   .sv-ww { position: absolute; left: 0; top: 0; width: 100%; height: calc(536 * var(--u)); }
   .sv-ww .bc { position: absolute; left: calc(48 * var(--u)); top: calc(48 * var(--u)); width: calc(317.066 * var(--u)); height: calc(99 * var(--u)); }
   .sv-ww__copy { position: absolute; left: calc(48 * var(--u)); top: calc(190.2 * var(--u)); width: calc(344 * var(--u)); }
@@ -4368,8 +4341,26 @@ main { display: block; outline: none; }
   }
 }
 
-/* --- S4 Next step ------------------------------------------------------------ */
-.sv-ns__title {
+/* --- card figures (cardArt.tsx, VoxelRain) ----------------------------------
+   Hairline cubes in light on ink, as the exports; cube edges keep a constant
+   hairline at any scale (the network's cubes are drawn at 0.3). The dashed
+   ring and the threads stay in user units (their dashes are path-relative). */
+.sv-ca { display: block; width: 100%; height: 100%; }
+.sv-ca :is(.sv-ca__cube, .sv-ca__edge, .sv-ca__gear, .sv-ca__arrow) {
+  stroke: var(--ccdv-panel);
+  stroke-width: 0.6px;
+  vector-effect: non-scaling-stroke;
+}
+.sv-ca__cube { fill: var(--ccdv-ink); stroke-linejoin: round; }
+.sv-ca :is(.sv-ca__edge, .sv-ca__gear, .sv-ca__arrow, .sv-ca__ring, .sv-ca__thread) { fill: none; }
+.sv-ca__ring { stroke: var(--ccdv-panel); stroke-width: 0.6; stroke-dasharray: 4 4; }
+.sv-ca__thread { stroke: var(--ccdv-panel); stroke-width: 0.35; }
+.sv-vx { display: block; width: 100%; height: 100%; }
+.sv-vx path { stroke-width: 0.6px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.sv-vx--pile path { stroke-width: 0.8px; }
+
+/* --- S4 Formation (R1 CORR01, SERVICES_v2 y2880..4160) ----------------------- */
+.sv-fm__title {
   margin: 0;
   font: inherit;
   font-weight: 600;
@@ -4379,21 +4370,51 @@ main { display: block; outline: none; }
   text-underline-offset: 0.04545em;
   text-decoration-thickness: 0.04545em;
 }
-.sv-ns__copy { margin: 0; font-size: calc(19.8 * var(--s)); line-height: calc(24 * var(--s)); }
-.sv-ns__card {
+.sv-fm__copy { margin: 0; font-size: calc(17.6 * var(--s)); line-height: calc(22 * var(--s)); }
+/* the light underlined chip link (SERVICES_v2 "Join the newsletter!") */
+.sv-fm__link {
+  position: relative;
+  display: table;
+  height: calc(18.32 * var(--s));
+  margin: calc(14 * var(--s)) 0 0 auto;
+  padding: 0 calc(1 * var(--s));
+  background: var(--ccdv-panel);
+  color: var(--ccdv-ink);
+  font-size: max(12px, calc(13.2 * var(--s)));
+  line-height: calc(18.32 * var(--s));
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 0.06em;
+  white-space: nowrap;
+}
+/* a 44px tall hit area around the small chip */
+.sv-fm__link::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 44px; transform: translateY(-50%); }
+.sv-fm__pile { pointer-events: none; }
+/* the throw stretch: only a fine pointer may grab a cube (touch never does,
+   so the page scrolls over the pile) */
+@media (hover: hover) and (pointer: fine) {
+  .sv-fm__pile .sv-vx { pointer-events: auto; touch-action: none; }
+  .sv-fm__pile .sv-vx > g > use { cursor: grab; }
+  .sv-fm__pile .sv-vx[data-dragging] { cursor: grabbing; }
+  .sv-fm__pile .sv-vx[data-dragging] use { cursor: grabbing; }
+}
+.sv-fm__card {
   position: relative;
   display: block;
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0;
   border-radius: calc(16.4354 * var(--s));
   overflow: clip;
   background: var(--ccdv-ink);
   color: var(--ccdv-ink);
-  text-decoration: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
 }
-.sv-ns__art { position: absolute; left: 0; right: 0; top: 0; bottom: calc(78 * var(--s)); display: grid; place-items: center; }
-.sv-ns__art svg { display: block; width: 62%; height: auto; max-height: 100%; overflow: visible; }
-.sv-ns__trace { fill: none; stroke: var(--ccdv-panel); stroke-width: 0.75px; vector-effect: non-scaling-stroke; }
-.sv-ns__caption {
+.sv-fm__art { position: absolute; inset: 0; }
+.sv-fm__caption {
   position: absolute;
   left: calc(12 * var(--s));
   right: calc(12 * var(--s));
@@ -4401,64 +4422,69 @@ main { display: block; outline: none; }
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  min-height: max(44px, calc(54 * var(--s)));
-  padding: 0 calc(12.25 * var(--s));
+  min-height: calc(33.4 * var(--s));
+  padding: calc(8 * var(--s)) calc(12.25 * var(--s));
   border-radius: calc(10 * var(--s));
   background: var(--ccdv-panel);
-  font-size: max(12px, calc(16.5 * var(--s)));
-  line-height: 1.2;
-  transition: background-color 0.3s var(--sm-ease), color 0.3s var(--sm-ease);
+  font-size: var(--t-small);
+  line-height: calc(16 * var(--s));
+  transition: background-color 0.3s var(--sm-ease);
 }
-.sv-ns__card:hover .sv-ns__caption { background: var(--ccdv-red); }
-.sv-ns__cta {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  height: calc(18.32 * var(--s));
-  padding: 0 calc(1 * var(--s));
-  background: var(--ccdv-panel);
-  color: var(--ccdv-ink);
-  font-size: max(12px, calc(16.5 * var(--s)));
-  line-height: 1;
-  text-decoration: none;
-  white-space: nowrap;
+.sv-fm__card:hover .sv-fm__caption { background: var(--ccdv-red); }
+/* the selected card: a light ring inside its edge */
+.sv-fm__card[aria-pressed="true"] { box-shadow: inset 0 0 0 max(1px, calc(1 * var(--s))) var(--ccdv-panel); }
+.sv-fm__sq { display: block; width: calc(6.317 * var(--s)); height: calc(6.317 * var(--s)); background: var(--ccdv-ink); }
+/* the one pile -> card connector: the selected one grows, the others retract */
+.sv-fm__links { display: none; }
+.sv-fm__line { stroke: var(--ccdv-ink); stroke-width: 0.8; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.sv-fm__line[data-active="true"] { stroke-dashoffset: 0; }
+.r11--services[data-motion="on"] .sv-fm:not([data-seen="true"]) .sv-fm__line { stroke-dashoffset: 1; }
+@media (prefers-reduced-motion: no-preference) {
+  .sv-fm__line { transition: stroke-dashoffset 0.4s var(--sm-ease); }
+  .sv-fm__line[data-active="true"] { transition: stroke-dashoffset 0.9s var(--sm-ease) 0.35s; }
 }
-.sv-ns__cta::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: calc(-2.65 * var(--s));
-  height: max(0.75px, calc(0.75 * var(--s)));
-  background: var(--ccdv-ink);
-}
-/* a 44px tall hit area around the small chip */
-.sv-ns__cta::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 44px; transform: translateY(-50%); }
-.sv-ns__sq { display: block; width: calc(6.317 * var(--s)); height: calc(6.317 * var(--s)); background: var(--ccdv-ink); }
 
 @media (min-width: 1024px) {
-  /* y536..1236 of the red canvas; the connectors' coordinates follow these */
-  .sv-ns { position: absolute; left: 0; top: calc(536 * var(--u)); width: 100%; height: calc(700 * var(--u)); }
-  .sv-ns__title { position: absolute; left: calc(680 * var(--u)); top: calc(88 * var(--u)); font-size: calc(110 * var(--u)); }
-  .sv-ns__copy { position: absolute; left: calc(680 * var(--u)); top: calc(262 * var(--u)); width: calc(380 * var(--u)); }
-  .sv-ns__card { position: absolute; left: calc(1107.333 * var(--u)); top: calc(262 * var(--u)); width: calc(284.667 * var(--u)); height: calc(300 * var(--u)); }
-  .sv-ns__cta { position: absolute; left: calc(680 * var(--u)); top: calc(430 * var(--u)); }
-  .sv-ns__sq { position: absolute; left: calc(1385.68 * var(--u)); top: calc(640 * var(--u)); }
+  /* y536..1736 of the red canvas = SERVICES_v2 y2880..4160 */
+  .sv-fm { position: absolute; left: 0; top: calc(536 * var(--u)); width: 100%; height: calc(1200 * var(--u)); }
+  .sv-fm__title { position: absolute; left: calc(48 * var(--u)); top: calc(80 * var(--u)); font-size: calc(120 * var(--u)); }
+  .sv-fm__intro { position: absolute; left: calc(1007.8 * var(--u)); top: calc(124 * var(--u)); width: calc(384 * var(--u)); }
+  .sv-fm__pile { position: absolute; left: calc(365.6 * var(--u)); top: calc(393.75 * var(--u)); width: calc(756.6 * var(--u)); height: calc(712.5 * var(--u)); }
+  .sv-fm__links { position: absolute; left: 0; top: 0; display: block; width: 100%; height: 100%; pointer-events: none; }
+  .sv-fm__card { position: absolute; width: calc(284.667 * var(--u)); }
+  .sv-fm__card--gear { left: calc(72.19 * var(--u)); top: calc(484.6 * var(--u)); height: calc(258 * var(--u)); }
+  .sv-fm__card--arrow { left: calc(72.19 * var(--u)); top: calc(862.1 * var(--u)); height: calc(242.1 * var(--u)); }
+  .sv-fm__card--network { left: calc(1131.9 * var(--u)); top: calc(484.6 * var(--u)); height: calc(298.5 * var(--u)); }
+  .sv-fm__card--toolmaking { left: calc(1131.9 * var(--u)); top: calc(805.4 * var(--u)); height: calc(298.5 * var(--u)); }
+  .sv-fm__card--gear .sv-fm__caption { min-height: calc(49.3 * var(--u)); }
+  .sv-fm__sq { position: absolute; left: calc(47.6 * var(--u)); top: calc(1145.7 * var(--u)); }
 }
 
 @media (max-width: 1023px) {
-  .sv-ns {
+  .sv-fm {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     padding: calc(96 * var(--k)) calc(var(--x0) + 48 * var(--k)) calc(48 * var(--k));
   }
   /* nine glyphs at 0.6em = 281k inside the 294k column */
-  .sv-ns__title { font-size: calc(52 * var(--k)); }
-  .sv-ns__copy { margin-top: calc(32 * var(--k)); }
-  .sv-ns__card { width: calc(294 * var(--k)); height: calc(300 * var(--k)); margin-top: calc(40 * var(--k)); }
-  .sv-ns__cta { margin-top: calc(48 * var(--k)); }
-  .sv-ns__sq { align-self: center; margin-top: calc(80 * var(--k)); }
+  .sv-fm__title { font-size: calc(52 * var(--k)); }
+  .sv-fm__intro { margin-top: calc(32 * var(--k)); }
+  /* the pile spans the whole 390k column (the section clips nothing: the
+     viewBox already holds every formation) */
+  .sv-fm__pile { width: calc(390 * var(--k)); aspect-ratio: 807 / 760; margin: calc(24 * var(--k)) 0 0 calc(-48 * var(--k)); }
+  .sv-fm__cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: calc(12 * var(--k));
+    width: 100%;
+    margin-top: calc(24 * var(--k));
+  }
+  /* each card keeps its figure above a caption of up to three short lines */
+  .sv-fm__card { aspect-ratio: 1; min-height: 132px; }
+  .sv-fm__art { bottom: calc(56 * var(--k)); }
+  .sv-fm__caption { left: 8px; right: 8px; bottom: 8px; min-height: 0; padding: 6px 8px; line-height: 1.25; }
+  .sv-fm__sq { align-self: center; margin-top: calc(64 * var(--k)); }
 }
 
 /* --- desktop connectors ------------------------------------------------------ */
@@ -4473,7 +4499,6 @@ main { display: block; outline: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .r11--services .sv-ix__bar,
-  .r11--services .sv-ix__disc { transition: none; }
+  .r11--services :is(.sv-fm__caption, .sv-fm__line) { transition: none; }
 }
 /* === end SERVICES R1 ======================================================== */
