@@ -25,7 +25,8 @@ export function ChipGear({ className }: { className?: string }) {
 
 /* A label chip: gear + text on a solid plate. `ink` is the Whois chip (black
    plate, light text), `light` the Toolbelt chips (light plate, black text),
-   `lilac` the \\Studio Approach strip. */
+   `lilac` the \\Studio Approach strip. `red` is the Services R1 strip (the same
+   strip in the Services accent; its CSS lives in the SERVICES R1 block). */
 export function Chip({
   tone,
   as: Tag = "span",
@@ -33,7 +34,7 @@ export function Chip({
   id,
   children,
 }: {
-  tone: "ink" | "light" | "lilac";
+  tone: "ink" | "light" | "lilac" | "red";
   as?: "span" | "p" | "h2" | "h3" | "h4";
   className?: string;
   id?: string;
@@ -69,6 +70,24 @@ export function BuildChip({ id }: { id: string }) {
       <span className="bc__text">
         [Build with WrkOps<span className="bc__tm">™</span>]
       </span>
+    </h2>
+  );
+}
+
+/* Services R1: the same joined gear tab + label pill (verbatim BUILD_CHIP_D /
+   BUILD_CHIP_M silhouettes, unchanged geometry) carrying another label. Shares
+   the `.bc` CSS of BuildChip; BuildChip itself is untouched. */
+export function JoinedChip({ id, className, children }: { id: string; className?: string; children: ReactNode }) {
+  return (
+    <h2 className={`bc${className ? ` ${className}` : ""}`} id={id} data-spawn>
+      <svg className="bc__shape bc__shape--d" viewBox="48 2212 317.066 99" aria-hidden="true" focusable="false">
+        <path d={BUILD_CHIP_D} fill="currentColor" />
+      </svg>
+      <svg className="bc__shape bc__shape--m" viewBox="48 2684.25 294 91.8" aria-hidden="true" focusable="false">
+        <path d={BUILD_CHIP_M} fill="currentColor" />
+      </svg>
+      <ChipGear className="bc__gear" />
+      <span className="bc__text">{children}</span>
     </h2>
   );
 }

@@ -379,10 +379,13 @@ export function GearConveyor({
   reduced,
   frame = "0 0 390 130",
   pitch = GEAR_PITCH,
+  accent = LILAC,
 }: {
   reduced: boolean;
   frame?: string;
   pitch?: number;
+  /** the core gradient's end colour; Services R1 passes its red */
+  accent?: string;
 }) {
   const id = `conv-${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
   const svgRef = useRef<SVGSVGElement>(null);
@@ -415,7 +418,7 @@ export function GearConveyor({
       <defs>
         <linearGradient id={id} gradientUnits="userSpaceOnUse" x1="148" y1="170" x2="148" y2="126">
           <stop stopColor="#D4D4D4" />
-          <stop offset="1" stopColor={LILAC} />
+          <stop offset="1" stopColor={accent} />
         </linearGradient>
         <g id={`${id}-gear`}>
           <path d={GEAR_OUTLINE} stroke={LIGHT} strokeWidth={STROKE} />

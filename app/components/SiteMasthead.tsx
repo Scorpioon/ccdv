@@ -46,7 +46,7 @@ const SECTION_NAV: Record<SectionVariant, { index: number; Tile: (props: { class
   contact: { index: 4, Tile: ContactMarkTile },
 };
 
-export function SiteMasthead({ variant }: { variant: "home" | SectionVariant }) {
+export function SiteMasthead({ variant, compact = false }: { variant: "home" | SectionVariant; compact?: boolean }) {
   const link = useTransitionLink();
   const isHome = variant === "home";
   const nav = !isHome ? SECTION_NAV[variant as SectionVariant] : null;
@@ -55,8 +55,10 @@ export function SiteMasthead({ variant }: { variant: "home" | SectionVariant }) 
      compact state swaps the stacked pixel block for the inline lockup (FB_R4_2),
      so that variant is rendered too; both are driven by `--mh-p` (0..1) set by
      the Studio route. Only Studio gets it, and with --mh-p unset it is the
-     full-size masthead. */
-  const collapsing = variant === "studio";
+     full-size masthead.
+     Services R1: `compact` opts another section route into the same markup
+     (the thin bar); its placement CSS is scoped to that route. */
+  const collapsing = variant === "studio" || compact;
 
   const mark = (
     <>

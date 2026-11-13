@@ -37,7 +37,9 @@ const LEGAL = ["Privacy", "Terms of use", "Legal", "Onlyfans"];
 const LIGHT = "#F2F2F2";
 const INK = "#1A1A1A";
 
-export function StudioMobileMenu() {
+/* Services R1: `current` marks another route as the page (default /studio, so
+   Studio renders exactly as before). */
+export function StudioMobileMenu({ current: currentRoute = "/studio" }: { current?: string } = {}) {
   const [open, setOpen] = useState(false);
   const panelId = useId();
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -118,7 +120,7 @@ export function StudioMobileMenu() {
         >
         <ul className="smm__routes">
           {ROUTES.map(({ label, to }) => {
-            const current = to === "/studio";
+            const current = to === currentRoute;
             return (
               <li key={to}>
                 <Link
