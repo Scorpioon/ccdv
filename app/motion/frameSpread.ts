@@ -6,13 +6,20 @@
    A drawing that joins both columns (Studio's Build / CC.OS connectors, the
    Formation tether) needs that same spread in its own units:
 
-     useFrameSpread(ref, units)  g = max(0, (shell - frame) / 2) * units / frame,
+     useFrameSpread(ref, units)  g = min(max(0, (shell - frame) / 2), cap)
+                                     * units / frame,
                                  where `ref` is an element exactly as wide as
                                  the frame and `units` its width in viewBox
                                  units; 0 below 1024px and before the first
-                                 measure (SSR renders the unspread drawing). */
+                                 measure (SSR renders the unspread drawing).
+
+   Round 4 (OPERATOR): the spread is capped at SPREAD_CAP design units per
+   side (cap = SPREAD_CAP / 1440 of the frame); global.css's --gx clamp uses
+   the same 120 and must match. */
 import { useEffect, useState } from "react";
 import type { RefObject } from "react";
+
+export const SPREAD_CAP = 120;
 
 export function useFrameSpread(ref: RefObject<Element | null>, units: number) {
   const [spread, setSpread] = useState(0);
@@ -24,7 +31,8 @@ export function useFrameSpread(ref: RefObject<Element | null>, units: number) {
     const measure = () => {
       const frame = el.getBoundingClientRect().width;
       const ground = shell.getBoundingClientRect().width - frame;
-      const g = wide.matches && frame > 0 ? (Math.max(0, ground / 2) * units) / frame : 0;
+      const cap = (SPREAD_CAP * frame) / 1440;
+      const g = wide.matches && frame > 0 ? (Math.min(Math.max(0, ground / 2), cap) * units) / frame : 0;
       setSpread(Math.round(g * 100) / 100);
     };
     measure();

@@ -3565,7 +3565,7 @@ main { display: block; outline: none; }
     position: absolute;
     left: calc(48 * var(--u));
     top: calc(902 * var(--u));              /* y2020 */
-    width: calc(1344 * var(--u));           /* A2: x48..1392, both columns (FB_R4_5: x48..696) */
+    width: calc(648 * var(--u));            /* x48..696, the sphere module only (FB_R4_5; CORR01 round 4, OPERATOR) */
     height: max(0.5px, calc(0.5 * var(--u)));
     background: var(--ccdv-panel);
   }
@@ -3868,9 +3868,10 @@ main { display: block; outline: none; }
      (0 on wide screens, where nothing changes); the left column moves left by
      it, the right column right (`translate`, which stacks with the spawn
      transform); the CC.OS title stays centred. The connectors follow in
-     StudioConnectors (useFrameSpread). */
+     StudioConnectors (useFrameSpread). Round 4 (OPERATOR): capped at 120u
+     per side (SPREAD_CAP in app/motion/frameSpread.ts must match). */
   .r11--studio :is(.cv__frame, .ap, .studio-lilac) {
-    --gx: max(0px, calc((100cqw - 1440 * var(--u)) / 2));
+    --gx: clamp(0px, calc((100cqw - 1440 * var(--u)) / 2), calc(120 * var(--u)));
   }
   .r11--studio :is(.cv__lockup, .cv__whois-col, .cv__sq--d, .ap__bars, .ap__art, .bu .bc, .bu__copy, .cs__globe-wrap) {
     translate: calc(-1 * var(--gx)) 0;
@@ -3878,8 +3879,9 @@ main { display: block; outline: none; }
   .r11--studio :is(.cv__label, .cv__sq--a, .cv__sq--b, .cv__sq--c, .cv__sq--e, .cv__orbit, .ap__panel, .bu__cards-wrap, .cs__copy, .cs__card, .cs__cta, .cs__sq) {
     translate: var(--gx) 0;
   }
-  /* the Approach rule runs across both spread columns */
-  .r11--studio .ap::after { left: calc(48 * var(--u) - var(--gx)); width: calc(1344 * var(--u) + 2 * var(--gx)); }
+  /* round 4: the Approach rule stays under the sphere module, so it moves with
+     the left column */
+  .r11--studio .ap::after { translate: calc(-1 * var(--gx)) 0; }
   .r11--studio .sc { overflow: visible; }
 }
 @media (max-width: 1023px) {
@@ -3949,9 +3951,10 @@ main { display: block; outline: none; }
   /* round 3 (OPERATOR, spread): as /studio (STUDIO FIT above): the left column
      moves left and the right column right by --gx, the ground beside the
      frame, so the scenes reach the screen margins; the Formation figure stays
-     centred and its tether follows (FormationScene, useFrameSpread) */
+     centred and its tether follows (FormationScene, useFrameSpread). Round 4:
+     capped at 120u per side, as /studio */
   .r11--services :is(.sv-cv__frame, .sv-ix, .sv-red) {
-    --gx: max(0px, calc((100cqw - 1440 * var(--u)) / 2));
+    --gx: clamp(0px, calc((100cqw - 1440 * var(--u)) / 2), calc(120 * var(--u)));
   }
   .r11--services :is(.sv-cv__lockup, .sv-cv__whatis-col, .sv-cv__sq--d, .sv-ix__head, .sv-ix__art, .sv-ww .bc, .sv-ww__copy, .sv-fm__title, .sv-fm__card--gear, .sv-fm__card--arrow, .sv-fm__sq) {
     translate: calc(-1 * var(--gx)) 0;
