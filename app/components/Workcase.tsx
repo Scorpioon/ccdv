@@ -22,7 +22,15 @@ import { AVAILABLE_YEARS, type WorkProject, type WorkcaseData } from "../data/wo
    Indetail body shows a neutral "[ pending ]" state — never invented text.
 
    Screenshots are single static <img>s (`WKC-PEND-003`): never split, never
-   overlaid with controls. */
+   overlaid with controls.
+
+   Work V2 (PROJECTv2.svg, 1520 artboard): same structure, re-measured — a
+   127 yellow band over a 31 ink rule, a 521 hero (733 photo | metadata sheet),
+   a 31 ink rule, then the 8.5-inset gallery (680 screenshot, two 311.5
+   Indetail fields, two 679 screenshots). The Type value shows the project's
+   own tag (the artboard's `INTERACTIVE WEBSITE`) and still links to the
+   canonical Type filter. The artboard's `[live site]`, `ADG-FAD.ORG` and
+   sample copy are not carried (D7). */
 
 const RESTORE_STATE = { restore: true } as const;
 
@@ -100,9 +108,9 @@ export function Workcase({ project, data }: { project: WorkProject; data: Workca
                   className="workcase-meta__type"
                   to="/work"
                   state={{ filter: { type: project.typeFilter } }}
-                  aria-label={`Type: ${project.typeFilter} — show in Work`}
+                  aria-label={`Type: ${project.tag} — show ${project.typeFilter} projects in Work`}
                 >
-                  {project.typeFilter}
+                  {project.tag}
                 </Link>
               </dd>
             </div>

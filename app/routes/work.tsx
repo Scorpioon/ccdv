@@ -1,48 +1,49 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Link, useLocation, useNavigationType } from "react-router";
+import { useLocation, useNavigationType } from "react-router";
 import { SiteMasthead } from "../components/SiteMasthead";
 import { SiteFooter } from "../components/SiteFooter";
-import { FilterGroup } from "../components/FilterGroup";
+import { GearMark } from "../components/marks/GearMark";
 import { ProjectList } from "../components/ProjectList";
-import { ProjectMosaic } from "../components/ProjectMosaic";
-import { ViewSelector, type WorkView } from "../components/ViewSelector";
-import { AVAILABLE_YEARS, DEFAULT_PREVIEW_ID, PROJECTS, TYPES, YEARS } from "../data/workProjects";
+import { WorkHero } from "../components/work/WorkHero";
+import { WorkIndexFilter } from "../components/work/WorkIndexFilter";
+import { WorkPreviewPane } from "../components/work/WorkPreviewPane";
+import { AVAILABLE_YEARS, DEFAULT_PREVIEW_ID, PROJECTS, TYPES, YEARS, typeLabel } from "../data/workProjects";
 
 export function meta() {
   return [{ title: "CCDV — Work" }];
 }
 
-/* Work is a 1195-tall artboard: 268.12 masthead, 31 stripe, 177 hero,
-   31 stripe, 527 explorer (filters + list + preview), 160 footer — the
-   literal rect heights from pages_work.svg, summing unchanged.
+/* Work V2 (t_20261113_workv2) — WORKv2.svg, a 1536 x 2148 artboard: the
+   featured composition (0..1192.53), the Work Index (1192.53..1979.54), the
+   shared footer. The shared masthead stays above it (OPERATOR decision for
+   this task: the site shell and section nav are kept, so the page is one
+   masthead taller than the artboard).
 
    The six projects, YEARS and TYPES live in app/data/workProjects.ts (shared
-   with Workcase). MTG02 CORR01 (FB002): the Year filter is live for the years
-   that have records (AVAILABLE_YEARS: 2026, 2025); 2024/2023 have none and
-   are native-disabled options (MTG02 CORR02). Year and Type are independent filters and combine (AND).
+   with Workcase). The Year filter is live for the years that have records
+   (AVAILABLE_YEARS: 2026, 2025); 2024/2023 are drawn but native-disabled
+   (D3). Year and Type are independent filters and combine (AND).
 
-   FB001: the explorer section is `min-height` 527 (see global.css), not a
-   fixed height — the six List rows need ~561u, and the fixed 527u let them
-   overflow beneath the footer. */
+   D4: the List / Mosaic switch is gone; the Work Index is the one view. */
 
 /* MTG02 — Work context restoration. Work unmounts when a Workcase opens, so
-   its Year/Type filters, desktop List/Mosaic choice and scroll are kept in
-   sessionStorage (per tab; survives a hard refresh; every access is
-   try/catch-guarded and the page works without it).
-     - `year` / `type` / `view` are written whenever they change.
+   its Year/Type filters and scroll are kept in sessionStorage (per tab;
+   survives a hard refresh; every access is try/catch-guarded and the page
+   works without it).
+     - `year` / `type` are written whenever they change.
      - `scrollY` (+ the history `scrollKey` it belongs to) is written just
        before a project link navigates to its Workcase.
    Arrival intent, decided once on mount:
-     - POP (Back/Forward/reload)        -> restore type + view; scroll only if
+     - POP (Back/Forward/reload)        -> restore year + type; scroll only if
                                            the saved scrollKey is this entry
                                            (otherwise the router's own scroll
                                            restoration stands).
-     - PUSH with state.restore (the three Workcase return links)
-                                        -> restore year + type + view + scroll.
+     - PUSH with state.restore (the Workcase return links)
+                                        -> restore year + type + scroll.
      - PUSH with state.filter (Workcase Year or Type link)
                                         -> select exactly that filter and clear
-                                           the other, keep the view, NO stale
-                                           scroll, focus the results area.
+                                           the other, NO stale scroll, focus the
+                                           Work Index.
      - anything else                    -> defaults. */
 const CONTEXT_KEY = "ccdv.work.context";
 
@@ -51,7 +52,6 @@ const UNAVAILABLE_YEARS = YEARS.filter((year) => !AVAILABLE_YEARS.includes(year)
 interface WorkContext {
   year: string | null;
   type: string | null;
-  view: WorkView;
   scrollY?: number;
   scrollKey?: string;
 }
@@ -84,10 +84,6 @@ function validType(value: unknown): string | null {
 
 function validYear(value: unknown): string | null {
   return typeof value === "string" && AVAILABLE_YEARS.includes(value) ? value : null;
-}
-
-function validView(value: unknown): WorkView {
-  return value === "mosaic" ? "mosaic" : "list";
 }
 
 type Arrival =
@@ -123,16 +119,11 @@ export default function Work() {
     return null;
   });
   const [previewId, setPreviewId] = useState<string>(DEFAULT_PREVIEW_ID);
-  /* Desktop view choice only. Both views stay mounted and CSS shows one
-     (`data-view`), so <=767px can force List without any viewport state. */
-  const [view, setView] = useState<WorkView>(() =>
-    arrival.kind === "fresh" ? "list" : validView(readContext().view),
-  );
   const resultsRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    writeContext({ year, type, view });
-  }, [year, type, view]);
+    writeContext({ year, type });
+  }, [year, type]);
 
   useLayoutEffect(() => {
     if (arrival.kind !== "restore" || !arrival.scroll) return;
@@ -141,7 +132,7 @@ export default function Work() {
   }, [arrival]);
 
   // Passive effect: runs after GlobalShell has attached <main> (and focused it),
-  // so the results area is the final focus owner.
+  // so the Work Index is the final focus owner.
   useEffect(() => {
     if (arrival.kind !== "filter") return;
     const node = resultsRef.current;
@@ -151,12 +142,12 @@ export default function Work() {
   }, [arrival]);
 
   const saveScrollForCase = () => {
-    writeContext({ year, type, view, scrollY: window.scrollY, scrollKey: location.key });
+    writeContext({ year, type, scrollY: window.scrollY, scrollKey: location.key });
   };
 
-  // Years without records are passed to FilterGroup as native-disabled options
-  // (derived from the data, not from position). The guard below is defense in
-  // depth: a year that would return empty results can never be selected.
+  // Years without records are native-disabled options (derived from the
+  // data, not from position). The guard below is defense in depth: a year
+  // that would return empty results can never be selected.
   const selectYear = (value: string | null) => {
     if (value === null || AVAILABLE_YEARS.includes(value)) setYear(value);
   };
@@ -176,51 +167,32 @@ export default function Work() {
     <div className="r11 r11--work">
       <SiteMasthead variant="work" />
 
-      <div className="section section--stripe" />
-
-      <section className="section section--hero" aria-labelledby="work-hero">
-        <h1 className="band__label" id="work-hero">
-          [Work]
-        </h1>
-        <span className="band__suffix" style={{ left: "calc(722 * var(--u))" }}>
-          +.+
-        </span>
-        <Link
-          className="hero__watermark"
-          to="/"
-          state={{ from: "work" }}
-          aria-label="collapse — back to Home"
-        >
-          collapse
-        </Link>
-      </section>
-
-      <div className="section section--stripe" />
+      <WorkHero />
 
       <section
         ref={resultsRef}
+        id="work-index"
         tabIndex={-1}
-        className="section section--work-explorer"
-        aria-label="Work projects"
-        data-view={view}
+        className="work-index"
+        aria-labelledby="work-index-title"
       >
-        <div className="work-filters">
-          <FilterGroup
-            label="Year"
-            options={YEARS}
-            value={year}
-            onChange={selectYear}
-            align="start"
-            disabledOptions={UNAVAILABLE_YEARS}
-          />
-          <div className="work-filters__end">
-            <FilterGroup label="Type" options={TYPES} value={type} onChange={setType} align="end" />
-            <ViewSelector value={view} onChange={setView} />
+        <div className="work-index__main">
+          <div className="work-index__filters">
+            <h2 className="work-index__title" id="work-index-title">
+              <GearMark className="work-index__gear" fill="#1A1A1A" dotFill="#FEF36A" />
+              {"\\\\Work Index"}
+            </h2>
+            <WorkIndexFilter
+              label="Year"
+              options={YEARS}
+              value={year}
+              onChange={selectYear}
+              disabledOptions={UNAVAILABLE_YEARS}
+            />
+            <WorkIndexFilter label="Type" options={TYPES} value={type} onChange={setType} formatLabel={typeLabel} />
           </div>
-        </div>
 
-        <div className="work-layout">
-          <div className="work-layout__list" onMouseLeave={() => setPreviewId(DEFAULT_PREVIEW_ID)}>
+          <div className="work-index__list" onMouseLeave={() => setPreviewId(DEFAULT_PREVIEW_ID)}>
             <ProjectList
               projects={filtered}
               activeId={previewId}
@@ -228,14 +200,9 @@ export default function Work() {
               onCaseNavigate={saveScrollForCase}
             />
           </div>
-
-          <div className="work-preview" role="status" aria-live="polite">
-            <p className="work-preview__name">{previewProject.name}</p>
-            <p className="work-preview__note">[ preview unavailable ]</p>
-          </div>
         </div>
 
-        <ProjectMosaic projects={filtered} onCaseNavigate={saveScrollForCase} />
+        <WorkPreviewPane project={previewProject} />
       </section>
 
       <SiteFooter />

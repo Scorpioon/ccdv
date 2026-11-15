@@ -13,7 +13,11 @@ export type { WorkProject };
    is the whole of `WRK-DEC-004`. GF09-C (FBI-019): the underline now follows
    the same `activeId` as the arrow, so both always sit on one row. ADG-ARC
    still carries both by default (it is the default `activeId`); `leading`
-   stays on the data shape but no longer drives a static underline. */
+   stays on the data shape but no longer drives a static underline.
+
+   Work V2: the row shows `displayName` when a project has one (D1, CC.OS
+   0.3) and marks WIP rows with `project-row--wip`, which the artboard sets
+   in grey. */
 
 export interface ProjectListProps {
   projects: WorkProject[];
@@ -45,7 +49,7 @@ export function ProjectList({ projects, activeId, onActiveChange, onCaseNavigate
               {isActive ? "→" : ""}
             </span>
             <span className={isActive ? "project-row__name project-row__name--underline" : "project-row__name"}>
-              {project.name}
+              {project.displayName ?? project.name}
             </span>
             <span className="project-row__tags">
               <span className="project-row__tag">{project.tag}</span>
@@ -54,7 +58,7 @@ export function ProjectList({ projects, activeId, onActiveChange, onCaseNavigate
           </>
         );
         return (
-          <li key={project.id} className="project-row">
+          <li key={project.id} className={project.wip ? "project-row project-row--wip" : "project-row"}>
             {project.href ? (
               <Link
                 to={project.href}
