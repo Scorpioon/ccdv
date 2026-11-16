@@ -1,21 +1,66 @@
+import { useEffect, useRef } from "react";
+import type { RefObject } from "react";
 import { Link } from "react-router";
 import { GearMark } from "../marks/GearMark";
 import { CcdvPixelMark } from "../marks/CcdvPixelMark";
 import { FEATURED, findProject } from "../../data/workProjects";
+import { index } from "../../motion/studioMotion";
 
-/* Work V2 featured composition — WORKv2.svg y0..1192.53 (1536 artboard).
-   Left: the CCDV identity column (gear, pixel lockup, `COLLAPSE CREATIVE` /
-   `DEV. UNIT` set sideways, three meta lines, `View all projects`). Right: the
-   five-tile ADG-ARC collage, its caption and five indicator marks.
+/* Work hub (WORK-T2, OPERATOR sketch over WORKv2). Left: the CCDV identity
+   column (gear, pixel lockup, `COLLAPSE CREATIVE` / `DEV. UNIT` set sideways,
+   three meta lines, `View all projects`), pinned and sized to fit the viewport
+   at every height. Right: the ADG-ARC collage, three columns that drift at
+   different rates as the page scrolls (parallax) while each tile fades in on
+   arrival (`data-spawn`, the shared reveal observer). `View all projects` opens
+   the archive (/work/archive).
 
-   D5: ADG-ARC is the only featured case. The marks are static decoration
-   (`aria-hidden`), not a carousel. The caption links to the existing
-   `/work/adg-arc` case. The artboard's `- ADG-FAD` client suffix is left out
-   (D7: client is not confirmed in project data). */
+   D5: ADG-ARC is the only featured case; the caption links to its Workcase.
+   The images are OPERATOR placeholders (see FEATURED). Reduced motion: no
+   drift, no fade — plain content. */
 
-export function WorkHero() {
+/* Parallax: one rAF-throttled scroll listener writes `--t` (-1..1, the
+   collage's centre against the viewport's) on the figure; each column's CSS
+   turns it into its own offset (`--dir` x `--amp`), so JS never touches the
+   columns. Idle off screen (early-out), cleaned up on unmount. */
+function useCollageDrift(ref: RefObject<HTMLElement | null>, reduced: boolean) {
+  useEffect(() => {
+    const node = ref.current;
+    if (!node || reduced) return;
+    let frame = 0;
+    let last = "";
+    const update = () => {
+      frame = 0;
+      const rect = node.getBoundingClientRect();
+      const view = window.innerHeight;
+      if (rect.bottom < 0 || rect.top > view || rect.height === 0) return;
+      const travel = (rect.height + view) / 2;
+      const t = Math.min(1, Math.max(-1, (view / 2 - (rect.top + rect.height / 2)) / travel)).toFixed(4);
+      if (t !== last) {
+        last = t;
+        node.style.setProperty("--t", t);
+      }
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      if (frame) cancelAnimationFrame(frame);
+      node.style.removeProperty("--t");
+    };
+  }, [ref, reduced]);
+}
+
+export function WorkHero({ reduced }: { reduced: boolean }) {
   const project = findProject(FEATURED.projectId);
   const caption = project ? `${project.name} - ${project.tag}` : null;
+  const featureRef = useRef<HTMLElement>(null);
+
+  useCollageDrift(featureRef, reduced);
 
   return (
     <section className="work-hero" aria-labelledby="work-title">
@@ -38,19 +83,34 @@ export function WorkHero() {
           </div>
         </div>
         <span className="work-hero__square" aria-hidden="true" />
-        <a className="work-hero__all" href="#work-index">
+        <Link className="work-hero__all" to="/work/archive">
           View all projects
           <span className="work-hero__all-icon" aria-hidden="true">
-            ↓
+            →
           </span>
-        </a>
+        </Link>
       </div>
 
-      <figure className="work-feature" aria-labelledby={caption ? "work-feature-caption" : undefined}>
-        <div className="work-feature__tiles">
-          {FEATURED.tiles.map((tile, index) => (
-            <div key={index} className={`work-feature__tile work-feature__tile--${index + 1}`}>
-              <img src={tile.src} alt={tile.alt} decoding="async" />
+      <figure
+        className="work-feature"
+        ref={featureRef}
+        aria-labelledby={caption ? "work-feature-caption" : undefined}
+      >
+        <div className="work-feature__columns">
+          {FEATURED.columns.map((column, c) => (
+            <div key={c} className={`work-feature__col work-feature__col--${c + 1}`}>
+              {column.map((tile, i) => (
+                <div key={i} className="work-feature__tile" data-spawn style={index(i)}>
+                  <img
+                    src={tile.src}
+                    alt={tile.alt}
+                    width={tile.width}
+                    height={tile.height}
+                    loading={c === 0 && i === 0 ? "eager" : "lazy"}
+                    decoding="async"
+                  />
+                </div>
+              ))}
             </div>
           ))}
         </div>
@@ -60,14 +120,6 @@ export function WorkHero() {
           </figcaption>
         )}
       </figure>
-
-      <span className="work-feature__marks" aria-hidden="true">
-        <i />
-        <i className="work-feature__mark--open" />
-        <i />
-        <i />
-        <i />
-      </span>
     </section>
   );
 }

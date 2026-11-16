@@ -3,6 +3,7 @@ export default [
   index("./routes/home.tsx"),
   route("studio", "./routes/studio.tsx"),
   route("work", "./routes/work.tsx"),
+  route("work/archive", "./routes/work.archive.tsx"),
   route("work/:slug", "./routes/workcase.tsx"),
   route("services", "./routes/services.tsx"),
   route("products", "./routes/products.tsx"),

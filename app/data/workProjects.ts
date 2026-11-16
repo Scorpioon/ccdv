@@ -1,8 +1,8 @@
-import adgArcHero from "../assets/workcase/workcase_r11_source_image_0.png";
-import adgArcShowcase1 from "../assets/workcase/workcase_r11_source_image_1.png";
-import adgArcShowcase2 from "../assets/workcase/workcase_r11_source_image_2.png";
-import adgArcShowcase3 from "../assets/workcase/workcase_r11_source_image_3.png";
-import adgArcDetailMobile from "../assets/work/work_v2_adg_arc_detail_mobile.jpg";
+import adgArcHero from "../assets/workcase/workcase_r11_source_image_0.webp";
+import adgArcShowcase1 from "../assets/workcase/workcase_r11_source_image_1.webp";
+import adgArcShowcase2 from "../assets/workcase/workcase_r11_source_image_2.webp";
+import adgArcShowcase3 from "../assets/workcase/workcase_r11_source_image_3.webp";
+import adgArcDetailMobile from "../assets/work/work_v2_adg_arc_detail_mobile.webp";
 
 /* Shared Work / Workcase project registry (MTG02). Moved verbatim out of
    work.tsx so Work and Workcase read ONE collection: same six projects, same
@@ -125,49 +125,60 @@ export function findProject(id: string): WorkProject | undefined {
   return PROJECTS.find((project) => project.id === id);
 }
 
-/* Work V2 imagery (D5/D6). Every src is a real ADG-ARC capture already in the
-   repo, or byte-identical to the image embedded in WORKv2.svg: showcase 1/2
-   are the existing workcase files (SHA-256 match), the phone capture is the
-   one new file. Tiles repeat or crop those images exactly as the artboard
-   does; nothing is synthesised. `alt` is empty on a repeat, so each image is
-   announced once. */
+/* Work imagery (D5/D6). Every src is a real ADG-ARC capture already in the
+   repo (WebP since WORK-T2). OPERATOR (WORK-T2): the hub and archive images
+   are PLACEHOLDERS until final project imagery is supplied — tiles repeat
+   those captures; nothing is synthesised. `alt` is empty on a repeat, so each
+   image is announced once. */
+const ADG_HERO = WORKCASES["adg-arc"].hero!;
 const ADG_PASSPORT = WORKCASES["adg-arc"].showcase[0];
 const ADG_MAP_DETAIL = WORKCASES["adg-arc"].showcase[1];
+const ADG_MAP_CITY = WORKCASES["adg-arc"].showcase[2];
 
 export interface WorkImage {
   src: string;
   alt: string;
 }
 
-/* The featured composition is ADG-ARC only (D5): five tiles in artboard order
-   (wide top-left, top-right, three bottom). Its five indicator marks are
-   static and decorative. */
-export const FEATURED = {
+/** a placed image whose intrinsic size reserves its box before it loads */
+export interface WorkTile extends WorkImage {
+  width: number;
+  height: number;
+}
+
+const DETAIL_MOBILE: WorkTile = {
+  src: adgArcDetailMobile,
+  alt: "Phone screenshot of a yellow detail panel for the building “Illa Glòries, Bloc A”, listing its author, movement, year and address",
+  width: 946,
+  height: 2048,
+};
+const repeat = (tile: WorkTile): WorkTile => ({ ...tile, alt: "" });
+
+/* WORK-T2 hub: ADG-ARC is still the one featured case (D5). Three collage
+   columns that drift at different rates while the identity column stays put;
+   each column ends where the next project would begin. */
+export const FEATURED: { projectId: string; columns: WorkTile[][] } = {
   projectId: "adg-arc",
-  tiles: [
-    { src: ADG_PASSPORT.src, alt: ADG_PASSPORT.alt },
-    {
-      src: adgArcDetailMobile,
-      alt: "Phone screenshot of a yellow detail panel for the building “Illa Glòries, Bloc A”, listing its author, movement, year and address",
-    },
-    { src: ADG_MAP_DETAIL.src, alt: "Screenshot of a 3D city map with a highlighted building marker" },
-    { src: ADG_MAP_DETAIL.src, alt: "" },
-    { src: ADG_PASSPORT.src, alt: "" },
-  ] satisfies WorkImage[],
+  columns: [
+    [ADG_PASSPORT, ADG_HERO, ADG_MAP_DETAIL, repeat(DETAIL_MOBILE)],
+    [DETAIL_MOBILE, repeat(ADG_PASSPORT), ADG_MAP_CITY, repeat(ADG_HERO)],
+    [repeat(ADG_HERO), repeat(ADG_MAP_CITY), repeat(DETAIL_MOBILE), repeat(ADG_MAP_DETAIL)],
+  ],
 };
 
-/* Work Index preview pair for a project that has imagery. `caption` is the
-   artboard's own label for the pair; projects without an entry show the
-   honest no-preview state. */
+/* Archive preview cards for a project that has imagery (three, Studio card
+   proportions). `caption` is the artboard's own label; projects without an
+   entry show the honest no-preview state. */
 export interface WorkPreview {
-  frames: [WorkImage, WorkImage];
+  cards: [WorkImage, WorkImage, WorkImage];
   caption: string;
 }
 
 export const WORK_PREVIEWS: Record<string, WorkPreview> = {
   "adg-arc": {
-    frames: [
+    cards: [
       { src: ADG_PASSPORT.src, alt: ADG_PASSPORT.alt },
+      { src: ADG_PASSPORT.src, alt: "" },
       { src: ADG_PASSPORT.src, alt: "" },
     ],
     caption: "passport_menu.png",

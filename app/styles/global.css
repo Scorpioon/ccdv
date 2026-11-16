@@ -2984,15 +2984,21 @@ main { display: block; outline: none; }
 .r11--studio .ap__slot:focus-visible { outline-offset: -4px; }
 
 /* --- OC01-02: the thin masthead (E10 "to be", Frame 334) --------------------
-   One state: light bar, cells 44 tall, 12 padding, mark 44 tall (gear + inline
-   pixel mark), cells x307..1428 at 224.2 each. Sticky with a negative margin,
-   so it takes no height; it is translated out by (1 - --nav-in), which
-   studio.tsx derives from the Approach section's top edge only (A3). Focus inside
-   the bar always shows it. Phones keep the M1 bar (masthead not rendered). */
+   One state, shared by every route that renders the compact masthead (Studio,
+   Services, Work — WORK-T2 merged the per-route copies). Sticky with a negative
+   margin, so it takes no height; it is translated out by (1 - --nav-in), which
+   each route derives from one section's top edge (A3). Focus inside the bar
+   always shows it. Phones keep the M1 bar (masthead not rendered).
+   WORK-T2 (OPERATOR): ~30% thinner — cells 44 -> 32, padding 12 -> 8, mark 32
+   tall (gear 220 -> 32 = scale 0.14545, inline pixel mark 140 x 32), cells
+   x224..1432 at 241.6. The stacked pixel mark is removed, not only faded: at
+   opacity 0 its 49 x 220 box still hung ~220 below the bar inside the Home
+   link, so clicks over the content under the bar went Home. The link is
+   clipped to its own box for the same reason. */
 @media (min-width: 768px) {
-  .r11--studio .masthead--collapsing {
-    --cell-h: calc(44 * var(--u));
-    --nav-h: calc(var(--cell-h) + 24 * var(--u));
+  :is(.r11--studio, .r11--services, .r11--work) .masthead--collapsing {
+    --cell-h: calc(32 * var(--u));
+    --nav-h: calc(var(--cell-h) + 16 * var(--u));
     position: sticky;
     top: 0;
     z-index: 7;
@@ -3000,40 +3006,43 @@ main { display: block; outline: none; }
     margin-bottom: calc(-1 * var(--nav-h));
     transform: translateY(calc((var(--nav-in, 0) - 1) * 100%));
   }
-  .r11--studio .masthead--collapsing:focus-within { transform: none; }
-  .r11--studio .masthead--collapsing .masthead__mark {
-    left: calc(12 * var(--u));
-    top: calc(12 * var(--u));
-    width: calc(243 * var(--u));
-    height: calc(44 * var(--u));
-  }
-  .r11--studio .masthead--collapsing .masthead__gear { transform: scale(0.2); }   /* 220 -> 44 */
-  .r11--studio .masthead--collapsing .masthead__pixel-inline {
-    left: calc(50.3 * var(--u));
-    width: calc(192.5 * var(--u));
-    height: calc(44 * var(--u));
-  }
-  .r11--studio .masthead--collapsing .cells { top: calc(12 * var(--u)); left: calc(307 * var(--u)); }
-  .r11--studio .masthead--collapsing .cell { width: calc(224.2 * var(--u)); height: var(--cell-h); }
-  .r11--studio .masthead--collapsing .cell__label {
-    left: calc(7 * var(--u));
+  :is(.r11--studio, .r11--services, .r11--work) .masthead--collapsing:focus-within { transform: none; }
+  :is(.r11--studio, .r11--services, .r11--work) .masthead--collapsing .masthead__mark {
+    left: calc(8 * var(--u));
     top: calc(8 * var(--u));
+    width: calc(176.6 * var(--u));
+    height: calc(32 * var(--u));
+    overflow: clip;
+  }
+  :is(.r11--studio, .r11--services, .r11--work) .masthead--collapsing .masthead__gear { transform: scale(0.14545); }   /* 220 -> 32 */
+  :is(.r11--studio, .r11--services, .r11--work) .masthead--collapsing :is(.masthead__pixel, .cell__tile) { display: none; }
+  :is(.r11--studio, .r11--services, .r11--work) .masthead--collapsing .masthead__pixel-inline {
+    left: calc(36.6 * var(--u));
+    width: calc(140 * var(--u));
+    height: calc(32 * var(--u));
+    opacity: 1;
+  }
+  :is(.r11--studio, .r11--services, .r11--work) .masthead--collapsing .cells { top: calc(8 * var(--u)); left: calc(224 * var(--u)); }
+  :is(.r11--studio, .r11--services, .r11--work) .masthead--collapsing .cell { width: calc(241.6 * var(--u)); height: var(--cell-h); }
+  :is(.r11--studio, .r11--services, .r11--work) .masthead--collapsing .cell__label {
+    left: calc(6 * var(--u));
+    top: calc(5 * var(--u));
     font-size: max(10px, calc(8.8 * var(--u)));
   }
-  .r11--studio .masthead--collapsing .cell__dot {
-    left: calc(7 * var(--u));
-    top: calc(var(--cell-h) - 15 * var(--u));
-    width: calc(7 * var(--u));
-    height: calc(7 * var(--u));
+  :is(.r11--studio, .r11--services, .r11--work) .masthead--collapsing .cell__dot {
+    left: calc(6 * var(--u));
+    top: calc(var(--cell-h) - 12 * var(--u));
+    width: calc(6 * var(--u));
+    height: calc(6 * var(--u));
   }
 }
 @media (min-width: 768px) and (max-width: 1023px) and (pointer: coarse) {
-  .r11--studio .masthead--collapsing { --cell-h: max(calc(44 * var(--u)), 2.75rem); }
+  :is(.r11--studio, .r11--services, .r11--work) .masthead--collapsing { --cell-h: max(calc(32 * var(--u)), 2.75rem); }
 }
 @media (prefers-reduced-motion: no-preference) {
   /* A4: back in 0.22 s, decelerating (the transition of the state reached) */
-  .r11--studio .masthead--collapsing { transition: transform 0.12s linear, translate 0.22s var(--sm-ease); }
-  .r11--studio .smm__bar { transition: translate 0.22s var(--sm-ease); }
+  :is(.r11--studio, .r11--services, .r11--work) .masthead--collapsing { transition: transform 0.12s linear, translate 0.22s var(--sm-ease); }
+  :is(.r11--studio, .r11--services, .r11--work) .smm__bar { transition: translate 0.22s var(--sm-ease); }
 }
 
 /* --- Addendum A1: idle hide ------------------------------------------------
@@ -3043,16 +3052,16 @@ main { display: block; outline: none; }
    stays while it holds focus or the pointer (desktop) or while the M1 menu is
    open (phones; no :hover there, it sticks after a tap). Reduced motion: same
    states, no slide. */
-.r11--studio[data-nav-idle] .masthead--collapsing:not(:hover):not(:focus-within),
-.r11--studio[data-nav-idle] .smm__bar:not([data-open="true"]):not(:focus-within) {
+:is(.r11--studio, .r11--services, .r11--work)[data-nav-idle] .masthead--collapsing:not(:hover):not(:focus-within),
+:is(.r11--studio, .r11--services, .r11--work)[data-nav-idle] .smm__bar:not([data-open="true"]):not(:focus-within) {
   translate: 0 -100%;
 }
 /* A4: away in 0.3 s, starting soft and accelerating out */
 @media (prefers-reduced-motion: no-preference) {
-  .r11--studio[data-nav-idle] .masthead--collapsing:not(:hover):not(:focus-within) {
+  :is(.r11--studio, .r11--services, .r11--work)[data-nav-idle] .masthead--collapsing:not(:hover):not(:focus-within) {
     transition: transform 0.12s linear, translate 0.3s cubic-bezier(0.4, 0, 1, 1);
   }
-  .r11--studio[data-nav-idle] .smm__bar:not([data-open="true"]):not(:focus-within) {
+  :is(.r11--studio, .r11--services, .r11--work)[data-nav-idle] .smm__bar:not([data-open="true"]):not(:focus-within) {
     transition: translate 0.3s cubic-bezier(0.4, 0, 1, 1);
   }
 }
@@ -3739,68 +3748,11 @@ main { display: block; outline: none; }
 .r11--services :is(.sv-ix__slot, .sv-ix__service):focus-visible { outline-offset: -4px; }
 .r11--services .sv-fm__card:focus-visible { outline-color: var(--ccdv-ink); }
 
-/* --- thin masthead (Studio OC01-02 / A1 / A3 / A4, mirrored) -----------------
+/* --- thin masthead (Studio OC01-02 / A1 / A3 / A4; geometry shared, WORK-T2) --
    SiteMasthead `compact` renders the Studio compact markup; services.tsx sets
    --nav-in from the black Service Index's top edge (motion/routeNav.ts). The
    active cell is ink (shared .masthead--collapsing rule) with a red square. */
 .r11--services .masthead--collapsing .cell[aria-current="page"] .cell__dot { background: var(--ccdv-red); }
-@media (min-width: 768px) {
-  .r11--services .masthead--collapsing {
-    --cell-h: calc(44 * var(--u));
-    --nav-h: calc(var(--cell-h) + 24 * var(--u));
-    position: sticky;
-    top: 0;
-    z-index: 7;
-    height: var(--nav-h);
-    margin-bottom: calc(-1 * var(--nav-h));
-    transform: translateY(calc((var(--nav-in, 0) - 1) * 100%));
-  }
-  .r11--services .masthead--collapsing:focus-within { transform: none; }
-  .r11--services .masthead--collapsing .masthead__mark {
-    left: calc(12 * var(--u));
-    top: calc(12 * var(--u));
-    width: calc(243 * var(--u));
-    height: calc(44 * var(--u));
-  }
-  .r11--services .masthead--collapsing .masthead__gear { transform: scale(0.2); }
-  .r11--services .masthead--collapsing .masthead__pixel-inline {
-    left: calc(50.3 * var(--u));
-    width: calc(192.5 * var(--u));
-    height: calc(44 * var(--u));
-  }
-  .r11--services .masthead--collapsing .cells { top: calc(12 * var(--u)); left: calc(307 * var(--u)); }
-  .r11--services .masthead--collapsing .cell { width: calc(224.2 * var(--u)); height: var(--cell-h); }
-  .r11--services .masthead--collapsing .cell__label {
-    left: calc(7 * var(--u));
-    top: calc(8 * var(--u));
-    font-size: max(10px, calc(8.8 * var(--u)));
-  }
-  .r11--services .masthead--collapsing .cell__dot {
-    left: calc(7 * var(--u));
-    top: calc(var(--cell-h) - 15 * var(--u));
-    width: calc(7 * var(--u));
-    height: calc(7 * var(--u));
-  }
-}
-@media (min-width: 768px) and (max-width: 1023px) and (pointer: coarse) {
-  .r11--services .masthead--collapsing { --cell-h: max(calc(44 * var(--u)), 2.75rem); }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .r11--services .masthead--collapsing { transition: transform 0.12s linear, translate 0.22s var(--sm-ease); }
-  .r11--services .smm__bar { transition: translate 0.22s var(--sm-ease); }
-}
-.r11--services[data-nav-idle] .masthead--collapsing:not(:hover):not(:focus-within),
-.r11--services[data-nav-idle] .smm__bar:not([data-open="true"]):not(:focus-within) {
-  translate: 0 -100%;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .r11--services[data-nav-idle] .masthead--collapsing:not(:hover):not(:focus-within) {
-    transition: transform 0.12s linear, translate 0.3s cubic-bezier(0.4, 0, 1, 1);
-  }
-  .r11--services[data-nav-idle] .smm__bar:not([data-open="true"]):not(:focus-within) {
-    transition: translate 0.3s cubic-bezier(0.4, 0, 1, 1);
-  }
-}
 
 /* phones: the M1 bar + menu (StudioMobileMenu, Services current) replaces the
    masthead, as on Studio; the shared .smm__* rules apply unchanged, only the
@@ -4390,13 +4342,38 @@ main { display: block; outline: none; }
   border: 0;
 }
 
-/* --- /work featured composition (WORKv2 y0..1192.53) ------------------------
-   Ground #D9D9D9 under a 5% ink grid: 1.067 lines, rows every 49.689 across
-   the full width, columns every 52.968 from y164.8 to y1027.73. */
+/* --- WORK-T2: thin masthead on /work and /work/archive ----------------------
+   The shared thin bar (see OC01-02) with --mh-p 1, as Studio / Services; the
+   active cell is ink with a yellow square. --hub-bar is the bar's height, so
+   pinned content and the archive start below it. Phones: the M1 bar + menu. */
+.r11--work {
+  --mh-p: 1;
+  --sm-ease: var(--studio-ease, cubic-bezier(0.22, 0.61, 0.36, 1));
+  --hub-bar: calc(48 * var(--u));
+}
+.r11--work .masthead--collapsing .cell[aria-current="page"] .cell__dot { background: var(--ccdv-yellow); }
+@media (max-width: 767px) {
+  .r11--work { --hub-bar: 0px; }
+  body:has(.r11--work) .mobile-notice { display: none; }
+  .r11--work .masthead--work { display: none; }
+  .r11--work .smm__route[aria-current="page"] .smm__square { border-color: var(--ccdv-yellow); background: var(--ccdv-yellow); }
+}
+
+/* --- /work hub (WORK-T2, from WORKv2 y0..1192.53) ----------------------------
+   Ground #D9D9D9 under a 5% ink grid: 1.067 lines, rows every 49.689, columns
+   every 52.968. Two tracks: the identity column, pinned below the bar and
+   drawn on its own unit --iu (one WORKv2 px, capped so all 1192.53 of it fit
+   the viewport under the bar at any height), and the collage, which scrolls.
+   Inside the identity column --wu is redefined as --iu, so every artboard
+   coordinate below is unchanged. */
 .r11--work .work-hero {
+  --iu: min(calc(1cqw / 15.36), calc((100svh - var(--hub-bar)) / 1192.53));
   position: relative;
-  height: calc(1192.53 * var(--wu));
-  overflow: hidden;
+  display: grid;
+  grid-template-columns: calc(353.875 * var(--iu)) minmax(0, 1fr);
+  align-items: start;
+  padding-top: var(--hub-bar);
+  overflow: clip;
   background-color: var(--ccdv-light);
   background-image: repeating-linear-gradient(
     to bottom,
@@ -4407,16 +4384,21 @@ main { display: block; outline: none; }
 .r11--work .work-hero::before {
   content: "";
   position: absolute;
-  left: 0;
-  right: 0;
-  top: calc(164.8 * var(--wu));
-  height: calc(862.93 * var(--wu));
+  inset: 0;
   background-image: repeating-linear-gradient(
     to right,
     rgb(26 26 26 / 0.05) 0 calc(1.067 * var(--wu)),
     transparent calc(1.067 * var(--wu)) calc(52.968 * var(--wu))
   );
   pointer-events: none;
+}
+
+.r11--work .work-hero__identity {
+  --wu: var(--iu);
+  position: sticky;
+  top: var(--hub-bar);
+  z-index: 1;
+  height: calc(1192.53 * var(--wu));
 }
 
 .r11--work .work-hero__gear {
@@ -4511,41 +4493,66 @@ main { display: block; outline: none; }
   line-height: 1;
 }
 
-/* five tiles: a 3-track grid of 371.644 columns and 528.067 rows, 8 gaps;
-   each tile is an ink plate with the image inset 1 (the artboard's backing
-   rects are 1 larger on every side). Crops are centred `cover`, which is what
-   every pattern transform in WORKv2.svg resolves to. */
+/* Collage: three 8-gap columns from x353.875 to the artboard's right margin
+   (51.2). Each tile is an ink plate with the image inset 1 (the artboard's
+   backing rects); the image keeps its own proportions (width/height attrs
+   reserve the box). Parallax: WorkHero writes --t (-1..1) on the figure and
+   each column moves --t x --dir x --amp; the padding above and below equals
+   --amp, so a drifting column never uncovers an empty edge. Reduced motion:
+   --t is never written, so nothing moves. */
 .r11--work .work-feature {
-  position: absolute;
-  left: calc(353.875 * var(--wu));
-  top: calc(51.2 * var(--wu));
-  width: calc(1130.93 * var(--wu));
+  --amp: calc(160 * var(--wu));
+  position: relative;
   margin: 0;
+  padding: calc(51.2 * var(--wu) + var(--amp)) calc(51.2 * var(--wu)) calc(51.2 * var(--wu));
 }
-.r11--work .work-feature__tiles {
+.r11--work .work-feature__columns {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  grid-template-rows: repeat(2, calc(528.067 * var(--wu)));
+  align-items: start;
   gap: calc(8 * var(--wu));
+  padding-bottom: var(--amp);
 }
+.r11--work .work-feature__col {
+  display: flex;
+  flex-direction: column;
+  gap: calc(8 * var(--wu));
+  min-width: 0;
+  transform: translateY(calc(var(--t, 0) * var(--dir, 0) * var(--amp)));
+  will-change: transform;
+}
+/* the OPERATOR sketch: outer columns rise faster than the page, the middle one
+   lags (reads as moving down) */
+.r11--work .work-feature__col--1 { --dir: -1; }
+.r11--work .work-feature__col--2 { --dir: 1; }
+.r11--work .work-feature__col--3 { --dir: -0.6; }
 .r11--work .work-feature__tile {
   min-width: 0;
   padding: calc(1 * var(--wu));
   background: var(--ccdv-ink);
 }
-.r11--work .work-feature__tile--1 { grid-column: span 2; }
 .r11--work .work-feature__tile img {
   display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
 }
 
-/* caption plate at y1123.33 (18 tall), baseline 14.1 down */
+/* tile arrival: fade + rise, staggered by --i inside its column; armed only
+   while the reveal observer runs (data-motion="on"), so without JS or with
+   reduced motion every tile is plain, visible content */
+.r11--work[data-motion="on"] .work-feature__tile[data-spawn]:not([data-seen="true"]) {
+  opacity: 0;
+  translate: 0 calc(24 * var(--wu));
+}
+.r11--work[data-motion="on"] .work-feature__tile[data-spawn][data-seen="true"] {
+  transition:
+    opacity 0.9s var(--sm-ease) calc(var(--i, 0) * 0.08s),
+    translate 0.9s var(--sm-ease) calc(var(--i, 0) * 0.08s);
+}
+
+/* caption plate after the collage */
 .r11--work .work-feature__caption {
-  position: absolute;
-  left: 0;
-  top: calc(1072.13 * var(--wu));
+  display: inline-block;
   height: calc(18 * var(--wu));
   padding: 0 calc(4.3 * var(--wu));
   background: var(--ccdv-panel);
@@ -4559,37 +4566,17 @@ main { display: block; outline: none; }
   text-underline-offset: calc(1.5 * var(--wu));
 }
 
-/* five static marks (D5): 12 squares on a 22 pitch from x1381.8, the second
-   drawn open */
-.r11--work .work-feature__marks {
-  position: absolute;
-  left: calc(1381.8 * var(--wu));
-  top: calc(1126.33 * var(--wu));
-  display: flex;
-  gap: calc(10 * var(--wu));
-}
-.r11--work .work-feature__marks i {
-  display: block;
-  width: calc(12 * var(--wu));
-  height: calc(12 * var(--wu));
-  background: var(--ccdv-ink);
-}
-.r11--work .work-feature__marks .work-feature__mark--open {
-  background: none;
-  box-shadow: inset 0 0 0 calc(1.067 * var(--wu)) var(--ccdv-ink);
-}
-
-/* --- /work Work Index (WORKv2 y1192.53..1979.54) ---------------------------
-   Two 708 columns from x48 / x780. Left: the yellow `\\Work Index` header,
-   Year row, 12 gap, Type row at the top; the six 66-pitch rows sit on the
-   column's bottom (last separator y1905.82, last row ends 1971.82). Right:
-   the 320 + 12 + 360 preview frames and their caption. */
+/* --- /work/archive Work Index (WORKv2 y1192.53..1979.54, WORK-T2) ----------
+   Two 708 columns from x48 / x780, starting below the thin bar. Left: the
+   yellow `\\Work Index` header, Year row, 12 gap, Type row, then the 66-pitch
+   rows directly under the filters (OPERATOR: no gap). Right: three preview
+   cards in the Studio card proportions and their caption. */
 .r11--work .work-index {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   column-gap: calc(24 * var(--wu));
   min-height: calc(787.01 * var(--wu));
-  padding: calc(31.47 * var(--wu)) calc(48 * var(--wu)) calc(7.72 * var(--wu));
+  padding: calc(var(--hub-bar) + 31.47 * var(--wu)) calc(48 * var(--wu)) calc(48 * var(--wu));
   background: var(--ccdv-light);
 }
 /* programmatic focus target (Workcase Year/Type links, `View all projects`) */
@@ -4598,7 +4585,7 @@ main { display: block; outline: none; }
 .r11--work .work-index__main {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: calc(24 * var(--wu));
   min-width: 0;
 }
@@ -4698,23 +4685,39 @@ main { display: block; outline: none; }
   gap: calc(12 * var(--wu));
   min-width: 0;
 }
-.r11--work .work-preview__frame {
+/* three cards in the Studio card proportions (.bu__card: 284.667 x 450, 16.4354
+   radius, ink ground), scaled to share the 708 column: 3 x 228 + 2 x 12, so the
+   radius is 16.4354 x 228 / 284.667 = 13.16 */
+.r11--work .work-preview__cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: calc(12 * var(--wu));
+}
+.r11--work .work-preview__card {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  border: calc(0.5 * var(--wu)) solid var(--ccdv-ink);
-  background: var(--ccdv-panel);
+  aspect-ratio: 284.667 / 450;
+  border-radius: calc(13.16 * var(--wu));
+  overflow: clip;
+  background: var(--ccdv-ink);
 }
-.r11--work .work-preview__frame--a { height: calc(320 * var(--wu)); }
-.r11--work .work-preview__frame--b { height: calc(360 * var(--wu)); }
-.r11--work .work-preview__frame img {
+.r11--work .work-preview__card img {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-.r11--work .work-preview__note { font-size: max(11px, calc(15.5 * var(--wu))); opacity: 0.6; }
+.r11--work .work-preview__note {
+  padding: 0 calc(8 * var(--wu));
+  color: var(--ccdv-panel);
+  font-size: max(11px, calc(13.2 * var(--wu)));
+  text-align: center;
+  opacity: 0.7;
+}
 .r11--work .work-preview__caption {
   margin-top: calc(5 * var(--wu));
   font-size: max(10px, calc(13.2 * var(--wu)));
@@ -4723,7 +4726,7 @@ main { display: block; outline: none; }
 }
 
 /* --- /work phones: derived stack (not OPERATOR pixel-approved) --------------
-   Reading order: identity, collage, caption, marks; then Work Index header,
+   Reading order: identity, collage, caption (hub); Work Index header,
    filters, rows, previews. The sideways words are set upright. */
 @media (max-width: 767px) {
   .r11--work .work-hero {
@@ -4741,7 +4744,7 @@ main { display: block; outline: none; }
     align-items: flex-end;
     gap: 12px 16px;
   }
-  .r11--work :is(.work-hero__gear, .work-hero__pixel, .work-hero__word, .work-hero__meta, .work-hero__all, .work-feature, .work-feature__caption, .work-feature__marks) {
+  .r11--work :is(.work-hero__gear, .work-hero__pixel, .work-hero__word, .work-hero__meta, .work-hero__all, .work-feature, .work-feature__caption) {
     position: static;
     transform: none;
   }
@@ -4784,17 +4787,13 @@ main { display: block; outline: none; }
     vertical-align: middle;
   }
 
-  .r11--work .work-feature { width: auto; }
-  .r11--work .work-feature__tiles {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: none;
-    gap: 6px;
-  }
-  .r11--work .work-feature__tile { position: relative; aspect-ratio: 371.644 / 528.067; padding: 0; }
-  .r11--work .work-feature__tile--1 { aspect-ratio: 751.126 / 528.067; }
-  /* the box height comes from aspect-ratio, so the image is laid in absolutely
-     (a percentage height would not resolve against it) */
-  .r11--work .work-feature__tile img { position: absolute; inset: 1px; width: calc(100% - 2px); height: calc(100% - 2px); }
+  /* WORK-T2 phones: identity in flow (not pinned), collage without drift
+     (--amp 0); tiles still fade in */
+  .r11--work .work-hero__identity { position: static; height: auto; }
+  .r11--work .work-feature { --amp: 0px; padding: 0; }
+  .r11--work .work-feature__columns { gap: 6px; }
+  .r11--work .work-feature__col { gap: 6px; transform: none; will-change: auto; }
+  .r11--work .work-feature__tile { padding: 1px; }
   .r11--work .work-feature__caption {
     display: inline-block;
     height: auto;
@@ -4805,9 +4804,6 @@ main { display: block; outline: none; }
     white-space: normal;
   }
   .r11--work .work-feature__caption a { display: inline-block; padding: 8px 0; text-underline-offset: 3px; }
-  .r11--work .work-feature__marks { align-self: flex-end; gap: 8px; }
-  .r11--work .work-feature__marks i { width: 10px; height: 10px; }
-  .r11--work .work-feature__marks .work-feature__mark--open { box-shadow: inset 0 0 0 1px var(--ccdv-ink); }
 
   .r11--work .work-index {
     display: flex;
@@ -4849,11 +4845,9 @@ main { display: block; outline: none; }
   .r11--work .work-index .project-list__empty { padding: 16px 0; font-size: var(--ccdv-t-body-m); }
 
   .r11--work .work-preview { gap: 8px; }
-  .r11--work .work-preview__frame { position: relative; border-width: 1px; }
-  .r11--work .work-preview__frame--a { height: auto; aspect-ratio: 708 / 320; }
-  .r11--work .work-preview__frame--b { height: auto; aspect-ratio: 708 / 360; }
-  .r11--work .work-preview__frame img { position: absolute; inset: 0; }
-  .r11--work .work-preview__note { font-size: var(--ccdv-t-label-m); }
+  .r11--work .work-preview__cards { gap: 6px; }
+  .r11--work .work-preview__card { border-radius: 8px; }
+  .r11--work .work-preview__note { padding: 0 4px; font-size: 11px; }
   .r11--work .work-preview__caption { margin-top: 0; font-size: 12px; line-height: 1.5; }
 }
 

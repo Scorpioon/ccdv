@@ -30,7 +30,10 @@ import { AVAILABLE_YEARS, type WorkProject, type WorkcaseData } from "../data/wo
    Indetail fields, two 679 screenshots). The Type value shows the project's
    own tag (the artboard's `INTERACTIVE WEBSITE`) and still links to the
    canonical Type filter. The artboard's `[live site]`, `ADG-FAD.ORG` and
-   sample copy are not carried (D7). */
+   sample copy are not carried (D7).
+
+   WORK-T2: every link back (arrow, `[Work]`, `collapse`, Year, Type) now opens
+   the archive (/work/archive), which owns the filters and restore context. */
 
 const RESTORE_STATE = { restore: true } as const;
 
@@ -45,10 +48,10 @@ export function Workcase({ project, data }: { project: WorkProject; data: Workca
 
       <section className="workcase-band" aria-label="Workcase">
         <div className="workcase-title">
-          <Link className="workcase-title__back" to="/work" state={RESTORE_STATE} aria-label="Back to Work">
+          <Link className="workcase-title__back" to="/work/archive" state={RESTORE_STATE} aria-label="Back to the Work archive">
             (←)
           </Link>
-          <Link className="workcase-title__work" to="/work" state={RESTORE_STATE}>
+          <Link className="workcase-title__work" to="/work/archive" state={RESTORE_STATE}>
             [Work]
           </Link>
           <span className="workcase-title__sep" aria-hidden="true">
@@ -56,7 +59,7 @@ export function Workcase({ project, data }: { project: WorkProject; data: Workca
           </span>
           <h1 className="workcase-title__slug">{data.slug}</h1>
         </div>
-        <Link className="hero__watermark" to="/work" state={RESTORE_STATE} aria-label="collapse — back to Work">
+        <Link className="hero__watermark" to="/work/archive" state={RESTORE_STATE} aria-label="collapse — back to the Work archive">
           collapse
         </Link>
       </section>
@@ -90,9 +93,9 @@ export function Workcase({ project, data }: { project: WorkProject; data: Workca
                 {project.year && AVAILABLE_YEARS.includes(project.year) ? (
                   <Link
                     className="workcase-meta__year"
-                    to="/work"
+                    to="/work/archive"
                     state={{ filter: { year: project.year } }}
-                    aria-label={`Year: ${project.year} — show in Work`}
+                    aria-label={`Year: ${project.year} — show in the Work archive`}
                   >
                     {project.year}
                   </Link>
@@ -106,9 +109,9 @@ export function Workcase({ project, data }: { project: WorkProject; data: Workca
               <dd>
                 <Link
                   className="workcase-meta__type"
-                  to="/work"
+                  to="/work/archive"
                   state={{ filter: { type: project.typeFilter } }}
-                  aria-label={`Type: ${project.tag} — show ${project.typeFilter} projects in Work`}
+                  aria-label={`Type: ${project.tag} — show ${project.typeFilter} projects in the Work archive`}
                 >
                   {project.tag}
                 </Link>
