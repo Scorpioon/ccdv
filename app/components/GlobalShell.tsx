@@ -82,8 +82,8 @@ export function GlobalShell({ children }: { children: ReactNode }) {
   const previousPath = useRef(location.pathname);
   const routeKey = isCcosPath(location.pathname) ? CCOS_ROOT : location.pathname;
 
-  // Focus follows the INCOMING route. Under AnimatePresence mode="wait" the new
-  // <main> mounts only after the outgoing one has unmounted, so attaching the
+  // Focus follows the INCOMING route. The new <main> mounts in the same commit
+  // that pops the outgoing one (see the HOME-T1 note below), so attaching the
   // ref is the exact moment the new route owns focus. A pathname effect would
   // still be aiming at the outgoing <main>. Covers back/forward too, since any
   // route swap remounts this node; the first mount is skipped so a cold page
@@ -110,15 +110,24 @@ export function GlobalShell({ children }: { children: ReactNode }) {
     }
   }, [location.pathname]);
 
+  /* HOME-T1 (t_20261113_workv2 addendum): route swaps no longer flash. Under
+     mode="wait" the outgoing route faded to 0 and unmounted BEFORE the
+     incoming one mounted, so for every swap the stage was empty — bare body,
+     collapsed document height, clamped scroll — the same dip GF09-F CORR03
+     removed for CCOS-to-CCOS. mode="popLayout" mounts the incoming route at
+     once, fully opaque, in flow; the outgoing route is popped out of layout
+     (absolute, `[data-motion-pop-id]`, stacked above and inert in global.css)
+     and fades out over it. The document is never empty. The coordinator's
+     lead/leaving pose and onExitComplete -> endTransition are unchanged. */
   return (
     <NavigationContext.Provider value={transition}>
       <div className="site-shell" data-route={location.pathname}>
         <div className="site-stage">
-          <AnimatePresence mode="wait" initial={false} onExitComplete={transition.endTransition}>
+          <AnimatePresence mode="popLayout" initial={false} onExitComplete={transition.endTransition}>
             <motion.div
               key={routeKey}
               className="site-stage__route"
-              initial={transition.reduced ? false : { opacity: 0 }}
+              initial={false}
               animate={{ opacity: 1 }}
               exit={transition.reduced ? { opacity: 1 } : { opacity: 0 }}
               transition={{ duration: transition.reduced ? 0 : 0.22 }}

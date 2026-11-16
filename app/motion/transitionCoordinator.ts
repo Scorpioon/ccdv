@@ -34,7 +34,7 @@ export function useTransitionCoordinator() {
     failsafe.current = null;
   }, []);
   // Releases the exit phase. Driven by AnimatePresence onExitComplete so the
-  // OUTGOING route holds its leaving pose for the whole exit under mode="wait",
+  // OUTGOING route holds its leaving pose for the whole exit (popLayout since HOME-T1),
   // instead of being reset the moment location.key changes. Idempotent: a
   // navigation the coordinator did not start (back/forward) also lands here and
   // simply resets an already-clean state.

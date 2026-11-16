@@ -56,6 +56,10 @@ h1, h2, p { margin: 0; font-weight: 600; }
    overflow/min-height here. */
 .site-shell { min-height: 100vh; container-type: inline-size; }
 .site-stage__route { display: block; }
+/* HOME-T1: the stage anchors the popped (outgoing) route, which paints over
+   the incoming one while it fades and never takes input. */
+.site-stage { position: relative; }
+.site-stage > [data-motion-pop-id] { z-index: 1; pointer-events: none; }
 main { display: block; outline: none; }
 
 .r11 {
@@ -5013,3 +5017,84 @@ main { display: block; outline: none; }
   .r11--workcase .workcase-details__col { min-height: 0; padding: 14px; font-size: 14px; }
 }
 /* === end WORK V2 + PROJECT V2 =============================================== */
+
+/* === HOME T1 (t_20261113_workv2 addendum, OPERATOR-approved) ================
+   Home only: every rule is scoped under .r11--home. Desktop geometry (R1.1) is
+   untouched; this block adds the band hover/focus state and the phone layout. */
+
+/* Hover / keyboard focus: the label group steps right and the chevron turns
+   ink. Transform only — no reflow, no change to the label/stripe overlap. The
+   global reduced-motion rule zeroes the transition. */
+.r11--home .band__label,
+.r11--home .band__suffix { transition: translate 0.18s ease-out; }
+.r11--home .band__chevron { transition: color 0.18s ease-out; }
+.r11--home .band__link:focus-visible { outline-offset: calc(-3 * var(--u)); }
+.r11--home .band__link:focus-visible :is(.band__label, .band__suffix) { translate: calc(24 * var(--u)) 0; }
+.r11--home .band__link:focus-visible .band__chevron { color: var(--ccdv-ink); }
+@media (hover: hover) {
+  .r11--home .band__link:hover :is(.band__label, .band__suffix) { translate: calc(24 * var(--u)) 0; }
+  .r11--home .band__link:hover .band__chevron { color: var(--ccdv-ink); }
+}
+
+/* <=767px: composed in px on the 16px gutter instead of scaled from 1440
+   (at 375 the 1440 scale gave an 8px stripe and a 3.4px masthead text).
+   --hb-f sizes the label so the longest band, "[Services]" + gap + "\",
+   fits: 10 + 3 * 0.4724 glyph advances of 0.545em = 6.22em (+ 8px gap). The
+   label keeps its baseline on the body's bottom edge (top = H - 0.886364f),
+   so the bracket still descends over the next stripe. */
+@media (max-width: 767px) {
+  .r11--home {
+    --hb-f: min(calc((100cqw - 2 * var(--ccdv-gutter-m) - 8px) / 6.22), 96px);
+    --hb-s: calc(var(--hb-f) * 0.4724);       /* 99 / 209.57 */
+    --hb-h: max(calc(var(--hb-f) * 1.15), var(--ccdv-tap));
+  }
+
+  .r11--home .masthead--home {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+    height: auto;
+    padding: 16px var(--ccdv-gutter-m);
+  }
+  .r11--home .masthead--home .masthead__mark { position: relative; left: auto; top: auto; width: 85.25px; height: 64px; }
+  .r11--home .masthead--home .masthead__gear { width: 64px; height: 64px; }
+  .r11--home .masthead--home .masthead__pixel { left: 71px; width: 14.26px; height: 64px; }
+  .r11--home .masthead--home .masthead__title {
+    position: static;
+    font-size: min(calc((100cqw - 2 * var(--ccdv-gutter-m) - 97.25px) / 9.3), 1.5rem);
+    line-height: 1.25;
+  }
+  .r11--home .masthead--home :is(.masthead__meta, .masthead__lang) {
+    position: static;
+    grid-column: 1 / -1;
+    font-size: var(--ccdv-t-label-m);
+    line-height: 1.5;
+    white-space: normal;
+  }
+  .r11--home .masthead--home .masthead__lang { margin-top: -8px; }
+  .r11--home .masthead--home .masthead__dot { display: none; }
+
+  .r11--home .band__stripe { height: 12px; }
+  .r11--home .band__body { height: var(--hb-h); }
+  .r11--home .band__label {
+    left: var(--ccdv-gutter-m);
+    top: calc(var(--hb-h) - 0.886364 * var(--hb-f));
+    font-size: var(--hb-f);
+  }
+  /* the inline desktop `left` (an artboard x) is overridden: the emoticon
+     sits on the label baseline at the right gutter */
+  .r11--home .band__suffix {
+    left: auto !important;
+    right: var(--ccdv-gutter-m);
+    top: calc(var(--hb-h) - 0.886364 * var(--hb-s));
+    font-size: var(--hb-s);
+  }
+  .r11--home .band__chevron { left: auto; right: var(--ccdv-gutter-m); top: 6px; font-size: 13px; }
+  .r11--home .band__link:focus-visible { outline-offset: -2px; }
+  .r11--home .band__link:focus-visible :is(.band__label, .band__suffix) { translate: none; }
+  @media (hover: hover) {
+    .r11--home .band__link:hover :is(.band__label, .band__suffix) { translate: none; }
+  }
+}
+/* === end HOME T1 ============================================================ */

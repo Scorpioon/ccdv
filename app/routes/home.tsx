@@ -5,7 +5,7 @@ import { SiteFooter } from "../components/SiteFooter";
 import { NavBand } from "../components/NavBand";
 
 export function meta() {
-  return [{ title: "CCDV — Collapse Creative Developent Unit" }];
+  return [{ title: "CCDV — Collapse Creative Development Unit" }];
 }
 
 /* The five bands, top to bottom, exactly as R1.1 stacks them: a 31 colour
