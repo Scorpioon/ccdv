@@ -3583,9 +3583,15 @@ main { display: block; outline: none; }
    only the frame boxes of the R3 block above; phones are untouched.
      cover     .cv__frame     1118      approach  .ap  1046
      lilac     .studio-lilac  1200 (CC.OS, the taller of its two scenes);
-               .bu / .cs / .sc are centred on the 1440u frame */
+               .bu / .cs / .sc are centred on the 1440u frame
+   SIZE-T1 (OPERATOR, 2026-11-17): fitting the whole scene shrank every page on
+   short wide screens (0.77 at 1920 x 860). The size now follows the width, as
+   drawn, and --fit-h is one shared cap of 700 (the first screen: lockup + the
+   Whois copy) that only stops very wide, short screens from growing past it.
+   Scenes run below the fold, as the 1536 x 1192 design does. */
 @media (min-width: 1024px) {
   .r11--studio :is(.cv__frame, .ap, .studio-lilac) {
+    --fit-h: 700;
     --u: min(calc(1cqw / 14.4), calc(100svh / var(--fit-h)));
     --s: var(--u);
     --t-small: max(11px, calc(13.2 * var(--s)));
@@ -3593,14 +3599,12 @@ main { display: block; outline: none; }
   }
   .r11--studio .cv { height: auto; }
   .r11--studio .cv__frame {
-    --fit-h: 1118;
     position: relative;
     width: calc(1440 * var(--u));
     height: calc(1118 * var(--u));
     margin-inline: auto;
   }
-  .r11--studio .ap { --fit-h: 1046; width: calc(1440 * var(--u)); margin-inline: auto; }
-  .r11--studio .studio-lilac { --fit-h: 1200; }
+  .r11--studio .ap { width: calc(1440 * var(--u)); margin-inline: auto; }
   .r11--studio :is(.bu, .cs, .sc) { left: calc((100% - 1440 * var(--u)) / 2); width: calc(1440 * var(--u)); }
 
   /* R1 CORR01 round 3 (OPERATOR, spread): the size still fits the height, but
@@ -3670,23 +3674,23 @@ main { display: block; outline: none; }
    1440 units), centred with the full-width ground left and right. The size
    tokens that carry --u are re-declared so they follow the frame's unit.
      cover   .sv-cv__frame  1118      index  .sv-ix  1042
-     red     .sv-red        1200 (Formation, the taller of its two scenes) */
+     red     .sv-red        1200 (Formation, the taller of its two scenes)
+   SIZE-T1: width-led with one shared 700 cap, as /studio (STUDIO FIT). */
 @media (min-width: 1024px) {
   .r11--services :is(.sv-cv__frame, .sv-ix, .sv-red) {
+    --fit-h: 700;
     --u: min(calc(1cqw / 14.4), calc(100svh / var(--fit-h)));
     --s: var(--u);
     --t-small: max(11px, calc(13.2 * var(--s)));
     --sm-rise: calc(16 * var(--u));
   }
   .r11--services .sv-cv__frame {
-    --fit-h: 1118;
     position: relative;
     width: calc(1440 * var(--u));
     height: calc(1118 * var(--u));
     margin-inline: auto;
   }
-  .r11--services .sv-ix { --fit-h: 1042; width: calc(1440 * var(--u)); margin-inline: auto; }
-  .r11--services .sv-red { --fit-h: 1200; }
+  .r11--services .sv-ix { width: calc(1440 * var(--u)); margin-inline: auto; }
 
   /* round 3 (OPERATOR, spread): as /studio (STUDIO FIT above): the left column
      moves left and the right column right by --gx, the ground beside the
@@ -4013,7 +4017,14 @@ main { display: block; outline: none; }
      wide), then the editorial strip and the category content; every slot and
      service row is a 44px target */
   .sv-ix { padding: calc(48 * var(--k)) calc(var(--x0) + 48 * var(--k)); }
-  .sv-ix__art { margin-top: calc(32 * var(--k)); }
+  /* §13.1 (OPERATOR, parity with the Studio Approach): the face comes first,
+     wider than the column and cropped by the screen edges (as .ap__art, 486 at
+     -96), and the strip + slots sit over its foot (as .ap__head, -61). Only the
+     visual order changes: the face holds nothing focusable, so the tab and
+     reading order stay strip, slots, face, editorial. */
+  .sv-ix { display: flex; flex-direction: column; }
+  .sv-ix__art { order: -1; width: calc(486 * var(--k)); margin-left: calc(-96 * var(--k)); }
+  .sv-ix__head { margin-top: calc(-61 * var(--k)); }
   .sv-ix__panel { margin-top: calc(48 * var(--k)); }
   .sv-ix__slots { grid-template-columns: minmax(0, 1fr); }
   .sv-ix__slot { height: auto; min-height: 44px; }
@@ -4342,7 +4353,7 @@ main { display: block; outline: none; }
   border: 0;
 }
 
-/* --- WORK-T2: thin masthead on /work and /work/archive ----------------------
+/* --- WORK-T2: thin masthead on /work, /work/archive and /work/:slug ---------
    The shared thin bar (see OC01-02) with --mh-p 1, as Studio / Services; the
    active cell is ink with a yellow square. --hub-bar is the bar's height, so
    pinned content and the archive start below it. Phones: the M1 bar + menu. */
@@ -4369,9 +4380,6 @@ main { display: block; outline: none; }
 .r11--work .work-hero {
   --iu: min(calc(1cqw / 15.36), calc((100svh - var(--hub-bar)) / 1192.53));
   position: relative;
-  display: grid;
-  grid-template-columns: calc(353.875 * var(--iu)) minmax(0, 1fr);
-  align-items: start;
   padding-top: var(--hub-bar);
   overflow: clip;
   background-color: var(--ccdv-light);
@@ -4391,6 +4399,15 @@ main { display: block; outline: none; }
     transparent calc(1.067 * var(--wu)) calc(52.968 * var(--wu))
   );
   pointer-events: none;
+}
+
+/* the body holds the two tracks, so the pinned column stops at the collage's
+   end and never slides over the foot row */
+.r11--work .work-hero__body {
+  position: relative;
+  display: grid;
+  grid-template-columns: calc(353.875 * var(--iu)) minmax(0, 1fr);
+  align-items: start;
 }
 
 .r11--work .work-hero__identity {
@@ -4461,23 +4478,43 @@ main { display: block; outline: none; }
   background: var(--ccdv-ink);
 }
 
-/* #F2F2F2 plate 142 x 19.54 at (51.2, 1121.79); baseline on the plate's
-   bottom edge (L = 28.88 puts it there), underline 1.5 below it. The artboard
-   draws a platform emoji arrow; it is redrawn as the List's own ink arrow box
-   rather than extracted (not project media). */
-.r11--work .work-hero__all {
-  position: absolute;
-  left: calc(51.2 * var(--wu));
-  top: calc(1121.79 * var(--wu));
-  height: calc(19.54 * var(--wu));
-  padding-right: calc(0.5 * var(--wu));
+/* --- foot row (OPERATOR, Figma): `View all projects` under the identity
+   column (x51.2), the caption at the collage's left edge, the five squares
+   (the second open) on the right margin. One line, one size: both plates are
+   the caption's #F2F2F2 18-high plate at 13.2 type on the page unit --wu. The
+   artboard draws a platform emoji arrow; it is redrawn as the List's own ink
+   arrow box rather than extracted (not project media). */
+.r11--work .work-hero__foot {
+  position: relative;
+  display: grid;
+  grid-template-columns: calc(353.875 * var(--iu)) minmax(0, 1fr) auto;
+  align-items: center;
+  padding: 0 calc(51.2 * var(--wu)) calc(51.2 * var(--wu)) 0;
+}
+.r11--work :is(.work-hero__all, .work-feature__caption) {
+  justify-self: start;
+  height: calc(18 * var(--wu));
+  padding: 0 calc(4.3 * var(--wu));
   background: var(--ccdv-panel);
   font-size: calc(13.2 * var(--wu));
-  line-height: calc(28.88 * var(--wu));
+  line-height: calc(18 * var(--wu));
   white-space: nowrap;
+}
+.r11--work .work-hero__all {
+  margin-left: calc(51.2 * var(--iu));
   text-decoration: underline;
-  text-decoration-thickness: max(1px, calc(0.64 * var(--wu)));
+  text-decoration-thickness: max(1px, calc(0.6 * var(--wu)));
   text-underline-offset: calc(1.5 * var(--wu));
+}
+.r11--work .work-hero__marks { display: flex; gap: calc(10 * var(--wu)); }
+.r11--work .work-hero__mark {
+  width: calc(10.667 * var(--wu));
+  height: calc(10.667 * var(--wu));
+  background: var(--ccdv-ink);
+}
+.r11--work .work-hero__mark--open {
+  background: none;
+  border: max(1px, calc(1.067 * var(--wu))) solid var(--ccdv-ink);
 }
 .r11--work .work-hero__all-icon {
   display: inline-flex;
@@ -4504,7 +4541,7 @@ main { display: block; outline: none; }
   --amp: calc(160 * var(--wu));
   position: relative;
   margin: 0;
-  padding: calc(51.2 * var(--wu) + var(--amp)) calc(51.2 * var(--wu)) calc(51.2 * var(--wu));
+  padding: calc(51.2 * var(--wu) + var(--amp)) calc(51.2 * var(--wu)) 0;
 }
 .r11--work .work-feature__columns {
   display: grid;
@@ -4550,16 +4587,8 @@ main { display: block; outline: none; }
     translate 0.9s var(--sm-ease) calc(var(--i, 0) * 0.08s);
 }
 
-/* caption plate after the collage */
-.r11--work .work-feature__caption {
-  display: inline-block;
-  height: calc(18 * var(--wu));
-  padding: 0 calc(4.3 * var(--wu));
-  background: var(--ccdv-panel);
-  font-size: calc(13.2 * var(--wu));
-  line-height: calc(18 * var(--wu));
-  white-space: nowrap;
-}
+/* caption plate: in the foot row (above), at the collage's left edge */
+.r11--work .work-feature__caption { margin: 0 0 0 calc(51.2 * var(--wu)); }
 .r11--work .work-feature__caption a {
   text-decoration: underline;
   text-decoration-thickness: max(1px, calc(0.6 * var(--wu)));
@@ -4737,6 +4766,12 @@ main { display: block; outline: none; }
     padding: 24px var(--ccdv-gutter-m);
   }
   .r11--work .work-hero::before { display: none; }
+  .r11--work .work-hero__body { display: flex; flex-direction: column; gap: 16px; }
+  /* foot: the caption follows the collage, then `View all projects`; the
+     squares are decoration and drop out, as the identity square does */
+  .r11--work .work-hero__foot { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 0; }
+  .r11--work .work-hero__foot .work-feature__caption { order: -1; }
+  .r11--work .work-hero__marks { display: none; }
 
   .r11--work .work-hero__identity {
     display: flex;
@@ -4774,6 +4809,7 @@ main { display: block; outline: none; }
     align-items: center;
     height: auto;
     min-height: var(--ccdv-tap);
+    margin: 0;
     padding: 0 8px;
     font-size: var(--ccdv-t-label-m);
     line-height: 1.4;
@@ -4797,7 +4833,7 @@ main { display: block; outline: none; }
   .r11--work .work-feature__caption {
     display: inline-block;
     height: auto;
-    margin-top: 8px;
+    margin: 0;
     padding: 4px 6px;
     font-size: var(--ccdv-t-label-m);
     line-height: 1.4;
@@ -4861,6 +4897,15 @@ main { display: block; outline: none; }
   position: relative;
   height: calc(127 * var(--pu));
   background: var(--ccdv-yellow);
+}
+/* WORK-T2 (WF1): the thin bar takes no height, so the band grows by it in
+   yellow above the drawn 127; the title and `collapse` keep their offsets
+   (absolute children sit in the padding box, below the border). */
+@media (min-width: 768px) {
+  .r11--workcase .workcase-band {
+    box-sizing: content-box;
+    border-top: var(--hub-bar) solid var(--ccdv-yellow);
+  }
 }
 
 /* 99 type, baseline on the band's bottom edge: top = 127 - (L/2 + 0.386364 *

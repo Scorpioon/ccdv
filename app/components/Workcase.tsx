@@ -1,6 +1,9 @@
+import { useRef } from "react";
 import { Link } from "react-router";
 import { SiteMasthead } from "./SiteMasthead";
 import { SiteFooter } from "./SiteFooter";
+import { StudioMobileMenu } from "./StudioMobileMenu";
+import { useBoundaryNav, useNavIdle } from "../motion/routeNav";
 import { AVAILABLE_YEARS, type WorkProject, type WorkcaseData } from "../data/workProjects";
 
 /* Reusable Workcase page (MTG02 / `CCDV-FBI-022`), composed per R1.1
@@ -33,7 +36,11 @@ import { AVAILABLE_YEARS, type WorkProject, type WorkcaseData } from "../data/wo
    sample copy are not carried (D7).
 
    WORK-T2: every link back (arrow, `[Work]`, `collapse`, Year, Type) now opens
-   the archive (/work/archive), which owns the filters and restore context. */
+   the archive (/work/archive), which owns the filters and restore context.
+   WORK-T2 (OPERATOR, WF1): every /work/:slug page gets the thin masthead too,
+   as the hub and archive — `r11--work` on the root shares their bar CSS; the
+   yellow band is the boundary edge, so the bar shows from the top; phones get
+   the M1 bar. */
 
 const RESTORE_STATE = { restore: true } as const;
 
@@ -42,11 +49,18 @@ function Pending() {
 }
 
 export function Workcase({ project, data }: { project: WorkProject; data: WorkcaseData }) {
-  return (
-    <div className="r11 r11--workcase">
-      <SiteMasthead variant="work" />
+  const rootRef = useRef<HTMLDivElement>(null);
+  const bandRef = useRef<HTMLElement>(null);
 
-      <section className="workcase-band" aria-label="Workcase">
+  useBoundaryNav(rootRef, bandRef, ".masthead--work");
+  useNavIdle(rootRef);
+
+  return (
+    <div className="r11 r11--work r11--workcase" ref={rootRef}>
+      <StudioMobileMenu current="/work" />
+      <SiteMasthead variant="work" compact />
+
+      <section ref={bandRef} className="workcase-band" aria-label="Workcase">
         <div className="workcase-title">
           <Link className="workcase-title__back" to="/work/archive" state={RESTORE_STATE} aria-label="Back to the Work archive">
             (←)

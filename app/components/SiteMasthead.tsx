@@ -92,7 +92,7 @@ export function SiteMasthead({ variant, compact = false }: { variant: "home" | S
         <>
           <h1 className="masthead__title">
             <span>Collapse Creative</span>
-            <span>Developent Unit</span>
+            <span>Development Unit</span>
           </h1>
 
           <div className="masthead__meta">

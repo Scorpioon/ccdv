@@ -16,7 +16,12 @@ import { index } from "../../motion/studioMotion";
 
    D5: ADG-ARC is the only featured case; the caption links to its Workcase.
    The images are OPERATOR placeholders (see FEATURED). Reduced motion: no
-   drift, no fade — plain content. */
+   drift, no fade — plain content.
+
+   WORK-T2 foot (OPERATOR, Figma): `View all projects`, the caption and the
+   five squares (the second open) share one row under the collage, on one
+   line and at one size; they left the pinned column, whose fit-to-height unit
+   had made `View all projects` tiny. */
 
 /* Parallax: one rAF-throttled scroll listener writes `--t` (-1..1, the
    collage's centre against the viewport's) on the figure; each column's CSS
@@ -68,58 +73,68 @@ export function WorkHero({ reduced }: { reduced: boolean }) {
         Work
       </h1>
 
-      <div className="work-hero__identity">
-        <GearMark className="work-hero__gear" fill="#1A1A1A" dotFill="#D9D9D9" />
-        <CcdvPixelMark variant="inline" className="work-hero__pixel" fill="#1A1A1A" />
-        <p className="work-hero__words">
-          <span className="work-hero__word work-hero__word--collapse">COLLAPSE CREATIVE</span>{" "}
-          <span className="work-hero__word work-hero__word--unit">DEV. UNIT</span>
-        </p>
-        <div className="work-hero__meta">
-          <div>[ COLLAPSE CREATIVE : DEV UNIT ]</div>
-          <div>[ hello[@]collapsecreative.com ]</div>
-          <div>
-            [ Part of <a href="https://collapsecreative.com">collapsecreative.com</a> ]
+      <div className="work-hero__body">
+        <div className="work-hero__identity">
+          <GearMark className="work-hero__gear" fill="#1A1A1A" dotFill="#D9D9D9" />
+          <CcdvPixelMark variant="inline" className="work-hero__pixel" fill="#1A1A1A" />
+          <p className="work-hero__words">
+            <span className="work-hero__word work-hero__word--collapse">COLLAPSE CREATIVE</span>{" "}
+            <span className="work-hero__word work-hero__word--unit">DEV. UNIT</span>
+          </p>
+          <div className="work-hero__meta">
+            <div>[ COLLAPSE CREATIVE : DEV UNIT ]</div>
+            <div>[ hello[@]collapsecreative.com ]</div>
+            <div>
+              [ Part of <a href="https://collapsecreative.com">collapsecreative.com</a> ]
+            </div>
           </div>
+          <span className="work-hero__square" aria-hidden="true" />
         </div>
-        <span className="work-hero__square" aria-hidden="true" />
+
+        <figure
+          className="work-feature"
+          ref={featureRef}
+          aria-labelledby={caption ? "work-feature-caption" : undefined}
+        >
+          <div className="work-feature__columns">
+            {FEATURED.columns.map((column, c) => (
+              <div key={c} className={`work-feature__col work-feature__col--${c + 1}`}>
+                {column.map((tile, i) => (
+                  <div key={i} className="work-feature__tile" data-spawn style={index(i)}>
+                    <img
+                      src={tile.src}
+                      alt={tile.alt}
+                      width={tile.width}
+                      height={tile.height}
+                      loading={c === 0 && i === 0 ? "eager" : "lazy"}
+                      decoding="async"
+                    />
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </figure>
+      </div>
+
+      <div className="work-hero__foot">
         <Link className="work-hero__all" to="/work/archive">
           View all projects
           <span className="work-hero__all-icon" aria-hidden="true">
             →
           </span>
         </Link>
-      </div>
-
-      <figure
-        className="work-feature"
-        ref={featureRef}
-        aria-labelledby={caption ? "work-feature-caption" : undefined}
-      >
-        <div className="work-feature__columns">
-          {FEATURED.columns.map((column, c) => (
-            <div key={c} className={`work-feature__col work-feature__col--${c + 1}`}>
-              {column.map((tile, i) => (
-                <div key={i} className="work-feature__tile" data-spawn style={index(i)}>
-                  <img
-                    src={tile.src}
-                    alt={tile.alt}
-                    width={tile.width}
-                    height={tile.height}
-                    loading={c === 0 && i === 0 ? "eager" : "lazy"}
-                    decoding="async"
-                  />
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
         {caption && (
-          <figcaption className="work-feature__caption" id="work-feature-caption">
+          <p className="work-feature__caption" id="work-feature-caption">
             {project?.href ? <Link to={project.href}>{caption}</Link> : caption}
-          </figcaption>
+          </p>
         )}
-      </figure>
+        <span className="work-hero__marks" aria-hidden="true">
+          {[0, 1, 2, 3, 4].map((m) => (
+            <span key={m} className={`work-hero__mark${m === 1 ? " work-hero__mark--open" : ""}`} />
+          ))}
+        </span>
+      </div>
     </section>
   );
 }
