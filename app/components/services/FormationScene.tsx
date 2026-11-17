@@ -21,7 +21,8 @@
              the text, and draws past its edges (overflow visible); with the
              columns spread (useFrameSpread) the tether ends at the moved card.
      wires   the LLM drawing's wires, under its cubes, drawn in once it has
-             landed while Understanding LLMs is selected.
+             landed while Understanding LLMs is selected. LLM-T1: centre to
+             centre, and they ride the cubes' physics (VoxelRain `links`).
      throw   (optional stretch, FORMATION_THROW) a mouse or pen can pick up a
              cube, drag it and throw it; it knocks others aside and everything
              springs back into the formation (VoxelRain). Pointer-only extra:
@@ -33,7 +34,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { Link } from "react-router";
 import { AdvanceArrowArt, GearMeshArt, NetworkArt, ToolmakingArt } from "./cardArt";
 import { VoxelRain } from "./VoxelRain";
-import { CUBE_CORNERS, FORMATION_SHAPES, FORMATION_WIRED, LLM_WIRES } from "./voxelShapes";
+import { CUBE_CORNERS, FORMATION_SHAPES, FORMATION_WIRED, LLM_LINK_SLOTS, LLM_WIRES } from "./voxelShapes";
 import type { VoxelShape } from "./voxelShapes";
 import { FORMATION_CARDS, FORMATION_COPY, FORMATION_DEFAULT, FORMATION_LINK, FORMATION_THROW } from "../../data/servicesScenes";
 import { useFrameSpread } from "../../motion/frameSpread";
@@ -47,6 +48,8 @@ const CARD_RECTS = [
   [1207.36, 3739.35, 303.644, 318.451],
 ] as const;
 const ISO = 21.427 / 37.373; // the cube edges' slope (30 deg isometric)
+/* LLM-T1: the wires follow their cubes (VoxelRain `links`) */
+const WIRE_LINKS = { shape: FORMATION_WIRED, pairs: LLM_LINK_SLOTS } as const;
 const CLEAR = 24; // a cube corner closer than this to the card is behind it
 
 /* the tether from `shape` to card `card`: from the outer corner of the cube
@@ -121,10 +124,11 @@ export function FormationScene({ reduced }: { reduced: boolean }) {
           rain={460}
           enterDelay={0.4}
           throwable={FORMATION_THROW}
+          links={WIRE_LINKS}
         >
           <g className="sv-fm__wires" data-active={selected === FORMATION_WIRED}>
             {LLM_WIRES.map((d, i) => (
-              <path key={i} className="sv-fm__wire" d={d} pathLength={1} style={{ "--i": i } as CSSProperties} />
+              <path key={i} className="sv-fm__wire" data-wire d={d} pathLength={1} style={{ "--i": i } as CSSProperties} />
             ))}
           </g>
           <g className="sv-fm__tethers">

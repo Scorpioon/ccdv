@@ -8,7 +8,7 @@ import { WorkWithScene } from "../components/services/WorkWithScene";
 import { FormationScene } from "../components/services/FormationScene";
 import { useMotionPolicy } from "../motion/reducedMotion";
 import { useSceneReveal } from "../motion/studioMotion";
-import { useBoundaryNav, useNavIdle } from "../motion/routeNav";
+import { useBoundaryNav, useNavIdle, usePinTop } from "../motion/routeNav";
 
 export function meta() {
   return [{ title: "CCDV — Services" }];
@@ -38,25 +38,37 @@ export default function Services() {
   const { reduced } = useMotionPolicy();
   const rootRef = useRef<HTMLDivElement>(null);
   const indexRef = useRef<HTMLElement>(null);
+  const redRef = useRef<HTMLDivElement>(null);
 
   useSceneReveal(rootRef, reduced);
-  useBoundaryNav(rootRef, indexRef, ".masthead--services");
+  // NAV-T3: the bar appears once the cover lockup has scrolled past
+  useBoundaryNav(rootRef, indexRef, ".masthead--services", ".sv-cv__lockup");
   useNavIdle(rootRef);
+  usePinTop(indexRef, redRef);
 
   return (
     <div className="r11 r11--services" ref={rootRef}>
       <StudioMobileMenu current="/services" />
       <SiteMasthead variant="services" compact />
 
-      <ServicesCover reduced={reduced} />
+      {/* NAV-T3 curtain + PIN-T1 pin (desktop, global.css): the cover pins
+          while the index rises over it; the index then pins, one screen tall,
+          while the red rises over it. PIN-T1 snap (Services only, trial): the
+          two in-flow markers are the snap points, since a sticky element's
+          own snap position moves with it */}
+      <div className="scene-curtain">
+        <ServicesCover reduced={reduced} />
 
-      <section className="sv-index" aria-labelledby="services-index-title" ref={indexRef}>
-        <ServiceIndex reduced={reduced} titleId="services-index-title" />
-      </section>
+        <span className="pin-snap" aria-hidden="true" />
+        <section className="sv-index" aria-labelledby="services-index-title" ref={indexRef}>
+          <ServiceIndex reduced={reduced} titleId="services-index-title" />
+        </section>
 
-      <div className="sv-red sv-grid">
-        <WorkWithScene reduced={reduced} />
-        <FormationScene reduced={reduced} />
+        <span className="pin-snap" aria-hidden="true" />
+        <div className="sv-red sv-grid" ref={redRef}>
+          <WorkWithScene reduced={reduced} />
+          <FormationScene reduced={reduced} />
+        </div>
       </div>
 
       <SiteFooter />

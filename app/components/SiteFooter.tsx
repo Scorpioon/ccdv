@@ -18,8 +18,8 @@ import { CcdvPixelMark } from "./marks/CcdvPixelMark";
    All four footer nav entries route as of GF08-B. */
 
 const COLUMN_B: { label: string; to?: string }[] = [
+  { label: "[ Services ]", to: "/services" }, // NAV-T3: Services before Work
   { label: "[ Work ]", to: "/work" },
-  { label: "[ Services ]", to: "/services" },
   { label: "[ Products ]", to: "/products" },
   { label: "[ Contact ]", to: "/contact" },
 ];

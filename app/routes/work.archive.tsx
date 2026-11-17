@@ -16,9 +16,11 @@ export function meta() {
 
 /* Work archive (WORK-T2): the Work Index that used to close /work, now its own
    page, reached from the hub's `View all projects`. Thin masthead (as Studio /
-   Services) and the M1 bar on phones. The list sits directly under the
-   filters; the right column shows three preview cards in the Studio card
-   proportions for the active row.
+   Services) and the M1 bar on phones.
+   WORK-T3 (OPERATOR retouch): one screen tall on desktop. A top row carries
+   the `\\Work Index` bar and both filters on one line; below it the project
+   list (left) and the preview (right: a wide lead image over three cards,
+   then the caption) for the active row.
 
    The six projects, YEARS and TYPES live in app/data/workProjects.ts (shared
    with Workcase). The Year filter is live for the years that have records
@@ -179,30 +181,28 @@ export default function WorkArchive() {
         className="work-index"
         aria-labelledby="work-index-title"
       >
-        <div className="work-index__main">
-          <div className="work-index__filters">
-            <h1 className="work-index__title" id="work-index-title">
-              <GearMark className="work-index__gear" fill="#1A1A1A" dotFill="#FEF36A" />
-              {"\\\\Work Index"}
-            </h1>
-            <WorkIndexFilter
-              label="Year"
-              options={YEARS}
-              value={year}
-              onChange={selectYear}
-              disabledOptions={UNAVAILABLE_YEARS}
-            />
-            <WorkIndexFilter label="Type" options={TYPES} value={type} onChange={setType} formatLabel={typeLabel} />
-          </div>
+        <div className="work-index__filters">
+          <h1 className="work-index__title" id="work-index-title">
+            <GearMark className="work-index__gear" fill="#141414" dotFill="#FEF36A" />
+            {"\\\\Work Index"}
+          </h1>
+          <WorkIndexFilter
+            label="Year"
+            options={YEARS}
+            value={year}
+            onChange={selectYear}
+            disabledOptions={UNAVAILABLE_YEARS}
+          />
+          <WorkIndexFilter label="Type" options={TYPES} value={type} onChange={setType} formatLabel={typeLabel} />
+        </div>
 
-          <div className="work-index__list" onMouseLeave={() => setPreviewId(DEFAULT_PREVIEW_ID)}>
-            <ProjectList
-              projects={filtered}
-              activeId={previewId}
-              onActiveChange={setPreviewId}
-              onCaseNavigate={saveScrollForCase}
-            />
-          </div>
+        <div className="work-index__list" onMouseLeave={() => setPreviewId(DEFAULT_PREVIEW_ID)}>
+          <ProjectList
+            projects={filtered}
+            activeId={previewId}
+            onActiveChange={setPreviewId}
+            onCaseNavigate={saveScrollForCase}
+          />
         </div>
 
         <WorkPreviewPane project={previewProject} />

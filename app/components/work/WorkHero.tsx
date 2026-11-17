@@ -1,116 +1,154 @@
-import { useEffect, useRef } from "react";
-import type { RefObject } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import { Link } from "react-router";
 import { GearMark } from "../marks/GearMark";
 import { CcdvPixelMark } from "../marks/CcdvPixelMark";
-import { FEATURED, findProject } from "../../data/workProjects";
+import {
+  AVAILABLE_TYPES,
+  AVAILABLE_YEARS,
+  FEATURED,
+  TYPES,
+  YEARS,
+  findProject,
+  typeLabel,
+} from "../../data/workProjects";
 import { index } from "../../motion/studioMotion";
 
 /* Work hub (WORK-T2, OPERATOR sketch over WORKv2). Left: the CCDV identity
-   column (gear, pixel lockup, `COLLAPSE CREATIVE` / `DEV. UNIT` set sideways,
-   three meta lines, `View all projects`), pinned and sized to fit the viewport
-   at every height. Right: the ADG-ARC collage, three columns that drift at
-   different rates as the page scrolls (parallax) while each tile fades in on
-   arrival (`data-spawn`, the shared reveal observer). `View all projects` opens
-   the archive (/work/archive).
-
-   D5: ADG-ARC is the only featured case; the caption links to its Workcase.
-   The images are OPERATOR placeholders (see FEATURED). Reduced motion: no
-   drift, no fade — plain content.
+   column (gear, pixel lockup), drawn on the viewport-fit unit. Right: the
+   featured project's collage, each tile fading in on arrival (`data-spawn`,
+   the shared reveal observer).
 
    WORK-T2 foot (OPERATOR, Figma): `View all projects`, the caption and the
-   five squares (the second open) share one row under the collage, on one
-   line and at one size; they left the pinned column, whose fit-to-height unit
-   had made `View all projects` tiny. */
+   five squares share one row under the collage, on one line and at one size.
 
-/* Parallax: one rAF-throttled scroll listener writes `--t` (-1..1, the
-   collage's centre against the viewport's) on the figure; each column's CSS
-   turns it into its own offset (`--dir` x `--amp`), so JS never touches the
-   columns. Idle off screen (early-out), cleaned up on unmount. */
-function useCollageDrift(ref: RefObject<HTMLElement | null>, reduced: boolean) {
-  useEffect(() => {
-    const node = ref.current;
-    if (!node || reduced) return;
-    let frame = 0;
-    let last = "";
-    const update = () => {
-      frame = 0;
-      const rect = node.getBoundingClientRect();
-      const view = window.innerHeight;
-      if (rect.bottom < 0 || rect.top > view || rect.height === 0) return;
-      const travel = (rect.height + view) / 2;
-      const t = Math.min(1, Math.max(-1, (view / 2 - (rect.top + rect.height / 2)) / travel)).toFixed(4);
-      if (t !== last) {
-        last = t;
-        node.style.setProperty("--t", t);
-      }
-    };
-    const schedule = () => {
-      if (!frame) frame = requestAnimationFrame(update);
-    };
-    update();
-    window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
-    return () => {
-      window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
-      if (frame) cancelAnimationFrame(frame);
-      node.style.removeProperty("--t");
-    };
-  }, [ref, reduced]);
+   WORK-T3 (OPERATOR): the five squares are a project switcher (FEATURED): the
+   open square is the shown project; a switch fades the collage out and brings
+   the new tiles up in order. Projects other than ADG-ARC show its captures as
+   placeholders (see FEATURED). Reduced motion: instant switch.
+
+   WORK-T4 (OPERATOR to-be): the hub is one screen tall on desktop.
+     - The sideways `COLLAPSE CREATIVE` / `DEV. UNIT` words and their square
+       left the identity column. Under the lockup: the `\\Work` section label
+       (the page's heading) and two lists, Year and Type, each entry a link to
+       the archive with that one filter applied (the Workcase links' state).
+       A Year or Type without projects is drawn but inert.
+     - The collage is a fixed mosaic (FEATURED tiles): a wide image and a tall
+       card on top, three below, filling the space between the lockup's top
+       and the foot row. The scroll-linked column sync is gone with the
+       columns. */
+
+const SWITCH_OUT_MS = 250;
+
+function ArchiveLinks({
+  label,
+  options,
+  available,
+  filter,
+  format = (value) => value,
+}: {
+  label: string;
+  options: string[];
+  available: string[];
+  filter: "year" | "type";
+  format?: (value: string) => string;
+}) {
+  return (
+    <ul className="work-hero__list" aria-label={label}>
+      {options.map((option) => {
+        const text = `[ ${format(option)} ]`;
+        return (
+          <li key={option}>
+            {available.includes(option) ? (
+              <Link
+                className="work-hero__link"
+                to="/work/archive"
+                state={{ filter: { [filter]: option } }}
+                aria-label={`${label}: ${format(option)} — show in the Work archive`}
+              >
+                <span className="work-hero__link-text">{text}</span>
+              </Link>
+            ) : (
+              <span className="work-hero__link" aria-disabled="true">
+                <span className="work-hero__link-text">{text}</span>
+              </span>
+            )}
+          </li>
+        );
+      })}
+    </ul>
+  );
 }
 
 export function WorkHero({ reduced }: { reduced: boolean }) {
-  const project = findProject(FEATURED.projectId);
-  const caption = project ? `${project.name} - ${project.tag}` : null;
-  const featureRef = useRef<HTMLElement>(null);
+  const [active, setActive] = useState(0);
+  const [shown, setShown] = useState(0);
+  const [phase, setPhase] = useState<"idle" | "out" | "in">("idle");
+  const timer = useRef(0);
 
-  useCollageDrift(featureRef, reduced);
+  useEffect(() => () => window.clearTimeout(timer.current), []);
+
+  const select = (next: number) => {
+    if (next === active) return;
+    setActive(next);
+    window.clearTimeout(timer.current);
+    if (reduced) {
+      setShown(next);
+      return;
+    }
+    setPhase("out");
+    timer.current = window.setTimeout(() => {
+      setShown(next);
+      setPhase("in");
+    }, SWITCH_OUT_MS);
+  };
+
+  const featured = FEATURED[shown];
+  const project = findProject(featured.projectId);
+  const caption = project ? `${project.displayName ?? project.name} - ${project.tag}` : null;
+  // the first collage spawns with the page (reveal observer); after a switch
+  // the new tiles mount already in view and play their own entry (CSS)
+  const spawn = phase === "idle";
 
   return (
     <section className="work-hero" aria-labelledby="work-title">
-      <h1 className="work-visually-hidden" id="work-title">
-        Work
-      </h1>
-
       <div className="work-hero__body">
         <div className="work-hero__identity">
-          <GearMark className="work-hero__gear" fill="#1A1A1A" dotFill="#D9D9D9" />
-          <CcdvPixelMark variant="inline" className="work-hero__pixel" fill="#1A1A1A" />
-          <p className="work-hero__words">
-            <span className="work-hero__word work-hero__word--collapse">COLLAPSE CREATIVE</span>{" "}
-            <span className="work-hero__word work-hero__word--unit">DEV. UNIT</span>
-          </p>
-          <div className="work-hero__meta">
-            <div>[ COLLAPSE CREATIVE : DEV UNIT ]</div>
-            <div>[ hello[@]collapsecreative.com ]</div>
-            <div>
-              [ Part of <a href="https://collapsecreative.com">collapsecreative.com</a> ]
-            </div>
-          </div>
-          <span className="work-hero__square" aria-hidden="true" />
+          <GearMark className="work-hero__gear" fill="#141414" dotFill="#D9D9D9" />
+          <CcdvPixelMark variant="inline" className="work-hero__pixel" fill="#141414" />
+          <nav className="work-hero__links" aria-labelledby="work-title">
+            <h1 className="work-hero__title" id="work-title">
+              <GearMark className="work-hero__title-gear" fill="#141414" dotFill="#FEF36A" />
+              {"\\\\Work"}
+            </h1>
+            <ArchiveLinks label="Year" options={YEARS} available={AVAILABLE_YEARS} filter="year" />
+            <ArchiveLinks
+              label="Type"
+              options={TYPES}
+              available={AVAILABLE_TYPES}
+              filter="type"
+              format={typeLabel}
+            />
+          </nav>
         </div>
 
-        <figure
-          className="work-feature"
-          ref={featureRef}
-          aria-labelledby={caption ? "work-feature-caption" : undefined}
-        >
-          <div className="work-feature__columns">
-            {FEATURED.columns.map((column, c) => (
-              <div key={c} className={`work-feature__col work-feature__col--${c + 1}`}>
-                {column.map((tile, i) => (
-                  <div key={i} className="work-feature__tile" data-spawn style={index(i)}>
-                    <img
-                      src={tile.src}
-                      alt={tile.alt}
-                      width={tile.width}
-                      height={tile.height}
-                      loading={c === 0 && i === 0 ? "eager" : "lazy"}
-                      decoding="async"
-                    />
-                  </div>
-                ))}
+        <figure className="work-feature" data-phase={phase} aria-labelledby={caption ? "work-feature-caption" : undefined}>
+          <div className="work-feature__grid" key={shown}>
+            {featured.tiles.map((tile, i) => (
+              <div
+                key={i}
+                className="work-feature__tile"
+                data-spawn={spawn ? "" : undefined}
+                style={{ ...index(i), ...(tile.focus ? { "--focus": tile.focus } : null) } as CSSProperties}
+              >
+                <img
+                  src={tile.src}
+                  alt={tile.alt}
+                  width={tile.width}
+                  height={tile.height}
+                  loading={i < 2 ? "eager" : "lazy"}
+                  decoding="async"
+                />
               </div>
             ))}
           </div>
@@ -129,11 +167,21 @@ export function WorkHero({ reduced }: { reduced: boolean }) {
             {project?.href ? <Link to={project.href}>{caption}</Link> : caption}
           </p>
         )}
-        <span className="work-hero__marks" aria-hidden="true">
-          {[0, 1, 2, 3, 4].map((m) => (
-            <span key={m} className={`work-hero__mark${m === 1 ? " work-hero__mark--open" : ""}`} />
-          ))}
-        </span>
+        <div className="work-hero__marks" role="group" aria-label="Featured projects">
+          {FEATURED.map((entry, m) => {
+            const name = findProject(entry.projectId);
+            return (
+              <button
+                key={entry.projectId}
+                type="button"
+                className="work-hero__mark"
+                aria-pressed={m === active}
+                aria-label={`Show ${name ? (name.displayName ?? name.name) : entry.projectId}`}
+                onClick={() => select(m)}
+              />
+            );
+          })}
+        </div>
       </div>
     </section>
   );

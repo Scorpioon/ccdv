@@ -19,8 +19,9 @@ export function meta() {
    artboard numbers, which is the check that they are origins. */
 const BANDS = [
   { slug: "studio", label: "[Studio]", suffix: ":P", suffixLeft: 951, routed: true },
-  { slug: "work", label: "[Work]", suffix: "+.+", suffixLeft: 722, routed: true },
+  // NAV-T3 (OPERATOR): Services moved above Work
   { slug: "services", label: "[Services]", suffix: "\\", suffixLeft: 1180, routed: true },
+  { slug: "work", label: "[Work]", suffix: "+.+", suffixLeft: 722, routed: true },
   { slug: "products", label: "[Products]", suffix: ":o", suffixLeft: 1180, routed: true },
   { slug: "contact", label: "[Contact]", suffix: "<3", suffixLeft: 1065, routed: true },
 ] as const;

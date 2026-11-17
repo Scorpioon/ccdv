@@ -17,22 +17,28 @@ const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
 const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 const NAV_IDLE_MIN_SCROLL = 50; // px: the M1 bar's height; nearer the top the bar stays
 
+/* NAV-T3 (OPERATOR): `leadSelector` names an element whose LOWER edge reveals
+   the bar first (the cover lockup): the bar appears once the lockup has
+   scrolled past, or when the section edge arrives, whichever comes first. */
 export function useBoundaryNav(
   rootRef: RefObject<HTMLElement | null>,
   edgeRef: RefObject<HTMLElement | null>,
   navSelector: string,
+  leadSelector?: string,
 ) {
   useIsomorphicLayoutEffect(() => {
     const root = rootRef.current;
     const edge = edgeRef.current;
     const nav = root?.querySelector<HTMLElement>(navSelector);
     if (!root || !edge || !nav) return;
+    const lead = leadSelector ? root.querySelector<HTMLElement>(leadSelector) : null;
     let frame = 0;
     let last = "";
     const update = () => {
       frame = 0;
       const navH = nav.offsetHeight;
-      const top = edge.getBoundingClientRect().top;
+      const edgeTop = edge.getBoundingClientRect().top;
+      const top = lead ? Math.min(edgeTop, lead.getBoundingClientRect().bottom) : edgeTop;
       /* navH is 0 on phones, where the bar is not rendered */
       const p = navH > 0 ? clamp01((navH - top) / navH).toFixed(4) : "1";
       if (p !== last) {
@@ -52,7 +58,85 @@ export function useBoundaryNav(
       if (frame) cancelAnimationFrame(frame);
       root.style.removeProperty("--nav-in");
     };
-  }, [rootRef, edgeRef, navSelector]);
+  }, [rootRef, edgeRef, navSelector, leadSelector]);
+}
+
+/* PIN-T1 (OPERATOR): a pinned scene module sticks with its top at
+   min(0, screen height - its own height), written as --pin-top. One screen
+   tall or less, it pins at the top; taller (a long Service Index category), it
+   is read to its end first and pins by its bottom, so nothing is cut. Only
+   the CSS at >= 1024px reads the property. Re-measured on resize and when
+   the module changes size. */
+/* FLOW-T1 (OPERATOR): what a curtain fully covers is marked `data-covered` —
+   the pinned module once the next section's top has reached the top of the
+   screen, and the cover (the curtain's first child) once the module has. The
+   CSS stops painting it (visibility) and useVisibleLoop (studio/artworks)
+   pauses any animation inside it; both resume when it is uncovered. */
+const coverListeners = new Set<() => void>();
+export function onCoverChange(listener: () => void) {
+  coverListeners.add(listener);
+  return () => {
+    coverListeners.delete(listener);
+  };
+}
+
+export function usePinTop(ref: RefObject<HTMLElement | null>, nextRef?: RefObject<HTMLElement | null>) {
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+    const next = nextRef?.current ?? null;
+    const first = node.parentElement?.firstElementChild;
+    const cover = first instanceof HTMLElement && first !== node ? first : null;
+    let last = "";
+    let frame = 0;
+    const measure = () => {
+      const top = `${Math.min(0, window.innerHeight - node.offsetHeight)}px`;
+      if (top !== last) {
+        last = top;
+        node.style.setProperty("--pin-top", top);
+      }
+    };
+    const mark = (el: HTMLElement | null, covered: boolean) => {
+      if (!el || el.hasAttribute("data-covered") === covered) return false;
+      el.toggleAttribute("data-covered", covered);
+      return true;
+    };
+    const check = () => {
+      frame = 0;
+      const moduleCovered = !!next && next.getBoundingClientRect().top <= 0;
+      const coverCovered = node.getBoundingClientRect().top <= 0;
+      const changed = [mark(node, moduleCovered), mark(cover, coverCovered)].some(Boolean);
+      if (changed) coverListeners.forEach((listener) => listener());
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(check);
+    };
+    const observer =
+      typeof ResizeObserver !== "undefined"
+        ? new ResizeObserver(() => {
+            measure();
+            schedule();
+          })
+        : null;
+    observer?.observe(node);
+    measure();
+    check();
+    const onResize = () => {
+      measure();
+      schedule();
+    };
+    window.addEventListener("resize", onResize);
+    window.addEventListener("scroll", schedule, { passive: true });
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("scroll", schedule);
+      if (frame) cancelAnimationFrame(frame);
+      node.style.removeProperty("--pin-top");
+      const changed = [mark(node, false), mark(cover, false)].some(Boolean);
+      if (changed) coverListeners.forEach((listener) => listener());
+    };
+  }, [ref, nextRef]);
 }
 
 export function useNavIdle(rootRef: RefObject<HTMLElement | null>) {

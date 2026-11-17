@@ -1,6 +1,8 @@
+import { Link } from "react-router";
 import { SiteMasthead } from "../components/SiteMasthead";
 import { SiteFooter } from "../components/SiteFooter";
 import { ContactDirectory } from "../components/ContactDirectory";
+import { useTransitionLink } from "../components/GlobalShell";
 
 export function meta() {
   return [{ title: "CCDV — Contact" }];
@@ -11,6 +13,7 @@ export function meta() {
    pages_contact.svg, summing unchanged. See ContactDirectory for link
    provenance per `CTC-DEC-001`-`005`. */
 export default function Contact() {
+  const link = useTransitionLink();
   return (
     <div className="r11 r11--contact">
       <SiteMasthead variant="contact" />
@@ -24,9 +27,10 @@ export default function Contact() {
         <span className="band__suffix" style={{ left: "calc(1065 * var(--u))" }}>
           &lt;3
         </span>
-        <span className="hero__watermark" aria-hidden="true">
+        {/* NAV-T3 (OPERATOR): `collapse` goes Home everywhere */}
+        <Link className="hero__watermark" aria-label="collapse — back to Home" {...link("/")}>
           collapse
-        </span>
+        </Link>
       </section>
 
       <div className="section section--stripe" />

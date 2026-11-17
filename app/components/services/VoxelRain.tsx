@@ -30,6 +30,11 @@
      reduced   no loop: the active formation is drawn at rest, and a new
                target replaces it at once; a dragged cube still follows the
                pointer but goes straight home on release (no throw, no hits).
+     links     (LLM-T1, OPERATOR) while `links.shape` is the formation, every
+               `path[data-wire]` among the children joins the CENTRES of its
+               two cubes where they are on screen this frame (falling, thrown,
+               pushed), so the wires ride the physics; the slot -> cube map is
+               kept by every assignment.
    React renders the first formation; afterwards the engine owns the cube
    attributes (and React never re-renders the pool). */
 import { useEffect, useId, useRef } from "react";
@@ -134,6 +139,7 @@ export function VoxelRain({
   cycle,
   throwable = false,
   morph = false,
+  links,
   children,
 }: {
   shapes: readonly VoxelShape[];
@@ -156,6 +162,9 @@ export function VoxelRain({
   throwable?: boolean;
   /** the shapes are one set of cubes by identity: scramble, don't re-rain */
   morph?: boolean;
+  /** wires that follow their cubes: `pairs` are slot indices of `shapes[shape]`,
+      in the order of the `path[data-wire]` children */
+  links?: { shape: number; pairs: readonly (readonly [number, number])[] };
   /** drawn under the cubes, in the same viewBox (the pile's tether lines) */
   children?: ReactNode;
 }) {
@@ -175,7 +184,34 @@ export function VoxelRain({
     order: [] as number[],
     lifted: false,
     drag: null as Drag | null,
+    /* slot j of the shown formation -> the cube standing on it (-1: none) */
+    map: [] as number[],
   });
+  const wires = useRef<SVGPathElement[]>([]);
+  const wireKeys = useRef<string[]>([]);
+
+  /* the wires join their cubes' centres as drawn now (a cube's value, offset
+     and slot); only while the linked formation is the one shown */
+  const writeWires = () => {
+    const s = sim.current;
+    if (!links || s.shown !== links.shape) return;
+    const point = (j: number) => {
+      const c = s.cubes[s.map[j] ?? -1];
+      if (!c || !c.slot) return null;
+      const [drop] = valueAt(c, s.clock);
+      return [c.slot.x + c.dx, c.slot.y + drop + c.dy + MID_Y * c.slot.s] as const;
+    };
+    links.pairs.forEach(([a, b], n) => {
+      const node = wires.current[n];
+      const p = point(a);
+      const q = point(b);
+      if (!node || !p || !q) return;
+      const d = `M${p[0].toFixed(2)} ${p[1].toFixed(2)}L${q[0].toFixed(2)} ${q[1].toFixed(2)}`;
+      if (d === wireKeys.current[n]) return;
+      wireKeys.current[n] = d;
+      node.setAttribute("d", d);
+    });
+  };
 
   const href = (slot: VoxelSlot | null) => `#${id}-${slot?.ghost ? "ghost" : "ink"}`;
   const writeCube = (i: number, c: Cube, value: [number, number]) => {
@@ -224,6 +260,7 @@ export function VoxelRain({
       writeCube(i, c, valueAt(c, s.clock));
     });
     if (s.lifted) restack();
+    writeWires();
   };
 
   /* every cube at its final value for `shape` (reduced motion, rest) */
@@ -231,6 +268,7 @@ export function VoxelRain({
     const s = sim.current;
     s.cubes = Array.from({ length: pool }, (_, i) => restCube(shape[i] ?? null));
     s.order = morph ? depthOrder(shape) : shape.map((_, i) => i);
+    s.map = shape.map((_, i) => i);
     s.cubes.forEach((c, i) => {
       const node = nodes.current[i];
       if (!node) return;
@@ -239,6 +277,7 @@ export function VoxelRain({
       if (c.slot) writeCube(i, c, [0, 1]);
     });
     restack();
+    writeWires();
   };
 
   /* morph: the first appearance, cube k falls onto slot k, lowest first */
@@ -262,6 +301,7 @@ export function VoxelRain({
       writeCube(k, c, [-rain, 0]);
     });
     s.order = depthOrder(shape);
+    s.map = shape.map((_, k) => k);
     restack();
   };
 
@@ -293,6 +333,7 @@ export function VoxelRain({
       nodes.current[k]?.setAttribute("href", href(slot));
     });
     s.order = depthOrder(shape);
+    s.map = shape.map((_, k) => k);
     restack();
   };
 
@@ -352,6 +393,7 @@ export function VoxelRain({
     });
     /* back to front: leaving cubes, then the formation's own order */
     s.order = [...leaving, ...assigned.filter((i) => i >= 0)];
+    s.map = assigned;
     restack();
     return inAt + Math.max(0, fresh.length - 1) * IN_STAGGER + IN_DUR;
   };
@@ -398,6 +440,12 @@ export function VoxelRain({
     if (s.lifted && !s.drag && s.cubes.every(still)) restack();
   };
 
+  /* the wire paths among the children, in document order (= links.pairs) */
+  useEffect(() => {
+    wires.current = Array.from(svgRef.current?.querySelectorAll<SVGPathElement>("path[data-wire]") ?? []);
+    wireKeys.current = [];
+  }, [links]);
+
   /* a new selection (the pile) */
   useEffect(() => {
     const s = sim.current;
@@ -439,6 +487,7 @@ export function VoxelRain({
       }
       if (throwable || morph) physics(dt, clock);
       s.cubes.forEach((c, i) => writeCube(i, c, valueAt(c, clock)));
+      writeWires();
     },
     () => {
       const s = sim.current;
@@ -492,7 +541,10 @@ export function VoxelRain({
       c.dy = drag.baseDy + p.y - drag.y;
       drag.samples.push({ ...p, t: e.timeStamp });
       if (drag.samples.length > 6) drag.samples.shift();
-      if (reduced) writeCube(drag.i, c, [0, 1]);
+      if (reduced) {
+        writeCube(drag.i, c, [0, 1]);
+        writeWires();
+      }
     };
     const onUp = (e: PointerEvent) => {
       const drag = s.drag;

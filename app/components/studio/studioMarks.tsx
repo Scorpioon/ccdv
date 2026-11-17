@@ -107,7 +107,7 @@ export function CcosHexMark({ id }: { id: string }) {
         </linearGradient>
       </defs>
       <path d="M722.469 2809L764.445 2833.23V2881.7L722.469 2905.94L680.494 2881.7V2833.23L722.469 2809Z" fill="#F2F2F2" />
-      <path d="M722.471 2818.7L756.051 2838.08V2876.86L722.471 2896.25L688.89 2876.86V2838.08L722.471 2818.7Z" fill="#1A1A1A" />
+      <path d="M722.471 2818.7L756.051 2838.08V2876.86L722.471 2896.25L688.89 2876.86V2838.08L722.471 2818.7Z" fill="#141414" />
       <path d="M722.47 2832.27L744.297 2844.87V2870.07L722.47 2882.67L700.642 2870.07V2844.87L722.47 2832.27Z" fill={`url(#${id})`} />
       <path d="M688.539 2838.08L722.468 2857.47L756.396 2838.08" stroke="#F2F2F2" strokeWidth="1.67542" fill="none" />
       <path d="M722.469 2857.47V2896.24" stroke="#F2F2F2" strokeWidth="1.67542" fill="none" />
@@ -115,7 +115,7 @@ export function CcosHexMark({ id }: { id: string }) {
   );
 }
 
-/* Desktop only: the hairlines that join Build to CC.OS (FB_R4_5, 0.5 #1A1A1A):
+/* Desktop only: the hairlines that join Build to CC.OS (FB_R4_5, 0.5 #141414):
    the bus under the three cards, the run from card 1 to the CC.OS title row,
    the two arms of that row, and the dev-notes return to the graph card. The SVG
    covers the lilac mega-section exactly (y2164..3900), so these are the

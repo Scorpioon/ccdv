@@ -27,11 +27,13 @@ import { ContactMarkTile } from "./marks/ContactMarkTile";
    narrowly `"/" | "/studio"` and this movement must not widen it or give
    the masthead new page-transition choreography — see NavBand's identical
    reasoning for its own Work/Services/Products/Contact links. */
-const CELLS = ["[Studio]", "[Work]", "[Services]", "[Products]", "[Contact]"] as const;
+/* NAV-T3 (OPERATOR): section order is Studio, Services, Work, Products,
+   Contact everywhere (masthead, Home bands, footer, M1 menu). */
+const CELLS = ["[Studio]", "[Services]", "[Work]", "[Products]", "[Contact]"] as const;
 const CELL_ROUTES: Partial<Record<number, string>> = {
   0: "/studio",
-  1: "/work",
-  2: "/services",
+  1: "/services",
+  2: "/work",
   3: "/products",
   4: "/contact",
 };
@@ -40,8 +42,8 @@ type SectionVariant = "studio" | "work" | "services" | "products" | "contact";
 
 const SECTION_NAV: Record<SectionVariant, { index: number; Tile: (props: { className?: string }) => ReactNode }> = {
   studio: { index: 0, Tile: StudioWheelTile },
-  work: { index: 1, Tile: WorkGearTile },
-  services: { index: 2, Tile: ServicesArrowTile },
+  services: { index: 1, Tile: ServicesArrowTile },
+  work: { index: 2, Tile: WorkGearTile },
   products: { index: 3, Tile: ProductsMarkTile },
   contact: { index: 4, Tile: ContactMarkTile },
 };
@@ -66,12 +68,12 @@ export function SiteMasthead({ variant, compact = false }: { variant: "home" | S
           "change white"); the other routes keep #D9D9D9. */}
       <GearMark
         className="masthead__gear"
-        fill="#1A1A1A"
+        fill="#141414"
         dotFill={collapsing ? "#F2F2F2" : "#D9D9D9"}
       />
-      <CcdvPixelMark variant="stack" className="masthead__pixel" fill="#1A1A1A" />
+      <CcdvPixelMark variant="stack" className="masthead__pixel" fill="#141414" />
       {collapsing && (
-        <CcdvPixelMark variant="inline" className="masthead__pixel-inline" fill="#1A1A1A" />
+        <CcdvPixelMark variant="inline" className="masthead__pixel-inline" fill="#141414" />
       )}
     </>
   );

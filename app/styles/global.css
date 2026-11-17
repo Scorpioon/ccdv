@@ -60,6 +60,24 @@ h1, h2, p { margin: 0; font-weight: 600; }
    the incoming one while it fades and never takes input. */
 .site-stage { position: relative; }
 .site-stage > [data-motion-pop-id] { z-index: 1; pointer-events: none; }
+/* NAV-T3: Home -> Studio / Services rises the incoming page over the popped
+   Home, so on "rise" the in-flow route paints above it; on "fall" the popped
+   scene page slides down over Home (the default order). The stage clips, so a
+   page one screen down never lengthens the document. */
+.site-shell[data-route-move="rise"] .site-stage > .site-stage__route:not([data-motion-pop-id]) {
+  position: relative;
+  z-index: 2;
+}
+.site-shell:is([data-route-move="rise"], [data-route-move="fall"]) .site-stage { overflow: clip; }
+/* ...and the cover's pieces come up after the page, slower than a scene
+   reveal, in reading order (StudioCover / ServicesCover set --i).
+   NAV-T4 (OPERATOR): the same on a cross-fade into Studio / Services (from
+   the bar, Work, ...): the outgoing page fades over the bare ground and grid,
+   a calm beat, then the cover builds. Not on a first load ("load"). */
+.site-shell:is([data-route-move="rise"], [data-route-move="fade"]) :is(.cv, .sv-cv) [data-spawn][data-seen="true"] {
+  transition-duration: 1s, 1s;
+  transition-delay: calc(0.45s + var(--i, 0) * 0.16s), calc(0.45s + var(--i, 0) * 0.16s);
+}
 main { display: block; outline: none; }
 
 .r11 {
@@ -2945,12 +2963,12 @@ main { display: block; outline: none; }
   }
 }
 
-/* OC01-08: the two lilac mega-sections, #1A1A1A grid at exactly 5% */
+/* OC01-08: the two lilac mega-sections, #141414 grid at exactly 5% */
 .studio-grid {
   background-color: var(--ccdv-purple-card);
   background-image:
-    linear-gradient(rgb(26 26 26 / 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(26 26 26 / 0.05) 1px, transparent 1px);
+    linear-gradient(rgb(20 20 20 / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(20 20 20 / 0.05) 1px, transparent 1px);
   background-size: var(--studio-grid) var(--studio-grid);
 }
 
@@ -3235,12 +3253,13 @@ main { display: block; outline: none; }
 .ap__bar[data-active="true"] { background: var(--ccdv-purple-card); border-color: var(--ccdv-purple-card); }
 .ap__sphere { display: block; width: 100%; height: 100%; overflow: visible; color: var(--ccdv-panel); }
 .ap__line { stroke: var(--ccdv-panel); stroke-width: 0.752677; fill: none; }
-/* the lit disc: FB_R4_5 fills it #CC8AD3 in color-dodge over the #1A1A1A
-   ground, which renders #823997 (26/255 / (1 - c) per channel). The rendered
-   value is used, so an isolating parent (the inline SVG root in Blink) can
-   never turn it into the raw #CC8AD3; the others are dashed outlines */
+/* the lit disc: FB_R4_5 fills it #CC8AD3 in color-dodge over the ink ground,
+   which renders ground / (1 - c) per channel: #823997 over the old #1A1A1A,
+   #642C74 over #141414 (FLOW-T1, OPERATOR ink change). The rendered value is
+   used, so an isolating parent (the inline SVG root in Blink) can never turn
+   it into the raw #CC8AD3; the others are dashed outlines */
 .ap__disc {
-  fill: #823997;
+  fill: #642c74;
   fill-opacity: 0;
   stroke: var(--ccdv-panel);
   stroke-width: 0.752677;
@@ -3633,6 +3652,71 @@ main { display: block; outline: none; }
 }
 /* === end STUDIO FIT ========================================================== */
 
+/* === NAV-T3 (OPERATOR, 2026-11-17): curtain + compact second module ==========
+   Desktop, /studio and /services.
+   Curtain: the cover sticks once its lower edge meets the screen's (top =
+   screen - cover height, never below 0) inside .scene-curtain, and the black
+   module (z-index 2, ink ground) rises over it; past the pair both scroll on.
+   Compact: the Approach / Service Index lose 71.5 above and 40 below, their
+   art and copy move up a further 48, and the module fits the screen height
+   (--fit-h = the compact height), so it shows whole in any viewport. */
+@media (min-width: 1024px) {
+  :is(.r11--studio .cv, .r11--services .sv-cv) {
+    --cv-u: min(calc(1cqw / 14.4), calc(100svh / 700));
+    position: sticky;
+    top: min(0px, calc(100svh - 1118 * var(--cv-u)));
+  }
+
+  /* FLOW-T1 (OPERATOR): the modules breathe — one rhythm, --flow-pad 120
+     above and below (was 72 / 56); the content moves down 48 and the fit
+     height grows by the added 112, so the module still shows whole */
+  .r11--studio .ap {
+    --fit-h: 998.5;
+    min-height: calc(998.5 * var(--u));
+    padding-top: calc(120 * var(--u));
+    padding-bottom: calc(120 * var(--u));
+  }
+  .r11--studio .ap__bars { top: calc(120 * var(--u)); }
+  .r11--studio .ap__art { top: calc(208.5 * var(--u)); }
+  .r11--studio .ap::after { top: calc(830.5 * var(--u)); }
+  .r11--studio .ap__body { margin-top: calc(101.6 * var(--u)); }
+
+  /* PIN-T1 (OPERATOR, trial): the black module is at least one screen tall
+     and pins (top = --pin-top, routeNav.usePinTop) while the next section
+     (lilac / red, opaque) rises over it. .scene-curtain now also holds that
+     next section, so both pins end where it ends. */
+  :is(.r11--studio .studio-approach, .r11--services .sv-index) {
+    position: sticky;
+    top: var(--pin-top, 0px);
+    min-height: 100svh;
+  }
+  :is(.r11--studio .studio-approach, .r11--services .sv-index) > :is(.ap, .sv-ix) { min-height: 100svh; }
+  :is(.r11--studio .scene-curtain > .studio-lilac, .r11--services .scene-curtain > .sv-red) { z-index: 3; }
+
+  /* PIN-T1 snap, FLOW-T1 (OPERATOR: Studio as Services): proximity only — it
+     settles a scroll that stops near a module start, never forces one (a
+     module taller than the screen stays fully reachable). Snap points: the
+     in-flow markers at the black module's and the lilac / red's natural tops,
+     and the second scene of the lilac / red (CC.OS / Formation). */
+  html:has(:is(.r11--studio, .r11--services)) { scroll-snap-type: y proximity; }
+  :is(.r11--studio, .r11--services) .pin-snap { display: block; height: 0; scroll-snap-align: start; }
+  :is(.r11--studio .cs, .r11--services .sv-fm) { scroll-snap-align: start; }
+
+  /* FLOW-T1 rhythm in the lilac / red: the first scene (Build / Work with)
+     starts 120 down (was 48: every scene of the block moves 72) and the
+     block ends 120 below its last scene, so each boundary breathes the same.
+     The connector layer moves with the scenes and keeps its drawn height. */
+  :is(.r11--studio .studio-lilac, .r11--services .sv-red) { height: calc(1880 * var(--u)); }
+  :is(.r11--studio :is(.bu, .cs, .sc), .r11--services :is(.sv-ww, .sv-fm)) { margin-top: calc(72 * var(--u)); }
+  .r11--studio .sc { height: calc(1736 * var(--u)); }
+
+  /* FLOW-T1: what a curtain fully covers is not painted (routeNav marks it;
+     the animation loops inside it pause) */
+  .scene-curtain > [data-covered] { visibility: hidden; }
+}
+.pin-snap { display: none; }
+/* === end NAV-T3 Studio ======================================================= */
+
 /* === SERVICES R1 — Studio-grammar scene system (t_20261113_servicesr1) ======
    /services only; every selector below is `.r11--services`-scoped or uses the
    new `sv-` / `chip--red` names, so no other route is reached. Services has no
@@ -3640,7 +3724,7 @@ main { display: block; outline: none; }
    STUDIO_resp3-1.svg phones, see the STUDIO R3 block above) re-used for the
    Services scenes, in the same units: desktop calc(N * var(--u)) at the 1440
    reference, below 1024px --k (1px at 390, max 1.5px) on a 390k column; --s is
-   the active one. Accent #FF3E58 (--ccdv-red, round 3; was #F64848), ink #1A1A1A, light #F2F2F2,
+   the active one. Accent #FF3E58 (--ccdv-red, round 3; was #F64848), ink #141414, light #F2F2F2,
    grid ink 5%. Shared markup re-used as is: .chip (+ new red tone), .bc (the
    joined chip), .studio-sphere (pointer/touch ownership), the thin masthead and
    the M1 bar/menu (their Studio-scoped rules are mirrored here, not edited). */
@@ -3710,6 +3794,22 @@ main { display: block; outline: none; }
 @media (max-width: 1023px) {
   .sv-cv__frame { display: contents; }
 }
+/* NAV-T3 compact Service Index (see the NAV-T3 Studio block), FLOW-T1 rhythm:
+   120 above and below, head at 120, the face at 231, the editorial column
+   with tighter inner gaps; fit height 994.5 */
+@media (min-width: 1024px) {
+  .r11--services .sv-ix {
+    --fit-h: 994.5;
+    min-height: calc(994.5 * var(--u));
+    padding-top: calc(120 * var(--u));
+    padding-bottom: calc(120 * var(--u));
+  }
+  .r11--services .sv-ix__head { top: calc(120 * var(--u)); }
+  .r11--services .sv-ix__art { top: calc(231 * var(--u)); }
+  .r11--services .sv-ix__body { margin-top: calc(74.3 * var(--u)); }
+  .r11--services .sv-ix__services { margin-top: calc(48 * var(--u)); }
+  .r11--services .sv-ix__detail { margin-top: calc(32 * var(--u)); }
+}
 
 .sv-visually-hidden {
   position: absolute;
@@ -3723,12 +3823,12 @@ main { display: block; outline: none; }
   border: 0;
 }
 
-/* the red blocks (cover, Work with + Next step), #1A1A1A grid at 5% */
+/* the red blocks (cover, Work with + Next step), #141414 grid at 5% */
 .sv-grid {
   background-color: var(--ccdv-red);
   background-image:
-    linear-gradient(rgb(26 26 26 / 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(26 26 26 / 0.05) 1px, transparent 1px);
+    linear-gradient(rgb(20 20 20 / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(20 20 20 / 0.05) 1px, transparent 1px);
   background-size: var(--sv-grid) var(--sv-grid);
 }
 
@@ -4385,7 +4485,7 @@ main { display: block; outline: none; }
   background-color: var(--ccdv-light);
   background-image: repeating-linear-gradient(
     to bottom,
-    rgb(26 26 26 / 0.05) 0 calc(1.067 * var(--wu)),
+    rgb(20 20 20 / 0.05) 0 calc(1.067 * var(--wu)),
     transparent calc(1.067 * var(--wu)) calc(49.689 * var(--wu))
   );
 }
@@ -4395,27 +4495,37 @@ main { display: block; outline: none; }
   inset: 0;
   background-image: repeating-linear-gradient(
     to right,
-    rgb(26 26 26 / 0.05) 0 calc(1.067 * var(--wu)),
+    rgb(20 20 20 / 0.05) 0 calc(1.067 * var(--wu)),
     transparent calc(1.067 * var(--wu)) calc(52.968 * var(--wu))
   );
   pointer-events: none;
 }
 
-/* the body holds the two tracks, so the pinned column stops at the collage's
-   end and never slides over the foot row */
+/* WORK-T4 (OPERATOR to-be): one screen tall on desktop. The identity column
+   is drawn on the fit unit --iu; the foot row, the mosaic's gaps and the grid
+   keep the page unit --wu (OPERATOR: the hub-wide fit unit made the foot
+   type too small again). The mosaic takes the width that is left and the
+   height between its 51.2 top and the foot row. Track 1 is the gear's right
+   edge (51.2 + 234.7) plus the same 51.2. */
+@media (min-width: 768px) {
+  .r11--work .work-hero {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    box-sizing: border-box;
+    height: 100svh;
+  }
+}
 .r11--work .work-hero__body {
   position: relative;
   display: grid;
-  grid-template-columns: calc(353.875 * var(--iu)) minmax(0, 1fr);
-  align-items: start;
+  grid-template-columns: calc(337.1 * var(--iu)) minmax(0, 1fr);
+  min-height: 0;
 }
 
 .r11--work .work-hero__identity {
   --wu: var(--iu);
-  position: sticky;
-  top: var(--hub-bar);
+  position: relative;
   z-index: 1;
-  height: calc(1192.53 * var(--wu));
 }
 
 .r11--work .work-hero__gear {
@@ -4433,50 +4543,60 @@ main { display: block; outline: none; }
   height: calc(52.3 * var(--wu));
 }
 
-/* Sideways words: horizontal text rotated 90deg about its top-left corner, so
-   the line box's baseline (L/2 + 0.386364 * size from the top) lands at
-   x = left - 61.31. Underline rules (3.146 thick, 6.95 off the baseline) and
-   the 421.78 start are the artboard's: COLLAPSE CREATIVE baseline x50.3,
-   DEV. UNIT baseline x135.3, 69.17 type (both runs end where 17 / 9
-   advances of 0.545em put them: y1063.1 / y761.3). */
-.r11--work .work-hero__words { margin: 0; }
-.r11--work .work-hero__word {
+/* WORK-T4 (OPERATOR to-be, measured on the 1536 frame): under the lockup, the
+   yellow `\\Work` label (y413.6, the archive bar's gear), 13 below it the
+   Year list, 26 below that the Type list; each entry a keyline box the gear's
+   width. OPERATOR (too small at the to-be's 12 / 18.8): type 20 (the longest
+   entry, 19 advances of 0.545em, is 207 of the 234.7 width), entries 34,
+   label 40, never under 11px type. Entries are archive links: the white band
+   behind the text on hover / focus, as the archive's filters; entries
+   without projects are drawn at half strength and inert. */
+.r11--work .work-hero__links {
   position: absolute;
-  top: calc(421.78 * var(--wu));
-  font-size: calc(69.17 * var(--wu));
+  left: calc(51.2 * var(--wu));
+  top: calc(413.6 * var(--wu));
+  width: calc(234.7 * var(--wu));
+}
+.r11--work .work-hero__title {
+  display: flex;
+  align-items: center;
+  gap: calc(10 * var(--wu));
+  height: calc(40 * var(--wu));
+  margin: 0;
+  padding-left: calc(10 * var(--wu));
+  border: max(1px, calc(0.8 * var(--wu))) solid var(--ccdv-ink);
+  background: var(--ccdv-yellow);
+  font-size: max(11px, calc(20 * var(--wu)));
+  font-weight: inherit;
+  line-height: 1;
+}
+.r11--work .work-hero__title-gear { flex: none; width: calc(20 * var(--wu)); height: calc(20 * var(--wu)); }
+.r11--work .work-hero__list {
+  margin: calc(13 * var(--wu)) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.r11--work .work-hero__list + .work-hero__list { margin-top: calc(26 * var(--wu)); }
+.r11--work .work-hero__link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(34 * var(--wu));
+  border: max(1px, calc(0.8 * var(--wu))) solid var(--ccdv-ink);
+  font-size: max(11px, calc(20 * var(--wu)));
   line-height: 1;
   white-space: nowrap;
-  transform-origin: 0 0;
-  transform: rotate(90deg);
-  text-decoration: underline;
-  text-decoration-thickness: calc(3.146 * var(--wu));
-  text-underline-offset: calc(6.95 * var(--wu));
 }
-.r11--work .work-hero__word--collapse { left: calc(111.61 * var(--wu)); }
-.r11--work .work-hero__word--unit { left: calc(196.61 * var(--wu)); }
-
-/* three meta lines, same rotation: 14.08 type on a 21.9 pitch, first line's
-   baseline at x275.9 (16.39 into its line box) */
-.r11--work .work-hero__meta {
-  position: absolute;
-  left: calc(292.3 * var(--wu));
-  top: calc(421.7 * var(--wu));
-  font-size: calc(14.08 * var(--wu));
-  line-height: calc(21.9 * var(--wu));
-  white-space: nowrap;
-  transform-origin: 0 0;
-  transform: rotate(90deg);
+.r11--work .work-hero__list li + li .work-hero__link { border-top-width: 0; }
+.r11--work .work-hero__link-text {
+  background: linear-gradient(var(--ccdv-white), var(--ccdv-white)) center / 100% 0 no-repeat;
 }
-.r11--work .work-hero__meta a { text-decoration: underline; }
-
-.r11--work .work-hero__square {
-  position: absolute;
-  left: calc(232.544 * var(--wu));
-  top: calc(1053.18 * var(--wu));
-  width: calc(10.667 * var(--wu));
-  height: calc(10.667 * var(--wu));
-  background: var(--ccdv-ink);
+.r11--work a.work-hero__link:hover .work-hero__link-text,
+.r11--work a.work-hero__link:focus-visible .work-hero__link-text {
+  background-size: 100% 1.1em;
 }
+.r11--work .work-hero__link[aria-disabled="true"] { cursor: default; }
+.r11--work .work-hero__link[aria-disabled="true"] .work-hero__link-text { opacity: 0.5; }
 
 /* --- foot row (OPERATOR, Figma): `View all projects` under the identity
    column (x51.2), the caption at the collage's left edge, the five squares
@@ -4487,9 +4607,11 @@ main { display: block; outline: none; }
 .r11--work .work-hero__foot {
   position: relative;
   display: grid;
-  grid-template-columns: calc(353.875 * var(--iu)) minmax(0, 1fr) auto;
+  grid-template-columns: calc(337.1 * var(--iu)) minmax(0, 1fr) auto;
   align-items: center;
-  padding: 0 calc(51.2 * var(--wu)) calc(51.2 * var(--wu)) 0;
+  /* WORK-T4: the plate sits 12 under the mosaic; the row closes the frame's
+     1192.53 (mosaic bottom at y1119) */
+  padding: calc(12 * var(--wu)) calc(51.2 * var(--wu)) calc(43.5 * var(--wu)) 0;
 }
 .r11--work :is(.work-hero__all, .work-feature__caption) {
   justify-self: start;
@@ -4506,13 +4628,25 @@ main { display: block; outline: none; }
   text-decoration-thickness: max(1px, calc(0.6 * var(--wu)));
   text-underline-offset: calc(1.5 * var(--wu));
 }
+/* WORK-T3: the squares are the project switcher; the shown project's square
+   is open, the others filled. The drawn square is the button's centre; the
+   button pads it to a usable hit area without moving the drawing. */
 .r11--work .work-hero__marks { display: flex; gap: calc(10 * var(--wu)); }
 .r11--work .work-hero__mark {
+  margin: calc(-6 * var(--wu));
+  padding: calc(6 * var(--wu));
+}
+.r11--work .work-hero__mark::before {
+  content: "";
+  display: block;
+  box-sizing: border-box;
   width: calc(10.667 * var(--wu));
   height: calc(10.667 * var(--wu));
   background: var(--ccdv-ink);
 }
-.r11--work .work-hero__mark--open {
+.r11--work .work-hero__mark:not([aria-pressed="true"]):hover::before { background: var(--work-muted); }
+.r11--work .work-hero__mark[aria-pressed="true"] { cursor: default; }
+.r11--work .work-hero__mark[aria-pressed="true"]::before {
   background: none;
   border: max(1px, calc(1.067 * var(--wu))) solid var(--ccdv-ink);
 }
@@ -4530,48 +4664,57 @@ main { display: block; outline: none; }
   line-height: 1;
 }
 
-/* Collage: three 8-gap columns from x353.875 to the artboard's right margin
-   (51.2). Each tile is an ink plate with the image inset 1 (the artboard's
-   backing rects); the image keeps its own proportions (width/height attrs
-   reserve the box). Parallax: WorkHero writes --t (-1..1) on the figure and
-   each column moves --t x --dir x --amp; the padding above and below equals
-   --amp, so a drifting column never uncovers an empty edge. Reduced motion:
-   --t is never written, so nothing moves. */
+/* WORK-T4 mosaic (OPERATOR to-be): from x337.1 to the right margin (51.2),
+   y51.2 to the foot row. Three equal columns, two equal rows, 8 gaps; the
+   first tile spans two columns. Each tile is an ink plate with the image
+   inset 1 (the artboard's backing rects), cropped to fill it (cover, centred
+   unless the tile sets --focus). */
 .r11--work .work-feature {
-  --amp: calc(160 * var(--wu));
   position: relative;
+  min-height: 0;
   margin: 0;
-  padding: calc(51.2 * var(--wu) + var(--amp)) calc(51.2 * var(--wu)) 0;
+  padding: calc(51.2 * var(--wu)) calc(51.2 * var(--wu)) 0 0;
 }
-.r11--work .work-feature__columns {
+.r11--work .work-feature__grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: start;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
   gap: calc(8 * var(--wu));
-  padding-bottom: var(--amp);
+  height: 100%;
 }
-.r11--work .work-feature__col {
-  display: flex;
-  flex-direction: column;
-  gap: calc(8 * var(--wu));
-  min-width: 0;
-  transform: translateY(calc(var(--t, 0) * var(--dir, 0) * var(--amp)));
-  will-change: transform;
+.r11--work .work-feature__tile:first-child { grid-column: span 2; }
+
+/* WORK-T3 switch: the shown collage fades out, then the new one's tiles come
+   up in reading order (they mount in view, so they play their own entry
+   rather than wait for the reveal observer) */
+.r11--work .work-feature[data-phase="out"] .work-feature__grid {
+  opacity: 0;
+  transition: opacity 0.25s var(--sm-ease);
 }
-/* the OPERATOR sketch: outer columns rise faster than the page, the middle one
-   lags (reads as moving down) */
-.r11--work .work-feature__col--1 { --dir: -1; }
-.r11--work .work-feature__col--2 { --dir: 1; }
-.r11--work .work-feature__col--3 { --dir: -0.6; }
+.r11--work .work-feature[data-phase="in"] .work-feature__tile {
+  animation: work-tile-in 0.7s var(--sm-ease) both;
+  animation-delay: calc(var(--i, 0) * 0.08s);
+}
+@keyframes work-tile-in {
+  from { opacity: 0; translate: 0 calc(24 * var(--wu)); }
+  to { opacity: 1; translate: 0 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .r11--work .work-feature[data-phase] .work-feature__tile { animation: none; }
+  .r11--work .work-feature[data-phase="out"] .work-feature__grid { transition: none; }
+}
 .r11--work .work-feature__tile {
   min-width: 0;
+  min-height: 0;
   padding: calc(1 * var(--wu));
   background: var(--ccdv-ink);
 }
 .r11--work .work-feature__tile img {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--focus, 50% 50%);
 }
 
 /* tile arrival: fade + rise, staggered by --i inside its column; armed only
@@ -4587,8 +4730,8 @@ main { display: block; outline: none; }
     translate 0.9s var(--sm-ease) calc(var(--i, 0) * 0.08s);
 }
 
-/* caption plate: in the foot row (above), at the collage's left edge */
-.r11--work .work-feature__caption { margin: 0 0 0 calc(51.2 * var(--wu)); }
+/* caption plate: in the foot row (above), at the mosaic's left edge */
+.r11--work .work-feature__caption { margin: 0; }
 .r11--work .work-feature__caption a {
   text-decoration: underline;
   text-decoration-thickness: max(1px, calc(0.6 * var(--wu)));
@@ -4600,24 +4743,37 @@ main { display: block; outline: none; }
    yellow `\\Work Index` header, Year row, 12 gap, Type row, then the 66-pitch
    rows directly under the filters (OPERATOR: no gap). Right: three preview
    cards in the Studio card proportions and their caption. */
+/* WORK-T3 (OPERATOR retouch, 1497-wide frame): the archive is one screen tall
+   on desktop. Row 1 spans both columns: the yellow bar takes what is left,
+   the Year and Type filters follow on the same line as compact chips. Row 2:
+   the list (511 of 1400, x51..562) and the preview (866, x585..1451). The
+   preview's lead image takes whatever height is left, so the whole section
+   fits the screen. */
 .r11--work .work-index {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: calc(24 * var(--wu));
-  min-height: calc(787.01 * var(--wu));
-  padding: calc(var(--hub-bar) + 31.47 * var(--wu)) calc(48 * var(--wu)) calc(48 * var(--wu));
+  grid-template-columns: minmax(0, 511fr) minmax(0, 866fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: calc(40 * var(--wu)) calc(23 * var(--wu));
+  box-sizing: border-box;
+  min-height: 100svh;
+  padding: calc(var(--hub-bar) + 31.47 * var(--wu)) calc(48 * var(--wu)) calc(40 * var(--wu));
   background: var(--ccdv-light);
+}
+@media (min-width: 768px) {
+  .r11--work .work-index { height: 100svh; }
 }
 /* programmatic focus target (Workcase Year/Type links, `View all projects`) */
 .r11--work .work-index:focus { outline: none; }
 
-.r11--work .work-index__main {
+.r11--work .work-index__filters {
+  grid-column: 1 / -1;
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  gap: calc(24 * var(--wu));
+  align-items: center;
+  gap: calc(46 * var(--wu));
   min-width: 0;
 }
+.r11--work .work-index__filters .work-index__title { flex: 1 1 auto; min-width: 0; }
+.r11--work .work-index__list { min-width: 0; min-height: 0; overflow-y: auto; }
 
 .r11--work .work-index__title {
   display: flex;
@@ -4649,6 +4805,18 @@ main { display: block; outline: none; }
 }
 .r11--work .work-filter__option:first-child { border-left-width: calc(0.533 * var(--wu)); }
 .r11--work .work-index__title + .work-filter .work-filter__option { border-top-width: 0; }
+/* WORK-T3 desktop: the filters are compact chip rows beside the bar */
+@media (min-width: 768px) {
+  .r11--work .work-index__filters .work-filter { display: flex; flex: none; }
+  .r11--work .work-index__filters .work-filter + .work-filter { margin-top: 0; }
+  .r11--work .work-index__filters .work-filter__option,
+  .r11--work .work-index__filters .work-index__title + .work-filter .work-filter__option {
+    height: calc(22.07 * var(--wu));
+    padding: 0 calc(6 * var(--wu));
+    border-top-width: calc(0.533 * var(--wu));
+    font-size: max(11px, calc(13.2 * var(--wu)));
+  }
+}
 
 /* the white 11-tall band behind the selected (or previewed) option text */
 .r11--work .work-filter__text {
@@ -4708,28 +4876,47 @@ main { display: block; outline: none; }
   font-size: max(13px, calc(17.6 * var(--wu)));
 }
 
+/* WORK-T3 preview: a wide lead (866 x 311 drawn) over three 281 x 311 cards,
+   10 apart, 1 ink edges, then the caption. The lead flexes to the height the
+   screen leaves (never under 120), the cards keep their proportion. */
 .r11--work .work-preview {
   display: flex;
   flex-direction: column;
-  gap: calc(12 * var(--wu));
+  gap: calc(10 * var(--wu));
   min-width: 0;
+  min-height: 0;
 }
-/* three cards in the Studio card proportions (.bu__card: 284.667 x 450, 16.4354
-   radius, ink ground), scaled to share the 708 column: 3 x 228 + 2 x 12, so the
-   radius is 16.4354 x 228 / 284.667 = 13.16 */
+.r11--work .work-preview__lead {
+  position: relative;
+  display: flex;
+  flex: 1 1 calc(311 * var(--wu));
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+  max-height: calc(311 * var(--wu));
+  overflow: clip;
+  border: calc(1 * var(--wu)) solid var(--ccdv-ink);
+  background: var(--ccdv-ink);
+}
+.r11--work .work-preview__lead img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 .r11--work .work-preview__cards {
   display: grid;
+  flex: none;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: calc(12 * var(--wu));
+  gap: calc(10 * var(--wu));
 }
 .r11--work .work-preview__card {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  aspect-ratio: 284.667 / 450;
-  border-radius: calc(13.16 * var(--wu));
+  aspect-ratio: 281 / 311;
   overflow: clip;
+  border: calc(1 * var(--wu)) solid var(--ccdv-ink);
   background: var(--ccdv-ink);
 }
 .r11--work .work-preview__card img {
@@ -4767,11 +4954,14 @@ main { display: block; outline: none; }
   }
   .r11--work .work-hero::before { display: none; }
   .r11--work .work-hero__body { display: flex; flex-direction: column; gap: 16px; }
-  /* foot: the caption follows the collage, then `View all projects`; the
-     squares are decoration and drop out, as the identity square does */
+  /* foot: the switcher squares and the caption follow the collage, then
+     `View all projects`; each square keeps a 44px target (WORK-T3) */
   .r11--work .work-hero__foot { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 0; }
   .r11--work .work-hero__foot .work-feature__caption { order: -1; }
-  .r11--work .work-hero__marks { display: none; }
+  .r11--work .work-hero__marks { order: -2; gap: 0; margin-left: -16px; }
+  .r11--work .work-hero__mark { margin: 0; padding: 16px; }
+  .r11--work .work-hero__mark::before { width: 12px; height: 12px; }
+  .r11--work .work-hero__mark[aria-pressed="true"]::before { border-width: 1px; }
 
   .r11--work .work-hero__identity {
     display: flex;
@@ -4779,31 +4969,27 @@ main { display: block; outline: none; }
     align-items: flex-end;
     gap: 12px 16px;
   }
-  .r11--work :is(.work-hero__gear, .work-hero__pixel, .work-hero__word, .work-hero__meta, .work-hero__all, .work-feature, .work-feature__caption) {
+  .r11--work :is(.work-hero__gear, .work-hero__pixel, .work-hero__links, .work-hero__all, .work-feature, .work-feature__caption) {
     position: static;
     transform: none;
   }
   .r11--work .work-hero__gear { width: 88px; height: 88px; }
   .r11--work .work-hero__pixel { width: 150px; height: 34px; }
-  .r11--work .work-hero__words { flex-basis: 100%; }
-  .r11--work .work-hero__word {
-    display: block;
-    width: max-content;
-    max-width: 100%;
-    font-size: min(38px, 9.6cqw);
-    line-height: 1.25;
-    white-space: normal;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 4px;
-  }
-  .r11--work .work-hero__meta {
-    flex-basis: 100%;
+  /* WORK-T4 phones: the label full width, then Year and Type as two
+     wrapping rows of tap-sized entries */
+  .r11--work .work-hero__links { flex-basis: 100%; width: auto; }
+  .r11--work .work-hero__title { gap: 8px; height: 32px; padding-left: 8px; border-width: 1px; font-size: var(--ccdv-t-label-m); }
+  .r11--work .work-hero__title-gear { width: 14px; height: 14px; }
+  .r11--work .work-hero__list,
+  .r11--work .work-hero__list + .work-hero__list { display: flex; flex-wrap: wrap; margin-top: 8px; }
+  .r11--work .work-hero__link,
+  .r11--work .work-hero__list li + li .work-hero__link {
+    height: var(--ccdv-tap);
+    padding: 0 8px;
+    border-width: 0;
     font-size: var(--ccdv-t-label-m);
-    line-height: 1.5;
-    white-space: normal;
-    overflow-wrap: anywhere;
   }
-  .r11--work .work-hero__square { display: none; }
+  .r11--work :is(a.work-hero__link:hover, a.work-hero__link:focus-visible) .work-hero__link-text { background-size: 100% 1.1em; }
   .r11--work .work-hero__all {
     display: inline-flex;
     align-items: center;
@@ -4823,13 +5009,14 @@ main { display: block; outline: none; }
     vertical-align: middle;
   }
 
-  /* WORK-T2 phones: identity in flow (not pinned), collage without drift
-     (--amp 0); tiles still fade in */
+  /* WORK-T4 phones: identity in flow; the mosaic in two columns, the wide
+     tile across both, every slot at the desktop slot's proportion (the wide
+     one 1.46:1, the others 0.72:1); tiles still fade in */
   .r11--work .work-hero__identity { position: static; height: auto; }
-  .r11--work .work-feature { --amp: 0px; padding: 0; }
-  .r11--work .work-feature__columns { gap: 6px; }
-  .r11--work .work-feature__col { gap: 6px; transform: none; will-change: auto; }
-  .r11--work .work-feature__tile { padding: 1px; }
+  .r11--work .work-feature { padding: 0; }
+  .r11--work .work-feature__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; gap: 6px; height: auto; }
+  .r11--work .work-feature__tile { padding: 1px; aspect-ratio: 0.72; }
+  .r11--work .work-feature__tile:first-child { aspect-ratio: 1.46; }
   .r11--work .work-feature__caption {
     display: inline-block;
     height: auto;
@@ -4848,7 +5035,9 @@ main { display: block; outline: none; }
     min-height: 0;
     padding: 24px var(--ccdv-gutter-m) 16px;
   }
-  .r11--work .work-index__main { gap: 16px; }
+  /* WORK-T3: phones keep the stacked header (bar, Year grid, Type grid) */
+  .r11--work .work-index__filters { display: block; }
+  .r11--work .work-index__list { overflow: visible; }
   .r11--work .work-index__title { height: 36px; gap: 10px; padding-left: 8px; border-width: 1px; font-size: var(--ccdv-t-label-m); }
   .r11--work .work-index__gear { width: 16px; height: 16px; }
   /* Type labels (up to 19 characters) need two columns at 320 */
@@ -4882,7 +5071,8 @@ main { display: block; outline: none; }
 
   .r11--work .work-preview { gap: 8px; }
   .r11--work .work-preview__cards { gap: 6px; }
-  .r11--work .work-preview__card { border-radius: 8px; }
+  .r11--work .work-preview__lead { flex: none; aspect-ratio: 866 / 311; min-height: 0; max-height: none; border-width: 1px; }
+  .r11--work .work-preview__card { border-width: 1px; }
   .r11--work .work-preview__note { padding: 0 4px; font-size: 11px; }
   .r11--work .work-preview__caption { margin-top: 0; font-size: 12px; line-height: 1.5; }
 }

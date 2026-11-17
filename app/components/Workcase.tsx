@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { SiteMasthead } from "./SiteMasthead";
 import { SiteFooter } from "./SiteFooter";
 import { StudioMobileMenu } from "./StudioMobileMenu";
+import { useTransitionLink } from "./GlobalShell";
 import { useBoundaryNav, useNavIdle } from "../motion/routeNav";
 import { AVAILABLE_YEARS, type WorkProject, type WorkcaseData } from "../data/workProjects";
 
@@ -40,7 +41,9 @@ import { AVAILABLE_YEARS, type WorkProject, type WorkcaseData } from "../data/wo
    WORK-T2 (OPERATOR, WF1): every /work/:slug page gets the thin masthead too,
    as the hub and archive — `r11--work` on the root shares their bar CSS; the
    yellow band is the boundary edge, so the bar shows from the top; phones get
-   the M1 bar. */
+   the M1 bar.
+   NAV-T3 (OPERATOR): `collapse` now goes Home (global rule); the arrow,
+   `[Work]`, Year and Type still open the archive. */
 
 const RESTORE_STATE = { restore: true } as const;
 
@@ -49,6 +52,7 @@ function Pending() {
 }
 
 export function Workcase({ project, data }: { project: WorkProject; data: WorkcaseData }) {
+  const link = useTransitionLink();
   const rootRef = useRef<HTMLDivElement>(null);
   const bandRef = useRef<HTMLElement>(null);
 
@@ -73,7 +77,9 @@ export function Workcase({ project, data }: { project: WorkProject; data: Workca
           </span>
           <h1 className="workcase-title__slug">{data.slug}</h1>
         </div>
-        <Link className="hero__watermark" to="/work/archive" state={RESTORE_STATE} aria-label="collapse — back to the Work archive">
+        {/* NAV-T3 (OPERATOR): `collapse` goes Home everywhere; (←) and [Work]
+            still return to the archive */}
+        <Link className="hero__watermark" aria-label="collapse — back to Home" {...link("/")}>
           collapse
         </Link>
       </section>

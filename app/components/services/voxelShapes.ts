@@ -158,9 +158,12 @@ const LLM_SLOTS = fit(LLM_CELLS);
 const LLM = depthSorted(LLM_CELLS, LLM_SLOTS);
 
 /* the LLM wires: the input fans out to column 1, each column joins the next
-   cube for cube and one step up, column 3 fans in to the output; each wire
-   runs from a cube's right corner to the next cube's left corner (the side
-   faces' outer vertices, mid height), as the card's threads (Frame 353) */
+   cube for cube and one step up, column 3 fans in to the output.
+   LLM-T1 (OPERATOR): each wire joins the two cubes' CENTRES and is drawn under
+   them, so it reads as leaving one cube's hidden back centre and entering the
+   next one's centre; VoxelRain moves both ends with the cubes (LLM_LINK_SLOTS
+   names them by their place in the depth-sorted shape). LLM_WIRES is the
+   wires at rest (first render, reduced motion). */
 const LLM_LINKS: [number, number][] = [
   ...[1, 2, 3, 4].map((k): [number, number] => [0, k]),
   ...[0, 1].flatMap((c) =>
@@ -172,12 +175,18 @@ const LLM_LINKS: [number, number][] = [
   ),
   ...[9, 10, 11, 12].map((k): [number, number] => [k, 13]),
 ];
-const MID = (21.427 + 64.46) / 2;
+/* a cube's centre: its top vertex down half its height (the inner Y's joint) */
+export const CUBE_CENTRE_Y = 42.857;
 export const LLM_WIRES: readonly string[] = LLM_LINKS.map(([a, b]) => {
   const p = LLM_SLOTS[a];
   const q = LLM_SLOTS[b];
-  return `M${(p.x + 37.373 * p.s).toFixed(2)} ${(p.y + MID * p.s).toFixed(2)}L${(q.x - 36.874 * q.s).toFixed(2)} ${(q.y + MID * q.s).toFixed(2)}`;
+  return `M${p.x.toFixed(2)} ${(p.y + CUBE_CENTRE_Y * p.s).toFixed(2)}L${q.x.toFixed(2)} ${(q.y + CUBE_CENTRE_Y * q.s).toFixed(2)}`;
 });
+/* the same links as indices into the depth-sorted LLM shape */
+export const LLM_LINK_SLOTS: readonly (readonly [number, number])[] = LLM_LINKS.map(([a, b]) => [
+  LLM.indexOf(LLM_SLOTS[a]),
+  LLM.indexOf(LLM_SLOTS[b]),
+]);
 
 /* one per Formation card, in card order: Tailored formation, Keep up with
    advancements, Understanding LLMs, Toolmaking Workshops (the drawn pile) */

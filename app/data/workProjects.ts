@@ -130,7 +130,6 @@ export function findProject(id: string): WorkProject | undefined {
    are PLACEHOLDERS until final project imagery is supplied — tiles repeat
    those captures; nothing is synthesised. `alt` is empty on a repeat, so each
    image is announced once. */
-const ADG_HERO = WORKCASES["adg-arc"].hero!;
 const ADG_PASSPORT = WORKCASES["adg-arc"].showcase[0];
 const ADG_MAP_DETAIL = WORKCASES["adg-arc"].showcase[1];
 const ADG_MAP_CITY = WORKCASES["adg-arc"].showcase[2];
@@ -154,30 +153,61 @@ const DETAIL_MOBILE: WorkTile = {
 };
 const repeat = (tile: WorkTile): WorkTile => ({ ...tile, alt: "" });
 
-/* WORK-T2 hub: ADG-ARC is still the one featured case (D5). Three collage
-   columns that drift at different rates while the identity column stays put;
-   each column ends where the next project would begin. */
-export const FEATURED: { projectId: string; columns: WorkTile[][] } = {
-  projectId: "adg-arc",
-  columns: [
-    [ADG_PASSPORT, ADG_HERO, ADG_MAP_DETAIL, repeat(DETAIL_MOBILE)],
-    [DETAIL_MOBILE, repeat(ADG_PASSPORT), ADG_MAP_CITY, repeat(ADG_HERO)],
-    [repeat(ADG_HERO), repeat(ADG_MAP_CITY), repeat(DETAIL_MOBILE), repeat(ADG_MAP_DETAIL)],
-  ],
-};
+/* WORK-T4 (OPERATOR to-be): the hub collage is a fixed five-slot mosaic that
+   fits one screen: a wide image and a tall card on top, three tall images
+   below, in reading order. Each image is cropped to its slot (cover);
+   `focus` is the crop's object-position where the centre is not the subject. */
+export interface MosaicTile extends WorkTile {
+  focus?: string;
+}
 
-/* Archive preview cards for a project that has imagery (three, Studio card
-   proportions). `caption` is the artboard's own label; projects without an
-   entry show the honest no-preview state. */
+const ADG_MOSAIC: MosaicTile[] = [
+  ADG_PASSPORT,
+  { ...DETAIL_MOBILE, focus: "50% 45%" },
+  ADG_MAP_DETAIL,
+  ADG_MAP_CITY,
+  repeat(ADG_PASSPORT),
+];
+
+/* WORK-T3 (OPERATOR): the hub's five squares switch the viewer between five
+   projects. Only ADG-ARC has sourced imagery; the other four show its
+   captures as PLACEHOLDERS (`placeholder: true`, every alt empty, so no
+   ADG-ARC description is announced under another project's name) until the
+   OPERATOR supplies their own. CC.OS 0.3 is not featured. */
+export interface FeaturedProject {
+  projectId: string;
+  placeholder: boolean;
+  tiles: MosaicTile[];
+}
+
+const placeholderTiles = ADG_MOSAIC.map((tile) => ({ ...tile, alt: "" }));
+
+export const FEATURED: FeaturedProject[] = [
+  { projectId: "adg-arc", placeholder: false, tiles: ADG_MOSAIC },
+  { projectId: "adg-ops", placeholder: true, tiles: placeholderTiles },
+  { projectId: "ccdv-website", placeholder: true, tiles: placeholderTiles },
+  { projectId: "htw-website", placeholder: true, tiles: placeholderTiles },
+  { projectId: "htw-tool", placeholder: true, tiles: placeholderTiles },
+];
+
+/* WORK-T4: the hub's archive links. A Year or Type without a project is drawn
+   but inert, as in the archive (D3). */
+export const AVAILABLE_TYPES = TYPES.filter((type) => PROJECTS.some((project) => project.typeFilter === type));
+
+/* Archive preview for a project that has imagery (WORK-T3, OPERATOR retouch):
+   one wide lead image over three cards. `caption` is the artboard's own
+   label; projects without an entry show the honest no-preview state. */
 export interface WorkPreview {
+  lead: WorkImage;
   cards: [WorkImage, WorkImage, WorkImage];
   caption: string;
 }
 
 export const WORK_PREVIEWS: Record<string, WorkPreview> = {
   "adg-arc": {
+    lead: { src: ADG_PASSPORT.src, alt: ADG_PASSPORT.alt },
     cards: [
-      { src: ADG_PASSPORT.src, alt: ADG_PASSPORT.alt },
+      { src: ADG_PASSPORT.src, alt: "" },
       { src: ADG_PASSPORT.src, alt: "" },
       { src: ADG_PASSPORT.src, alt: "" },
     ],

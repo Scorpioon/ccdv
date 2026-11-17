@@ -39,7 +39,7 @@
      delta; literal hexes inside the artwork marks are untouched. */
   --ccdv-bg: #b2b2b2;      /* page ground                                  */
   --ccdv-panel: #f2f2f2;   /* masthead + band bodies + light sections      */
-  --ccdv-ink: #1a1a1a;     /* type, dark sections, footer                  */
+  --ccdv-ink: #141414;     /* type, dark sections, footer                  */
   --ccdv-light: #d9d9d9;   /* gear centre, footer mark, hex rings          */
   --ccdv-white: #ffffff;
 

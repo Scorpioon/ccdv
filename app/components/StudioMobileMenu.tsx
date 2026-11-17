@@ -35,7 +35,7 @@ const SYSTEMS: { label: string; to: string }[] = [
 const LEGAL = ["Privacy", "Terms of use", "Legal", "Onlyfans"];
 
 const LIGHT = "#F2F2F2";
-const INK = "#1A1A1A";
+const INK = "#141414";
 
 /* Services R1: `current` marks another route as the page (default /studio, so
    Studio renders exactly as before). */

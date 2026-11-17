@@ -9,6 +9,7 @@
 import { useEffect, useId, useRef } from "react";
 import type { RefObject } from "react";
 import { IDENT, apply, mul, rotY, useSphereMotion } from "../marks/StudioMobileOrbit";
+import { onCoverChange } from "../../motion/routeNav";
 import type { Mat3, Vec3 } from "../marks/StudioMobileOrbit";
 
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
@@ -65,14 +66,25 @@ export function useVisibleLoop(
       frame = 0;
     };
     latest.current.step(0);
+    /* FLOW-T1: on screen AND not under a curtain (routeNav data-covered) */
+    let visible = false;
+    const sync = () => (visible && !node.closest("[data-covered]") ? start() : stop());
     const observer =
       typeof IntersectionObserver === "undefined"
         ? null
-        : new IntersectionObserver(([entry]) => (entry.isIntersecting ? start() : stop()));
+        : new IntersectionObserver(([entry]) => {
+            visible = entry.isIntersecting;
+            sync();
+          });
     if (observer) observer.observe(node);
-    else start();
+    else {
+      visible = true;
+      sync();
+    }
+    const offCover = onCoverChange(sync);
     return () => {
       observer?.disconnect();
+      offCover();
       stop();
       latest.current.rest();
     };
@@ -87,7 +99,7 @@ export const GEAR_OUTLINE =
 export const GEAR_CORE =
   "M138.474 164.5C144.369 167.903 151.631 167.903 157.526 164.5C163.421 161.097 167.053 154.807 167.053 148C167.053 141.193 163.421 134.903 157.526 131.5C151.631 128.097 144.369 128.097 138.474 131.5C132.579 134.903 128.947 141.193 128.947 148C128.947 154.807 132.579 161.097 138.474 164.5Z";
 
-export const INK = "#1A1A1A";
+export const INK = "#141414";
 export const LIGHT = "#F2F2F2";
 
 /* Card windows for the three Build figures (CORR01). FB_R4_5 draws each card

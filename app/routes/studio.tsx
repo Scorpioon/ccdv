@@ -9,6 +9,7 @@ import { CcosScene } from "../components/studio/CcosScene";
 import { StudioConnectors } from "../components/studio/studioMarks";
 import { useMotionPolicy } from "../motion/reducedMotion";
 import { STUDIO_MOTION, useSceneReveal } from "../motion/studioMotion";
+import { usePinTop } from "../motion/routeNav";
 
 export function meta() {
   return [{ title: "CCDV — Studio" }];
@@ -55,21 +56,28 @@ export default function Studio() {
 
   const rootRef = useRef<HTMLDivElement>(null);
   const approachRef = useRef<HTMLElement>(null);
+  const lilacRef = useRef<HTMLDivElement>(null);
 
   useSceneReveal(rootRef, reduced);
+  usePinTop(approachRef, lilacRef);
 
   useIsomorphicLayoutEffect(() => {
     const root = rootRef.current;
     const approach = approachRef.current;
     const nav = root?.querySelector<HTMLElement>(".masthead--studio");
     if (!root || !approach || !nav) return;
+    // NAV-T3 (OPERATOR, supersedes A3's edge): the bar appears once the cover
+    // lockup's lower edge has scrolled past, or when the Approach arrives on a
+    // screen tall enough that the lockup never leaves
+    const lockup = root.querySelector<HTMLElement>(".cv__lockup");
     let frame = 0;
     let last = "";
     const update = () => {
       frame = 0;
       // reads
       const navH = nav.offsetHeight;
-      const edge = approach.getBoundingClientRect().top;
+      const approachTop = approach.getBoundingClientRect().top;
+      const edge = lockup ? Math.min(approachTop, lockup.getBoundingClientRect().bottom) : approachTop;
       // write (navH is 0 on phones, where the bar is not rendered)
       const p = navH > 0 ? clamp01((navH - edge) / navH).toFixed(4) : "1";
       if (p !== last) {
@@ -119,16 +127,25 @@ export default function Studio() {
       <StudioMobileMenu />
       <SiteMasthead variant="studio" />
 
-      <StudioCover />
+      {/* NAV-T3 curtain + PIN-T1 pin (desktop, global.css): the cover pins
+          while the Approach rises over it; the Approach then pins, one screen
+          tall, while the lilac rises over it. FLOW-T1 (OPERATOR): the Services
+          snap too — in-flow markers, since a sticky element's own snap
+          position moves with it */}
+      <div className="scene-curtain">
+        <StudioCover />
 
-      <section className="studio-approach" aria-labelledby="studio-approach-title" ref={approachRef}>
-        <ApproachPanel reduced={reduced} titleId="studio-approach-title" />
-      </section>
+        <span className="pin-snap" aria-hidden="true" />
+        <section className="studio-approach" aria-labelledby="studio-approach-title" ref={approachRef}>
+          <ApproachPanel reduced={reduced} titleId="studio-approach-title" />
+        </section>
 
-      <div className="studio-lilac studio-grid">
-        <BuildScene reduced={reduced} />
-        <CcosScene reduced={reduced} />
-        <StudioConnectors />
+        <span className="pin-snap" aria-hidden="true" />
+        <div className="studio-lilac studio-grid" ref={lilacRef}>
+          <BuildScene reduced={reduced} />
+          <CcosScene reduced={reduced} />
+          <StudioConnectors />
+        </div>
       </div>
 
       <SiteFooter />

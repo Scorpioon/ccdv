@@ -10,7 +10,7 @@
    CCOS_GRAPH_ORDER) -> impulse (feedback on interaction). Nothing locks the
    viewport; scenes are reached by native scrolling. Reduced motion: nothing is
    hidden or moved, loops stop, drag still works one step per event. */
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import type { CSSProperties, RefObject } from "react";
 
 export const STUDIO_MOTION = {
@@ -38,9 +38,14 @@ export const index = (i: number) => ({ "--i": i }) as CSSProperties;
    `[data-words]`, `[data-spawn]` and `[data-scene]` elements with `data-seen`
    the first time they are on screen, and arms the hidden start states by
    setting `data-motion="on"` on the root. Without it (reduced motion, no JS, no
-   IntersectionObserver) nothing is hidden and everything is plain content. */
+   IntersectionObserver) nothing is hidden and everything is plain content.
+   NAV-T4: armed in a layout effect, before the incoming page's first paint;
+   armed after it, the cover painted whole for a frame, vanished, then spawned
+   (the flash on a swap). */
+const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
 export function useSceneReveal(rootRef: RefObject<HTMLElement | null>, reduced: boolean) {
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const root = rootRef.current;
     if (!root || reduced || typeof IntersectionObserver === "undefined") return;
     const observer = new IntersectionObserver(

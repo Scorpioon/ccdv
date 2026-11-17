@@ -9,8 +9,12 @@
    Heading: one h1 at every width. Phones show it as the large [Services] label
    (the Studio phone title role); desktop keeps the identity title as drawn and
    carries the h1 for assistive tech only (visually hidden), since the desktop
-   cover grammar has no page label. The masthead stays hidden over the cover. */
+   cover grammar has no page label. NAV-T3 (OPERATOR): the thin masthead
+   appears once the lockup's lower edge has scrolled past the top; `collapse`
+   is a link Home (global); the pieces spawn in reading order as on Studio. */
 import { Fragment } from "react";
+import { Link } from "react-router";
+import { useTransitionLink } from "../GlobalShell";
 import { GearMark } from "../marks/GearMark";
 import { CcdvPixelMark } from "../marks/CcdvPixelMark";
 import { Chip } from "../studio/studioMarks";
@@ -20,12 +24,13 @@ import { SERVICES_WHATIS } from "../../data/servicesScenes";
 import { index } from "../../motion/studioMotion";
 
 export function ServicesCover({ reduced }: { reduced: boolean }) {
+  const link = useTransitionLink();
   return (
     <section className="sv-cv sv-grid" aria-labelledby="services-title">
       {/* R1 CORR01: the 1440 x 1118 frame; on desktop it scales to fit the
           screen height and centres (global.css, "fit") */}
       <div className="sv-cv__frame">
-        <div className="sv-cv__lockup">
+        <div className="sv-cv__lockup" data-spawn style={index(0)}>
           <GearMark className="sv-cv__gear" fill={INK} dotFill={LIGHT} />
           <CcdvPixelMark variant="stack" className="sv-cv__pixel" fill={INK} />
           <p className="sv-cv__title">
@@ -39,16 +44,16 @@ export function ServicesCover({ reduced }: { reduced: boolean }) {
             </div>
           </div>
         </div>
-        <span className="sv-cv__label" aria-hidden="true">
+        <Link className="sv-cv__label" aria-label="collapse — back to Home" data-spawn style={index(1)} {...link("/")}>
           collapse
-        </span>
-        <span className="sv-cv__sq sv-cv__sq--a" aria-hidden="true" />
-        <span className="sv-cv__sq sv-cv__sq--b" aria-hidden="true" />
-        <span className="sv-cv__sq sv-cv__sq--c" aria-hidden="true" />
-        <span className="sv-cv__sq sv-cv__sq--d" aria-hidden="true" />
-        <span className="sv-cv__sq sv-cv__sq--e" aria-hidden="true" />
+        </Link>
+        <span className="sv-cv__sq sv-cv__sq--a" aria-hidden="true" data-spawn style={index(2)} />
+        <span className="sv-cv__sq sv-cv__sq--b" aria-hidden="true" data-spawn style={index(2)} />
+        <span className="sv-cv__sq sv-cv__sq--c" aria-hidden="true" data-spawn style={index(2)} />
+        <span className="sv-cv__sq sv-cv__sq--d" aria-hidden="true" data-spawn style={index(2)} />
+        <span className="sv-cv__sq sv-cv__sq--e" aria-hidden="true" data-spawn style={index(2)} />
 
-        <div className="sv-cv__art">
+        <div className="sv-cv__art" data-spawn style={index(4)}>
           <ArrowTrace reduced={reduced} className="sv-arrow" />
         </div>
 
@@ -57,7 +62,7 @@ export function ServicesCover({ reduced }: { reduced: boolean }) {
         </h1>
 
         <div className="sv-cv__whatis-col">
-          <div className="sv-cv__whatis" data-spawn style={index(0)}>
+          <div className="sv-cv__whatis" data-spawn style={index(3)}>
             <Chip tone="ink" as="p" className="sv-cv__chip">
               {"Whatis\\\\"}
             </Chip>
