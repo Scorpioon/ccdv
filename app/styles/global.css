@@ -991,50 +991,13 @@ main { display: block; outline: none; }
    pages_products_ccos.svg (noted inline below), internal arrangement by
    normal flow (flex) rather than exhaustive absolute positioning. */
 
-.r11--products .section--stripe { background: var(--ccdv-green); }
 .r11--contact .section--stripe { background: var(--ccdv-blue); }
 
 .masthead--products .cell[aria-current="page"] { background: var(--ccdv-green); }
 .masthead--contact .cell[aria-current="page"] { background: var(--ccdv-blue); }
 
-/* --- Products card rail (`PRD-011`-`017`) --------------------------------
-   569 tall, matching pages_products.svg's own card-section rect; four equal
-   299-wide cards on a 48 gap, the literal card width/gap/height read off
-   that same source (347.5-48.5=299, 396.5-347.5=49≈48, 1027.62-555.622≈472). */
-.section--products-cards {
-  height: calc(569 * var(--u));
-  background: var(--ccdv-panel);
-  display: flex;
-  align-items: flex-start;
-  gap: calc(48 * var(--u));
-  padding: calc(48.5 * var(--u)) calc(48 * var(--u)) 0;
-}
-
-.product-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: calc(299 * var(--u));
-  height: calc(472 * var(--u));
-  border: calc(1 * var(--u)) solid var(--ccdv-ink);
-  border-top-right-radius: calc(24.5 * var(--u));
-  padding-top: calc(22 * var(--u));
-  font-size: calc(15.4 * var(--u));
-}
-
-.product-card:not(.product-card--active) { opacity: 0.4; }
-.product-card--active { cursor: pointer; }
-
-.product-card__index { align-self: flex-start; margin-left: calc(24 * var(--u)); white-space: nowrap; }
-
-.product-card__art {
-  flex: 1 1 auto;
-  width: calc(132 * var(--u));
-  margin-top: calc(24 * var(--u));
-}
-
-.product-card__label { margin-top: calc(24 * var(--u)); margin-bottom: calc(24 * var(--u)); white-space: nowrap; }
+/* (The R1.1 Products card rail moved to the PRODUCTS V2 block at the end of
+   this file — t_20261117_products20.) */
 
 /* --- Contact directory (`CTC-010`-`024`) ---------------------------------
    571 tall, matching pages_contact.svg's own directory-section rect. */
@@ -3003,7 +2966,8 @@ main { display: block; outline: none; }
 
 /* --- OC01-02: the thin masthead (E10 "to be", Frame 334) --------------------
    One state, shared by every route that renders the compact masthead (Studio,
-   Services, Work — WORK-T2 merged the per-route copies). Sticky with a negative
+   Services, Work — WORK-T2 merged the per-route copies; Products V2 joined in
+   t_20261117_products20). Sticky with a negative
    margin, so it takes no height; it is translated out by (1 - --nav-in), which
    each route derives from one section's top edge (A3). Focus inside the bar
    always shows it. Phones keep the M1 bar (masthead not rendered).
@@ -3014,7 +2978,7 @@ main { display: block; outline: none; }
    link, so clicks over the content under the bar went Home. The link is
    clipped to its own box for the same reason. */
 @media (min-width: 768px) {
-  :is(.r11--studio, .r11--services, .r11--work) .masthead--collapsing {
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products) .masthead--collapsing {
     --cell-h: calc(32 * var(--u));
     --nav-h: calc(var(--cell-h) + 16 * var(--u));
     position: sticky;
@@ -3024,30 +2988,30 @@ main { display: block; outline: none; }
     margin-bottom: calc(-1 * var(--nav-h));
     transform: translateY(calc((var(--nav-in, 0) - 1) * 100%));
   }
-  :is(.r11--studio, .r11--services, .r11--work) .masthead--collapsing:focus-within { transform: none; }
-  :is(.r11--studio, .r11--services, .r11--work) .masthead--collapsing .masthead__mark {
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products) .masthead--collapsing:focus-within { transform: none; }
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products) .masthead--collapsing .masthead__mark {
     left: calc(8 * var(--u));
     top: calc(8 * var(--u));
     width: calc(176.6 * var(--u));
     height: calc(32 * var(--u));
     overflow: clip;
   }
-  :is(.r11--studio, .r11--services, .r11--work) .masthead--collapsing .masthead__gear { transform: scale(0.14545); }   /* 220 -> 32 */
-  :is(.r11--studio, .r11--services, .r11--work) .masthead--collapsing :is(.masthead__pixel, .cell__tile) { display: none; }
-  :is(.r11--studio, .r11--services, .r11--work) .masthead--collapsing .masthead__pixel-inline {
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products) .masthead--collapsing .masthead__gear { transform: scale(0.14545); }   /* 220 -> 32 */
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products) .masthead--collapsing :is(.masthead__pixel, .cell__tile) { display: none; }
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products) .masthead--collapsing .masthead__pixel-inline {
     left: calc(36.6 * var(--u));
     width: calc(140 * var(--u));
     height: calc(32 * var(--u));
     opacity: 1;
   }
-  :is(.r11--studio, .r11--services, .r11--work) .masthead--collapsing .cells { top: calc(8 * var(--u)); left: calc(224 * var(--u)); }
-  :is(.r11--studio, .r11--services, .r11--work) .masthead--collapsing .cell { width: calc(241.6 * var(--u)); height: var(--cell-h); }
-  :is(.r11--studio, .r11--services, .r11--work) .masthead--collapsing .cell__label {
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products) .masthead--collapsing .cells { top: calc(8 * var(--u)); left: calc(224 * var(--u)); }
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products) .masthead--collapsing .cell { width: calc(241.6 * var(--u)); height: var(--cell-h); }
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products) .masthead--collapsing .cell__label {
     left: calc(6 * var(--u));
     top: calc(5 * var(--u));
     font-size: max(10px, calc(8.8 * var(--u)));
   }
-  :is(.r11--studio, .r11--services, .r11--work) .masthead--collapsing .cell__dot {
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products) .masthead--collapsing .cell__dot {
     left: calc(6 * var(--u));
     top: calc(var(--cell-h) - 12 * var(--u));
     width: calc(6 * var(--u));
@@ -3055,12 +3019,12 @@ main { display: block; outline: none; }
   }
 }
 @media (min-width: 768px) and (max-width: 1023px) and (pointer: coarse) {
-  :is(.r11--studio, .r11--services, .r11--work) .masthead--collapsing { --cell-h: max(calc(32 * var(--u)), 2.75rem); }
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products) .masthead--collapsing { --cell-h: max(calc(32 * var(--u)), 2.75rem); }
 }
 @media (prefers-reduced-motion: no-preference) {
   /* A4: back in 0.22 s, decelerating (the transition of the state reached) */
-  :is(.r11--studio, .r11--services, .r11--work) .masthead--collapsing { transition: transform 0.12s linear, translate 0.22s var(--sm-ease); }
-  :is(.r11--studio, .r11--services, .r11--work) .smm__bar { transition: translate 0.22s var(--sm-ease); }
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products) .masthead--collapsing { transition: transform 0.12s linear, translate 0.22s var(--sm-ease); }
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products) .smm__bar { transition: translate 0.22s var(--sm-ease); }
 }
 
 /* --- Addendum A1: idle hide ------------------------------------------------
@@ -3070,16 +3034,16 @@ main { display: block; outline: none; }
    stays while it holds focus or the pointer (desktop) or while the M1 menu is
    open (phones; no :hover there, it sticks after a tap). Reduced motion: same
    states, no slide. */
-:is(.r11--studio, .r11--services, .r11--work)[data-nav-idle] .masthead--collapsing:not(:hover):not(:focus-within),
-:is(.r11--studio, .r11--services, .r11--work)[data-nav-idle] .smm__bar:not([data-open="true"]):not(:focus-within) {
+:is(.r11--studio, .r11--services, .r11--work, .r11--products)[data-nav-idle] .masthead--collapsing:not(:hover):not(:focus-within),
+:is(.r11--studio, .r11--services, .r11--work, .r11--products)[data-nav-idle] .smm__bar:not([data-open="true"]):not(:focus-within) {
   translate: 0 -100%;
 }
 /* A4: away in 0.3 s, starting soft and accelerating out */
 @media (prefers-reduced-motion: no-preference) {
-  :is(.r11--studio, .r11--services, .r11--work)[data-nav-idle] .masthead--collapsing:not(:hover):not(:focus-within) {
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products)[data-nav-idle] .masthead--collapsing:not(:hover):not(:focus-within) {
     transition: transform 0.12s linear, translate 0.3s cubic-bezier(0.4, 0, 1, 1);
   }
-  :is(.r11--studio, .r11--services, .r11--work)[data-nav-idle] .smm__bar:not([data-open="true"]):not(:focus-within) {
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products)[data-nav-idle] .smm__bar:not([data-open="true"]):not(:focus-within) {
     transition: translate 0.3s cubic-bezier(0.4, 0, 1, 1);
   }
 }
@@ -5327,3 +5291,426 @@ main { display: block; outline: none; }
   }
 }
 /* === end HOME T1 ============================================================ */
+
+/* === PRODUCTS V2 (t_20261117_products20) ====================================
+   /products follows PRODUCTS_v2.svg (1536 x 3354, OPERATOR D1: the main
+   four-column design) at >= 1024px and PRODUCTS_responsive_v2.svg (390 x 3430,
+   D2) below, tablets included, with the Studio phone unit (--k, capped at
+   1.5px, the 390 column centred). Units:
+     --pv = one PRODUCTS_v2 px (1cqw / 15.36, the WORK V2 1536 precedent), so
+            the SVG coordinates are used unchanged
+     --k  = one PRODUCTS_responsive_v2 px
+     --s  = the chip unit (Studio's chips are drawn in 1440 units: --u on
+            desktop, 1.0667 --k on phones, so a chip is 22.6 artboard px
+            tall on both, as drawn)
+   Ground: ink under a 5% #F2F2F2 grid (desktop only; the phone artboard has
+   none). The phone artboard's ground is #171717; ink is kept (one token,
+   DEVIATION, report). Every rule is scoped to .r11--products. */
+
+.r11--products {
+  --pv: calc(1cqw / 15.36);
+  --s: var(--u);
+  --t-small: max(11px, calc(13.2 * var(--s)));
+  --pv-line: max(0.5px, calc(0.493 * var(--pv)));
+  --mh-p: 1;
+  --sm-ease: var(--studio-ease, cubic-bezier(0.22, 0.61, 0.36, 1));
+  background: var(--ccdv-ink);
+}
+.r11--products .masthead--collapsing .cell[aria-current="page"] .cell__dot { background: var(--ccdv-green); }
+@media (max-width: 767px) {
+  body:has(.r11--products) .mobile-notice { display: none; }
+  .r11--products .masthead--products { display: none; }
+  .r11--products .smm__route[aria-current="page"] .smm__square { border-color: var(--ccdv-green); background: var(--ccdv-green); }
+}
+
+.r11--products .pv-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* light type on the page body only: the shared masthead, M1 bar and footer
+   inherit their own colours */
+.pv { position: relative; overflow-x: clip; color: var(--ccdv-panel); }
+:where(.pv) p { margin: 0; }
+
+/* green chips: Studio's ink (Whois) and lilac (strip) chips, recoloured */
+.r11--products .pv-chip {
+  --chip-ground: var(--ccdv-green);
+  background: var(--ccdv-green);
+  color: var(--ccdv-ink);
+}
+
+/* cover */
+.pv-cover { position: relative; }
+.pv-cover__gear,
+.pv-cover__pixel,
+.pv-cover__sq,
+.pv-cover__cube { position: absolute; display: block; }
+.pv-cover__cube { z-index: 0; pointer-events: none; overflow: visible; }
+.pv-cover__title { font: inherit; font-weight: 600; white-space: nowrap; }
+.pv-cover__title span {
+  display: block;
+  text-decoration: underline;
+  text-underline-offset: 0.04545em;
+  text-decoration-thickness: 0.04545em;
+}
+.pv-cover__meta { position: absolute; white-space: nowrap; }
+.pv-cover__meta a { text-decoration: underline; text-underline-offset: 0.04545em; text-decoration-thickness: 0.04545em; }
+.pv-cover__sq { box-sizing: border-box; background: var(--ccdv-panel); }
+.pv-cover__whois { position: relative; z-index: 1; }
+.pv-cover__whois .pv-cover__chip { display: flex; width: max-content; }
+
+/* \\Our Software Code */
+.pv-code { position: relative; z-index: 1; }
+.pv-code__title { margin: 0; }
+.pv-code__tab {
+  --chip-ground: var(--ccdv-ink);
+  display: flex;
+  align-items: center;
+  gap: calc(7.8 * var(--s));
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0 0 0 calc(4 * var(--s));
+  border: var(--pv-line) solid var(--ccdv-green);
+  border-top: 0;
+  color: var(--ccdv-green);
+  font-size: var(--t-small);
+  line-height: 1.2;
+  text-align: left;
+  white-space: nowrap;
+}
+.pv-code__tab[aria-selected="true"] {
+  --chip-ground: var(--ccdv-green);
+  background: var(--ccdv-green);
+  color: var(--ccdv-ink);
+}
+.pv-topic__art {
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: var(--pv-line) solid var(--ccdv-green);
+  border-top-right-radius: calc(12.09 * var(--pv));
+}
+.pv-topic__label { width: 100%; }
+.pv-topic__headline[data-pending] { opacity: 0.4; }
+.pv-code__page {
+  box-sizing: border-box;
+  padding: 0;
+  border: var(--pv-line) solid var(--ccdv-green);
+}
+.pv-code__page[data-active="true"] { background: var(--ccdv-green); }
+
+/* Products rail */
+.pv-products__title {
+  margin: 0;
+  font: inherit;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--ccdv-green);
+  text-decoration: underline;
+  text-underline-offset: 0.04545em;
+  text-decoration-thickness: 0.04545em;
+}
+.pv-rail { display: grid; margin: 0; padding: 0; list-style: none; }
+.pv-card {
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+  border: var(--pv-line) solid var(--ccdv-panel);
+  border-top-right-radius: calc(12.09 * var(--pv));
+  font-size: max(7px, calc(7.04 * var(--pv)));
+  line-height: 1;
+  white-space: nowrap;
+}
+.pv-card--active { border-color: var(--ccdv-green); color: var(--ccdv-green); }
+/* the source draws 02-08 inside <g opacity="0.2"> */
+.pv-card:not(.pv-card--active) { opacity: 0.2; }
+.pv-card__index,
+.pv-card__label,
+.pv-card__status,
+.pv-card__icon { position: absolute; }
+.pv-card__icon { display: block; height: auto; translate: -50% 0; }
+.pv-rule { display: none; }
+
+/* CC.OS panel */
+.pv-ccos {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  border: var(--pv-line) solid var(--ccdv-panel);
+}
+.pv-ccos__index { position: absolute; line-height: 1; white-space: nowrap; }
+.pv-ccos__art { position: absolute; }
+.pv-ccos__copy { display: flex; flex: 1 1 auto; flex-direction: column; align-items: flex-start; }
+.pv-ccos__title {
+  margin: 0;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.04545em;
+  text-decoration-thickness: 0.04545em;
+}
+.pv-ccos__cta {
+  margin-top: auto;
+  background: var(--ccdv-panel);
+  color: var(--ccdv-ink);
+  white-space: nowrap;
+  text-decoration: underline;
+  text-underline-offset: 0.04545em;
+  text-decoration-thickness: 0.04545em;
+}
+
+/* --- desktop: PRODUCTS_v2.svg ---------------------------------------------- */
+@media (min-width: 1024px) {
+  .pv {
+    padding-bottom: calc(51.2 * var(--pv));             /* panel end 3134.39 -> footer 3185.59 */
+    background-color: var(--ccdv-ink);
+    background-image:
+      repeating-linear-gradient(
+        to bottom,
+        rgb(242 242 242 / 0.05) 0 calc(1.067 * var(--pv)),
+        transparent calc(1.067 * var(--pv)) calc(32.444 * var(--pv))
+      ),
+      repeating-linear-gradient(
+        to right,
+        rgb(242 242 242 / 0.05) 0 calc(1.067 * var(--pv)),
+        transparent calc(1.067 * var(--pv)) calc(52.968 * var(--pv))
+      );
+  }
+
+  /* y0..1243.73 (the \\Our Software Code chip). StudioCover's 1440 geometry
+     x1.0667: gear 51.2 / 234.67, pixel block 311.47, title 389.37 (69.23 /
+     85.33), meta (14.08 / 21.33), `collapse` 51.2 from the right, squares
+     10.67 at the source rects, Whois at 51.2, 337.07 (17.6u copy). */
+  .pv-cover { height: calc(1243.73 * var(--pv)); }
+  .pv-cover__lockup { position: absolute; left: 0; top: 0; width: 100%; height: calc(288 * var(--pv)); }
+  .pv-cover__gear { left: calc(51.2 * var(--pv)); top: calc(51.2 * var(--pv)); width: calc(234.67 * var(--pv)); height: calc(234.67 * var(--pv)); }
+  .pv-cover__pixel { left: calc(311.47 * var(--pv)); top: calc(51.2 * var(--pv)); width: calc(52.3 * var(--pv)); height: calc(234.8 * var(--pv)); }
+  .pv-cover__title {
+    position: absolute;
+    left: calc(389.37 * var(--pv));
+    top: calc(31.93 * var(--pv));
+    font-size: calc(69.23 * var(--pv));
+    line-height: calc(85.33 * var(--pv));
+  }
+  .pv-cover__meta {
+    left: calc(389.37 * var(--pv));
+    top: calc(227.1 * var(--pv));
+    font-size: calc(14.08 * var(--pv));
+    line-height: calc(21.33 * var(--pv));
+  }
+  .pv-cover__label {
+    position: absolute;
+    right: calc(51.2 * var(--pv));
+    top: calc(49.39 * var(--pv));
+    font-size: calc(14.08 * var(--pv));
+    line-height: 1;
+  }
+  .pv-cover__sq { width: calc(10.67 * var(--pv)); height: calc(10.67 * var(--pv)); }
+  .pv-cover__sq--a { left: calc(1020.84 * var(--pv)); top: calc(275.2 * var(--pv)); }
+  .pv-cover__sq--b { left: calc(1474.14 * var(--pv)); top: calc(275.2 * var(--pv)); }
+  .pv-cover__sq--c {
+    left: calc(1474.14 * var(--pv));
+    top: calc(337.07 * var(--pv));
+    background: none;
+    border: calc(1.067 * var(--pv)) solid var(--ccdv-panel);
+  }
+  .pv-cover__sq--d { left: calc(51.2 * var(--pv)); top: calc(1130.67 * var(--pv)); }
+  .pv-cover__sq--e { left: calc(1474.13 * var(--pv)); top: calc(1130.67 * var(--pv)); }
+  /* the source box 563,50 1097 x 1267: past the artboard's right edge; .pv clips */
+  .pv-cover__cube { left: calc(563 * var(--pv)); top: calc(50 * var(--pv)); width: calc(1097 * var(--pv)); height: calc(1267 * var(--pv)); }
+  .pv-cover__whois {
+    position: absolute;
+    left: calc(51.2 * var(--pv));
+    top: calc(337.07 * var(--pv));
+    width: calc(426.67 * var(--pv));
+    font-size: calc(18.77 * var(--pv));
+    line-height: calc(23.47 * var(--pv));
+  }
+  .pv-cover__whois .pv-cover__chip { margin-bottom: calc(20.48 * var(--pv)); }
+  .pv-cover__whois p + p { margin-top: calc(16 * var(--pv)); }
+
+  /* chip 51.2,1243.73 (177.13 x 22.6), columns from 1314.33: four 340.4 on a
+     24 gap — art box 222.4 (green hairline, 12.09 top-right), label chip
+     22.6, headline 28.16 / 35.2, body 17.6 / 22. Ends where "Products" starts. */
+  .pv-code {
+    box-sizing: border-box;
+    min-height: calc(871.13 * var(--pv));
+    padding: 0 calc(51.2 * var(--pv)) calc(35.2 * var(--pv));
+  }
+  .pv-code__title { width: max-content; padding-right: calc(5 * var(--pv)); }
+  .pv-code__tabs,
+  .pv-code__pager { display: none; }
+  .pv-code__topics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: calc(24 * var(--pv));
+    margin-top: calc(48 * var(--pv));
+  }
+  .pv-topic__art { height: calc(222.4 * var(--pv)); }
+  .pv-topic__svg { display: block; width: 100%; height: 100%; }
+  .pv-topic__headline {
+    margin-top: calc(15 * var(--pv));
+    font-size: calc(28.16 * var(--pv));
+    line-height: calc(35.2 * var(--pv));
+  }
+  .pv-topic__body { font-size: max(11px, calc(17.6 * var(--pv))); line-height: calc(22 * var(--pv)); }
+  .pv-topic__headline + .pv-topic__body { margin-top: calc(35.2 * var(--pv)); }
+  .pv-topic__body + .pv-topic__body { margin-top: calc(22 * var(--pv)); }
+
+  /* "Products" 74.67 (baseline 2181.04), the rail 34.4 below: eight 158.2 x
+     263 cards on a 24 gap at y2223.93. Card nodes are placed from each
+     card's top-left, by the source ink (7.04 type). */
+  .pv-products { padding: 0 calc(51.2 * var(--pv)); }
+  .pv-products__title { font-size: calc(74.67 * var(--pv)); }
+  .pv-rail {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    column-gap: calc(24 * var(--pv));
+    margin-top: calc(34.4 * var(--pv));
+  }
+  .pv-card { height: calc(263 * var(--pv)); }
+  .pv-card__index { left: calc(13 * var(--pv)); top: calc(10.8 * var(--pv)); }
+  .pv-card__label,
+  .pv-card__status { left: 0; right: 0; text-align: center; }
+  .pv-card__label { top: calc(81.3 * var(--pv)); }
+  .pv-card--active .pv-card__label { top: calc(92.2 * var(--pv)); }
+  .pv-card__status { top: calc(194.5 * var(--pv)); }
+  .pv-card__icon { left: 50%; top: calc(104.54 * var(--pv)); width: calc(var(--icon-w) * var(--pv)); }
+  .pv-card--active .pv-card__icon { top: calc(115.44 * var(--pv)); }
+
+  /* 51.2,2534.93 1433.6 x 599.46, 48 under the rail: copy column at 36.34
+     (title 35.2, baseline 2621.5; body 17.6 / 22; CTA 13.07 on an 18 light
+     plate, 36.3 off the bottom), graph at 748.5,2580.24 (Studio's graph
+     x1.2695 = 490 x 530.5). */
+  .pv-ccos {
+    min-height: calc(599.46 * var(--pv));
+    margin: calc(48 * var(--pv)) calc(51.2 * var(--pv)) 0;
+    padding: calc(55.37 * var(--pv)) 0 calc(36.3 * var(--pv)) calc(36.34 * var(--pv));
+    border-top-right-radius: calc(12.09 * var(--pv));
+  }
+  .pv-ccos__index { left: calc(13 * var(--pv)); top: calc(10.8 * var(--pv)); font-size: max(7px, calc(7.04 * var(--pv))); }
+  .pv-ccos__art { left: calc(697.3 * var(--pv)); top: calc(45.31 * var(--pv)); width: calc(490 * var(--pv)); height: calc(530.5 * var(--pv)); }
+  .pv-ccos__copy { width: calc(410 * var(--pv)); }
+  .pv-ccos__title { font-size: calc(35.2 * var(--pv)); line-height: calc(35.2 * var(--pv)); }
+  .pv-ccos__body { font-size: max(11px, calc(17.6 * var(--pv))); line-height: calc(22 * var(--pv)); }
+  .pv-ccos__title + .pv-ccos__body { margin-top: calc(35.5 * var(--pv)); }
+  .pv-ccos__body + .pv-ccos__body { margin-top: calc(22 * var(--pv)); }
+  .pv-ccos__body:last-of-type { margin-bottom: calc(22 * var(--pv)); }
+  .pv-ccos__cta {
+    padding: 0 calc(5.5 * var(--pv));
+    font-size: max(10px, calc(13.07 * var(--pv)));
+    line-height: calc(18 * var(--pv));
+  }
+}
+
+/* --- phones + tablets: PRODUCTS_responsive_v2.svg ---------------------------
+   Positions are the artboard's, measured from the bottom of the 50px M1 bar
+   (y50.14). The cover keeps only the cube (x0.2379 of the desktop drawing);
+   the tab list, one topic panel and the pager follow; four product rows
+   (05-08 not shown); a green rule; the CC.OS panel with the graph on top
+   (Studio's graph x0.7849). */
+@media (max-width: 1023px) {
+  .r11--products {
+    --k: min(1.5px, calc(100cqw / 390));
+    --s: calc(1.0667 * var(--k));
+    --pv-line: max(0.5px, calc(0.533 * var(--k)));
+  }
+  .pv { width: calc(390 * var(--k)); margin: 0 auto; padding-bottom: calc(28 * var(--k)); }
+
+  .pv-cover { height: calc(506.86 * var(--k)); }
+  .pv-cover__lockup,
+  .pv-cover__label,
+  .pv-cover__sq,
+  .pv-cover__whois { display: none; }
+  .pv-cover__cube { left: calc(64.09 * var(--k)); top: calc(178.76 * var(--k)); width: calc(260.98 * var(--k)); height: calc(301.42 * var(--k)); }
+
+  /* tab list y585 (chip + four rows of 22.6), panel 47.95 below (334 x 245,
+     the desktop art centred), headline 28.16 / 35.2, body 17.6 / 22, pager
+     (four 18 squares across 334) 40 under the body. Rows keep a 24px floor
+     (target size; the source draws 22.6). */
+  .pv-code { margin-top: calc(28 * var(--k)); padding: 0 calc(28 * var(--k)); }
+  .pv-code__title { width: 100%; min-height: max(24px, calc(22.6 * var(--k))); }
+  .pv-code__tab { min-height: max(24px, calc(22.6 * var(--k))); }
+  .pv-code__topics { margin-top: calc(47.95 * var(--k)); }
+  .pv-topic:not([data-active="true"]) { display: none; }
+  .pv-topic__art { height: calc(245 * var(--k)); border-top-right-radius: calc(12.09 * var(--k)); }
+  .pv-topic__svg {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: calc(340.4 * var(--k));
+    height: calc(222.4 * var(--k));
+    translate: -50% -50%;
+  }
+  .pv-topic__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    min-height: 0;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .pv-topic__headline {
+    margin-top: calc(37.2 * var(--k));
+    font-size: calc(28.16 * var(--k));
+    line-height: calc(35.2 * var(--k));
+  }
+  .pv-topic__body { font-size: calc(17.6 * var(--k)); line-height: calc(22 * var(--k)); }
+  .pv-topic__headline + .pv-topic__body { margin-top: calc(35.2 * var(--k)); }
+  .pv-topic__body + .pv-topic__body { margin-top: calc(22 * var(--k)); }
+  .pv-code__pager { display: flex; justify-content: space-between; margin-top: calc(40 * var(--k)); }
+  .pv-code__page { width: calc(18 * var(--k)); height: calc(18 * var(--k)); }
+
+  /* "Products" 40.9 under the pager; rows 334 x 122 on a 24.2 gap, 34.4
+     under the title: index 13,10.9; label 13,32.7; status 127.3,32.7; icon
+     centred on x283.8, top 34.15 */
+  .pv-products { padding: 0 calc(28 * var(--k)); }
+  .pv-products__title { margin-top: calc(40.9 * var(--k)); font-size: calc(74.67 * var(--k)); }
+  .pv-rail { row-gap: calc(24.2 * var(--k)); margin-top: calc(34.4 * var(--k)); }
+  .pv-rail__empty { display: none; }
+  .pv-card { height: calc(122 * var(--k)); border-top-right-radius: calc(12.09 * var(--k)); font-size: max(7px, calc(7.04 * var(--k))); }
+  .pv-card__index { left: calc(13 * var(--k)); top: calc(10.9 * var(--k)); }
+  .pv-card__label { left: calc(13 * var(--k)); top: calc(32.7 * var(--k)); }
+  .pv-card__status { left: calc(127.3 * var(--k)); top: calc(32.7 * var(--k)); }
+  .pv-card__icon { left: calc(283.8 * var(--k)); top: calc(34.15 * var(--k)); width: calc(var(--icon-w) * var(--k)); }
+
+  .pv-rule {
+    display: block;
+    height: 0;
+    margin: calc(47.5 * var(--k)) calc(28 * var(--k)) 0;
+    border: 0;
+    border-top: 1px solid var(--ccdv-green);
+  }
+
+  /* 28..362 x 2225.65..3401.1: graph 15.5,48.6 (303 x 328), copy at 36.1
+     (title 35.2 / 43 from 408.45; body 31.6 under it), CTA 36.1 off the
+     bottom */
+  .pv-ccos {
+    min-height: calc(1175.45 * var(--k));
+    margin: calc(48.5 * var(--k)) calc(28 * var(--k)) 0;
+    padding: calc(408.45 * var(--k)) calc(36.1 * var(--k)) calc(36.1 * var(--k));
+    border-top-right-radius: calc(12.09 * var(--k));
+  }
+  .pv-ccos__index { left: calc(13 * var(--k)); top: calc(10.9 * var(--k)); font-size: max(7px, calc(7.04 * var(--k))); }
+  .pv-ccos__art { left: calc(15.5 * var(--k)); top: calc(48.6 * var(--k)); width: calc(303 * var(--k)); height: calc(328 * var(--k)); }
+  .pv-ccos__title { font-size: calc(35.2 * var(--k)); line-height: calc(43 * var(--k)); }
+  .pv-ccos__body { font-size: calc(17.6 * var(--k)); line-height: calc(22 * var(--k)); }
+  .pv-ccos__title + .pv-ccos__body { margin-top: calc(31.6 * var(--k)); }
+  .pv-ccos__body + .pv-ccos__body { margin-top: calc(22 * var(--k)); }
+  .pv-ccos__body:last-of-type { margin-bottom: calc(22 * var(--k)); }
+  .pv-ccos__cta { padding: 0 calc(5.5 * var(--k)); font-size: max(10px, calc(13.07 * var(--k))); line-height: max(18px, calc(18 * var(--k))); }
+}
+/* === end PRODUCTS V2 ======================================================== */

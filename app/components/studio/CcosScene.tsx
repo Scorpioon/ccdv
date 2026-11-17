@@ -66,7 +66,12 @@ function GraphNode({ name }: { name: NodeName }) {
   );
 }
 
-function CcosGraph() {
+/* Products V2 (t_20261117_products20) draws this same graph, uniformly scaled
+   (x1.2695 desktop, x0.7849 phone), as decorative art (OPERATOR D3: the node
+   names are not a mapping to the six CC.OS systems) — `decorative` hides it
+   from assistive tech instead of describing it. Its motion CSS is scoped to
+   .r11--studio, so elsewhere it is static. */
+export function CcosGraph({ decorative = false }: { decorative?: boolean } = {}) {
   return (
     <svg
       className="cg"
@@ -74,8 +79,12 @@ function CcosGraph() {
       viewBox="994 3114.18 386 417.892"
       preserveAspectRatio="xMidYMid slice"
       fill="none"
-      role="img"
-      aria-label={`CC.OS system map: ${CCOS_GRAPH_ORDER[0]} at the centre, connected to ${CCOS_GRAPH_ORDER.slice(1).join(", ")}.`}
+      {...(decorative
+        ? { "aria-hidden": true, focusable: false }
+        : {
+            role: "img",
+            "aria-label": `CC.OS system map: ${CCOS_GRAPH_ORDER[0]} at the centre, connected to ${CCOS_GRAPH_ORDER.slice(1).join(", ")}.`,
+          })}
       style={{ "--cg-step": `${CCOS_GRAPH_STEP}s` } as CSSProperties}
     >
       {CCOS_GRAPH_ORDER.map((name) =>

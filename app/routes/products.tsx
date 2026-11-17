@@ -1,51 +1,72 @@
-import { Link } from "react-router";
+import { useRef } from "react";
 import { SiteMasthead } from "../components/SiteMasthead";
 import { SiteFooter } from "../components/SiteFooter";
-import { ProductsCard } from "../components/ProductsCard";
-import { useTransitionLink } from "../components/GlobalShell";
+import { StudioMobileMenu } from "../components/StudioMobileMenu";
+import { ProductsCard, ProductsEmptySlot } from "../components/ProductsCard";
+import { ProductsCover } from "../components/products/ProductsCover";
+import { ProductsSoftwareCode } from "../components/products/ProductsSoftwareCode";
+import { ProductsCcosPanel } from "../components/products/ProductsCcosPanel";
+import { PRODUCTS, PRODUCTS_EMPTY_SLOTS } from "../data/productsContent";
+import { useBoundaryNav, useNavIdle } from "../motion/routeNav";
 
 export function meta() {
   return [{ title: "CCDV — Products" }];
 }
 
-/* Products is a 1237-tall artboard: 268.12 masthead, 31 stripe, 177 hero,
-   31 stripe, 569 card rail, 160 footer — the literal rect heights from
-   pages_products.svg, summing unchanged.
+/* Products V2 (t_20261117_products20, P1). Desktop follows PRODUCTS_v2.svg
+   (1536 x 3354, OPERATOR D1: the four-column main design), phones
+   PRODUCTS_responsive_v2.svg (390 x 3430, D2); tablets take the phone
+   composition. Cover, \\Our Software Code, the Products rail, the CC.OS panel,
+   then the shared footer.
 
-   Card 01 opens CCOS (`PRD-DEC-002`); cards 02-04 stay visible, disabled,
-   non-navigable (`PRD-DEC-001`) — see ProductsCard for the per-card art
-   provenance. Labels/indices are transcribed verbatim draft placeholders. */
+   Navigation follows the global V2 routes (Studio / Services / Work): the thin
+   masthead appears once the cover lockup has scrolled past and idles away
+   (motion/routeNav.ts); phones get the M1 bar and menu instead.
+
+   Card 01 opens CC.OS (`PRD-DEC-002`); 02-04 stay visible, disabled and
+   non-navigable (`PRD-DEC-001`); 05-08 are empty decoration (D3). */
 export default function Products() {
-  const link = useTransitionLink();
+  const rootRef = useRef<HTMLDivElement>(null);
+  const edgeRef = useRef<HTMLDivElement>(null);
+
+  useBoundaryNav(rootRef, edgeRef, ".masthead--products", ".pv-cover__lockup");
+  useNavIdle(rootRef);
+
   return (
-    <div className="r11 r11--products">
-      <SiteMasthead variant="products" />
+    <div className="r11 r11--products" ref={rootRef}>
+      <StudioMobileMenu current="/products" />
+      <SiteMasthead variant="products" compact />
 
-      <div className="section section--stripe" />
+      <div className="pv">
+        <h1 className="pv-visually-hidden">Products</h1>
+        <ProductsCover />
 
-      <section className="section section--hero" aria-labelledby="products-hero">
-        <h1 className="band__label" id="products-hero">
-          [Products]
-        </h1>
-        <span className="band__suffix" style={{ left: "calc(1180 * var(--u))" }}>
-          :o
-        </span>
-        {/* NAV-T3 (OPERATOR): `collapse` goes Home everywhere */}
-        <Link className="hero__watermark" aria-label="collapse — back to Home" {...link("/")}>
-          collapse
-        </Link>
-      </section>
+        <div ref={edgeRef}>
+          <ProductsSoftwareCode />
+        </div>
 
-      <div className="section section--stripe" />
+        <section className="pv-products" aria-labelledby="pv-products-title">
+          <h2 className="pv-products__title" id="pv-products-title">
+            Products
+          </h2>
+          <ul className="pv-rail">
+            {PRODUCTS.map((product) => (
+              <li key={product.index}>
+                <ProductsCard {...product} />
+              </li>
+            ))}
+            {PRODUCTS_EMPTY_SLOTS.map((index) => (
+              <li key={index} className="pv-rail__empty" aria-hidden="true">
+                <ProductsEmptySlot index={index} />
+              </li>
+            ))}
+          </ul>
+        </section>
 
-      <section className="section section--products-cards" aria-label="Products">
-        <ProductsCard index="01" label="CC.OS" kind="ccos" href="/products/ccos" />
-        <ProductsCard index="02" label="PROJECT LS" kind="triangle" />
-        <ProductsCard index="03" label="PROJECT VC" kind="diamond" />
-        {/* 2026-11-17 (OPERATOR): card 04 renamed PROJECT L -> PROJECT iDS;
-            still a disabled placeholder (PRD-016 / PRD-DEC-001) */}
-        <ProductsCard index="04" label="PROJECT iDS" kind="pentagon" />
-      </section>
+        <hr className="pv-rule" />
+
+        <ProductsCcosPanel />
+      </div>
 
       <SiteFooter />
     </div>
