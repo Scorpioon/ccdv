@@ -1,25 +1,45 @@
-import type { CSSProperties } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
+import { useVisibleLoop } from "../studio/artworks";
+import { apply, mul, rotX, rotY, rotZ, type Mat3, type Vec3 } from "../marks/StudioMobileOrbit";
+import { LitFaces, type LitPattern } from "./LitCube";
+import { index } from "../../motion/studioMotion";
 
-/* Products V2 artwork, transcribed from PRODUCTS_v2.svg (OPERATOR D1). Each
-   viewBox is the drawing's own source box, so the path data is pasted
-   unchanged (the ProductsCard / WorkGearTile convention). The phone artboard
-   (PRODUCTS_responsive_v2.svg) draws the same shapes at the same size (topic
-   art, card icons) or uniformly scaled (hero cube, x0.2379), so one drawing
-   serves both layouts.
+/* Products V2 artwork. The hero cube and the card icons are transcribed from
+   PRODUCTS_v2.svg: each viewBox is the drawing's own source box, so the path
+   data is pasted unchanged (the ProductsCard / WorkGearTile convention). The
+   phone artboard (PRODUCTS_responsive_v2.svg) draws the same shapes uniformly
+   scaled, so one drawing serves both layouts.
 
-   Figma's inside-aligned strokes are kept as exported: a doubled stroke
-   masked by the shape itself. `Products demo cube (not use, recreate)` is a
-   negative reference and is not used anywhere here. All art is decorative. */
+   P1b (OPERATOR): the four \\Our Software Code figures are animated
+   recreations in the same language (green <-> #F2F2F2 ramps, #1A1A1A edges),
+   each in a 340 x 222 box: Approach (a hand slides in, the cube lifts),
+   Target (four intersecting beams turning like a chaos pendulum), Offline
+   (signal bars counting down and back up) and Updates (community pillars
+   growing). Each runs only while it is the selected topic and on screen
+   (useVisibleLoop); a selection replays it; reduced motion shows the rest
+   pose. `Products demo cube (not use, recreate)` is not used anywhere here.
+   All art is decorative. */
 
 /* hero wireframe cube: three nested hexagons (light / green / green-to-light)
    and the green Y + light vertical that read as a cube. The source box runs
-   past the 1536 artboard on the right; the page clips it. */
-export function ProductsHeroCube({ className }: { className?: string }) {
+   past the 1536 artboard on the right; the page clips it. P1b: the lit faces
+   (LitCube) sit under the outlines, on the hexagons' own centre and radii.
+   `spawn` makes it the cover's spawn step of that index (on the svg itself: a
+   transformed wrapper would become the absolute cube's containing block). */
+export function ProductsHeroCube({ className, pattern, spawn }: { className?: string; pattern: LitPattern; spawn?: number }) {
   const outer = "M1111.5 53L1657.53 368.25V998.75L1111.5 1314L565.471 998.75V368.25L1111.5 53Z";
   const middle = "M1111.47 179.104L1548.29 431.304V935.704L1111.47 1187.9L674.647 935.704V431.304L1111.47 179.104Z";
   const inner = "M1111.49 355.635L1395.43 519.565V847.425L1111.49 1011.36L827.558 847.425V519.565L1111.49 355.635Z";
   return (
-    <svg className={className} viewBox="563 50 1097 1267" fill="none" aria-hidden="true" focusable="false">
+    <svg
+      className={className}
+      viewBox="563 50 1097 1267"
+      fill="none"
+      aria-hidden="true"
+      focusable="false"
+      data-spawn={spawn === undefined ? undefined : true}
+      style={spawn === undefined ? undefined : index(spawn)}
+    >
       <defs>
         <mask id="pv-cube-m0" fill="white"><path d={outer} /></mask>
         <mask id="pv-cube-m1" fill="white"><path d={middle} /></mask>
@@ -29,6 +49,7 @@ export function ProductsHeroCube({ className }: { className?: string }) {
           <stop offset="1" stopColor="#F2F2F2" />
         </linearGradient>
       </defs>
+      <LitFaces cx={1111.5} cy={683.5} radii={[630.5, 504.4, 327.86]} pattern={pattern} />
       <path d={outer} strokeWidth="4.53597" stroke="#F2F2F2" mask="url(#pv-cube-m0)" />
       <path d={middle} strokeWidth="4.53597" stroke="#5AE36F" mask="url(#pv-cube-m1)" />
       <path d={inner} strokeWidth="4.53597" stroke="url(#pv-cube-g0)" mask="url(#pv-cube-m2)" />
@@ -38,12 +59,58 @@ export function ProductsHeroCube({ className }: { className?: string }) {
   );
 }
 
-/* \\Our Software Code artwork boxes: each viewBox is that column's 340.4 x
-   222.4 box (x 51.2 / 415.6 / 780 / 1144.4, y 1314.33), so the art keeps its
-   place inside the box; the box outline itself is CSS. */
-function ApproachArt() {
+type ArtProps = { active: boolean; reduced: boolean };
+
+const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
+const easeOut = (v: number) => 1 - (1 - clamp01(v)) ** 3;
+const easeOutBack = (v: number) => {
+  const t = clamp01(v) - 1;
+  return 1 + 2.4 * t ** 3 + 1.4 * t ** 2;
+};
+const fmt = (n: number) => Math.round(n * 100) / 100;
+/** exponential approach: the share of the gap closed in `dt` seconds */
+const approach = (dt: number, rate: number) => 1 - Math.exp(-dt * rate);
+
+/* An isometric hexagonal prism (the series' bar / pillar): front-bottom vertex
+   (cx, yb), half width a, top-face half height c, top corners at yt. Returns
+   the silhouette and the Y of edges that reads it as a solid. */
+function prism(cx: number, yb: number, yt: number, a: number, c: number) {
+  const body = `M${fmt(cx + a)} ${fmt(yb - c)}V${fmt(yt)}L${fmt(cx)} ${fmt(yt - c)}L${fmt(cx - a)} ${fmt(yt)}V${fmt(yb - c)}L${fmt(cx)} ${fmt(yb)}Z`;
+  const edges = `M${fmt(cx)} ${fmt(yb)}V${fmt(yt + c)}M${fmt(cx)} ${fmt(yt + c)}L${fmt(cx + a)} ${fmt(yt)}M${fmt(cx)} ${fmt(yt + c)}L${fmt(cx - a)} ${fmt(yt)}`;
+  return { body, edges };
+}
+
+/* --- 01 Approach: the hand gives the product -------------------------------
+   The source hand and cube (PRODUCTS_v2.svg column 1), polished into the
+   series: the palm is a slab now (a green under-face 5 below the top face, a
+   #1A1A1A rim). The hand comes in from the left, then the cube lifts off it
+   and floats. Rest pose: hand in place, cube lifted. */
+const HAND =
+  "M186.7 1468.91H164.906C163.802 1468.91 162.906 1469.81 162.906 1470.91V1483.27C162.906 1484.37 163.802 1485.27 164.906 1485.27H244.251C244.542 1485.27 244.829 1485.21 245.093 1485.08L277.845 1469.87C278.938 1469.36 279.337 1468.01 278.694 1466.99L275.886 1462.53C275.365 1461.71 274.324 1461.38 273.424 1461.75L245.062 1473.59C244.818 1473.69 244.557 1473.74 244.292 1473.74H214.13C213.025 1473.74 212.13 1472.85 212.13 1471.74V1466.08C212.13 1464.97 213.025 1464.08 214.13 1464.08H233.605C234.71 1464.08 235.605 1463.18 235.605 1462.08V1458.27C235.605 1457.16 234.71 1456.27 233.605 1456.27H201.209C200.685 1456.27 200.182 1456.48 199.808 1456.84L188.101 1468.34C187.727 1468.7 187.224 1468.91 186.7 1468.91Z";
+const LIFT = -10;
+
+function ApproachArt({ active, reduced }: ArtProps) {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const handRef = useRef<SVGGElement>(null);
+  const cubeRef = useRef<SVGGElement>(null);
+
+  const pose = (handX: number, handA: number, cubeY: number) => {
+    handRef.current?.setAttribute("transform", `translate(${fmt(handX)} 0)`);
+    handRef.current?.setAttribute("opacity", `${fmt(handA)}`);
+    cubeRef.current?.setAttribute("transform", `translate(0 ${fmt(cubeY)})`);
+  };
+  useVisibleLoop(
+    svgRef,
+    active && !reduced,
+    (t) => {
+      const lift = t < 0.75 ? 0 : t < 1.3 ? LIFT * easeOutBack((t - 0.75) / 0.55) : LIFT + 2 * Math.sin((t - 1.3) * 2.2);
+      pose(-170 * (1 - easeOut(t / 0.75)), clamp01(t / 0.3), lift);
+    },
+    () => pose(0, 1, LIFT),
+  );
+
   return (
-    <svg className="pv-topic__svg" viewBox="51.2 1314.33 340.4 222.4" fill="none" aria-hidden="true" focusable="false">
+    <svg ref={svgRef} className="pv-topic__svg" viewBox="0 0 340 222" fill="none" aria-hidden="true" focusable="false">
       <defs>
         <linearGradient id="pv-topic-a1" x1="221.409" y1="1440.04" x2="221.409" y2="1365.79" gradientUnits="userSpaceOnUse">
           <stop stopColor="#5AE36F" />
@@ -55,159 +122,300 @@ function ApproachArt() {
           <stop offset="1" stopColor="#F2F2F2" />
         </linearGradient>
       </defs>
-      <path d="M221.409 1365.79L253.658 1384.41V1421.65L221.409 1440.27L189.161 1421.65V1384.41L221.409 1365.79Z" fill="url(#pv-topic-a1)" />
-      <path d="M188.43 1383.97L221.454 1403.26L254.48 1383.97" strokeWidth="2" stroke="#1A1A1A" />
-      <path
-        d="M186.7 1468.91H164.906C163.802 1468.91 162.906 1469.81 162.906 1470.91V1483.27C162.906 1484.37 163.802 1485.27 164.906 1485.27H244.251C244.542 1485.27 244.829 1485.21 245.093 1485.08L277.845 1469.87C278.938 1469.36 279.337 1468.01 278.694 1466.99L275.886 1462.53C275.365 1461.71 274.324 1461.38 273.424 1461.75L245.062 1473.59C244.818 1473.69 244.557 1473.74 244.292 1473.74H214.13C213.025 1473.74 212.13 1472.85 212.13 1471.74V1466.08C212.13 1464.97 213.025 1464.08 214.13 1464.08H233.605C234.71 1464.08 235.605 1463.18 235.605 1462.08V1458.27C235.605 1457.16 234.71 1456.27 233.605 1456.27H201.209C200.685 1456.27 200.182 1456.48 199.808 1456.84L188.101 1468.34C187.727 1468.7 187.224 1468.91 186.7 1468.91Z"
-        fill="url(#pv-topic-a2)"
-      />
+      <g transform="translate(-51.2 -1314.33)">
+        <g ref={cubeRef} transform={`translate(0 ${LIFT})`}>
+          <path d="M221.409 1365.79L253.658 1384.41V1421.65L221.409 1440.27L189.161 1421.65V1384.41L221.409 1365.79Z" fill="url(#pv-topic-a1)" />
+          <path d="M188.43 1383.97L221.454 1403.26L254.48 1383.97" strokeWidth="2" stroke="#1A1A1A" />
+          <path d="M221.409 1403.26V1440.27" strokeWidth="1" stroke="#1A1A1A" opacity="0.5" />
+        </g>
+        <g ref={handRef}>
+          <path d={HAND} transform="translate(0 5)" fill="#5AE36F" opacity="0.45" />
+          <path d={HAND} fill="url(#pv-topic-a2)" stroke="#1A1A1A" strokeWidth="1" strokeLinejoin="round" />
+        </g>
+      </g>
     </svg>
   );
 }
 
-function TargetArt() {
-  return (
-    <svg className="pv-topic__svg" viewBox="415.6 1314.33 340.4 222.4" fill="none" aria-hidden="true" focusable="false">
-      <defs>
-        <linearGradient id="pv-topic-t3" x1="585.073" y1="1375.23" x2="544.913" y2="1365.31" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#5AE36F" />
-          <stop offset="1" stopColor="#F2F2F2" />
-        </linearGradient>
-        <linearGradient id="pv-topic-t4" x1="534.929" y1="1417.9" x2="520.936" y2="1456.82" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#5AE36F" />
-          <stop offset="1" stopColor="#F2F2F2" />
-        </linearGradient>
-        <linearGradient id="pv-topic-t5" x1="600.143" y1="1470.88" x2="638.948" y2="1456.55" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#F2F2F2" />
-          <stop offset="0.822115" stopColor="#5AE36F" />
-        </linearGradient>
-        <linearGradient id="pv-topic-t6" x1="546.151" y1="1461.14" x2="567.626" y2="1496.49" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#F2F2F2" />
-          <stop offset="0.822115" stopColor="#5AE36F" />
-        </linearGradient>
-      </defs>
-      <path d="M544.912 1365.32L581.758 1499.06L601.9 1504.03L616.278 1489.08L579.432 1355.34L559.29 1350.36L544.912 1365.32Z" fill="url(#pv-topic-t3)" />
-      <path d="M559.148 1349.91L559.686 1349.76L595.639 1482.12L595.101 1482.26L594.564 1482.41L558.611 1350.06L559.148 1349.91ZM595.101 1482.26L595.501 1482.65L580.659 1497.94L580.259 1497.55L579.859 1497.16L594.702 1481.87L595.101 1482.26ZM595.101 1482.26L595.235 1481.72L615.269 1486.67L615.136 1487.21L615.002 1487.75L594.968 1482.8L595.101 1482.26Z" fill="#1A1A1A" />
-      <path d="M520.931 1456.82L657.796 1433.95L664.817 1414.44L651.421 1398.6L514.556 1421.46L507.534 1440.98L520.931 1456.82Z" fill="url(#pv-topic-t4)" />
-      <path d="M507.07 1441.07L506.981 1440.52L642.368 1418.4L642.458 1418.95L642.548 1419.5L507.16 1441.62L507.07 1441.07ZM642.458 1418.95L642.885 1418.6L656.564 1434.93L656.136 1435.29L655.709 1435.65L642.031 1419.31L642.458 1418.95ZM642.458 1418.95L641.934 1418.77L648.918 1399.35L649.442 1399.54L649.966 1399.73L642.982 1419.14L642.458 1418.95Z" fill="#1A1A1A" />
-      <path d="M638.95 1456.55L533.391 1366.51L513.928 1373.69L510.417 1394.13L615.976 1484.18L635.44 1477L638.95 1456.55Z" fill="url(#pv-topic-t5)" />
-      <path d="M635.812 1477.29L635.449 1477.72L531.411 1388.32L531.774 1387.9L532.137 1387.48L636.176 1476.87L635.812 1477.29ZM531.774 1387.9L531.226 1387.8L534.934 1366.83L535.483 1366.92L536.032 1367.02L532.323 1388L531.774 1387.9ZM531.774 1387.9L531.967 1388.42L512.608 1395.57L512.415 1395.04L512.222 1394.52L531.581 1387.38L531.774 1387.9Z" fill="#1A1A1A" />
-      <path d="M567.636 1496.48L635.849 1375.68L625.074 1357.95L604.332 1358.42L536.119 1479.22L546.894 1496.95L567.636 1496.48Z" fill="url(#pv-topic-t6)" />
-      <path d="M546.672 1497.37L546.188 1497.09L614.052 1377.9L614.536 1378.18L615.02 1378.46L547.156 1497.64L546.672 1497.37ZM614.536 1378.18L614.526 1377.62L635.831 1377.25L635.84 1377.81L635.85 1378.36L614.546 1378.74L614.536 1378.18ZM614.536 1378.18L614.06 1378.47L603.343 1360.84L603.819 1360.55L604.295 1360.26L615.012 1377.89L614.536 1378.18Z" fill="#1A1A1A" />
-    </svg>
-  );
-}
-
-function OfflineArt() {
-  const hollow = "M1005.53 1495.76L1005.73 1400.23L980.678 1385.76L955.625 1400.23L955.42 1495.76L980.473 1510.22L1005.53 1495.76Z";
-  return (
-    <svg className="pv-topic__svg" viewBox="780 1314.33 340.4 222.4" fill="none" aria-hidden="true" focusable="false">
-      <defs>
-        <linearGradient id="pv-topic-o7" x1="841.682" y1="1466.92" x2="891.635" y2="1495.76" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#5AE36F" />
-          <stop offset="1" stopColor="#F2F2F2" />
-        </linearGradient>
-        <linearGradient id="pv-topic-o8" x1="897.862" y1="1466.92" x2="947.814" y2="1495.76" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#F2F2F2" />
-          <stop offset="1" stopColor="#5AE36F" />
-        </linearGradient>
-        <linearGradient id="pv-topic-o9" x1="955.573" y1="1466.92" x2="1005.53" y2="1495.76" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#5AE36F" />
-          <stop offset="1" stopColor="#F2F2F2" />
-        </linearGradient>
-        <linearGradient id="pv-topic-o10" x1="1007.5" y1="1464.1" x2="916.497" y2="1409.61" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#5AE36F" />
-          <stop offset="1" stopColor="#F2F2F2" />
-        </linearGradient>
-        <linearGradient id="pv-topic-o11" x1="1014.11" y1="1466.92" x2="1064.06" y2="1495.76" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#F2F2F2" />
-          <stop offset="1" stopColor="#5AE36F" />
-        </linearGradient>
-        <mask id="pv-topic-om" fill="white"><path d={hollow} /></mask>
-      </defs>
-      <path d="M891.636 1495.76L891.636 1447.76L866.583 1433.29L841.529 1447.76L841.529 1495.76L866.583 1510.22L891.636 1495.76Z" fill="url(#pv-topic-o7)" />
-      <path d="M866.602 1510.88L866.602 1462.42M866.602 1462.42L892.405 1447.69M866.602 1462.42L841.683 1448.04" strokeWidth="1.55376" stroke="#1A1A1A" />
-      <path d="M947.816 1495.75L947.816 1419.65L922.762 1405.19L897.709 1419.65L897.709 1495.75L922.762 1510.22L947.816 1495.75Z" fill="url(#pv-topic-o8)" />
-      <path d="M922.781 1510.88L922.781 1435.18M922.781 1435.18L948.584 1420.46M922.781 1435.18L897.862 1420.8" strokeWidth="1.55376" stroke="#1A1A1A" />
-      <path d={hollow} strokeWidth="3.10752" stroke="url(#pv-topic-o9)" mask="url(#pv-topic-om)" />
-      <path d="M980.492 1510.88L981.188 1416.17M981.188 1416.17L1006.99 1401.44M981.188 1416.17L956.269 1401.78" strokeWidth="1.55376" stroke="url(#pv-topic-o10)" />
-      <path d="M1064.07 1495.75L1066.54 1354.39L1041.48 1339.93L1016.43 1354.39L1013.96 1495.75L1039.01 1510.22L1064.07 1495.75Z" fill="url(#pv-topic-o11)" />
-      <path d="M1039.02 1510.88L1042.15 1372.62M1042.15 1372.62L1067.95 1357.89M1042.15 1372.62L1017.23 1358.23" strokeWidth="1.55376" stroke="#1A1A1A" />
-    </svg>
-  );
-}
-
-/* six bars, in source paint order: [body, gradient x1 y1 x2 y2 first-stop (end offset), edges] */
-const UPDATES_BARS: [string, [string, string, string, string, string, number?], string][] = [
-  [
-    "M1329.19 1459.76L1330.76 1345.76L1316.02 1337.25L1301.27 1345.79L1299.7 1459.79L1314.44 1468.3L1329.19 1459.76Z",
-    ["1322.54", "1337.56", "1329.45", "1459.75", "#F2F2F2", 0.528846],
-    "M1314.44 1468.69L1316.39 1355.99M1316.39 1355.99L1331.59 1347.3M1316.39 1355.99L1301.74 1347.53",
-  ],
-  [
-    "M1298.6 1461.09L1299.94 1347.23L1285.17 1338.7L1270.42 1347.2L1269.07 1461.07L1283.84 1469.59L1298.6 1461.09Z",
-    ["1275.69", "1345.41", "1273.97", "1468.86", "#5AE36F"],
-    "M1283.85 1469.98L1285.59 1357.42M1285.59 1357.42L1300.78 1348.77M1285.59 1357.42L1270.9 1348.94",
-  ],
-  [
-    "M1358.87 1465.64L1360.4 1351.66L1345.66 1343.15L1330.91 1351.68L1329.37 1465.66L1344.11 1474.17L1358.87 1465.64Z",
-    ["1329.48", "1448.67", "1358.87", "1465.64", "#5AE36F"],
-    "M1344.12 1474.56L1346.05 1361.89M1346.05 1361.89L1361.24 1353.2M1346.05 1361.89L1331.39 1353.42",
-  ],
-  [
-    "M1312.7 1479.39L1314.09 1365.49L1299.33 1356.97L1284.58 1365.48L1283.18 1479.37L1297.95 1487.89L1312.7 1479.39Z",
-    ["1303.82", "1394.79", "1273.39", "1482.8", "#F2F2F2", 0.822115],
-    "M1297.96 1488.28L1299.74 1375.69M1299.74 1375.69L1314.94 1367.03M1299.74 1375.69L1285.06 1367.21",
-  ],
-  [
-    "M1344.72 1489.91L1346.09 1376.03L1331.33 1367.51L1316.57 1376.01L1315.2 1489.89L1329.97 1498.42L1344.72 1489.91Z",
-    ["1315.28", "1472.92", "1344.72", "1489.92", "#F2F2F2", 0.822115],
-    "M1329.98 1498.81L1331.73 1386.23M1331.73 1386.23L1346.93 1377.57M1331.73 1386.23L1317.05 1377.75",
-  ],
-  [
-    "M1330.08 1505.01L1331.43 1391.15L1316.66 1382.62L1301.9 1391.12L1300.56 1504.98L1315.33 1513.51L1330.08 1505.01Z",
-    ["1300.63", "1488.01", "1330.08", "1505.01", "#5AE36F"],
-    "M1315.34 1513.9L1317.07 1401.34M1317.07 1401.34L1332.27 1392.68M1317.07 1401.34L1302.38 1392.85",
-  ],
+/* --- 02 Target: four beams through one centre -------------------------------
+   Four long square-section boxes share one centre point and truly intersect.
+   Each turns on its own bounded swings of incommensurate period (a chaos
+   pendulum: never repeating, never flying apart) and rolls about its own
+   length. Orthographic projection; each long side is cut into strips so the
+   painter's sort holds where the beams cross. A face's tone mixes green and
+   light by its lighting and by its place along the beam (the source ramps). */
+const BEAM = { half: 92, w: 11, strips: 6 };
+const VIEW = mul(rotX(0.42), rotY(-0.32));
+const LIGHT_DIR: Vec3 = (() => {
+  const v: Vec3 = [-0.45, -0.7, 0.55];
+  const n = Math.hypot(v[0], v[1], v[2]);
+  return [v[0] / n, v[1] / n, v[2] / n];
+})();
+const BEAMS = [
+  { base: 0.2, k: 1, spin: 0.42, p: 0 },
+  { base: 0.2 + Math.PI / 4, k: 1.37, spin: -0.55, p: 1.7 },
+  { base: 0.2 + Math.PI / 2, k: 0.83, spin: 0.68, p: 3.1 },
+  { base: 0.2 + (3 * Math.PI) / 4, k: 1.71, spin: -0.33, p: 4.4 },
 ];
+type Quad = { local: Vec3[]; normal: Vec3; along: number; cap: boolean };
 
-function UpdatesArt() {
+/* one beam's faces in its own frame (length on x) */
+const BEAM_QUADS: Quad[] = (() => {
+  const { half, w, strips } = BEAM;
+  const quads: Quad[] = [];
+  const sides: { n: Vec3; corner: (s: number, x: number) => Vec3 }[] = [
+    { n: [0, 1, 0], corner: (s, x) => [x, w, s * w] },
+    { n: [0, -1, 0], corner: (s, x) => [x, -w, s * w] },
+    { n: [0, 0, 1], corner: (s, x) => [x, s * w, w] },
+    { n: [0, 0, -1], corner: (s, x) => [x, s * w, -w] },
+  ];
+  for (const side of sides) {
+    for (let i = 0; i < strips; i++) {
+      const x0 = -half + (2 * half * i) / strips;
+      const x1 = -half + (2 * half * (i + 1)) / strips;
+      quads.push({
+        local: [side.corner(-1, x0), side.corner(1, x0), side.corner(1, x1), side.corner(-1, x1)],
+        normal: side.n,
+        along: (x0 + x1) / (2 * half),
+        cap: false,
+      });
+    }
+  }
+  for (const end of [-1, 1]) {
+    const x = end * half;
+    quads.push({ local: [[x, -w, -w], [x, w, -w], [x, w, w], [x, -w, w]], normal: [end, 0, 0], along: end, cap: true });
+  }
+  return quads;
+})();
+const POOL = BEAMS.length * BEAM_QUADS.length;
+
+/* #5AE36F -> #F2F2F2 */
+const ramp = (v: number) => {
+  const t = clamp01(v);
+  const ch = (a: number, b: number) => Math.round(a + (b - a) * t);
+  return `rgb(${ch(0x5a, 0xf2)} ${ch(0xe3, 0xf2)} ${ch(0x6f, 0xf2)})`;
+};
+
+function beamPose(i: number, t: number): Mat3 {
+  const b = BEAMS[i];
+  const swing = 0.38 * Math.sin(0.37 * b.k * t + b.p) + 0.16 * Math.sin(0.91 * b.k * t + 2 * b.p);
+  const tilt = 0.55 * Math.sin(0.29 * b.k * t + 1.3 * b.p);
+  return mul(VIEW, mul(rotZ(b.base + swing), mul(rotY(tilt), rotX(b.spin * t))));
+}
+
+function TargetArt({ active, reduced }: ArtProps) {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const poolRef = useRef<SVGGElement>(null);
+
+  const draw = (t: number) => {
+    const nodes = poolRef.current?.children;
+    if (!nodes) return;
+    const faces: { d: string; z: number; fill: string; cap: boolean }[] = [];
+    BEAMS.forEach((_, i) => {
+      const m = beamPose(i, t);
+      for (const q of BEAM_QUADS) {
+        const n = apply(m, q.normal);
+        if (n[2] <= 0) continue;
+        const pts = q.local.map((v) => apply(m, v));
+        const lit = Math.max(0, n[0] * LIGHT_DIR[0] + n[1] * LIGHT_DIR[1] + n[2] * LIGHT_DIR[2]);
+        faces.push({
+          d: `M${pts.map((p) => `${fmt(170 + p[0])} ${fmt(111 + p[1])}`).join("L")}Z`,
+          z: pts.reduce((sum, p) => sum + p[2], 0) / pts.length,
+          fill: ramp(0.15 + 0.55 * lit + 0.3 * (i % 2 ? q.along : -q.along)),
+          cap: q.cap,
+        });
+      }
+    });
+    faces.sort((a, b) => a.z - b.z);
+    for (let k = 0; k < nodes.length; k++) {
+      const node = nodes[k];
+      const face = faces[k];
+      if (!face) {
+        node.setAttribute("d", "");
+        continue;
+      }
+      node.setAttribute("d", face.d);
+      node.setAttribute("fill", face.fill);
+      /* strips take their own fill as stroke (no seams); the caps an ink rim */
+      node.setAttribute("stroke", face.cap ? "#1A1A1A" : face.fill);
+      node.setAttribute("stroke-width", face.cap ? "0.9" : "0.4");
+    }
+  };
+  // the start pose is drawn once whether or not the loop runs (reduced motion)
+  useEffect(() => draw(0), []);
+  useVisibleLoop(svgRef, active && !reduced, draw, () => draw(0));
+
   return (
-    <svg className="pv-topic__svg" viewBox="1144.4 1314.33 340.4 222.4" fill="none" aria-hidden="true" focusable="false">
+    <svg ref={svgRef} className="pv-topic__svg" viewBox="0 0 340 222" fill="none" aria-hidden="true" focusable="false">
+      <g ref={poolRef} strokeLinejoin="round">
+        {Array.from({ length: POOL }, (_, k) => (
+          <path key={k} />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+/* --- 03 Offline: four signal bars ------------------------------------------
+   The column-3 bars (PRODUCTS_v2.svg, which draws one of them hollow). They
+   count down 4 -> 3 -> 2 -> 1 -> 0 full bars and back up; a bar that is off
+   is the hollow green outline, a bar that is on cross-fades to its filled
+   ramp. Rest pose: all four full. */
+const OFFLINE_BARS = [
+  { cx: 86.58, yt: 133.43 },
+  { cx: 142.76, yt: 105.32 },
+  { cx: 200.58, yt: 85.9 },
+  { cx: 260.2, yt: 40.06 },
+].map((bar) => ({ ...bar, ...prism(bar.cx, 195.89, bar.yt, 25.05, 14.46) }));
+const SIGNAL = [4, 3, 2, 1, 0, 1, 2, 3];
+const SIGNAL_STEP = 0.6;
+
+function OfflineArt({ active, reduced }: ArtProps) {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const fillRefs = useRef<(SVGGElement | null)[]>([]);
+  const state = useRef({ last: 0, on: [1, 1, 1, 1] });
+
+  const write = () => fillRefs.current.forEach((node, i) => node?.setAttribute("opacity", `${fmt(state.current.on[i])}`));
+  useVisibleLoop(
+    svgRef,
+    active && !reduced,
+    (t) => {
+      const s = state.current;
+      if (t === 0) s.on = [1, 1, 1, 1];
+      const dt = Math.max(0, t - s.last);
+      s.last = t;
+      const full = SIGNAL[Math.floor(t / SIGNAL_STEP) % SIGNAL.length];
+      s.on = s.on.map((v, i) => v + ((i < full ? 1 : 0) - v) * approach(dt, 14));
+      write();
+    },
+    () => {
+      state.current = { last: 0, on: [1, 1, 1, 1] };
+      write();
+    },
+  );
+
+  return (
+    <svg ref={svgRef} className="pv-topic__svg" viewBox="0 0 340 222" fill="none" aria-hidden="true" focusable="false">
       <defs>
-        {UPDATES_BARS.map(([, [x1, y1, x2, y2, first, end]], i) => (
-          /* two-stop ramps: green <-> light; `end` is the second stop's offset
-             where the source does not run it to 1 */
-          <linearGradient key={i} id={`pv-topic-u${i}`} x1={x1} y1={y1} x2={x2} y2={y2} gradientUnits="userSpaceOnUse">
-            <stop stopColor={first} />
-            <stop offset={end ?? 1} stopColor={first === "#5AE36F" ? "#F2F2F2" : "#5AE36F"} />
+        {OFFLINE_BARS.map((bar, i) => (
+          <linearGradient key={i} id={`pv-topic-o${i}`} x1={bar.cx - 25} y1={bar.yt} x2={bar.cx + 25} y2="196" gradientUnits="userSpaceOnUse">
+            <stop stopColor={i % 2 ? "#F2F2F2" : "#5AE36F"} />
+            <stop offset="1" stopColor={i % 2 ? "#5AE36F" : "#F2F2F2"} />
           </linearGradient>
         ))}
       </defs>
-      {UPDATES_BARS.map(([body, , edges], i) => (
+      {OFFLINE_BARS.map((bar, i) => (
         <g key={i}>
-          <path d={body} fill={`url(#pv-topic-u${i})`} />
-          <path d={edges} strokeWidth="0.91498" stroke="#1A1A1A" />
+          <g stroke="#5AE36F" strokeWidth="1.55" strokeLinejoin="round">
+            <path d={bar.body} />
+            <path d={bar.edges} />
+          </g>
+          <g
+            ref={(node) => {
+              fillRefs.current[i] = node;
+            }}
+          >
+            <path d={bar.body} fill={`url(#pv-topic-o${i})`} />
+            <path d={bar.edges} strokeWidth="1.55" stroke="#1A1A1A" />
+          </g>
         </g>
       ))}
     </svg>
   );
 }
 
-export function ProductsTopicArt({ topic }: { topic: "approach" | "target" | "offline" | "updates" }) {
-  if (topic === "approach") return <ApproachArt />;
-  if (topic === "target") return <TargetArt />;
-  if (topic === "offline") return <OfflineArt />;
-  return <UpdatesArt />;
+/* --- 04 Updates and community feedback: growth pillars ---------------------
+   The column-4 cluster of six pillars (PRODUCTS_v2.svg, source paint order,
+   back to front). They grow from their footings one after another, hold,
+   settle back a little and grow again. Rest pose: full height. */
+const PILLARS = [
+  { cx: 171.62, yb: 153.97, yt: 31.43, green: false },
+  { cx: 140.78, yb: 155.26, yt: 32.87, green: true },
+  { cx: 201.26, yb: 159.84, yt: 37.33, green: true },
+  { cx: 154.93, yb: 173.56, yt: 51.15, green: false },
+  { cx: 186.93, yb: 184.09, yt: 61.68, green: false },
+  { cx: 172.26, yb: 199.18, yt: 76.79, green: true },
+];
+const PILLAR = { a: 14.75, c: 8.5, cycle: 4.4, hold: 3.4, stagger: 0.16, grow: 0.8, floor: 0.08, settle: 0.35 };
+
+/** pillar i's share of its full height at time t */
+function pillarShare(i: number, t: number) {
+  const { cycle, hold, stagger, grow, floor, settle } = PILLAR;
+  const u = t % cycle;
+  const from = t < cycle ? floor : settle;
+  if (u < hold) return from + (1 - from) * easeOut((u - i * stagger) / grow);
+  return 1 - (1 - settle) * easeOut((u - hold) / 0.8);
+}
+
+function UpdatesArt({ active, reduced }: ArtProps) {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const bodyRefs = useRef<(SVGPathElement | null)[]>([]);
+  const edgeRefs = useRef<(SVGPathElement | null)[]>([]);
+
+  const draw = (share: (i: number) => number) =>
+    PILLARS.forEach((p, i) => {
+      const h = p.yb - PILLAR.c - p.yt;
+      const { body, edges } = prism(p.cx, p.yb, p.yb - PILLAR.c - h * share(i), PILLAR.a, PILLAR.c);
+      bodyRefs.current[i]?.setAttribute("d", body);
+      edgeRefs.current[i]?.setAttribute("d", edges);
+    });
+  useVisibleLoop(
+    svgRef,
+    active && !reduced,
+    (t) => draw((i) => pillarShare(i, t)),
+    () => draw(() => 1),
+  );
+
+  return (
+    <svg ref={svgRef} className="pv-topic__svg" viewBox="0 0 340 222" fill="none" aria-hidden="true" focusable="false">
+      <defs>
+        {PILLARS.map((p, i) => (
+          <linearGradient key={i} id={`pv-topic-u${i}`} x1={p.cx} y1={p.yt} x2={p.cx} y2={p.yb} gradientUnits="userSpaceOnUse">
+            <stop stopColor={p.green ? "#5AE36F" : "#F2F2F2"} />
+            <stop offset="1" stopColor={p.green ? "#F2F2F2" : "#5AE36F"} />
+          </linearGradient>
+        ))}
+      </defs>
+      {PILLARS.map((p, i) => {
+        const { body, edges } = prism(p.cx, p.yb, p.yt, PILLAR.a, PILLAR.c);
+        return (
+          <g key={i}>
+            <path
+              ref={(node) => {
+                bodyRefs.current[i] = node;
+              }}
+              d={body}
+              fill={`url(#pv-topic-u${i})`}
+            />
+            <path
+              ref={(node) => {
+                edgeRefs.current[i] = node;
+              }}
+              d={edges}
+              strokeWidth="0.91498"
+              stroke="#1A1A1A"
+            />
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+export function ProductsTopicArt({ topic, active, reduced }: ArtProps & { topic: "approach" | "target" | "offline" | "updates" }) {
+  if (topic === "approach") return <ApproachArt active={active} reduced={reduced} />;
+  if (topic === "target") return <TargetArt active={active} reduced={reduced} />;
+  if (topic === "offline") return <OfflineArt active={active} reduced={reduced} />;
+  return <UpdatesArt active={active} reduced={reduced} />;
 }
 
 /* the icon is sized by its source width (CSS: --icon-w x the page unit) */
 const iconWidth = (w: number) => ({ "--icon-w": w }) as CSSProperties;
 
 /* Product card icons: outer plate, inner plate, a white-to-#202020 core and
-   the ink Y + vertical. CC.OS is green; the three placeholders are light
-   (the card's 0.2 opacity dims them, as the source group does). */
-export function ProductsCardIcon({ kind }: { kind: "ccos" | "triangle" | "diamond" | "pentagon" }) {
+   the ink Y + vertical. CC.OS is green; LS and iDS are light (a closed
+   card dims its contents to 0.2, as the source group does). */
+export function ProductsCardIcon({ kind }: { kind: "ccos" | "triangle" | "pentagon" }) {
   if (kind === "ccos") {
     return (
       <svg className="pv-card__icon" viewBox="97.52 2339.37 65.57 75.71" style={iconWidth(65.57)} aria-hidden="true" focusable="false">
@@ -239,23 +447,6 @@ export function ProductsCardIcon({ kind }: { kind: "ccos" | "triangle" | "diamon
         <path d="M312.505 2346.64L329.552 2376.17H295.458L312.505 2346.64Z" fill="url(#pv-card-g-triangle)" />
         <path d="M286.016 2351.18L312.514 2366.33L339.012 2351.18" strokeWidth="1.30851" stroke="#141414" fill="none" />
         <path d="M312.508 2366.33V2396.61" strokeWidth="1.30851" stroke="#141414" />
-      </svg>
-    );
-  }
-  if (kind === "diamond") {
-    return (
-      <svg className="pv-card__icon" viewBox="456.85 2328.47 75.71 75.71" style={iconWidth(75.71)} aria-hidden="true" focusable="false">
-        <defs>
-          <linearGradient id="pv-card-g-diamond" x1="494.7" y1="2346.64" x2="494.7" y2="2386.01" gradientUnits="userSpaceOnUse">
-            <stop stopColor="white" />
-            <stop offset="1" stopColor="#202020" />
-          </linearGradient>
-        </defs>
-        <path d="M494.706 2328.47L532.561 2366.33L494.706 2404.18L456.852 2366.33L494.706 2328.47Z" fill="#F2F2F2" />
-        <path d="M494.706 2336.04L524.989 2366.32L494.706 2396.61L464.422 2366.32L494.706 2336.04Z" fill="#F2F2F2" />
-        <path d="M494.7 2346.64L514.385 2366.33L494.7 2386.01L475.016 2366.33L494.7 2346.64Z" fill="url(#pv-card-g-diamond)" />
-        <path d="M468.211 2351.18L494.709 2366.33L521.208 2351.18" strokeWidth="1.30851" stroke="#141414" fill="none" />
-        <path d="M494.703 2366.33V2396.61" strokeWidth="1.30851" stroke="#141414" />
       </svg>
     );
   }

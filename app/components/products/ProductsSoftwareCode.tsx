@@ -2,25 +2,42 @@ import { useRef, useState } from "react";
 import type { KeyboardEvent } from "react";
 import { Chip, ChipGear } from "../studio/studioMarks";
 import { ProductsTopicArt } from "./ProductsArtwork";
+import { LitCube, type LitPattern } from "./LitCube";
 import { PENDING, PRODUCTS_TOPICS } from "../../data/productsContent";
 
-/* \\Our Software Code (PRODUCTS_v2.svg y1243.73..2076.8; phone
-   PRODUCTS_responsive_v2.svg y585..1419).
+/* \\Our Software Code. P1b (OPERATOR): one composition at every width — a
+   tab list and one selected topic. Desktop follows
+   PRODUCTS_v2_singlemidpanel_variant.svg (y1299.54..1891.89): the chip, the
+   four rows on the left, the selected topic's headline and body in the middle
+   and its animated figure in the right panel; the lit cube there is the hero
+   cube only (CORR: one cube on desktop), so the LitCube below is hidden.
+   Phones keep PRODUCTS_responsive_v2.svg (y585..1419): rows, one panel
+   (figure, headline, body), four pager squares — and the LitCube is the
+   page's one cube, drawn first with the chip and rows over its foot, as the
+   Studio sphere / Services voxel face sit behind their selectors (CSS order;
+   it holds nothing focusable, so reading order is unchanged).
 
-   One set of four topic panels serves both layouts, so the content stays
-   equivalent (OPERATOR D2). Desktop (D1): all four side by side — art box,
-   green label chip, headline, body — and the tab list is not rendered (CSS).
-   Phones: the chip and the four rows form a vertical tab list; only the
-   selected panel shows, and its label chip is visually hidden (the row names
-   it). Four squares under the panel mirror the selection; they duplicate the
-   tabs, so they stay out of the tab order and the accessibility tree. */
-export function ProductsSoftwareCode() {
+   Every selection — a click, or the arrow / Home / End keys, re-selecting the
+   current row included — asks the route for a new lit pattern (`onSelect`).
+   The label chip inside each panel is visually hidden (the row names it). The
+   pager squares duplicate the tabs, so they stay out of the tab order and the
+   accessibility tree. */
+export function ProductsSoftwareCode({
+  pattern,
+  onSelect,
+  reduced,
+}: {
+  pattern: LitPattern;
+  onSelect: () => void;
+  reduced: boolean;
+}) {
   const [selected, setSelected] = useState(0);
   const tabsRef = useRef<HTMLDivElement>(null);
   const last = PRODUCTS_TOPICS.length - 1;
 
   const select = (i: number, focus = false) => {
     setSelected(i);
+    onSelect();
     if (focus) tabsRef.current?.querySelectorAll<HTMLElement>('[role="tab"]')[i]?.focus();
   };
 
@@ -65,6 +82,9 @@ export function ProductsSoftwareCode() {
         ))}
       </div>
 
+      <LitCube className="pv-code__cube" pattern={pattern} />
+      <span className="pv-code__sq" aria-hidden="true" />
+
       <div className="pv-code__topics">
         {PRODUCTS_TOPICS.map((topic, i) => (
           <div
@@ -76,7 +96,7 @@ export function ProductsSoftwareCode() {
             data-active={i === selected}
           >
             <div className="pv-topic__art">
-              <ProductsTopicArt topic={topic.key} />
+              <ProductsTopicArt topic={topic.key} active={i === selected} reduced={reduced} />
             </div>
             <Chip tone="lilac" as="h3" id={`pv-label-${topic.key}`} className="pv-chip pv-topic__label">
               {topic.label ?? PENDING}

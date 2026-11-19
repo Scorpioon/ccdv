@@ -75,9 +75,10 @@ function isCcosPath(pathname: string) {
    (collapse, Back) the scene page FALLS away and uncovers Home ("fall"). Any
    other swap keeps the fade. The direction is read from the pair of paths, so
    Back/Forward get it too, and is held per location key so the exiting
-   route's variant cannot change mid-exit. */
+   route's variant cannot change mid-exit. Products V2 P1b: /products is a
+   scene route too (it used to fade in whole, cube first — the flash). */
 type RouteMove = "rise" | "fall" | "fade" | "load";
-const SCENE_ROUTES = ["/studio", "/services"];
+const SCENE_ROUTES = ["/studio", "/services", "/products"];
 const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 const SLIDE_S = 0.7;
 const SLIDE_EASE: [number, number, number, number] = [0.22, 0.61, 0.36, 1];

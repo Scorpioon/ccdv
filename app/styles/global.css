@@ -74,7 +74,7 @@ h1, h2, p { margin: 0; font-weight: 600; }
    NAV-T4 (OPERATOR): the same on a cross-fade into Studio / Services (from
    the bar, Work, ...): the outgoing page fades over the bare ground and grid,
    a calm beat, then the cover builds. Not on a first load ("load"). */
-.site-shell:is([data-route-move="rise"], [data-route-move="fade"]) :is(.cv, .sv-cv) [data-spawn][data-seen="true"] {
+.site-shell:is([data-route-move="rise"], [data-route-move="fade"]) :is(.cv, .sv-cv, .pv-cover) [data-spawn][data-seen="true"] {
   transition-duration: 1s, 1s;
   transition-delay: calc(0.45s + var(--i, 0) * 0.16s), calc(0.45s + var(--i, 0) * 0.16s);
 }
@@ -3662,8 +3662,8 @@ main { display: block; outline: none; }
      module taller than the screen stays fully reachable). Snap points: the
      in-flow markers at the black module's and the lilac / red's natural tops,
      and the second scene of the lilac / red (CC.OS / Formation). */
-  html:has(:is(.r11--studio, .r11--services)) { scroll-snap-type: y proximity; }
-  :is(.r11--studio, .r11--services) .pin-snap { display: block; height: 0; scroll-snap-align: start; }
+  html:has(:is(.r11--studio, .r11--services, .r11--products)) { scroll-snap-type: y proximity; }
+  :is(.r11--studio, .r11--services, .r11--products) .pin-snap { display: block; height: 0; scroll-snap-align: start; }
   :is(.r11--studio .cs, .r11--services .sv-fm) { scroll-snap-align: start; }
 
   /* FLOW-T1 rhythm in the lilac / red: the first scene (Build / Work with)
@@ -5293,8 +5293,9 @@ main { display: block; outline: none; }
 /* === end HOME T1 ============================================================ */
 
 /* === PRODUCTS V2 (t_20261117_products20) ====================================
-   /products follows PRODUCTS_v2.svg (1536 x 3354, OPERATOR D1: the main
-   four-column design) at >= 1024px and PRODUCTS_responsive_v2.svg (390 x 3430,
+   /products follows PRODUCTS_v2.svg (1536 x 3354, OPERATOR D1; since P1b its
+   \\Our Software Code is the single-midpanel variant's) at >= 1024px and
+   PRODUCTS_responsive_v2.svg (390 x 3430,
    D2) below, tablets included, with the Studio phone unit (--k, capped at
    1.5px, the 390 column centred). Units:
      --pv = one PRODUCTS_v2 px (1cqw / 15.36, the WORK V2 1536 precedent), so
@@ -5303,8 +5304,8 @@ main { display: block; outline: none; }
      --s  = the chip unit (Studio's chips are drawn in 1440 units: --u on
             desktop, 1.0667 --k on phones, so a chip is 22.6 artboard px
             tall on both, as drawn)
-   Ground: ink under a 5% #F2F2F2 grid (desktop only; the phone artboard has
-   none). The phone artboard's ground is #171717; ink is kept (one token,
+   Ground: ink under a 5% #F2F2F2 square grid, Studio / Services cell, at
+   every width (P1b CORR). The phone artboard's ground is #171717; ink is kept (one token,
    DEVIATION, report). Every rule is scoped to .r11--products. */
 
 .r11--products {
@@ -5314,7 +5315,35 @@ main { display: block; outline: none; }
   --pv-line: max(0.5px, calc(0.493 * var(--pv)));
   --mh-p: 1;
   --sm-ease: var(--studio-ease, cubic-bezier(0.22, 0.61, 0.36, 1));
+  /* P1b: the Studio / Services motion presets (cover spawn) */
+  --sm-dur-block: 0.7s;
+  --sm-step: 0.12s;
+  --sm-rise: calc(16 * var(--u));
   background: var(--ccdv-ink);
+}
+@media (max-width: 1023px) {
+  .r11--products { --sm-rise: 16px; }
+}
+/* P1b: the cover spawns as Studio's / Services' (useSceneReveal arms
+   data-motion before the first paint; the slower swap timing is the shared
+   rule at the top of this file) */
+.r11--products[data-motion="on"] [data-spawn]:not([data-seen="true"]) {
+  opacity: 0;
+  transform: translateY(var(--sm-rise));
+}
+.r11--products[data-motion="on"] [data-spawn][data-seen="true"] {
+  transition:
+    opacity var(--sm-dur-block) var(--sm-ease) calc(var(--i, 0) * var(--sm-step)),
+    transform var(--sm-dur-block) var(--sm-ease) calc(var(--i, 0) * var(--sm-step));
+}
+/* P1b: the lit cube's faces cross-fade, outer layer first (LitCube --i) */
+.r11--products .pv-lit path {
+  transition:
+    fill-opacity 0.5s var(--sm-ease) calc(var(--i, 0) * 80ms),
+    fill 0.5s var(--sm-ease) calc(var(--i, 0) * 80ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .r11--products .pv-lit path { transition: none; }
 }
 .r11--products .masthead--collapsing .cell[aria-current="page"] .cell__dot { background: var(--ccdv-green); }
 @media (max-width: 767px) {
@@ -5339,6 +5368,18 @@ main { display: block; outline: none; }
 /* light type on the page body only: the shared masthead, M1 bar and footer
    inherit their own colours */
 .pv { position: relative; overflow-x: clip; color: var(--ccdv-panel); }
+/* P1b CORR (OPERATOR, parity): the Studio / Services square grid — 1px lines
+   at 5% on a 48 cell (1440 units) on desktop, 24px on phones, at every width
+   (was PRODUCTS_v2's 52.968 x 32.444 rectangles, desktop only); here the
+   lines are light on ink */
+.r11--products { --pv-grid: calc(48 * var(--u)); }
+.pv {
+  background-color: var(--ccdv-ink);
+  background-image:
+    linear-gradient(rgb(242 242 242 / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(242 242 242 / 0.05) 1px, transparent 1px);
+  background-size: var(--pv-grid) var(--pv-grid);
+}
 :where(.pv) p { margin: 0; }
 
 /* green chips: Studio's ink (Whois) and lilac (strip) chips, recoloured */
@@ -5399,7 +5440,23 @@ main { display: block; outline: none; }
   border: var(--pv-line) solid var(--ccdv-green);
   border-top-right-radius: calc(12.09 * var(--pv));
 }
-.pv-topic__label { width: 100%; }
+/* P1b: one selected topic at every width; the row names it, so the panel's
+   own label chip is for assistive tech only */
+.pv-topic:not([data-active="true"]) { display: none; }
+.pv-topic__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  min-height: 0;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.pv-code__cube,
+.pv-code__sq { display: none; }
 .pv-topic__headline[data-pending] { opacity: 0.4; }
 .pv-code__page {
   box-sizing: border-box;
@@ -5419,39 +5476,99 @@ main { display: block; outline: none; }
   text-underline-offset: 0.04545em;
   text-decoration-thickness: 0.04545em;
 }
+/* P1b CORR03 (OPERATOR): the rail is eight slots; a product card is a
+   disclosure button and its panel drops below (ProductsRail). Desktop places
+   the cards in the rail's first row and every panel in one shared second row
+   (the slot items are `display: contents`); phones stack each panel under
+   its row. */
 .pv-rail { display: grid; margin: 0; padding: 0; list-style: none; }
 .pv-card {
   position: relative;
   display: block;
   box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  padding: 0;
   border: var(--pv-line) solid var(--ccdv-panel);
   border-top-right-radius: calc(12.09 * var(--pv));
+  background: none;
+  color: var(--ccdv-panel);
+  font: inherit;
   font-size: max(7px, calc(7.04 * var(--pv)));
   line-height: 1;
+  text-align: left;
   white-space: nowrap;
 }
-.pv-card--active { border-color: var(--ccdv-green); color: var(--ccdv-green); }
-/* the source draws 02-08 inside <g opacity="0.2"> */
-.pv-card:not(.pv-card--active) { opacity: 0.2; }
+button.pv-card { cursor: pointer; }
+/* the open slot: green hairline, a 35% green fill, green type (01 on load);
+   closed slots and the empty frames: the source's <g opacity="0.2"> on the
+   border and contents, over a 35% black fill (P1b CORR: 20 -> 35 %) */
+.pv-card[data-open="true"] {
+  border-color: var(--ccdv-green);
+  background: rgb(90 227 111 / 0.35);
+  color: var(--ccdv-green);
+}
+.pv-card:not([data-open="true"]) {
+  border-color: rgb(242 242 242 / 0.2);
+  background: rgb(0 0 0 / 0.35);
+}
+.pv-card:not([data-open="true"]) > * { opacity: 0.2; transition: opacity 0.2s var(--sm-ease); }
+@media (hover: hover) {
+  button.pv-card:not([data-open="true"]):hover > * { opacity: 0.45; }
+}
 .pv-card__index,
 .pv-card__label,
 .pv-card__status,
 .pv-card__icon { position: absolute; }
 .pv-card__icon { display: block; height: auto; translate: -50% 0; }
-.pv-rule { display: none; }
 
-/* CC.OS panel */
-.pv-ccos {
+/* the drop: a closed panel collapses to nothing (0fr) and leaves the
+   accessibility tree once collapsed (visibility, switched after the height) */
+.pv-drop {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    grid-template-rows 0.55s var(--sm-ease),
+    opacity 0.3s var(--sm-ease),
+    visibility 0s linear 0.55s;
+}
+.pv-drop[data-open="true"] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  visibility: visible;
+  transition:
+    grid-template-rows 0.55s var(--sm-ease),
+    opacity 0.45s var(--sm-ease) 0.1s,
+    visibility 0s;
+}
+.pv-drop__inner { min-height: 0; overflow: hidden; }
+.pv-drop .pv-panel { translate: 0 -12px; transition: translate 0.55s var(--sm-ease); }
+.pv-drop[data-open="true"] .pv-panel { translate: 0 0; }
+@media (prefers-reduced-motion: reduce) {
+  .pv-drop,
+  .pv-drop[data-open="true"],
+  .pv-drop .pv-panel { transition: none; }
+}
+
+/* product panel (CC.OS / LS / iDS) */
+.pv-panel {
   position: relative;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
   border: var(--pv-line) solid var(--ccdv-panel);
+  background: rgb(0 0 0 / 0.35);                       /* P1b (OPERATOR; CORR 20 -> 35 %) */
 }
-.pv-ccos__index { position: absolute; line-height: 1; white-space: nowrap; }
-.pv-ccos__art { position: absolute; }
-.pv-ccos__copy { display: flex; flex: 1 1 auto; flex-direction: column; align-items: flex-start; }
-.pv-ccos__title {
+.pv-panel__index { position: absolute; line-height: 1; white-space: nowrap; }
+.pv-panel__art { position: absolute; }
+/* LS / iDS: the sources' dark art box */
+.pv-panel:not(.pv-panel--ccos) .pv-panel__art { overflow: hidden; background: var(--ccdv-ink); }
+.pv-panel__svg { display: block; width: 100%; height: 100%; }
+.pv-ids__name { font-family: inherit; font-size: 39.5px; }
+.pv-panel__copy { display: flex; flex: 1 1 auto; flex-direction: column; align-items: flex-start; }
+.pv-panel__title {
   margin: 0;
   font: inherit;
   font-weight: 600;
@@ -5459,7 +5576,7 @@ main { display: block; outline: none; }
   text-underline-offset: 0.04545em;
   text-decoration-thickness: 0.04545em;
 }
-.pv-ccos__cta {
+.pv-panel__cta {
   margin-top: auto;
   background: var(--ccdv-panel);
   color: var(--ccdv-ink);
@@ -5469,29 +5586,90 @@ main { display: block; outline: none; }
   text-decoration-thickness: 0.04545em;
 }
 
+/* LS: the dots pulse outward — one breath per dot, delayed by its distance
+   from the centre (--d, 0..1), so the wave travels to the rim; it runs only
+   while its panel is open */
+.pv-ls__dot {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pv-ls-pulse 2.8s ease-in-out infinite;
+  animation-delay: calc(var(--d, 0) * 1.4s - 2.8s);
+}
+@keyframes pv-ls-pulse {
+  0%,
+  100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.5); opacity: 0.35; }
+}
+.pv-drop:not([data-open="true"]) .pv-ls__dot,
+.scene-curtain > [data-covered] .pv-ls__dot { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .pv-ls__dot { animation: none; }
+}
+
 /* --- desktop: PRODUCTS_v2.svg ---------------------------------------------- */
 @media (min-width: 1024px) {
-  .pv {
-    padding-bottom: calc(51.2 * var(--pv));             /* panel end 3134.39 -> footer 3185.59 */
+  /* P1b CORR03 (OPERATOR): the Studio / Services scene flow (NAV-T3 curtain,
+     PIN-T1 pin, FLOW-T1 rhythm, SIZE-T1 fit, round 3/4 spread), with the
+     page's own ink + grid ground in place of the black container.
+       fit     each scene scales so it fits the screen height: --pv is the
+               smaller of the width unit and 100svh / --fit-h (746.67 = the
+               shared 700 cap in 1536 units; the module its whole 832.35),
+               centred on the full-width ground; the --pv size tokens are
+               re-declared so they follow it
+       spread  the left column moves left and the right one right by --gx,
+               the ground beside the frame, capped at 128 (120 x 1.0667)
+       curtain the cover sticks once its lower edge meets the screen's; the
+               module (z 2) rises over it and pins, one screen tall
+               (--pin-top, routeNav.usePinTop); the rail (z 3) rises over
+               the module. Both carry the page ground, so they cover what
+               they pass without a container of their own. */
+  .pv { padding-bottom: 0; }
+  .r11--products :is(.pv-cover, .pv-scene, .pv-next) {
+    --fit-h: 746.67;
+    --pv: min(calc(1cqw / 15.36), calc(100svh / var(--fit-h)));
+    --u: calc(var(--pv) * 15.36 / 14.4);
+    --s: var(--u);
+    --t-small: max(11px, calc(13.2 * var(--s)));
+    --pv-line: max(0.5px, calc(0.493 * var(--pv)));
+    --sm-rise: calc(16 * var(--u));
+    --gx: clamp(0px, calc((100cqw - 1536 * var(--pv)) / 2), calc(128 * var(--pv)));
+  }
+  .r11--products .pv-scene { --fit-h: 832.35; }
+  .r11--products :is(.pv-scene, .pv-next) {
     background-color: var(--ccdv-ink);
     background-image:
-      repeating-linear-gradient(
-        to bottom,
-        rgb(242 242 242 / 0.05) 0 calc(1.067 * var(--pv)),
-        transparent calc(1.067 * var(--pv)) calc(32.444 * var(--pv))
-      ),
-      repeating-linear-gradient(
-        to right,
-        rgb(242 242 242 / 0.05) 0 calc(1.067 * var(--pv)),
-        transparent calc(1.067 * var(--pv)) calc(52.968 * var(--pv))
-      );
+      linear-gradient(rgb(242 242 242 / 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(242 242 242 / 0.05) 1px, transparent 1px);
+    background-size: var(--pv-grid) var(--pv-grid);
+  }
+  .r11--products .pv-cover {
+    position: sticky;
+    top: min(0px, calc(100svh - 1243.73 * var(--pv)));
+  }
+  .r11--products .pv-scene {
+    position: sticky;
+    top: var(--pin-top, 0px);
+    z-index: 2;
+    min-height: 100svh;
+  }
+  .r11--products .pv-next { position: relative; z-index: 3; }
+  .r11--products :is(.pv-cover__lockup, .pv-cover__whois, .pv-cover__sq--d, .pv-code__title, .pv-code__tabs, .pv-code__sq) {
+    translate: calc(-1 * var(--gx)) 0;
+  }
+  .r11--products :is(.pv-cover__label, .pv-cover__sq--a, .pv-cover__sq--b, .pv-cover__sq--c, .pv-cover__sq--e, .pv-cover__cube, .pv-code__topics) {
+    translate: var(--gx) 0;
   }
 
   /* y0..1243.73 (the \\Our Software Code chip). StudioCover's 1440 geometry
      x1.0667: gear 51.2 / 234.67, pixel block 311.47, title 389.37 (69.23 /
      85.33), meta (14.08 / 21.33), `collapse` 51.2 from the right, squares
      10.67 at the source rects, Whois at 51.2, 337.07 (17.6u copy). */
-  .pv-cover { height: calc(1243.73 * var(--pv)); }
+  .pv-cover__frame {
+    position: relative;
+    width: calc(1536 * var(--pv));
+    height: calc(1243.73 * var(--pv));
+    margin-inline: auto;
+  }
   .pv-cover__lockup { position: absolute; left: 0; top: 0; width: 100%; height: calc(288 * var(--pv)); }
   .pv-cover__gear { left: calc(51.2 * var(--pv)); top: calc(51.2 * var(--pv)); width: calc(234.67 * var(--pv)); height: calc(234.67 * var(--pv)); }
   .pv-cover__pixel { left: calc(311.47 * var(--pv)); top: calc(51.2 * var(--pv)); width: calc(52.3 * var(--pv)); height: calc(234.8 * var(--pv)); }
@@ -5539,27 +5717,58 @@ main { display: block; outline: none; }
   .pv-cover__whois .pv-cover__chip { margin-bottom: calc(20.48 * var(--pv)); }
   .pv-cover__whois p + p { margin-top: calc(16 * var(--pv)); }
 
-  /* chip 51.2,1243.73 (177.13 x 22.6), columns from 1314.33: four 340.4 on a
-     24 gap — art box 222.4 (green hairline, 12.09 top-right), label chip
-     22.6, headline 28.16 / 35.2, body 17.6 / 22. Ends where "Products" starts. */
+  /* P1b: PRODUCTS_v2_singlemidpanel_variant.svg, placed on this page's 51.2
+     margins (the variant draws its lower sections at 60). CORR03: the module
+     takes the FLOW-T1 rhythm — the chip 120 down, 120 under the topic — so it
+     is 832.35 tall and fits the screen whole (--fit-h). 70.6 under the chip:
+     the rows (339.07, 22.6 / 24px floor; the first one boxed on top, since
+     the chip does not touch them here), the topic (headline/body column at
+     415.6, 507 wide) and the art panel (512.37 x 521.51, right on 1484.8,
+     green hairline, 12.09 top-right); the green square at 701.93. */
   .pv-code {
+    position: relative;
     box-sizing: border-box;
-    min-height: calc(871.13 * var(--pv));
-    padding: 0 calc(51.2 * var(--pv)) calc(35.2 * var(--pv));
+    width: calc(1536 * var(--pv));
+    min-height: max(100svh, calc(832.35 * var(--pv)));
+    margin-inline: auto;
+    padding: calc(120 * var(--pv)) calc(51.2 * var(--pv)) 0;
   }
   .pv-code__title { width: max-content; padding-right: calc(5 * var(--pv)); }
-  .pv-code__tabs,
   .pv-code__pager { display: none; }
-  .pv-code__topics {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    column-gap: calc(24 * var(--pv));
-    margin-top: calc(48 * var(--pv));
+  .pv-code__tabs {
+    position: absolute;
+    left: calc(51.2 * var(--pv));
+    top: calc(190.6 * var(--pv));
+    width: calc(339.07 * var(--pv));
   }
-  .pv-topic__art { height: calc(222.4 * var(--pv)); }
-  .pv-topic__svg { display: block; width: 100%; height: 100%; }
+  .pv-code__tab { min-height: max(24px, calc(22.6 * var(--pv))); }
+  .pv-code__tab:first-child { border-top: var(--pv-line) solid var(--ccdv-green); }
+  .pv-code__sq {
+    position: absolute;
+    display: block;
+    left: calc(51.2 * var(--pv));
+    top: calc(701.93 * var(--pv));
+    width: calc(10.67 * var(--pv));
+    height: calc(10.67 * var(--pv));
+    background: var(--ccdv-green);
+  }
+  .pv-code__topics {
+    position: absolute;
+    left: calc(415.6 * var(--pv));
+    top: calc(190.6 * var(--pv));
+    width: calc(1069.2 * var(--pv));
+  }
+  .pv-topic { position: relative; min-height: calc(521.75 * var(--pv)); }
+  .pv-topic > p { width: calc(507 * var(--pv)); }
+  .pv-topic__art {
+    position: absolute;
+    right: 0;
+    top: calc(0.24 * var(--pv));
+    width: calc(512.37 * var(--pv));
+    height: calc(521.51 * var(--pv));
+  }
+  .pv-topic__svg { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
   .pv-topic__headline {
-    margin-top: calc(15 * var(--pv));
     font-size: calc(28.16 * var(--pv));
     line-height: calc(35.2 * var(--pv));
   }
@@ -5567,45 +5776,66 @@ main { display: block; outline: none; }
   .pv-topic__headline + .pv-topic__body { margin-top: calc(35.2 * var(--pv)); }
   .pv-topic__body + .pv-topic__body { margin-top: calc(22 * var(--pv)); }
 
-  /* "Products" 74.67 (baseline 2181.04), the rail 34.4 below: eight 158.2 x
-     263 cards on a 24 gap at y2223.93. Card nodes are placed from each
-     card's top-left, by the source ink (7.04 type). */
-  .pv-products { padding: 0 calc(51.2 * var(--pv)); }
+  /* "Products" 74.67, 120 under the rail section's top (FLOW-T1), the rail
+     34.4 below: eight 158.2 x 263 slots on a 24 gap. Card nodes are placed
+     from each card's top-left, by the source ink (7.04 type). The open panel
+     drops 48 under the rail, across it; the section ends 51.2 under it. */
+  .pv-products {
+    box-sizing: border-box;
+    width: calc(1536 * var(--pv));
+    margin-inline: auto;
+    padding: calc(120 * var(--pv)) calc(51.2 * var(--pv)) calc(51.2 * var(--pv));
+  }
   .pv-products__title { font-size: calc(74.67 * var(--pv)); }
   .pv-rail {
     grid-template-columns: repeat(8, minmax(0, 1fr));
     column-gap: calc(24 * var(--pv));
     margin-top: calc(34.4 * var(--pv));
   }
+  .pv-rail__slot { display: contents; }
+  .pv-rail__slot > .pv-card,
+  .pv-rail__empty { grid-row: 1; }
+  .pv-drop { grid-row: 2; grid-column: 1 / -1; }
+  .pv-drop__inner > .pv-panel { margin-top: calc(48 * var(--pv)); }
   .pv-card { height: calc(263 * var(--pv)); }
   .pv-card__index { left: calc(13 * var(--pv)); top: calc(10.8 * var(--pv)); }
   .pv-card__label,
   .pv-card__status { left: 0; right: 0; text-align: center; }
   .pv-card__label { top: calc(81.3 * var(--pv)); }
-  .pv-card--active .pv-card__label { top: calc(92.2 * var(--pv)); }
+  .pv-card--ccos .pv-card__label { top: calc(92.2 * var(--pv)); }
   .pv-card__status { top: calc(194.5 * var(--pv)); }
   .pv-card__icon { left: 50%; top: calc(104.54 * var(--pv)); width: calc(var(--icon-w) * var(--pv)); }
-  .pv-card--active .pv-card__icon { top: calc(115.44 * var(--pv)); }
+  .pv-card--ccos .pv-card__icon { top: calc(115.44 * var(--pv)); }
 
-  /* 51.2,2534.93 1433.6 x 599.46, 48 under the rail: copy column at 36.34
-     (title 35.2, baseline 2621.5; body 17.6 / 22; CTA 13.07 on an 18 light
-     plate, 36.3 off the bottom), graph at 748.5,2580.24 (Studio's graph
-     x1.2695 = 490 x 530.5). */
-  .pv-ccos {
-    min-height: calc(599.46 * var(--pv));
-    margin: calc(48 * var(--pv)) calc(51.2 * var(--pv)) 0;
+  /* 1433.6 wide: copy column at 36.34 (title 35.2, baseline 86.6 in; body
+     17.6 / 22; CTA 13.07 on an 18 light plate, 36.3 off the bottom).
+     CC.OS (599.46 tall): the graph at 697.3, 45.31 (Studio's graph x1.2695 =
+     490 x 530.5). LS / iDS (598 / 558 tall): the dark art box at 487.336,
+     58.121, 909.932 x 502.879 / 463, rx 10. */
+  .pv-panel {
     padding: calc(55.37 * var(--pv)) 0 calc(36.3 * var(--pv)) calc(36.34 * var(--pv));
     border-top-right-radius: calc(12.09 * var(--pv));
   }
-  .pv-ccos__index { left: calc(13 * var(--pv)); top: calc(10.8 * var(--pv)); font-size: max(7px, calc(7.04 * var(--pv))); }
-  .pv-ccos__art { left: calc(697.3 * var(--pv)); top: calc(45.31 * var(--pv)); width: calc(490 * var(--pv)); height: calc(530.5 * var(--pv)); }
-  .pv-ccos__copy { width: calc(410 * var(--pv)); }
-  .pv-ccos__title { font-size: calc(35.2 * var(--pv)); line-height: calc(35.2 * var(--pv)); }
-  .pv-ccos__body { font-size: max(11px, calc(17.6 * var(--pv))); line-height: calc(22 * var(--pv)); }
-  .pv-ccos__title + .pv-ccos__body { margin-top: calc(35.5 * var(--pv)); }
-  .pv-ccos__body + .pv-ccos__body { margin-top: calc(22 * var(--pv)); }
-  .pv-ccos__body:last-of-type { margin-bottom: calc(22 * var(--pv)); }
-  .pv-ccos__cta {
+  .pv-panel--ccos { min-height: calc(599.46 * var(--pv)); }
+  .pv-panel--ls { min-height: calc(598 * var(--pv)); }
+  .pv-panel--ids { min-height: calc(558 * var(--pv)); }
+  .pv-panel__index { left: calc(13 * var(--pv)); top: calc(10.8 * var(--pv)); font-size: max(7px, calc(7.04 * var(--pv))); }
+  .pv-panel--ccos .pv-panel__art { left: calc(697.3 * var(--pv)); top: calc(45.31 * var(--pv)); width: calc(490 * var(--pv)); height: calc(530.5 * var(--pv)); }
+  .pv-panel:not(.pv-panel--ccos) .pv-panel__art {
+    left: calc(487.336 * var(--pv));
+    top: calc(58.121 * var(--pv));
+    width: calc(909.932 * var(--pv));
+    border-radius: calc(10 * var(--pv));
+  }
+  .pv-panel--ls .pv-panel__art { height: calc(502.879 * var(--pv)); }
+  .pv-panel--ids .pv-panel__art { height: calc(463 * var(--pv)); }
+  .pv-panel__copy { width: calc(410 * var(--pv)); }
+  .pv-panel__title { font-size: calc(35.2 * var(--pv)); line-height: calc(35.2 * var(--pv)); }
+  .pv-panel__body { font-size: max(11px, calc(17.6 * var(--pv))); line-height: calc(22 * var(--pv)); }
+  .pv-panel__title + .pv-panel__body { margin-top: calc(35.5 * var(--pv)); }
+  .pv-panel__body + .pv-panel__body { margin-top: calc(22 * var(--pv)); }
+  .pv-panel__body:last-of-type { margin-bottom: calc(22 * var(--pv)); }
+  .pv-panel__cta {
     padding: 0 calc(5.5 * var(--pv));
     font-size: max(10px, calc(13.07 * var(--pv)));
     line-height: calc(18 * var(--pv));
@@ -5615,33 +5845,50 @@ main { display: block; outline: none; }
 /* --- phones + tablets: PRODUCTS_responsive_v2.svg ---------------------------
    Positions are the artboard's, measured from the bottom of the 50px M1 bar
    (y50.14). The cover keeps only the cube (x0.2379 of the desktop drawing);
-   the tab list, one topic panel and the pager follow; four product rows
-   (05-08 not shown); a green rule; the CC.OS panel with the graph on top
-   (Studio's graph x0.7849). */
+   the tab list, one topic panel and the pager follow; the product rows
+   (empty frames not shown), each opening its panel under it (P1b CORR03;
+   CC.OS: Studio's graph x0.7849 on top). The scene flow (curtain, pin) is
+   desktop only, as on Studio / Services. */
 @media (max-width: 1023px) {
   .r11--products {
     --k: min(1.5px, calc(100cqw / 390));
     --s: calc(1.0667 * var(--k));
     --pv-line: max(0.5px, calc(0.533 * var(--k)));
   }
-  .pv { width: calc(390 * var(--k)); margin: 0 auto; padding-bottom: calc(28 * var(--k)); }
+  /* the 390 column centred; the grid runs the full width (P1b CORR) */
+  .r11--products { --pv-grid: 24px; }
+  .pv {
+    padding-inline: max(0px, calc((100% - 390 * var(--k)) / 2));
+    padding-bottom: calc(28 * var(--k));
+  }
 
-  .pv-cover { height: calc(506.86 * var(--k)); }
-  .pv-cover__lockup,
-  .pv-cover__label,
-  .pv-cover__sq,
-  .pv-cover__whois { display: none; }
-  .pv-cover__cube { left: calc(64.09 * var(--k)); top: calc(178.76 * var(--k)); width: calc(260.98 * var(--k)); height: calc(301.42 * var(--k)); }
+  /* P1b CORR (OPERATOR, parity with the Studio Approach sphere and the
+     Services voxel face): on phones the one cube is the lit cube of
+     \\Our Software Code, drawn first and wider than the column, with the chip
+     and rows over its foot (.ap__art / .sv-ix__art: wide, then the head at
+     -61). The cover held only the hero cube on phones, so it is not shown. */
+  .pv-cover { display: none; }
+  .pv-cover__frame { display: contents; }
 
-  /* tab list y585 (chip + four rows of 22.6), panel 47.95 below (334 x 245,
-     the desktop art centred), headline 28.16 / 35.2, body 17.6 / 22, pager
-     (four 18 squares across 334) 40 under the body. Rows keep a 24px floor
-     (target size; the source draws 22.6). */
-  .pv-code { margin-top: calc(28 * var(--k)); padding: 0 calc(28 * var(--k)); }
-  .pv-code__title { width: 100%; min-height: max(24px, calc(22.6 * var(--k))); }
+  /* chip + four rows of 22.6 over the cube's foot, panel 47.95 below (334 x
+     245, the art centred), headline 28.16 / 35.2, body 17.6 / 22, pager (four
+     18 squares across 334) 40 under the body. Rows keep a 24px floor (target
+     size; the source draws 22.6) and an ink ground over the cube. */
+  .pv-code { display: flex; flex-direction: column; margin-top: calc(28 * var(--k)); padding: 0 calc(28 * var(--k)); }
+  .pv-code__cube {
+    order: -1;
+    display: block;
+    width: calc(420 * var(--k));
+    height: auto;
+    margin-left: calc(-43 * var(--k));
+    overflow: visible;
+  }
+  .pv-code__title,
+  .pv-code__tabs { position: relative; z-index: 1; }
+  .pv-code__title { width: 100%; min-height: max(24px, calc(22.6 * var(--k))); margin-top: calc(-61 * var(--k)); }
   .pv-code__tab { min-height: max(24px, calc(22.6 * var(--k))); }
+  .pv-code__tab:not([aria-selected="true"]) { background: var(--ccdv-ink); }
   .pv-code__topics { margin-top: calc(47.95 * var(--k)); }
-  .pv-topic:not([data-active="true"]) { display: none; }
   .pv-topic__art { height: calc(245 * var(--k)); border-top-right-radius: calc(12.09 * var(--k)); }
   .pv-topic__svg {
     position: absolute;
@@ -5650,18 +5897,6 @@ main { display: block; outline: none; }
     width: calc(340.4 * var(--k));
     height: calc(222.4 * var(--k));
     translate: -50% -50%;
-  }
-  .pv-topic__label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    min-height: 0;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    clip-path: inset(50%);
-    white-space: nowrap;
   }
   .pv-topic__headline {
     margin-top: calc(37.2 * var(--k));
@@ -5687,30 +5922,31 @@ main { display: block; outline: none; }
   .pv-card__status { left: calc(127.3 * var(--k)); top: calc(32.7 * var(--k)); }
   .pv-card__icon { left: calc(283.8 * var(--k)); top: calc(34.15 * var(--k)); width: calc(var(--icon-w) * var(--k)); }
 
-  .pv-rule {
-    display: block;
-    height: 0;
-    margin: calc(47.5 * var(--k)) calc(28 * var(--k)) 0;
-    border: 0;
-    border-top: 1px solid var(--ccdv-green);
-  }
-
-  /* 28..362 x 2225.65..3401.1: graph 15.5,48.6 (303 x 328), copy at 36.1
-     (title 35.2 / 43 from 408.45; body 31.6 under it), CTA 36.1 off the
-     bottom */
-  .pv-ccos {
-    min-height: calc(1175.45 * var(--k));
-    margin: calc(48.5 * var(--k)) calc(28 * var(--k)) 0;
+  /* P1b CORR03 (OPERATOR): a slot's panel opens right under its row (the
+     P1 green rule before the CC.OS panel is gone with that layout).
+     334 wide, art 15.5,48.6, copy at 36.1 (title 35.2 / 43; body 31.6 under
+     it), CTA 36.1 off the bottom. CC.OS: the graph 303 x 328, copy from
+     408.45, 1175.45 tall (PRODUCTS_responsive_v2 28..362 x 2225.65..3401.1).
+     LS / iDS: the dark art box 303 wide at the desktop ratio (167.47 /
+     154.17 tall), copy 40 under it. */
+  .pv-drop__inner > .pv-panel { margin-top: calc(24.2 * var(--k)); }
+  .pv-panel {
     padding: calc(408.45 * var(--k)) calc(36.1 * var(--k)) calc(36.1 * var(--k));
     border-top-right-radius: calc(12.09 * var(--k));
   }
-  .pv-ccos__index { left: calc(13 * var(--k)); top: calc(10.9 * var(--k)); font-size: max(7px, calc(7.04 * var(--k))); }
-  .pv-ccos__art { left: calc(15.5 * var(--k)); top: calc(48.6 * var(--k)); width: calc(303 * var(--k)); height: calc(328 * var(--k)); }
-  .pv-ccos__title { font-size: calc(35.2 * var(--k)); line-height: calc(43 * var(--k)); }
-  .pv-ccos__body { font-size: calc(17.6 * var(--k)); line-height: calc(22 * var(--k)); }
-  .pv-ccos__title + .pv-ccos__body { margin-top: calc(31.6 * var(--k)); }
-  .pv-ccos__body + .pv-ccos__body { margin-top: calc(22 * var(--k)); }
-  .pv-ccos__body:last-of-type { margin-bottom: calc(22 * var(--k)); }
-  .pv-ccos__cta { padding: 0 calc(5.5 * var(--k)); font-size: max(10px, calc(13.07 * var(--k))); line-height: max(18px, calc(18 * var(--k))); }
+  .pv-panel--ccos { min-height: calc(1175.45 * var(--k)); }
+  .pv-panel--ls { padding-top: calc(256.07 * var(--k)); }
+  .pv-panel--ids { padding-top: calc(242.77 * var(--k)); }
+  .pv-panel__index { left: calc(13 * var(--k)); top: calc(10.9 * var(--k)); font-size: max(7px, calc(7.04 * var(--k))); }
+  .pv-panel__art { left: calc(15.5 * var(--k)); top: calc(48.6 * var(--k)); width: calc(303 * var(--k)); height: calc(328 * var(--k)); }
+  .pv-panel:not(.pv-panel--ccos) .pv-panel__art { border-radius: calc(10 * var(--k)); }
+  .pv-panel--ls .pv-panel__art { height: calc(167.47 * var(--k)); }
+  .pv-panel--ids .pv-panel__art { height: calc(154.17 * var(--k)); }
+  .pv-panel__title { font-size: calc(35.2 * var(--k)); line-height: calc(43 * var(--k)); }
+  .pv-panel__body { font-size: calc(17.6 * var(--k)); line-height: calc(22 * var(--k)); }
+  .pv-panel__title + .pv-panel__body { margin-top: calc(31.6 * var(--k)); }
+  .pv-panel__body + .pv-panel__body { margin-top: calc(22 * var(--k)); }
+  .pv-panel__body:last-of-type { margin-bottom: calc(22 * var(--k)); }
+  .pv-panel__cta { padding: 0 calc(5.5 * var(--k)); font-size: max(10px, calc(13.07 * var(--k))); line-height: max(18px, calc(18 * var(--k))); }
 }
 /* === end PRODUCTS V2 ======================================================== */

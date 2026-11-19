@@ -18,6 +18,9 @@ export interface NavBandProps {
   routed?: boolean;
 }
 
+/* the bands whose route rises out of Home (NAV-T3; Products V2 P1b) */
+const SCENE_TARGET = { studio: "/studio", services: "/services", products: "/products" } as const;
+
 export function NavBand({ slug, label, suffix, suffixLeft, routed = false }: NavBandProps) {
   const link = useTransitionLink();
 
@@ -44,9 +47,9 @@ export function NavBand({ slug, label, suffix, suffixLeft, routed = false }: Nav
   return (
     <li className={`band band--${slug}`}>
       {routed ? (
-        slug === "studio" || slug === "services" ? (
-          // NAV-T3: Services rises out of Home like Studio
-          <Link className="band__link" id={`band-link-${slug}`} {...link(slug === "studio" ? "/studio" : "/services")}>
+        slug === "studio" || slug === "services" || slug === "products" ? (
+          // NAV-T3: Services rises out of Home like Studio; Products V2 P1b too
+          <Link className="band__link" id={`band-link-${slug}`} {...link(SCENE_TARGET[slug])}>
             {inner}
           </Link>
         ) : (
