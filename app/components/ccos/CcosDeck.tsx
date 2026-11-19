@@ -1,10 +1,16 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import type { CSSProperties, FocusEvent, ReactNode, RefObject, TouchEvent } from "react";
-import { STUDIO_MOTION } from "../../motion/studioMotion";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import type { CSSProperties, FocusEvent, ReactNode, TouchEvent } from "react";
+import { Link } from "react-router";
+import { useTransitionLink } from "../GlobalShell";
 
-/* The CC.OS deck (P2, OPERATOR: "a fully slideshow product page" with deck
-   control). One slide per screen, at every width; one gesture moves exactly
-   one slide:
+/* The CC.OS deck (P2; P2 CORR01, OPERATOR: "the same classic start stop
+   slideshow"). Every slide is one screen on one vertical strip; paging slides
+   the whole strip to the next stop and stops there — no covering, dimming or
+   cut. A ground layer behind the strip moves with it at a slower rate
+   (parallax); it is plain now and ready for a texture. The footer is the last
+   stop, its own height: the strip stops with the footer at the screen's foot.
+
+   One gesture moves exactly one slide:
      wheel / trackpad  an accumulated 50px, then nothing until the gesture's
                        own tail has stopped (a 180 ms pause), so inertia never
                        pages twice
@@ -12,44 +18,32 @@ import { STUDIO_MOTION } from "../../motion/studioMotion";
                        Shift+Space back, Home / End; Space is left to a
                        focused button or link
      touch             a 48px swipe
-     focus             Tab into the neighbouring slide brings it up
-   An area marked `data-deck-scroll` (a slide's body on phones, when its copy
-   is taller than the screen) scrolls first and pages only at its ends.
+     focus             Tab into another slide brings it up
+   An area marked `data-deck-scroll` (a slide on phones, the explainer
+   detail) scrolls first and pages only at its ends. The deck clips
+   (`overflow: clip`), so focus never scrolls it. Reduced motion: no slide,
+   the stop is taken at once.
 
-   The slides are stacked layers (global.css): the next one rises over the
-   current one, which stays and dims; paging back reverses it. Slides further
-   away are not painted (visibility, after the move), so only the two in play
-   can take focus. The deck clips (`overflow: clip`), so focus never scrolls
-   it. Reduced motion: the same states, no movement.
-
-   Chrome: the thin masthead floats over the slides. It shows on the first
-   and the last slide and on every change, and idles away after
-   STUDIO_MOTION.navIdle elsewhere; the pointer near the top edge brings it
-   back (`data-nav-idle` on the route root, the shared A1 rule). Phones keep
-   the M1 bar in place. */
+   Chrome (OPERATOR): no masthead and no M1 bar on this page; one "Back" link
+   in the top-left corner over every slide, back to /products (it falls).
+   `content` may be a function of whether its slide is the current one (the
+   hero replays its entrance on arrival). */
 
 export interface DeckSlide {
   key: string;
   label: string;
-  content: ReactNode;
-  /** the footer: as tall as its content, rising over the slide's lower part */
+  content: ReactNode | ((current: boolean) => ReactNode);
+  /** the footer: as tall as its content */
   partial?: boolean;
 }
 
-const MOVE_MS = 700;
+const MOVE_MS = 800;
 const WHEEL_STEP = 50;
 const WHEEL_QUIET_MS = 180;
 const SWIPE_PX = 48;
-const NAV_EDGE_PX = 64;
+const PARALLAX = 0.35;
 
-type SlideState = "behind" | "past" | "current" | "next" | "after";
-
-function stateOf(i: number, current: number): SlideState {
-  if (i === current) return "current";
-  if (i === current - 1) return "past";
-  if (i === current + 1) return "next";
-  return i < current ? "behind" : "after";
-}
+const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 /* can the nearest `data-deck-scroll` area still scroll that way? */
 function scrollsFurther(target: EventTarget | null, dir: number) {
@@ -59,24 +53,30 @@ function scrollsFurther(target: EventTarget | null, dir: number) {
   return dir > 0 ? area.scrollTop + area.clientHeight < area.scrollHeight - 1 : area.scrollTop > 0;
 }
 
-export function CcosDeck({
-  slides,
-  rootRef,
-  reduced,
-  label,
-}: {
-  slides: DeckSlide[];
-  rootRef: RefObject<HTMLElement | null>;
-  reduced: boolean;
-  label: string;
-}) {
+export function CcosDeck({ slides, reduced, label }: { slides: DeckSlide[]; reduced: boolean; label: string }) {
+  const link = useTransitionLink();
   const [current, setCurrent] = useState(0);
+  const [size, setSize] = useState({ screen: 0, tail: 0 });
   const currentRef = useRef(0);
   const deckRef = useRef<HTMLDivElement>(null);
+  const tailRef = useRef<HTMLElement | null>(null);
   const lockedUntil = useRef(0);
   const wheel = useRef({ sum: 0, last: 0, tail: false });
   const touch = useRef<{ y: number; up: boolean; down: boolean } | null>(null);
   const count = slides.length;
+
+  /* the screen's height and the footer's, for the last stop */
+  useIsomorphicLayoutEffect(() => {
+    const deck = deckRef.current;
+    if (!deck) return;
+    const measure = () =>
+      setSize({ screen: deck.clientHeight, tail: tailRef.current?.offsetHeight ?? deck.clientHeight });
+    measure();
+    const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(measure);
+    observer?.observe(deck);
+    if (tailRef.current) observer?.observe(tailRef.current);
+    return () => observer?.disconnect();
+  }, []);
 
   const go = useCallback(
     (to: number) => {
@@ -98,7 +98,6 @@ export function CcosDeck({
     [go],
   );
 
-  /* wheel + keys: native listeners (the wheel one on the deck itself) */
   useEffect(() => {
     const deck = deckRef.current;
     if (!deck) return;
@@ -126,7 +125,7 @@ export function CcosDeck({
     const onKey = (event: KeyboardEvent) => {
       if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
       const target = event.target instanceof HTMLElement ? event.target : null;
-      if (target?.closest("input, textarea, select, [contenteditable='true'], .smm__panel[data-open='true']")) return;
+      if (target?.closest("input, textarea, select, [contenteditable='true']")) return;
       let dir = 0;
       switch (event.key) {
         case "ArrowDown":
@@ -183,39 +182,18 @@ export function CcosDeck({
     step(dir);
   };
 
-  /* focus following: Tab into a neighbouring slide brings it up */
+  /* focus following: Tab into another slide brings it up */
   const onFocus = (event: FocusEvent<HTMLDivElement>) => {
     const slide = (event.target as Element).closest<HTMLElement>("[data-slide]");
     const index = slide ? Number(slide.dataset.slide) : -1;
     if (index >= 0 && index !== currentRef.current) go(index);
   };
 
-  /* the masthead: shown on the first and last slide and on every change,
-     idle elsewhere after navIdle; the pointer at the top edge wakes it */
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
-    const wide = window.matchMedia("(min-width: 768px)");
-    const rest = current === 0 || current === count - 1;
-    let timer = 0;
-    const show = () => {
-      root.removeAttribute("data-nav-idle");
-      window.clearTimeout(timer);
-      if (!rest && wide.matches) {
-        timer = window.setTimeout(() => root.setAttribute("data-nav-idle", ""), STUDIO_MOTION.navIdle * 1000);
-      }
-    };
-    const onMove = (event: PointerEvent) => {
-      if (event.clientY < NAV_EDGE_PX) show();
-    };
-    show();
-    window.addEventListener("pointermove", onMove, { passive: true });
-    return () => {
-      window.clearTimeout(timer);
-      window.removeEventListener("pointermove", onMove);
-      root.removeAttribute("data-nav-idle");
-    };
-  }, [current, count, rootRef]);
+  /* the strip's offset: one screen per stop; the footer's stop shows the
+     footer at the foot of the screen, over the slide before it */
+  const last = slides[count - 1]?.partial ? count - 1 : -1;
+  const offset =
+    current === last && last > 0 ? (last - 1) * size.screen + size.tail : current * size.screen;
 
   return (
     <div
@@ -224,37 +202,48 @@ export function CcosDeck({
       role="region"
       aria-roledescription="slideshow"
       aria-label={label}
+      style={{ "--y": `${-offset}px`, "--ground-y": `${-offset * PARALLAX}px` } as CSSProperties}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
       onFocus={onFocus}
     >
-      {slides.map((slide, i) => (
-        <section
-          key={slide.key}
-          className={`cc-slide cc-slide--${slide.key}${slide.partial ? " cc-slide--partial" : ""}`}
-          data-slide={i}
-          data-state={stateOf(i, current)}
-          data-deck-scroll={slide.partial || undefined}
-          aria-roledescription="slide"
-          aria-label={`${slide.label} (${i + 1} of ${count})`}
-          style={{ "--z": i + 1 } as CSSProperties}
-        >
-          {slide.content}
-        </section>
-      ))}
+      <div className="cc-deck__ground" aria-hidden="true" />
+      <div className="cc-deck__track">
+        {slides.map((slide, i) => (
+          <section
+            key={slide.key}
+            ref={slide.partial ? (node) => void (tailRef.current = node) : undefined}
+            className={`cc-slide cc-slide--${slide.key}${slide.partial ? " cc-slide--partial" : ""}`}
+            data-slide={i}
+            data-current={i === current || (current === last && i === last - 1)}
+            data-deck-scroll={slide.partial || undefined}
+            aria-roledescription="slide"
+            aria-label={`${slide.label} (${i + 1} of ${count})`}
+            style={{ "--n": i } as CSSProperties}
+          >
+            {typeof slide.content === "function" ? slide.content(i === current) : slide.content}
+          </section>
+        ))}
+      </div>
+
+      <Link className="cc-back" {...link("/products")}>
+        <span className="cc-back__icon" aria-hidden="true">
+          ←
+        </span>
+        <span className="cc-back__label">Back</span>
+      </Link>
       <p className="cc-deck__status" aria-live="polite">
         {`${slides[current]?.label ?? ""}, ${current + 1} of ${count}`}
       </p>
-      <DeckNext onNext={() => step(1)} hidden={current >= count - 1} />
+      <button
+        type="button"
+        className="cc-deck__next"
+        aria-label="Next slide"
+        onClick={() => step(1)}
+        hidden={current >= count - 1}
+      >
+        v
+      </button>
     </div>
-  );
-}
-
-/* a quiet "next" chevron at the foot of the screen (not on the last slide) */
-function DeckNext({ onNext, hidden }: { onNext: () => void; hidden: boolean }) {
-  return (
-    <button type="button" className="cc-deck__next" aria-label="Next slide" onClick={onNext} hidden={hidden}>
-      v
-    </button>
   );
 }

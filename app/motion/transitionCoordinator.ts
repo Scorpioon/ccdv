@@ -11,7 +11,9 @@ export type TransitionTarget = "/" | "/studio" | "/services" | "/products" | "/p
 // GF05-A and matrix v3.8 both forbid freezing duration/easing before the
 // visual pieces are confirmed. EXIT_LEAD_MS is the pre-navigation scene lead;
 // EXIT_SETTLE_MS is only a failsafe budget for a missing onExitComplete.
-const EXIT_LEAD_MS = 300;
+// P2 CORR02 (OPERATOR): no lead — nothing reads the leaving pose, so the
+// 300 ms before navigating was dead time after every click.
+const EXIT_LEAD_MS = 0;
 const EXIT_SETTLE_MS = 900;
 const REDUCED_SETTLE_MS = 200;
 export function useTransitionCoordinator() {

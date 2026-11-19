@@ -8,7 +8,7 @@ import {
   type MouseEvent,
   type ReactNode,
 } from "react";
-import { useLocation } from "react-router";
+import { useLocation, useNavigationType } from "react-router";
 import { AnimatePresence, motion } from "motion/react";
 import {
   useTransitionCoordinator,
@@ -53,29 +53,31 @@ export function useTransitionLink() {
   );
 }
 
-/* NAV-T3 (OPERATOR): Home <-> the scene routes. Leaving Home for Studio or
-   Services the new page RISES from below over Home ("rise"); going back Home
-   (collapse, Back) the scene page FALLS away and uncovers Home ("fall"). Any
-   other swap keeps the fade. The direction is read from the pair of paths, so
-   Back/Forward get it too, and is held per location key so the exiting
-   route's variant cannot change mid-exit. Products V2 P1b: /products is a
-   scene route too (it used to fade in whole, cube first — the flash).
-   P2 (OPERATOR): the CC.OS deck rises out of /products the same way and falls
-   back to it (SCENE_PARENT). Its six leaf pages are gone, so the former
-   shared CCOS presence key (GF09-F CORR03) has nothing left to join. */
-type RouteMove = "rise" | "fall" | "fade" | "load";
-const SCENE_ROUTES = ["/studio", "/services", "/products"];
-const SCENE_PARENT: Record<string, string> = { "/products/ccos": "/products" };
-const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
-const SLIDE_S = 0.7;
-const SLIDE_EASE: [number, number, number, number] = [0.22, 0.61, 0.36, 1];
+/* P2 CORR02 (OPERATOR): ONE page transition for every navigation — a band,
+   a masthead cell, the footer, the menu, a Back link, `collapse`, a typed
+   link or the browser's Back / Forward: the old page fades to the ink ground
+   and the new one fades in, fully drawn. It replaces NAV-T3's rise / fall
+   (the rise exit animated nothing, so Motion ended it at once and the grey
+   body showed while the new page slid up; the fall moved the whole page one
+   screen down, which read as a scroll) and the plain 0.22s fade.
 
-function routeMove(from: string, to: string): RouteMove {
-  if (from === "/" && SCENE_ROUTES.includes(to)) return "rise";
-  if (SCENE_ROUTES.includes(from) && to === "/") return "fall";
-  if (SCENE_PARENT[to] === from) return "rise";
-  if (SCENE_PARENT[from] === to) return "fall";
-  return "fade";
+   The direction (`data-route-dir`) is kept for a later direction-aware
+   motion: "back" for Home, a parent page (/products from /products/ccos,
+   /work from a case), and the browser's Back / Forward (POP); "forward"
+   otherwise. The fade itself does not use it. */
+type RouteMove = "fade" | "load";
+type RouteDir = "forward" | "back";
+const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
+const FADE_OUT_S = 0.25;
+const FADE_IN_S = 0.4;
+const FADE_IN_DELAY_S = 0.12;
+const FADE_EASE: [number, number, number, number] = [0.22, 0.61, 0.36, 1];
+/* how long the arriving page counts as arriving (its pieces show at once) */
+const ARRIVE_MS = (FADE_IN_DELAY_S + FADE_IN_S) * 1000 + 150;
+
+function routeDir(from: string, to: string, pop: boolean): RouteDir {
+  if (pop || to === "/" || from.startsWith(`${to}/`)) return "back";
+  return "forward";
 }
 
 /* GF07-C: the shell no longer paints a header or footer. R1.1 gives Home and
@@ -93,21 +95,38 @@ export function GlobalShell({ children }: { children: ReactNode }) {
   /* `from` is the outgoing page's scroll offset, read while rendering the new
      location (ScrollRestoration has not moved the window yet); null on the
      first load. "load" marks the first page, which has no swap. */
-  const moveRef = useRef<{ key: string; path: string; move: RouteMove; from: number | null }>({
+  const navigationType = useNavigationType();
+  const moveRef = useRef<{ key: string; path: string; move: RouteMove; dir: RouteDir; from: number | null }>({
     key: location.key,
     path: location.pathname,
     move: "load",
+    dir: "forward",
     from: null,
   });
   if (moveRef.current.key !== location.key) {
     moveRef.current = {
       key: location.key,
       path: location.pathname,
-      move: routeMove(moveRef.current.path, location.pathname),
+      move: "fade",
+      dir: routeDir(moveRef.current.path, location.pathname, navigationType === "POP"),
       from: typeof window !== "undefined" ? window.scrollY : 0,
     };
   }
-  const move: RouteMove = transition.reduced ? "fade" : moveRef.current.move;
+  const { move, dir } = moveRef.current;
+
+  /* while the new page fades in, its arrival pieces (cover lockups, labels:
+     data-spawn) show with it instead of building after it (global.css,
+     [data-arriving]); a first load keeps its own entrance */
+  useIsomorphicLayoutEffect(() => {
+    const shell = shellRef.current;
+    if (!shell || moveRef.current.from === null) return;
+    shell.setAttribute("data-arriving", "");
+    const timer = window.setTimeout(() => shell.removeAttribute("data-arriving"), ARRIVE_MS);
+    return () => {
+      window.clearTimeout(timer);
+      shell.removeAttribute("data-arriving");
+    };
+  }, [location.key]);
 
   /* NAV-T4 (OPERATOR: swaps from a scrolled page flashed). The new location
      scrolls the window (top, or the restored offset on Back), but the popped
@@ -158,44 +177,35 @@ export function GlobalShell({ children }: { children: ReactNode }) {
      removed for CCOS-to-CCOS. mode="popLayout" mounts the incoming route at
      once, fully opaque, in flow; the outgoing route is popped out of layout
      (absolute, `[data-motion-pop-id]`, stacked above and inert in global.css)
-     and fades out over it. The document is never empty. The coordinator's
-     lead/leaving pose and onExitComplete -> endTransition are unchanged.
-     NAV-T3: on "rise" the incoming route starts one screen down and slides up,
-     painted above the popped Home (global.css, data-route-move); Home holds
-     still underneath for the slide. On "fall" the popped scene route slides
-     down over the incoming Home. */
+     and fades out over it. The document is never empty. onExitComplete ->
+     endTransition is unchanged. P2 CORR02: the exit is a real fade (1 -> 0),
+     so Motion runs it instead of ending it at once; the incoming route
+     starts transparent and fades in a beat later, over the ink ground
+     (global.css). Reduced motion: the same swap, instant. */
   return (
     <NavigationContext.Provider value={transition}>
-      <div className="site-shell" ref={shellRef} data-route={location.pathname} data-route-move={move}>
+      <div
+        className="site-shell"
+        ref={shellRef}
+        data-route={location.pathname}
+        data-route-move={move}
+        data-route-dir={dir}
+      >
         <div className="site-stage">
-          <AnimatePresence
-            mode="popLayout"
-            initial={false}
-            custom={move}
-            onExitComplete={transition.endTransition}
-          >
+          <AnimatePresence mode="popLayout" initial={false} onExitComplete={transition.endTransition}>
             <motion.div
               key={routeKey}
               className="site-stage__route"
-              initial={move === "rise" ? { y: "100vh" } : false}
-              animate={{ opacity: 1, y: 0 }}
-              exit="exit"
-              variants={{
-                exit: (m: RouteMove) =>
-                  transition.reduced
-                    ? { opacity: 1, transition: { duration: 0 } }
-                    : m === "rise"
-                      ? { opacity: 1, transition: { duration: SLIDE_S } }
-                      : m === "fall"
-                        ? { y: "100vh", transition: { duration: SLIDE_S, ease: SLIDE_EASE } }
-                        : { opacity: 0, transition: { duration: 0.22 } },
+              initial={move === "load" ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{
+                opacity: 0,
+                transition: transition.reduced ? { duration: 0 } : { duration: FADE_OUT_S, ease: FADE_EASE },
               }}
               transition={
                 transition.reduced
                   ? { duration: 0 }
-                  : move === "rise"
-                    ? { duration: SLIDE_S, ease: SLIDE_EASE }
-                    : { duration: 0.22 }
+                  : { duration: FADE_IN_S, delay: FADE_IN_DELAY_S, ease: FADE_EASE }
               }
             >
               <main ref={focusRoute} tabIndex={-1} id="main-content">
