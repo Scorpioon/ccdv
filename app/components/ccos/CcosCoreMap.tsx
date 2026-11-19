@@ -28,13 +28,13 @@ const CENTRES: Record<CcosCoreId, [number, number]> = {
 };
 
 /* source lines from CCOS's edges to each core */
-const LINKS = [
-  "M300 220.82L248.5 181.82",
-  "M300 269.82L248.5 308.82",
-  "M385 220.82L436.5 181.82",
-  "M385 269.82L436.5 308.82",
-  "M342 195.32V146.82",
-  "M342 342.82V293.82",
+const LINKS: [CcosCoreId, string][] = [
+  ["wrkops", "M300 220.82L248.5 181.82"],
+  ["kairon", "M300 269.82L248.5 308.82"],
+  ["aethernos", "M385 220.82L436.5 181.82"],
+  ["kron", "M385 269.82L436.5 308.82"],
+  ["kaia", "M342 195.32V146.82"],
+  ["panoptes", "M342 342.82V293.82"],
 ];
 
 const VIEW_W = 684;
@@ -61,67 +61,81 @@ function wye(cx: number, cy: number, from: number, to: number) {
     .join("");
 }
 
+/* one core's two looks (thin, solid), drawn on its own centre */
+function CoreDrawing({ id, uid }: { id: CcosCoreId; uid: string }) {
+  const core = CCOS_CORES.find((c) => c.id === id) ?? CCOS_CORES[0];
+  const [cx, cy] = CENTRES[id];
+  const inner = id === "ccos" ? 0.665 : 0.52;
+  return (
+    <>
+      <linearGradient
+        id={`${uid}-${id}`}
+        gradientUnits="userSpaceOnUse"
+        x1={cx}
+        y1={cy - R * 0.52}
+        x2={cx}
+        y2={cy + R * 0.52}
+      >
+        <stop stopColor="#FFFFFF" />
+        <stop offset="1" stopColor={core.color} />
+      </linearGradient>
+      <g className="cc-map__thin">
+        <path d={hex(cx, cy, R)} />
+        <path d={hex(cx, cy, R * 0.8)} />
+        <path d={hex(cx, cy, R * inner)} />
+        <path d={wye(cx, cy, R * inner, R * 0.8)} />
+        <text x={cx} y={cy} className="cc-map__abbr">
+          {core.abbr}
+        </text>
+      </g>
+      <g className="cc-map__solid">
+        <path d={hex(cx, cy, R)} fill="#D9D9D9" />
+        <path d={hex(cx, cy, R * 0.8)} fill="#202020" />
+        <path d={hex(cx, cy, R * 0.52)} fill={`url(#${uid}-${id})`} />
+        <path d={wye(cx, cy, 0, R * 0.8)} className="cc-map__wye" />
+      </g>
+    </>
+  );
+}
+
+/* P2 CORR03 (OPERATOR, phones): `selected` may be null (the whole diagram,
+   every core thin); `focus` removes every branch but CC.OS and that core, and
+   `blink` makes the two left blink before the card opens (CcosSlides). */
 export function CcosCoreMap({
   selected,
   onSelect,
   labelledBy,
+  focus = null,
+  blink = false,
 }: {
-  selected: CcosCoreId;
+  selected: CcosCoreId | null;
   onSelect: (id: CcosCoreId) => void;
   labelledBy: string;
+  focus?: CcosCoreId | null;
+  blink?: boolean;
 }) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const gone = (id: CcosCoreId) => focus !== null && id !== focus && id !== "ccos";
 
   return (
     <div className="cc-map">
       <svg className="cc-map__svg" viewBox={`0 0 ${VIEW_W} ${VIEW_H}`} aria-hidden="true" focusable="false">
-        <defs>
-          {CCOS_CORES.map((core) => {
-            const [cx, cy] = CENTRES[core.id];
-            return (
-              <linearGradient
-                key={core.id}
-                id={`${uid}-${core.id}`}
-                gradientUnits="userSpaceOnUse"
-                x1={cx}
-                y1={cy - R * 0.52}
-                x2={cx}
-                y2={cy + R * 0.52}
-              >
-                <stop stopColor="#FFFFFF" />
-                <stop offset="1" stopColor={core.color} />
-              </linearGradient>
-            );
-          })}
-        </defs>
         <g className="cc-map__links">
-          {LINKS.map((d) => (
-            <path key={d} d={d} />
+          {LINKS.map(([id, d]) => (
+            <path key={id} d={d} data-gone={gone(id)} />
           ))}
         </g>
-        {CCOS_CORES.map((core) => {
-          const [cx, cy] = CENTRES[core.id];
-          const inner = core.id === "ccos" ? 0.665 : 0.52;
-          return (
-            <g key={core.id} className="cc-map__core" data-selected={core.id === selected}>
-              <g className="cc-map__thin">
-                <path d={hex(cx, cy, R)} />
-                <path d={hex(cx, cy, R * 0.8)} />
-                <path d={hex(cx, cy, R * inner)} />
-                <path d={wye(cx, cy, R * inner, R * 0.8)} />
-                <text x={cx} y={cy} className="cc-map__abbr">
-                  {core.abbr}
-                </text>
-              </g>
-              <g className="cc-map__solid">
-                <path d={hex(cx, cy, R)} fill="#D9D9D9" />
-                <path d={hex(cx, cy, R * 0.8)} fill="#202020" />
-                <path d={hex(cx, cy, R * 0.52)} fill={`url(#${uid}-${core.id})`} />
-                <path d={wye(cx, cy, 0, R * 0.8)} className="cc-map__wye" />
-              </g>
-            </g>
-          );
-        })}
+        {CCOS_CORES.map((core) => (
+          <g
+            key={core.id}
+            className="cc-map__core"
+            data-selected={core.id === selected}
+            data-gone={gone(core.id)}
+            data-blink={blink && !gone(core.id)}
+          >
+            <CoreDrawing id={core.id} uid={uid} />
+          </g>
+        ))}
       </svg>
 
       <div className="cc-map__buttons" role="group" aria-labelledby={labelledBy}>
@@ -135,11 +149,31 @@ export function CcosCoreMap({
               style={{ left: `${(cx / VIEW_W) * 100}%`, top: `${(cy / VIEW_H) * 100}%` }}
               aria-pressed={core.id === selected}
               aria-label={core.name}
+              disabled={gone(core.id)}
               onClick={() => onSelect(core.id)}
             />
           );
         })}
       </div>
     </div>
+  );
+}
+
+/* one core alone, as the map draws it (the phone card's header): thin, or
+   solid when `solid` */
+export function CcosCoreGlyph({ id, solid = false, className }: { id: CcosCoreId; solid?: boolean; className?: string }) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const [cx, cy] = CENTRES[id];
+  return (
+    <svg
+      className={`cc-map ${className ?? ""}`}
+      viewBox={`${cx - R - 1} ${cy - R - 1} ${2 * R + 2} ${2 * R + 2}`}
+      aria-hidden="true"
+      focusable="false"
+    >
+      <g className="cc-map__core" data-selected={solid}>
+        <CoreDrawing id={id} uid={uid} />
+      </g>
+    </svg>
   );
 }

@@ -4,6 +4,7 @@ import { Link } from "react-router";
 import { GearMark } from "./marks/GearMark";
 import { CcdvPixelMark } from "./marks/CcdvPixelMark";
 import { CollapseCreativeLogo } from "./marks/CollapseCreativeLogo";
+import { ProductsCcosIcon } from "./marks/CcosArtwork";
 
 /* Operator-designed /studio mobile header + menu (M1: Frame 322 closed, Frame
    331 open; STUDIO_resp1/resp2). Studio only, phones only: both elements are
@@ -133,15 +134,16 @@ export function StudioMobileMenu({ current: currentRoute = "/studio" }: { curren
           })}
         </ul>
 
-        <section className="smm__ccos" aria-labelledby={`${panelId}-ccos`}>
-          <h2 className="smm__ccos-title" id={`${panelId}-ccos`}>
-            CC.OS
-          </h2>
+        {/* P2 CORR03 (OPERATOR): the legacy "CC.OS" heading is gone — one
+            CC.OS entry, the negative cube (black outer, for the light panel)
+            beside it */}
+        <section className="smm__ccos" aria-label="CC.OS">
           <ul className="smm__systems">
             {SYSTEMS.map(({ label, to }) => (
               <li key={to}>
                 <Link className="smm__system" to={to} onClick={close}>
-                  {label}
+                  <ProductsCcosIcon className="smm__system-icon" />
+                  <span>{label}</span>
                 </Link>
               </li>
             ))}

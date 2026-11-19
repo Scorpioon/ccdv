@@ -35,6 +35,8 @@ export interface DeckSlide {
   content: ReactNode | ((current: boolean) => ReactNode);
   /** the footer: as tall as its content */
   partial?: boolean;
+  /** P2 CORR03: the held lockup steps away on this slide (it carries its own) */
+  unmarked?: boolean;
 }
 
 const MOVE_MS = 800;
@@ -53,7 +55,25 @@ function scrollsFurther(target: EventTarget | null, dir: number) {
   return dir > 0 ? area.scrollTop + area.clientHeight < area.scrollHeight - 1 : area.scrollTop > 0;
 }
 
-export function CcosDeck({ slides, reduced, label }: { slides: DeckSlide[]; reduced: boolean; label: string }) {
+/* P2 CORR03 (OPERATOR, phones: "when scrolling very fast you can destabilize
+   the scroll and it gets stuck"): the page under the deck no longer scrolls
+   (global.css locks the document while the deck is up), a swipe that also
+   scrolled a slide's own area — or landed while that area was still coasting
+   — never pages, and a slide that is left goes back to its top. */
+const COAST_MS = 120;
+
+export function CcosDeck({
+  slides,
+  reduced,
+  label,
+  mark,
+}: {
+  slides: DeckSlide[];
+  reduced: boolean;
+  label: string;
+  /** P2 CORR03: a lockup held top-centre from the second slide on */
+  mark?: ReactNode;
+}) {
   const link = useTransitionLink();
   const [current, setCurrent] = useState(0);
   const [size, setSize] = useState({ screen: 0, tail: 0 });
@@ -62,7 +82,9 @@ export function CcosDeck({ slides, reduced, label }: { slides: DeckSlide[]; redu
   const tailRef = useRef<HTMLElement | null>(null);
   const lockedUntil = useRef(0);
   const wheel = useRef({ sum: 0, last: 0, tail: false });
-  const touch = useRef<{ y: number; up: boolean; down: boolean } | null>(null);
+  const touch = useRef<{ y: number; t: number; up: boolean; down: boolean } | null>(null);
+  /* when an area inside the deck last scrolled (its own scroll or its coast) */
+  const scrolledAt = useRef(0);
   const count = slides.length;
 
   /* the screen's height and the footer's, for the last stop */
@@ -156,18 +178,46 @@ export function CcosDeck({ slides, reduced, label }: { slides: DeckSlide[]; redu
       step(dir);
     };
 
+    const onScroll = () => {
+      scrolledAt.current = performance.now();
+    };
+
     deck.addEventListener("wheel", onWheel, { passive: true });
+    deck.addEventListener("scroll", onScroll, { passive: true, capture: true });
     window.addEventListener("keydown", onKey);
     return () => {
       deck.removeEventListener("wheel", onWheel);
+      deck.removeEventListener("scroll", onScroll, { capture: true });
       window.removeEventListener("keydown", onKey);
     };
   }, [count, go, step]);
 
+  /* a slide that is left goes back to its top once the strip has moved */
+  useEffect(() => {
+    const deck = deckRef.current;
+    if (!deck) return;
+    const timer = window.setTimeout(
+      () => {
+        deck.querySelectorAll<HTMLElement>("[data-slide]").forEach((slide) => {
+          if (slide.dataset.current === "true") return;
+          slide.querySelectorAll<HTMLElement>("[data-deck-scroll]").forEach((area) => (area.scrollTop = 0));
+          slide.scrollTop = 0;
+        });
+      },
+      reduced ? 0 : MOVE_MS,
+    );
+    return () => window.clearTimeout(timer);
+  }, [current, reduced]);
+
   const onTouchStart = (event: TouchEvent) => {
     const t = event.touches[0];
     touch.current = t
-      ? { y: t.clientY, up: scrollsFurther(event.target, -1), down: scrollsFurther(event.target, 1) }
+      ? {
+          y: t.clientY,
+          t: performance.now(),
+          up: scrollsFurther(event.target, -1),
+          down: scrollsFurther(event.target, 1),
+        }
       : null;
   };
   const onTouchEnd = (event: TouchEvent) => {
@@ -179,6 +229,8 @@ export function CcosDeck({ slides, reduced, label }: { slides: DeckSlide[]; redu
     if (Math.abs(dy) < SWIPE_PX) return;
     const dir = dy > 0 ? 1 : -1;
     if (dir > 0 ? start.down : start.up) return;
+    /* the gesture scrolled an area, or an area was still coasting when it began */
+    if (scrolledAt.current >= start.t - COAST_MS) return;
     step(dir);
   };
 
@@ -226,6 +278,15 @@ export function CcosDeck({ slides, reduced, label }: { slides: DeckSlide[]; redu
         ))}
       </div>
 
+      {mark ? (
+        <div
+          className="cc-deck__mark"
+          aria-hidden="true"
+          data-show={current > 0 && !slides[current]?.unmarked && !(current === last && slides[last - 1]?.unmarked)}
+        >
+          {mark}
+        </div>
+      ) : null}
       <Link className="cc-back" {...link("/products")}>
         <span className="cc-back__icon" aria-hidden="true">
           ←

@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { CcosWordmark } from "../marks/CcosWordmark";
 import { CcosHeroIcon, CcosSystemIcon } from "../marks/CcosArtwork";
-import { CcosCoreMap } from "./CcosCoreMap";
+import { CcosCoreGlyph, CcosCoreMap } from "./CcosCoreMap";
+import { CcosModularArt, CcosVaultArt } from "./CcosVoxelArt";
 import {
   CCOS_CORES,
   CCOS_INTRO,
@@ -14,8 +15,9 @@ import {
 /* The CC.OS slides (P2, PRODUCTS/CCOS.svg). P2 CORR02 (OPERATOR): ground
    #141414, every fill #171717 with a soft radius (global.css); no grid; the
    content stays put while the strip slides. Slides 3 and 6 share one selected
-   core; CC.OS itself is selected on load. The art boxes of slides 4 and 5 are
-   empty until the operator supplies the new animations. */
+   core; CC.OS itself is selected on load. P2 CORR03: slides 4 and 5 carry
+   the operator's new voxel animations (CcosVoxelArt); slides 3 and 6 open a
+   card on phones instead of scrolling under the diagram / the chips. */
 
 /* 1 — the lockup, written in each time the hero arrives: the cube floats up,
    C C O S type in, the S's dot slides into the stop (CcosWordmark) */
@@ -50,17 +52,137 @@ export function CcosIntroSlide() {
   );
 }
 
-/* 3 — the core map and what the selected core is for */
-export function CcosMapSlide({ selected, onSelect }: { selected: CcosCoreId; onSelect: (id: CcosCoreId) => void }) {
-  const core = getCcosCore(selected);
+/* the desktop layout (>= 1024, the deck's breakpoint) */
+function useWide() {
+  const [wide, setWide] = useState(true);
+  useEffect(() => {
+    const query = window.matchMedia("(min-width: 1024px)");
+    const update = () => setWide(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+  return wide;
+}
+
+/* the phone card's close button (images 31, 32: a circled x) */
+function CloseButton({ onClose, label }: { onClose: () => void; label: string }) {
+  const ref = useRef<HTMLButtonElement>(null);
+  useEffect(() => ref.current?.focus({ preventScroll: true }), []);
   return (
-    <div className="cc-frame cc-split cc-map-slide" data-deck-scroll>
+    <button ref={ref} type="button" className="cc-close" aria-label={label} onClick={onClose}>
+      <span aria-hidden="true">×</span>
+    </button>
+  );
+}
+
+/* P2 CORR03 (OPERATOR): on desktop the map walks the cores clockwise from
+   WRKOPS while slide 3 is up — a click stops it for that visit, and each
+   return starts it again from WRKOPS. The walk is the map's own; the shared
+   selection (and so the explainer) changes only on a click. */
+const CYCLE: CcosCoreId[] = ["wrkops", "kaia", "aethernos", "kron", "panoptes", "kairon"];
+const CYCLE_MS = 4000;
+/* phones: the other branches go and the two left blink, then the card */
+const BLINK_MS = 1000;
+
+/* 3 — the core map and what the selected core is for. Phones (image 32): the
+   whole diagram first; a tap keeps CC.OS and that core, both blink, and a
+   card opens over the slide and writes the core in, line by line; its x
+   brings the diagram back. */
+export function CcosMapSlide({
+  current,
+  reduced,
+  selected,
+  onSelect,
+}: {
+  current: boolean;
+  reduced: boolean;
+  selected: CcosCoreId;
+  onSelect: (id: CcosCoreId) => void;
+}) {
+  const wide = useWide();
+  const [cycling, setCycling] = useState(true);
+  const [step, setStep] = useState(0);
+  const [stage, setStage] = useState<"map" | "focus" | "card">("map");
+
+  useEffect(() => {
+    if (current) {
+      setCycling(true);
+      setStep(0);
+    } else setStage("map");
+  }, [current]);
+  useEffect(() => {
+    if (wide) setStage("map");
+  }, [wide]);
+
+  const walks = wide && cycling && !reduced;
+  useEffect(() => {
+    if (!walks || !current) return;
+    const timer = window.setInterval(() => setStep((n) => (n + 1) % CYCLE.length), CYCLE_MS);
+    return () => window.clearInterval(timer);
+  }, [walks, current]);
+
+  useEffect(() => {
+    if (stage !== "focus") return;
+    const timer = window.setTimeout(() => setStage("card"), BLINK_MS);
+    return () => window.clearTimeout(timer);
+  }, [stage]);
+
+  const pick = (id: CcosCoreId) => {
+    onSelect(id);
+    if (wide) setCycling(false);
+    else setStage(reduced ? "card" : "focus");
+  };
+
+  const shown = walks ? CYCLE[step] : selected;
+  const core = getCcosCore(wide ? shown : selected);
+  return (
+    <div className="cc-frame cc-split cc-map-slide" data-deck-scroll data-stage={wide ? undefined : stage}>
       <h2 className="cc-hidden" id="cc-map-title">
         The cores
       </h2>
       <div className="cc-box">
-        <CcosCoreMap selected={selected} onSelect={onSelect} labelledBy="cc-map-title" />
+        <CcosCoreMap
+          selected={wide ? shown : stage === "map" ? null : selected}
+          focus={wide || stage === "map" ? null : selected}
+          blink={stage === "focus"}
+          onSelect={pick}
+          labelledBy="cc-map-title"
+        />
       </div>
+      {!wide && stage === "card" ? (
+        <div className="cc-card" role="dialog" aria-label={core.name} data-deck-scroll>
+          <div className="cc-card__head">
+            <CcosCoreGlyph id="ccos" className="cc-card__glyph" />
+            {core.id === "ccos" ? null : <CcosCoreGlyph id={core.id} solid className="cc-card__glyph" />}
+            <div className="cc-card__title">
+              <p className="cc-info__label">Core:</p>
+              <p className="cc-info__name">{core.name}</p>
+            </div>
+            <CloseButton label={`Close ${core.name}`} onClose={() => setStage("map")} />
+          </div>
+          <dl className="cc-card__body">
+            {[
+              ["Main Area:", core.area],
+              ["Keywords:", core.keywords],
+              ["What it fixes:", core.problems],
+            ].map(([label, text], n) => (
+              <div key={label} className="cc-card__row cc-type" style={{ "--k-line": n } as CSSProperties}>
+                <dt className="cc-info__label">{label}</dt>
+                <dd className={n === 0 ? "cc-info__area" : "cc-info__text"}>{text}</dd>
+              </div>
+            ))}
+            <div className="cc-card__row cc-type" style={{ "--k-line": 3 } as CSSProperties}>
+              <dt className="cc-hidden">About</dt>
+              <dd className="cc-info__text">
+                {core.description.map((line) => (
+                  <p key={line}>{line}</p>
+                ))}
+              </dd>
+            </div>
+          </dl>
+        </div>
+      ) : null}
       <div className="cc-info">
         <dl className="cc-info__swap cc-info__list" key={core.id}>
           <div className="cc-info__row">
@@ -81,23 +203,29 @@ export function CcosMapSlide({ selected, onSelect }: { selected: CcosCoreId; onS
   );
 }
 
-/* 4 — modular: copy left, the art box right */
-export function CcosModularSlide() {
+/* 4 — modular: copy left, the art box right (P2 CORR03: the cores docking
+   on CC.OS, CcosVoxelArt) */
+export function CcosModularSlide({ current, reduced }: { current: boolean; reduced: boolean }) {
   return (
     <div className="cc-frame cc-split cc-statement" data-deck-scroll>
       <p className="cc-statement__copy">
         {CCOS_MODULAR}
       </p>
-      <div className="cc-box cc-statement__art" aria-hidden="true" />
+      <div className="cc-box cc-statement__art" aria-hidden="true">
+        <CcosModularArt className="cc-statement__svg" active={current} reduced={reduced} />
+      </div>
     </div>
   );
 }
 
-/* 5 — local: the art box left, copy right (the source order) */
-export function CcosLocalSlide() {
+/* 5 — local: the art box left, copy right (the source order; P2 CORR03: the
+   vault, CcosVoxelArt) */
+export function CcosLocalSlide({ current, reduced }: { current: boolean; reduced: boolean }) {
   return (
     <div className="cc-frame cc-split cc-statement cc-statement--flip" data-deck-scroll>
-      <div className="cc-box cc-statement__art" aria-hidden="true" />
+      <div className="cc-box cc-statement__art" aria-hidden="true">
+        <CcosVaultArt className="cc-statement__svg" active={current} reduced={reduced} />
+      </div>
       <p className="cc-statement__copy">
         {CCOS_LOCAL}
       </p>
@@ -106,17 +234,64 @@ export function CcosLocalSlide() {
 }
 
 /* 6 — each product: the list (CC.OS and the six cores) and its detail, the
-   detail given most of the width (CORR01: "let this table breathe") */
+   detail given most of the width (CORR01: "let this table breathe").
+   P2 CORR03 (OPERATOR, image 31): on phones the detail no longer scrolls under
+   the chips (it trapped the deck); a tap opens a card that fits the screen
+   over the blurred list — Core and Main Area, Keywords, the description, Dev
+   State and Public Release — and its x closes it. */
 export function CcosExplainerSlide({
+  current,
   selected,
   onSelect,
 }: {
+  current: boolean;
   selected: CcosCoreId;
   onSelect: (id: CcosCoreId) => void;
 }) {
+  const wide = useWide();
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (!current || wide) setOpen(false);
+  }, [current, wide]);
   const core = getCcosCore(selected);
   return (
-    <div className="cc-frame cc-explainer">
+    <div className="cc-frame cc-explainer" data-open={open || undefined}>
+      {open ? (
+        <div className="cc-excard">
+          <div className="cc-card" role="dialog" aria-label={core.name} data-deck-scroll>
+            <CloseButton label={`Close ${core.name}`} onClose={() => setOpen(false)} />
+            <div className="cc-explainer__pair">
+              <div>
+                <p className="cc-info__label">Core:</p>
+                <p className="cc-info__name">{core.name}</p>
+              </div>
+              <div>
+                <p className="cc-info__label">Main Area:</p>
+                <p className="cc-info__area">{core.area}</p>
+              </div>
+            </div>
+            <div className="cc-card__row">
+              <p className="cc-info__label">Keywords:</p>
+              <p className="cc-info__text">{core.keywords}</p>
+            </div>
+            <div className="cc-card__row cc-info__text">
+              {core.description.map((line) => (
+                <p key={line}>{line}</p>
+              ))}
+            </div>
+            <div className="cc-explainer__pair cc-card__facts">
+              <div>
+                <p className="cc-info__label">Dev State:</p>
+                <p className="cc-info__text">{core.state}</p>
+              </div>
+              <div>
+                <p className="cc-info__label">Public Release:</p>
+                <p className="cc-info__text">{core.release}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
       <div className="cc-explainer__list">
         <CcosWordmark className="cc-explainer__mark" />
         <h2 className="cc-hidden" id="cc-products-title">
@@ -129,16 +304,16 @@ export function CcosExplainerSlide({
                 type="button"
                 className="cc-explainer__item"
                 aria-pressed={item.id === selected}
-                onClick={() => onSelect(item.id)}
+                onClick={() => {
+                  onSelect(item.id);
+                  if (!wide) setOpen(true);
+                }}
               >
                 {item.id === "ccos" ? (
                   <CcosHeroIcon className="cc-explainer__icon" />
                 ) : (
-                  <CcosSystemIcon
-                    className="cc-explainer__icon"
-                    family={item.id === "kron" || item.id === "kairon" ? "thin" : "bold"}
-                    gradientTo={item.color}
-                  />
+                  /* P2 CORR03 (OPERATOR): KAIRON and KRON match the suite */
+                  <CcosSystemIcon className="cc-explainer__icon" family="bold" gradientTo={item.color} />
                 )}
                 <span>{item.name}</span>
               </button>

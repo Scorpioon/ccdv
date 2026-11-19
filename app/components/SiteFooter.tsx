@@ -15,15 +15,18 @@ import { CcdvPixelMark } from "./marks/CcdvPixelMark";
    what the reference does, so it is transcribed rather than normalised.
 
    Link text is reproduced verbatim from R1.1 and is editorially provisional.
-   All four footer nav entries route as of GF08-B. */
+   All four footer nav entries route as of GF08-B.
+
+   P2 CORR03 (OPERATOR): only the first column keeps its [ ] brackets; links
+   are not underlined (global.css). */
 
 const COLUMN_B: { label: string; to?: string }[] = [
-  { label: "[ Services ]", to: "/services" }, // NAV-T3: Services before Work
-  { label: "[ Work ]", to: "/work" },
-  { label: "[ Products ]", to: "/products" },
-  { label: "[ Contact ]", to: "/contact" },
+  { label: "Services", to: "/services" }, // NAV-T3: Services before Work
+  { label: "Work", to: "/work" },
+  { label: "Products", to: "/products" },
+  { label: "Contact", to: "/contact" },
 ];
-const COLUMN_C = ["[ Privacy ]", "[ Terms of use ]", "[ Legal ]", "[ Onlyfans ]"];
+const COLUMN_C = ["Privacy", "Terms of use", "Legal", "Onlyfans"];
 
 export function SiteFooter() {
   return (

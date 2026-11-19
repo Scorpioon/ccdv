@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { SiteFooter } from "../components/SiteFooter";
+import { CcosWordmark } from "../components/marks/CcosWordmark";
 import { CcosDeck, type DeckSlide } from "../components/ccos/CcosDeck";
 import {
   CcosExplainerSlide,
@@ -29,7 +30,11 @@ export function meta() {
    the deck's own rules (`r11--ccos`, global.css).
 
    The selected core lives here: the map (slide 3) and the explainer (slide 6)
-   show the same one, CC.OS on load. */
+   show the same one, CC.OS on load.
+
+   P2 CORR03 (OPERATOR): the CC.OS lockup stays top-centre from slide 2 on
+   (the deck's `mark`); slides 3-6 know whether they are current (the map's
+   walk, the cards and the animations run only then). */
 export default function ProductsCcos() {
   const { reduced } = useMotionPolicy();
   const [core, setCore] = useState<CcosCoreId>(CCOS_DEFAULT_CORE);
@@ -37,16 +42,29 @@ export default function ProductsCcos() {
   const slides: DeckSlide[] = [
     { key: "hero", label: "CC.OS", content: (current) => <CcosHeroSlide current={current} /> },
     { key: "intro", label: "Introduction", content: <CcosIntroSlide /> },
-    { key: "map", label: "The cores", content: <CcosMapSlide selected={core} onSelect={setCore} /> },
-    { key: "modular", label: "A modular ecosystem", content: <CcosModularSlide /> },
-    { key: "local", label: "Always local", content: <CcosLocalSlide /> },
-    { key: "explainer", label: "The products", content: <CcosExplainerSlide selected={core} onSelect={setCore} /> },
+    {
+      key: "map",
+      label: "The cores",
+      content: (current) => <CcosMapSlide current={current} reduced={reduced} selected={core} onSelect={setCore} />,
+    },
+    {
+      key: "modular",
+      label: "A modular ecosystem",
+      content: (current) => <CcosModularSlide current={current} reduced={reduced} />,
+    },
+    { key: "local", label: "Always local", content: (current) => <CcosLocalSlide current={current} reduced={reduced} /> },
+    {
+      key: "explainer",
+      label: "The products",
+      unmarked: true,
+      content: (current) => <CcosExplainerSlide current={current} selected={core} onSelect={setCore} />,
+    },
     { key: "footer", label: "Footer", content: <SiteFooter />, partial: true },
   ];
 
   return (
     <div className="r11 r11--products r11--ccos">
-      <CcosDeck slides={slides} reduced={reduced} label="CC.OS" />
+      <CcosDeck slides={slides} reduced={reduced} label="CC.OS" mark={<CcosWordmark />} />
     </div>
   );
 }
