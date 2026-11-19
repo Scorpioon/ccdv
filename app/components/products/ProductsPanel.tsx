@@ -1,15 +1,19 @@
 import { Link } from "react-router";
+import { useTransitionLink } from "../GlobalShell";
 import { ProductsPanelArt } from "./ProductsPanelArt";
 import type { ProductsEntry } from "../../data/productsContent";
 
 /* A product panel (P1b CORR03; it replaces the P1 CC.OS-only panel). The
    CC.OS panel follows PRODUCTS_v2.svg (51.2..1484.8 x 2534.93..3134.39; phone
    28..362 x 2225.65..3401.1), LS / iDS `Project LS.svg` / `Project iDS.svg`
-   (1434 x 598 / 558). Desktop: copy on the left, art on the right; phones: art
+   (1434 x 598 / 558). Desktop: copy on the left, art on the right (CORR05:
+   in the 887-wide column beside the cards, the art scaled down); phones: art
    above the copy. CC.OS draws Studio's graph (decorative, OPERATOR D3); LS and
    iDS sit in the sources' dark art box. Only CC.OS has a CTA (its hub); LS and
-   iDS have no product page yet (OPERATOR). */
+   iDS have no product page yet (OPERATOR). P2: the CC.OS deck is a scene
+   route, so the CTA goes through the transition coordinator (it rises). */
 export function ProductsPanel({ index, panel }: Pick<ProductsEntry, "index" | "panel">) {
+  const link = useTransitionLink();
   return (
     <article className={`pv-panel pv-panel--${panel.art}`} aria-labelledby={`pv-panel-title-${index}`}>
       <span className="pv-panel__index" aria-hidden="true">
@@ -28,7 +32,7 @@ export function ProductsPanel({ index, panel }: Pick<ProductsEntry, "index" | "p
           </p>
         ))}
         {panel.cta && (
-          <Link className="pv-panel__cta" to={panel.cta.href}>
+          <Link className="pv-panel__cta" {...link(panel.cta.href)}>
             {panel.cta.label}
           </Link>
         )}

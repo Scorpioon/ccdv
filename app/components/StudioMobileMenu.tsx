@@ -11,7 +11,8 @@ import { CollapseCreativeLogo } from "./marks/CollapseCreativeLogo";
    the existing masthead stays in charge.
 
    Route order is the order drawn in Frame 331 (not the masthead's CELLS order).
-   The six CC.OS names go to their existing /products/ccos/* routes. Contact and
+   P2 (OPERATOR): the six CC.OS names are one "CC.OS" entry now — the core
+   pages are gone and the CC.OS deck holds all six. Contact and
    legal lines are plain text exactly as in SiteFooter (no legal page exists, so
    none is linked). The gear is the open/close toggle; the pixel mark is Home. */
 
@@ -24,12 +25,7 @@ const ROUTES: { label: string; to: string }[] = [
 ];
 
 const SYSTEMS: { label: string; to: string }[] = [
-  { label: "WRKOPS", to: "/products/ccos/wrkops" },
-  { label: "KRON", to: "/products/ccos/kron" },
-  { label: "KAIA", to: "/products/ccos/kaia" },
-  { label: "KAIRON", to: "/products/ccos/kairon" },
-  { label: "AETHERNOS", to: "/products/ccos/aethernos" },
-  { label: "PANOPTES", to: "/products/ccos/panoptes" },
+  { label: "CC.OS", to: "/products/ccos" },
 ];
 
 const LEGAL = ["Privacy", "Terms of use", "Legal", "Onlyfans"];

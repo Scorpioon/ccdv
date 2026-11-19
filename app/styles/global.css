@@ -1060,383 +1060,6 @@ main { display: block; outline: none; }
 }
 .contact-directory__version { margin-left: auto; }
 
-/* === CCOS hub (`/products/ccos`) =========================================
-   Own page, own header — see CcosHub's note on why it does not reuse
-   SiteMasthead. Dark from the top through the icon rail (1413.92 in the
-   source), matching .ccos-hub__header + .ccos-hub__hero sharing one
-   unbroken --ccdv-ink background rather than two separately measured
-   rects. */
-.r11--ccos { background: var(--ccdv-ink); }
-
-/* GF09-F (FBI-034/038): geometry re-solved against the seven R1.1 SVGs
-   (pages_products_ccos.svg + the six page_products_ccos_*.svg — all share
-   one header and one hero, 1440 wide). The header is the Home masthead's own
-   lockup/title/meta geometry (see .masthead__* above, same face and the same
-   0.04545em underline pair) moved down 48: gear x24 y72 (220), pixel block
-   x268 (49.03 x 220.12), title origin x341.03 with baselines 119 / 199 at
-   64.9 / 80, meta baselines 252 / 272 / 292, three loose squares at y282
-   (x933.03 / 1145.52 / 1406), "collapse" baseline 82 ending at x1416. Header
-   and hero together are one unbroken block to y1413.92: header 316.12 +
-   hero 1097.8. Hero children are placed by baseline in page coordinates
-   less the header's 316.12, with the same baseline rule the masthead block
-   documents (T + L/2 + 0.386364 * font-size). The colour of the hub's own
-   text is #D9D9D9 in every hub hero path (leaves override it below). */
-.ccos-hub__header,
-.ccos-hub__hero {
-  position: relative;
-  background: var(--ccdv-ink);
-  color: var(--ccdv-light);
-}
-
-.ccos-hub__header { height: calc(316.12 * var(--u)); }
-
-.ccos-hub__mark {
-  position: absolute;
-  left: calc(24 * var(--u));
-  top: calc(72 * var(--u));
-  width: calc(293.03 * var(--u));
-  height: calc(220.12 * var(--u));
-  display: block;
-}
-.ccos-hub__gear { position: absolute; left: 0; top: 0; width: calc(220 * var(--u)); height: calc(220 * var(--u)); }
-.ccos-hub__pixel { position: absolute; left: calc(244 * var(--u)); top: 0; width: calc(49.03 * var(--u)); height: calc(220.12 * var(--u)); }
-
-.ccos-hub__title {
-  position: absolute;
-  left: calc(341.03 * var(--u));
-  top: calc(53.93 * var(--u));             /* baseline 119 */
-  margin: 0;
-  font-size: calc(64.9 * var(--u));
-  line-height: calc(80 * var(--u));        /* second baseline 199 */
-  white-space: nowrap;
-}
-.ccos-hub__title span {
-  display: block;
-  text-decoration: underline;
-  text-underline-offset: 0.04545em;
-  text-decoration-thickness: 0.04545em;
-}
-
-.ccos-hub__meta {
-  position: absolute;
-  left: calc(341.03 * var(--u));
-  top: calc(236.9 * var(--u));             /* baselines 252 / 272 / 292 */
-  margin: 0;
-  font-size: calc(13.2 * var(--u));
-  line-height: calc(20 * var(--u));
-  white-space: nowrap;
-}
-.ccos-hub__meta a {
-  text-decoration: underline;
-  text-underline-offset: 0.04545em;
-  text-decoration-thickness: 0.04545em;
-}
-
-.ccos-hub__watermark {
-  position: absolute;
-  top: calc(70.3 * var(--u));              /* baseline 82 */
-  right: calc(24 * var(--u));              /* ink ends x1415 */
-  font-size: calc(13.2 * var(--u));
-  line-height: 1;
-  opacity: 0.6;
-  pointer-events: none;
-}
-
-.ccos-hub__dot { position: absolute; top: calc(282 * var(--u)); width: calc(10 * var(--u)); height: calc(10 * var(--u)); background: var(--ccdv-light); }
-.ccos-hub__dot--a { left: calc(933.03 * var(--u)); }
-.ccos-hub__dot--b { left: calc(1145.52 * var(--u)); }
-.ccos-hub__dot--c { left: calc(1406 * var(--u)); }
-
-.ccos-hub__hero { height: calc(1097.8 * var(--u)); text-align: center; }
-
-/* 132.9 x 153.46 at x653.55 y364 (page) */
-.ccos-hub__hero-icon {
-  position: absolute;
-  left: calc(653.55 * var(--u));
-  top: calc(47.88 * var(--u));
-  width: calc(132.9 * var(--u));
-  height: auto;
-}
-
-/* five characters at the 114.3095 pitch = 209.57, as the Home/Studio CC.OS
-   wordmark; baseline 702.46, underline 9.53 thick at 23.83 below it */
-.ccos-hub__wordmark {
-  position: absolute;
-  left: 0;
-  top: calc(200.58 * var(--u));
-  width: 100%;
-  margin: 0;
-  font-size: calc(209.57 * var(--u));
-  line-height: 1;
-  text-decoration: underline;
-  text-underline-offset: 0.04545em;
-  text-decoration-thickness: 0.04545em;
-}
-
-/* 740 wide, 35.2 / 43 — the same measure as the Studio CC.OS copy; first
-   baseline 800.5, five lines (the wrap points match R1.1's) */
-.ccos-hub__intro {
-  position: absolute;
-  left: calc(350 * var(--u));
-  top: calc(449.28 * var(--u));
-  width: calc(740 * var(--u));
-  margin: 0;
-  font-size: calc(35.2 * var(--u));
-  line-height: calc(43 * var(--u));
-}
-/* GF09-F: the hub intro is two paragraphs (lead + body, 2 + 4 lines at this
-   measure); the 12 gap keeps the last baseline (~1027.5) clear of the `v`
-   block at y1044.46. Leaves still use a single <p class="ccos-hub__intro">. */
-.ccos-hub__intro p { margin: 0; }
-.ccos-hub__intro p + p { margin-top: calc(12 * var(--u)); }
-
-/* R1.1 draws the marker as a 15 x 29 white block at x712.5 y1044.46 holding
-   an ink "v" (baseline 1073.46, 26.4) with a 1.2 underline */
-.ccos-hub__chevron {
-  position: absolute;
-  left: calc(712.5 * var(--u));
-  top: calc(728.34 * var(--u));
-  width: calc(15 * var(--u));
-  height: calc(29 * var(--u));
-  box-sizing: border-box;
-  padding-top: calc(5.6 * var(--u));
-  background: var(--ccdv-white);
-  color: var(--ccdv-ink);
-  font-size: calc(26.4 * var(--u));
-  line-height: calc(26.4 * var(--u));
-  text-align: left;
-  text-decoration: underline;
-  text-underline-offset: 0.04545em;
-  text-decoration-thickness: 0.04545em;
-}
-
-/* rail: six 132.9 x 153.46 icons from x244.907 at a 163.457 pitch (gap
-   30.557), top y1145.46 — the icons carry no R1.1 text, so the names are
-   visually hidden (still the links' accessible text) */
-.ccos-rail {
-  position: absolute;
-  left: calc(244.91 * var(--u));
-  top: calc(829.34 * var(--u));
-  display: flex;
-  gap: calc(30.56 * var(--u));
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.ccos-rail__link { position: relative; display: block; }
-.ccos-rail__icon { display: block; width: calc(132.9 * var(--u)); height: auto; }
-.ccos-rail__name {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-}
-/* leaves only (`data-state` is unset on the hub): the five non-current
-   systems are R1.1's <g opacity="0.2"> groups */
-.ccos-rail__item[data-state="inactive"] .ccos-rail__icon { opacity: 0.2; }
-
-/* "<SYSTEM> [version]": 26.4, baseline 1341.9, 1.2 underline */
-.ccos-hub__rail-caption {
-  position: absolute;
-  left: 0;
-  top: calc(1002.4 * var(--u));
-  width: 100%;
-  margin: 0;
-  font-size: calc(26.4 * var(--u));
-  line-height: calc(26.4 * var(--u));
-  text-decoration: underline;
-  text-underline-offset: 0.04545em;
-  text-decoration-thickness: 0.04545em;
-}
-
-/* --- CCOS detail section (`PCC-013`) -------------------------------------
-   Heights read off pages_products_ccos.svg: 31 stripe, 177 strip, 31
-   light stripe, 392 overview, 31 light stripe, 366 columns, 31 light
-   stripe, 366 lists — collapsing .ccos-detail__body (392+31+366+31+366 =
-   1186) to 0 reuses Studio's own data-collapsed height-transition pattern
-   rather than inventing a new one. */
-.ccos-detail__lead-stripe { background: var(--ccdv-ink); }
-.section--stripe--light { background: var(--ccdv-light); }
-
-.ccos-detail__strip { position: relative; display: flex; align-items: center; padding: 0 calc(48 * var(--u)); }
-.ccos-detail__wordmark { font-size: calc(96 * var(--u)); line-height: 1; margin: 0; }
-.ccos-detail__version { font-size: calc(48 * var(--u)); margin-left: calc(32 * var(--u)); }
-.ccos-detail__toggle {
-  position: absolute;
-  top: calc(16 * var(--u));
-  right: calc(32 * var(--u));
-  font-size: calc(13.2 * var(--u));
-  opacity: 0.6;
-}
-
-.ccos-detail__body { height: calc(1186 * var(--u)); overflow: hidden; transition: height 0.32s ease; }
-/* MTG05 FBI-013: once collapsed, the body is also removed from the accessibility
-   tree and tab order, after the height collapse has played (same pattern as
-   `.fan__inner`). Expanding makes it visible immediately. */
-.ccos-detail[data-collapsed="true"] .ccos-detail__body { height: 0; visibility: hidden; transition: height 0.32s ease, visibility 0s 0.32s; }
-
-/* MTG05 FBI-013: the CCOS `collapse` control is ~3px tall at phone widths.
-   Additive, layout-neutral hit area (the control is already absolutely
-   positioned, so it is the containing block); touch only, ≥44px. */
-@media (max-width: 767px) {
-  .ccos-detail__toggle::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: max(100%, 44px);
-    height: 44px;
-    transform: translate(-50%, -50%);
-  }
-}
-
-.ccos-detail__overview {
-  position: relative;
-  height: calc(392 * var(--u));
-  background: var(--ccdv-ink);
-  color: var(--ccdv-bg);
-  padding: calc(48 * var(--u));
-}
-.ccos-detail__overview-statement { font-size: calc(26 * var(--u)); margin: 0 0 calc(24 * var(--u)); }
-.ccos-detail__overview-list { list-style: none; margin: 0; padding: 0; font-size: calc(22 * var(--u)); line-height: calc(36 * var(--u)); }
-.ccos-detail__overview-icon {
-  position: absolute;
-  right: calc(96 * var(--u));
-  top: calc(60 * var(--u));
-  width: calc(110 * var(--u));
-  height: auto;
-}
-
-.ccos-detail__columns,
-.ccos-detail__lists {
-  height: calc(366 * var(--u));
-  background: var(--ccdv-panel);
-  display: flex;
-  padding: calc(40 * var(--u)) calc(48 * var(--u));
-  gap: calc(48 * var(--u));
-}
-.ccos-detail__column,
-.ccos-detail__list { flex: 1 1 0; }
-.ccos-detail__column-heading { font-size: calc(16 * var(--u)); margin: 0 0 calc(16 * var(--u)); opacity: 0.7; }
-.ccos-detail__column-body { font-size: calc(18 * var(--u)); line-height: calc(26 * var(--u)); margin: 0; white-space: pre-line; }
-.ccos-detail__list ul { list-style: none; margin: 0; padding: 0; font-size: calc(18 * var(--u)); line-height: calc(28 * var(--u)); }
-
-/* GF09-F (FBI-039) — hub strip + overview, hub only (`.ccos-detail--hub` is
-   set by CcosDetailPanel alone; leaves keep the rules above). Measured from
-   pages_products_ccos.svg, in strip/overview-local units:
-   - "[CC.OS]" is a Home-band label: 209.57, origin 24 (ink lands at 53.55),
-     baseline on the strip's bottom edge, bracket overrunning the 177 strip
-     (y1441.76..1649.56) in ink over the dark stripe above/overview below;
-   - "0.3.0" is 99 (the .band__suffix size) on that same baseline, ink at
-     x852.78 (origin 848.9 less the digit's side bearing);
-   - overview statement / list: 35.2 / 43, origin 48, baselines 74.44 and
-     172.0 (+43 each), #B2B2B2;
-   - overview icon: the scale-1 HexCube itself, 255.87 wide at x960.26,
-     y1670.22 (48.3 below the overview's top). */
-.ccos-detail--hub .ccos-detail__strip { display: block; padding: 0; }
-.ccos-detail--hub .ccos-detail__wordmark {
-  position: absolute;
-  z-index: 3;
-  left: calc(24 * var(--u));
-  top: calc(-8.76 * var(--u));
-  font-size: calc(209.57 * var(--u));
-  line-height: 1;
-  white-space: nowrap;
-  color: var(--ccdv-ink);
-}
-.ccos-detail--hub .ccos-detail__version {
-  position: absolute;
-  z-index: 3;
-  left: calc(848.9 * var(--u));
-  top: calc(89.25 * var(--u));
-  margin: 0;
-  font-size: calc(99 * var(--u));
-  line-height: 1;
-  white-space: nowrap;
-  color: var(--ccdv-ink);
-}
-.ccos-detail--hub .ccos-detail__overview { padding: 0; }
-.ccos-detail--hub .ccos-detail__overview-statement,
-.ccos-detail--hub .ccos-detail__overview-list {
-  position: absolute;
-  left: calc(48 * var(--u));
-  margin: 0;
-  font-size: calc(35.2 * var(--u));
-  line-height: calc(43 * var(--u));
-  white-space: nowrap;
-}
-.ccos-detail--hub .ccos-detail__overview-statement { top: calc(39.34 * var(--u)); }
-.ccos-detail--hub .ccos-detail__overview-list { top: calc(136.9 * var(--u)); }
-.ccos-detail--hub .ccos-detail__overview-icon {
-  right: calc(223.87 * var(--u));
-  top: calc(48.3 * var(--u));
-  width: calc(255.87 * var(--u));
-}
-
-/* === CCOS subsystem leaf pages (GF08-C2) =================================
-   `CcosSystemDetail`, the shared template behind the six
-   `/products/ccos/{wrkops,kaia,aethernos,panoptes,kron,kairon}` routes.
-   Reuses `.ccos-hub__*`/`.ccos-rail*`/`.ccos-detail__{lead-stripe,strip,
-   wordmark,version,toggle,columns,column*,lists,list}` unchanged — none of
-   those rules are edited above this block. Everything here is additive and
-   scoped under `.ccos-sysdetail`, so it can only ever affect these six
-   leaves, never the hub's own `CcosHub`/`CcosDetailPanel` instance.
-
-   Per-system values arrive as inline custom properties set by
-   `CcosSystemDetail` from `app/data/ccosSystems.ts`:
-     --ccos-sys-color     one of the six existing --ccdv-* theme tokens
-     --ccos-sys-text      ink (colored panels) or bg (WRKOPS's dark panel)
-     --ccos-body-units    .ccos-sysdetail__body height (1057 WRKOPS, 1014 the
-                           other five — see CcosSystemData.bodyHeightUnits)
-     --ccos-overview-units .ccos-sysdetail__overview height (263 / 220) */
-
-.ccos-sysdetail .ccos-hub__header,
-.ccos-sysdetail .ccos-hub__hero {
-  background: var(--ccos-sys-color, var(--ccdv-ink));
-  color: var(--ccos-sys-text, var(--ccdv-bg));
-}
-
-/* GF09-F: the three loose squares are ink on the tinted leaves (set per
-   system by CcosSystemDetail, light on WRKOPS as before) */
-.ccos-sysdetail .ccos-hub__dot { background: var(--ccos-sys-dot, var(--ccdv-light)); }
-
-.ccos-sysdetail__overview {
-  position: relative;
-  height: calc(var(--ccos-overview-units, 220) * var(--u));
-  background: var(--ccdv-ink);
-  color: var(--ccdv-bg);
-  padding: calc(48 * var(--u));
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-/* Vertically centers the icon within whatever overview height this system
-   carries, rather than hardcoding a top offset tuned for one fixed height
-   (the hub's own 392u panel is a different, untouched rule above). 127u is
-   the icon's own rendered height at the fixed 110u width (HexCube's
-   255.873:295.456 aspect ratio). */
-.ccos-sysdetail__overview .ccos-detail__overview-icon {
-  position: absolute;
-  right: calc(96 * var(--u));
-  top: calc((var(--ccos-overview-units, 220) - 127) / 2 * var(--u));
-  width: calc(110 * var(--u));
-  height: auto;
-}
-
-/* GF09-F: the columns band is min-height 366 and grows with its copy, so the
-   body is natural height (its parts sum to --ccos-body-units unless the band
-   grows) and nothing is clipped. The columns keep their 300-wide flex share. */
-.ccos-sysdetail__body { min-height: calc(var(--ccos-body-units, 1014) * var(--u)); }
-.ccos-sysdetail .ccos-detail__columns { height: auto; min-height: calc(366 * var(--u)); }
-/* an empty overview list keeps its 36 line so the statement does not move */
-.ccos-sysdetail .ccos-detail__overview-list:empty { height: calc(36 * var(--u)); }
-
-.ccos-sysdetail__stripe--accent { background: var(--ccos-sys-color); }
-.ccos-sysdetail__lists--accent { background: var(--ccos-sys-color); }
-
 /* GF09-D — mobile-only notice (mounted in root.tsx, outside .site-shell, so
    --u is not defined here: sizes are plain px on purpose). No breakpoint
    convention existed in this file; 767px is the conventional phone/tablet cut.
@@ -5440,21 +5063,6 @@ main { display: block; outline: none; }
   border: var(--pv-line) solid var(--ccdv-green);
   border-top-right-radius: calc(12.09 * var(--pv));
 }
-/* P1b: one selected topic at every width; the row names it, so the panel's
-   own label chip is for assistive tech only */
-.pv-topic:not([data-active="true"]) { display: none; }
-.pv-topic__label {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  min-height: 0;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
 .pv-code__cube,
 .pv-code__sq { display: none; }
 .pv-topic__headline[data-pending] { opacity: 0.4; }
@@ -5501,7 +5109,7 @@ main { display: block; outline: none; }
 }
 button.pv-card { cursor: pointer; }
 /* the open slot: green hairline, a 35% green fill, green type (01 on load);
-   closed slots and the empty frames: the source's <g opacity="0.2"> on the
+   closed slots: the source's <g opacity="0.2"> on the
    border and contents, over a 35% black fill (P1b CORR: 20 -> 35 %) */
 .pv-card[data-open="true"] {
   border-color: var(--ccdv-green);
@@ -5613,7 +5221,7 @@ button.pv-card { cursor: pointer; }
      page's own ink + grid ground in place of the black container.
        fit     each scene scales so it fits the screen height: --pv is the
                smaller of the width unit and 100svh / --fit-h (746.67 = the
-               shared 700 cap in 1536 units; the module its whole 832.35),
+               shared 700 cap in 1536 units; the module ~1000, CORR04),
                centred on the full-width ground; the --pv size tokens are
                re-declared so they follow it
        spread  the left column moves left and the right one right by --gx,
@@ -5634,7 +5242,7 @@ button.pv-card { cursor: pointer; }
     --sm-rise: calc(16 * var(--u));
     --gx: clamp(0px, calc((100cqw - 1536 * var(--pv)) / 2), calc(128 * var(--pv)));
   }
-  .r11--products .pv-scene { --fit-h: 832.35; }
+  .r11--products .pv-scene { --fit-h: 1000; }
   .r11--products :is(.pv-scene, .pv-next) {
     background-color: var(--ccdv-ink);
     background-image:
@@ -5653,10 +5261,10 @@ button.pv-card { cursor: pointer; }
     min-height: 100svh;
   }
   .r11--products .pv-next { position: relative; z-index: 3; }
-  .r11--products :is(.pv-cover__lockup, .pv-cover__whois, .pv-cover__sq--d, .pv-code__title, .pv-code__tabs, .pv-code__sq) {
+  .r11--products :is(.pv-cover__lockup, .pv-cover__whois, .pv-cover__sq--d, .pv-code__title) {
     translate: calc(-1 * var(--gx)) 0;
   }
-  .r11--products :is(.pv-cover__label, .pv-cover__sq--a, .pv-cover__sq--b, .pv-cover__sq--c, .pv-cover__sq--e, .pv-cover__cube, .pv-code__topics) {
+  .r11--products :is(.pv-cover__label, .pv-cover__sq--a, .pv-cover__sq--b, .pv-cover__sq--c, .pv-cover__sq--e, .pv-cover__cube) {
     translate: var(--gx) 0;
   }
 
@@ -5717,58 +5325,36 @@ button.pv-card { cursor: pointer; }
   .pv-cover__whois .pv-cover__chip { margin-bottom: calc(20.48 * var(--pv)); }
   .pv-cover__whois p + p { margin-top: calc(16 * var(--pv)); }
 
-  /* P1b: PRODUCTS_v2_singlemidpanel_variant.svg, placed on this page's 51.2
-     margins (the variant draws its lower sections at 60). CORR03: the module
-     takes the FLOW-T1 rhythm — the chip 120 down, 120 under the topic — so it
-     is 832.35 tall and fits the screen whole (--fit-h). 70.6 under the chip:
-     the rows (339.07, 22.6 / 24px floor; the first one boxed on top, since
-     the chip does not touch them here), the topic (headline/body column at
-     415.6, 507 wide) and the art panel (512.37 x 521.51, right on 1484.8,
-     green hairline, 12.09 top-right); the green square at 701.93. */
+  /* CORR04 (OPERATOR): back to PRODUCTS_v2.svg's four columns (D1), inside
+     the CORR03 scene flow: the chip 120 down, the columns 48 under it — four
+     340.4 on a 24 gap: art box 222.4 (green hairline, 12.09 top-right),
+     label chip 22.6, headline 28.16 / 35.2, body 17.6 / 22 — and 120 under
+     the longest column. The module's height follows its copy, so --fit-h is
+     an estimate for the current draft copy (~1000); a taller column scrolls
+     inside the pin (usePinTop). The tab rows, the pager and the green square
+     are phone-only here; the columns' outer edges move out with the spread. */
   .pv-code {
     position: relative;
     box-sizing: border-box;
     width: calc(1536 * var(--pv));
-    min-height: max(100svh, calc(832.35 * var(--pv)));
+    min-height: 100svh;
     margin-inline: auto;
-    padding: calc(120 * var(--pv)) calc(51.2 * var(--pv)) 0;
+    padding: calc(120 * var(--pv)) calc(51.2 * var(--pv));
   }
   .pv-code__title { width: max-content; padding-right: calc(5 * var(--pv)); }
+  .pv-code__tabs,
   .pv-code__pager { display: none; }
-  .pv-code__tabs {
-    position: absolute;
-    left: calc(51.2 * var(--pv));
-    top: calc(190.6 * var(--pv));
-    width: calc(339.07 * var(--pv));
-  }
-  .pv-code__tab { min-height: max(24px, calc(22.6 * var(--pv))); }
-  .pv-code__tab:first-child { border-top: var(--pv-line) solid var(--ccdv-green); }
-  .pv-code__sq {
-    position: absolute;
-    display: block;
-    left: calc(51.2 * var(--pv));
-    top: calc(701.93 * var(--pv));
-    width: calc(10.67 * var(--pv));
-    height: calc(10.67 * var(--pv));
-    background: var(--ccdv-green);
-  }
   .pv-code__topics {
-    position: absolute;
-    left: calc(415.6 * var(--pv));
-    top: calc(190.6 * var(--pv));
-    width: calc(1069.2 * var(--pv));
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: calc(24 * var(--pv));
+    margin: calc(48 * var(--pv)) calc(-1 * var(--gx)) 0;
   }
-  .pv-topic { position: relative; min-height: calc(521.75 * var(--pv)); }
-  .pv-topic > p { width: calc(507 * var(--pv)); }
-  .pv-topic__art {
-    position: absolute;
-    right: 0;
-    top: calc(0.24 * var(--pv));
-    width: calc(512.37 * var(--pv));
-    height: calc(521.51 * var(--pv));
-  }
+  .pv-topic__art { height: calc(222.4 * var(--pv)); }
   .pv-topic__svg { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+  .pv-topic__label { width: 100%; }
   .pv-topic__headline {
+    margin-top: calc(15 * var(--pv));
     font-size: calc(28.16 * var(--pv));
     line-height: calc(35.2 * var(--pv));
   }
@@ -5777,9 +5363,10 @@ button.pv-card { cursor: pointer; }
   .pv-topic__body + .pv-topic__body { margin-top: calc(22 * var(--pv)); }
 
   /* "Products" 74.67, 120 under the rail section's top (FLOW-T1), the rail
-     34.4 below: eight 158.2 x 263 slots on a 24 gap. Card nodes are placed
+     34.4 below: eight 158.2 x 263 columns on a 24 gap (CORR04: the
+     three cards take the first three, the rest stays empty). Card nodes are placed
      from each card's top-left, by the source ink (7.04 type). The open panel
-     drops 48 under the rail, across it; the section ends 51.2 under it. */
+     sits beside the cards (CORR05); the section ends 51.2 under the rail. */
   .pv-products {
     box-sizing: border-box;
     width: calc(1536 * var(--pv));
@@ -5793,10 +5380,16 @@ button.pv-card { cursor: pointer; }
     margin-top: calc(34.4 * var(--pv));
   }
   .pv-rail__slot { display: contents; }
-  .pv-rail__slot > .pv-card,
-  .pv-rail__empty { grid-row: 1; }
-  .pv-drop { grid-row: 2; grid-column: 1 / -1; }
-  .pv-drop__inner > .pv-panel { margin-top: calc(48 * var(--pv)); }
+  /* CORR04: three cards in columns 1-3 of the eight; the rest stays empty */
+  .pv-rail__slot > .pv-card { grid-row: 1; }
+  /* CORR05 (OPERATOR): two columns — the three cards on the left (columns
+     1-3), the open panel beside them in columns 4-8 (887 wide) on the cards'
+     row, top-aligned; switching slots cross-fades in that one cell (the
+     closing panel collapses as the new one opens). The panel slides in from
+     the left here instead of dropping. */
+  .pv-drop { grid-row: 1; grid-column: 4 / -1; align-self: start; }
+  .pv-drop .pv-panel { translate: -12px 0; }
+  .pv-drop[data-open="true"] .pv-panel { translate: 0 0; }
   .pv-card { height: calc(263 * var(--pv)); }
   .pv-card__index { left: calc(13 * var(--pv)); top: calc(10.8 * var(--pv)); }
   .pv-card__label,
@@ -5807,29 +5400,30 @@ button.pv-card { cursor: pointer; }
   .pv-card__icon { left: 50%; top: calc(104.54 * var(--pv)); width: calc(var(--icon-w) * var(--pv)); }
   .pv-card--ccos .pv-card__icon { top: calc(115.44 * var(--pv)); }
 
-  /* 1433.6 wide: copy column at 36.34 (title 35.2, baseline 86.6 in; body
-     17.6 / 22; CTA 13.07 on an 18 light plate, 36.3 off the bottom).
-     CC.OS (599.46 tall): the graph at 697.3, 45.31 (Studio's graph x1.2695 =
-     490 x 530.5). LS / iDS (598 / 558 tall): the dark art box at 487.336,
-     58.121, 909.932 x 502.879 / 463, rx 10. */
+  /* CORR05: 887 wide, at least the cards' 263 tall, growing with its copy:
+     copy column 380 at 36.34 (title 35.2, body 17.6 / 22; CTA 13.07 on an 18
+     light plate, 36.3 off the bottom); the art on the right, 420 wide at 430
+     with its source proportions — CC.OS Studio's graph (490 x 530.5 ->
+     420 x 454.7, 45.31 down), LS / iDS the dark art box (909.932 x 502.879 /
+     463 -> 420 x 232.1 / 213.7, 58.121 down, rx 10). */
   .pv-panel {
+    min-height: calc(263 * var(--pv));
     padding: calc(55.37 * var(--pv)) 0 calc(36.3 * var(--pv)) calc(36.34 * var(--pv));
     border-top-right-radius: calc(12.09 * var(--pv));
   }
-  .pv-panel--ccos { min-height: calc(599.46 * var(--pv)); }
-  .pv-panel--ls { min-height: calc(598 * var(--pv)); }
-  .pv-panel--ids { min-height: calc(558 * var(--pv)); }
+  .pv-panel--ccos { min-height: calc(545.31 * var(--pv)); }
+  .pv-panel--ls { min-height: calc(348.34 * var(--pv)); }
+  .pv-panel--ids { min-height: calc(329.94 * var(--pv)); }
   .pv-panel__index { left: calc(13 * var(--pv)); top: calc(10.8 * var(--pv)); font-size: max(7px, calc(7.04 * var(--pv))); }
-  .pv-panel--ccos .pv-panel__art { left: calc(697.3 * var(--pv)); top: calc(45.31 * var(--pv)); width: calc(490 * var(--pv)); height: calc(530.5 * var(--pv)); }
+  .pv-panel__art { left: calc(430 * var(--pv)); width: calc(420 * var(--pv)); }
+  .pv-panel--ccos .pv-panel__art { top: calc(45.31 * var(--pv)); height: calc(454.7 * var(--pv)); }
   .pv-panel:not(.pv-panel--ccos) .pv-panel__art {
-    left: calc(487.336 * var(--pv));
     top: calc(58.121 * var(--pv));
-    width: calc(909.932 * var(--pv));
     border-radius: calc(10 * var(--pv));
   }
-  .pv-panel--ls .pv-panel__art { height: calc(502.879 * var(--pv)); }
-  .pv-panel--ids .pv-panel__art { height: calc(463 * var(--pv)); }
-  .pv-panel__copy { width: calc(410 * var(--pv)); }
+  .pv-panel--ls .pv-panel__art { height: calc(232.1 * var(--pv)); }
+  .pv-panel--ids .pv-panel__art { height: calc(213.7 * var(--pv)); }
+  .pv-panel__copy { width: calc(380 * var(--pv)); }
   .pv-panel__title { font-size: calc(35.2 * var(--pv)); line-height: calc(35.2 * var(--pv)); }
   .pv-panel__body { font-size: max(11px, calc(17.6 * var(--pv))); line-height: calc(22 * var(--pv)); }
   .pv-panel__title + .pv-panel__body { margin-top: calc(35.5 * var(--pv)); }
@@ -5846,7 +5440,7 @@ button.pv-card { cursor: pointer; }
    Positions are the artboard's, measured from the bottom of the 50px M1 bar
    (y50.14). The cover keeps only the cube (x0.2379 of the desktop drawing);
    the tab list, one topic panel and the pager follow; the product rows
-   (empty frames not shown), each opening its panel under it (P1b CORR03;
+   (three), each opening its panel under it (P1b CORR03;
    CC.OS: Studio's graph x0.7849 on top). The scene flow (curtain, pin) is
    desktop only, as on Studio / Services. */
 @media (max-width: 1023px) {
@@ -5889,6 +5483,21 @@ button.pv-card { cursor: pointer; }
   .pv-code__tab { min-height: max(24px, calc(22.6 * var(--k))); }
   .pv-code__tab:not([aria-selected="true"]) { background: var(--ccdv-ink); }
   .pv-code__topics { margin-top: calc(47.95 * var(--k)); }
+  /* one selected topic; the row names it, so the panel's own label chip is
+     for assistive tech only (desktop shows all four with their chips, CORR04) */
+  .pv-topic:not([data-active="true"]) { display: none; }
+  .pv-topic__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    min-height: 0;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
   .pv-topic__art { height: calc(245 * var(--k)); border-top-right-radius: calc(12.09 * var(--k)); }
   .pv-topic__svg {
     position: absolute;
@@ -5915,7 +5524,6 @@ button.pv-card { cursor: pointer; }
   .pv-products { padding: 0 calc(28 * var(--k)); }
   .pv-products__title { margin-top: calc(40.9 * var(--k)); font-size: calc(74.67 * var(--k)); }
   .pv-rail { row-gap: calc(24.2 * var(--k)); margin-top: calc(34.4 * var(--k)); }
-  .pv-rail__empty { display: none; }
   .pv-card { height: calc(122 * var(--k)); border-top-right-radius: calc(12.09 * var(--k)); font-size: max(7px, calc(7.04 * var(--k))); }
   .pv-card__index { left: calc(13 * var(--k)); top: calc(10.9 * var(--k)); }
   .pv-card__label { left: calc(13 * var(--k)); top: calc(32.7 * var(--k)); }
@@ -5950,3 +5558,450 @@ button.pv-card { cursor: pointer; }
   .pv-panel__cta { padding: 0 calc(5.5 * var(--k)); font-size: max(10px, calc(13.07 * var(--k))); line-height: max(18px, calc(18 * var(--k))); }
 }
 /* === end PRODUCTS V2 ======================================================== */
+
+/* === CC.OS DECK (t_20261117_products20 P2) ==================================
+   /products/ccos, PRODUCTS/CCOS.svg (1440 x 5139 draft; OPERATOR: the site's
+   margins, not the draft's 24). A slideshow (CcosDeck): every slide is one
+   screen, stacked; the next rises over the current one, which stays and dims.
+   Desktop (>= 1024): each slide's content is a 1536 x 864 frame that fits the
+   screen (--pv = the smaller of the width and height units, SIZE-T1) with the
+   page's 51.2 margins; the ground (ink + 5% grid) fills the rest. Phones and
+   tablets: one 390 column (--k) that scrolls inside its slide when taller than
+   the screen. The route also carries r11--products: Products' thin masthead,
+   M1 bar and menu, and their idle rule. */
+.r11--ccos {
+  --nav-in: 1;
+  --pv: min(calc(1cqw / 15.36), calc(100svh / 864));
+  --cc-box: #1A1A1A;
+  --cc-panel: #1C1C1C;
+  --cc-line: #D9D9D9;
+  --cc-move: 0.7s;
+  color: var(--ccdv-panel);
+}
+.r11--ccos p { margin: 0; }
+.r11--ccos :is(.cc-hidden, .cc-deck__status) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* the deck: one screen, clipped (focus never scrolls it), its own stacking
+   context so the masthead (z 7) stays above every slide */
+.cc-deck {
+  position: relative;
+  height: 100svh;
+  overflow: clip;
+  overscroll-behavior: none;
+  touch-action: none;
+  isolation: isolate;
+}
+.cc-deck [data-deck-scroll] { touch-action: pan-y; overscroll-behavior: contain; }
+
+.cc-slide {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z);
+  background-color: var(--ccdv-ink);
+  background-image:
+    linear-gradient(rgb(242 242 242 / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(242 242 242 / 0.05) 1px, transparent 1px);
+  background-size: var(--pv-grid) var(--pv-grid);
+  transition: translate var(--cc-move) var(--sm-ease), visibility 0s linear var(--cc-move);
+}
+.cc-slide::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  background: rgb(0 0 0 / 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--cc-move) var(--sm-ease);
+}
+.cc-slide[data-state="past"]::after { opacity: 1; }
+.cc-slide:is([data-state="next"], [data-state="after"]) { translate: 0 100%; }
+.cc-slide:is([data-state="behind"], [data-state="after"]) { visibility: hidden; }
+.cc-slide:is([data-state="current"], [data-state="past"], [data-state="next"]) {
+  visibility: visible;
+  transition: translate var(--cc-move) var(--sm-ease), visibility 0s;
+}
+/* the footer: its own height, rising over the last slide's lower part */
+.cc-slide--partial {
+  inset: auto 0 0;
+  max-height: 100%;
+  overflow-y: auto;
+  background: none;
+}
+.cc-slide--partial::after { content: none; }
+
+/* a slide's pieces come up in order (--i) once it is the current one */
+.cc-slide [data-spawn] {
+  transition:
+    opacity var(--cc-move) var(--sm-ease) calc(0.25s + var(--i, 0) * 0.12s),
+    transform var(--cc-move) var(--sm-ease) calc(0.25s + var(--i, 0) * 0.12s);
+}
+.cc-slide:is([data-state="next"], [data-state="after"], [data-state="behind"]) [data-spawn] {
+  opacity: 0;
+  transform: translateY(calc(16 * var(--u)));
+  transition: none;
+}
+
+.cc-deck__next {
+  position: absolute;
+  left: 50%;
+  bottom: calc(14 * var(--pv));
+  z-index: 30;
+  padding: 0 calc(8 * var(--pv));
+  translate: -50% 0;
+  color: var(--ccdv-panel);
+  font-size: max(13px, calc(17.6 * var(--pv)));
+  line-height: 1.4;
+  opacity: 0.6;
+}
+.cc-deck__next:hover { opacity: 1; }
+.cc-deck__next[hidden] { display: none; }
+
+/* shared pieces */
+.cc-frame { position: absolute; box-sizing: border-box; }
+.cc-box { position: relative; overflow: hidden; background: var(--cc-box); }
+.cc-back {
+  position: absolute;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  background: var(--ccdv-panel);
+  color: var(--ccdv-ink);
+  font-size: var(--t-small);
+  line-height: 1.4;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.cc-back:hover { text-decoration: underline; }
+.cc-hero::before {
+  content: "";
+  position: absolute;
+  background: var(--cc-panel);
+}
+.cc-hero__mark { position: absolute; display: block; }
+.cc-intro__copy { text-align: center; }
+.cc-info__label { font-size: max(10px, calc(12.8 * var(--pv))); opacity: 0.7; }
+.cc-info__name {
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 0.04545em;
+}
+.cc-info__swap { animation: cc-swap 0.45s var(--sm-ease) both; }
+@keyframes cc-swap {
+  from { opacity: 0; transform: translateY(8px); }
+}
+.cc-statement__copy { text-align: center; }
+
+/* the core map */
+.cc-map { position: relative; }
+.cc-map__svg { display: block; width: 100%; height: auto; }
+.cc-map__links path { fill: none; stroke: #F2F2F2; stroke-width: 0.5; }
+.cc-map__thin path { fill: none; stroke: #F2F2F2; stroke-width: 0.75; }
+.cc-map__abbr {
+  fill: #F2F2F2;
+  font-family: inherit;
+  font-size: 15.5px;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+.cc-map__wye { fill: none; stroke: #D9D9D9; stroke-width: 1.72; }
+.cc-map__thin,
+.cc-map__solid { transition: opacity 0.35s var(--sm-ease); }
+.cc-map__core[data-selected="true"] .cc-map__thin,
+.cc-map__core[data-selected="false"] .cc-map__solid { opacity: 0; }
+.cc-map__button {
+  position: absolute;
+  width: 12.57%;
+  height: 20.27%;
+  translate: -50% -50%;
+  cursor: pointer;
+}
+.cc-map__button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  background: #F2F2F2;
+  opacity: 0;
+  transition: opacity 0.2s var(--sm-ease);
+}
+.cc-map__button:hover::before { opacity: 0.08; }
+.cc-map__button[aria-pressed="true"] { cursor: default; }
+.cc-map__button[aria-pressed="true"]::before { opacity: 0; }
+
+/* the explainer */
+.cc-explainer__list,
+.cc-explainer__detail { box-sizing: border-box; background: var(--ccdv-ink); }
+.cc-explainer__mark { display: block; height: auto; }
+.cc-explainer__items li:first-child { border-bottom: 1px solid rgb(217 217 217 / 0.4); }
+.cc-explainer__item {
+  display: flex;
+  align-items: center;
+  color: var(--ccdv-panel);
+  text-align: left;
+  opacity: 0.5;
+  transition: opacity 0.2s var(--sm-ease);
+}
+.cc-explainer__item:hover { opacity: 0.8; }
+.cc-explainer__item[aria-pressed="true"] { opacity: 1; text-decoration: underline; text-underline-offset: 0.2em; }
+.cc-explainer__icon { flex: none; display: block; height: auto; }
+.cc-explainer__body { display: flex; flex-direction: column; min-height: 100%; }
+.cc-explainer__pair { display: grid; grid-template-columns: 1fr 1fr; }
+.cc-explainer__lists li::before { content: "- "; }
+.cc-explainer__facts { margin-top: auto; }
+
+/* the app */
+.cc-app__figure { margin: 0; }
+.cc-app__img { display: block; width: 100%; height: 100%; object-fit: contain; }
+
+/* the illustrations (CcosArt): they move only on the current slide */
+.cc-art { display: block; width: 100%; height: auto; }
+.cc-art__face { fill: var(--cc-box); stroke: var(--cc-line); stroke-width: 1; stroke-linejoin: round; }
+.cc-art__line { fill: none; stroke: var(--cc-line); stroke-width: 1; stroke-linejoin: round; }
+.cc-art__label { fill: var(--cc-line); font-family: inherit; font-size: 13px; opacity: 0.6; }
+.cc-art__label--node { dominant-baseline: central; opacity: 1; }
+.cc-art__dot { fill: var(--ccdv-green); }
+.cc-art__bar { fill: var(--cc-line); opacity: 0.45; }
+.cc-art__gate { fill: none; stroke: var(--ccdv-green); stroke-width: 3; }
+
+.cc-eco__join {
+  transition:
+    translate 1.1s var(--sm-ease) calc(0.35s + var(--i, 0) * 0.09s),
+    opacity 0.8s var(--sm-ease) calc(0.35s + var(--i, 0) * 0.09s);
+}
+.cc-slide:is([data-state="next"], [data-state="after"], [data-state="behind"]) .cc-eco__join {
+  translate: var(--x) var(--y);
+  opacity: 0;
+  transition: none;
+}
+.cc-eco__breathe { animation: cc-breathe 6s ease-in-out var(--phase, 0s) infinite; }
+@keyframes cc-breathe {
+  0%, 100% { translate: 0 0; }
+  50% { translate: var(--bx) var(--by); }
+}
+.cc-eco__core {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cc-core 6s ease-in-out infinite;
+}
+@keyframes cc-core {
+  50% { scale: 0.97; }
+}
+
+/* one 12 s cycle: the LLM sends an operation through the gate (the doors
+   open as it passes) and the core takes it; then the LLM dims and the core
+   works on its own; the perimeter scans and the history scrolls throughout */
+.cc-local__rim {
+  fill: none;
+  stroke: var(--cc-line);
+  stroke-width: 1;
+  stroke-dasharray: 6 10;
+  opacity: 0.6;
+  animation: cc-scan 12s linear infinite;
+}
+@keyframes cc-scan {
+  to { stroke-dashoffset: -192; }
+}
+.cc-local__log { animation: cc-log 12s linear infinite; }
+@keyframes cc-log {
+  to { translate: 0 -192px; }
+}
+.cc-local__door--a { animation: cc-door-a 12s ease-in-out infinite; }
+.cc-local__door--b { animation: cc-door-b 12s ease-in-out infinite; }
+@keyframes cc-door-a {
+  0%, 13%, 29%, 100% { translate: 0 0; }
+  17%, 25% { translate: 0 -54px; }
+}
+@keyframes cc-door-b {
+  0%, 13%, 29%, 100% { translate: 0 0; }
+  17%, 25% { translate: 0 54px; }
+}
+.cc-local__token { fill: var(--ccdv-green); opacity: 0; animation: cc-token 12s linear infinite; }
+@keyframes cc-token {
+  0% { translate: 0 0; opacity: 0; }
+  4% { opacity: 1; }
+  31% { translate: -176px 0; opacity: 1; }
+  34% { translate: -176px 0; opacity: 0; }
+  35%, 100% { translate: 0 0; opacity: 0; }
+}
+.cc-local__link { fill: none; stroke: var(--cc-line); stroke-width: 1; stroke-dasharray: 4 6; }
+.cc-local__node { animation: cc-node 12s ease-in-out infinite; }
+@keyframes cc-node {
+  0%, 36%, 100% { opacity: 1; }
+  44%, 92% { opacity: 0.3; }
+}
+.cc-local__core path { animation: cc-take 12s ease-in-out infinite; }
+@keyframes cc-take {
+  0%, 30%, 40%, 66%, 78%, 100% { stroke: var(--cc-line); }
+  33%, 70% { stroke: var(--ccdv-green); }
+}
+
+.cc-slide:not([data-state="current"]) :is(.cc-eco__breathe, .cc-eco__core, .cc-local__rim, .cc-local__log, .cc-local__door, .cc-local__token, .cc-local__node, .cc-local__core path) {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(.cc-eco__breathe, .cc-eco__core, .cc-local__rim, .cc-local__log, .cc-local__door, .cc-local__token, .cc-local__node, .cc-local__core path) {
+    animation: none;
+  }
+}
+
+/* --- desktop: 1536 x 864 frames --------------------------------------------- */
+@media (min-width: 1024px) {
+  .cc-frame {
+    left: 50%;
+    top: 50%;
+    width: calc(1536 * var(--pv));
+    height: calc(864 * var(--pv));
+    padding: calc(51.2 * var(--pv));
+    translate: -50% -50%;
+  }
+
+  /* 1 — the dark frame on the margins, the lockup centred (CCOS.svg 217.2
+     wide -> 231.7), the back chip on the frame's corner */
+  .cc-hero::before { inset: calc(51.2 * var(--pv)); }
+  .cc-hero__mark { left: 50%; top: 50%; width: calc(231.7 * var(--pv)); height: auto; translate: -50% -50%; }
+  .cc-back { left: calc(51.2 * var(--pv)); top: calc(51.2 * var(--pv)); padding: 0 calc(6 * var(--pv)); }
+
+  /* 2 — one centred column, headline type (28.16 / 35.2) */
+  .cc-intro { display: flex; align-items: center; justify-content: center; }
+  .cc-intro__copy { width: calc(680 * var(--pv)); font-size: calc(28.16 * var(--pv)); line-height: calc(35.2 * var(--pv)); }
+  .cc-intro__copy p + p { margin-top: calc(35.2 * var(--pv)); }
+
+  /* 3-5 — two columns on a 48 gap, vertically centred */
+  .cc-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: calc(48 * var(--pv));
+    align-items: center;
+  }
+  .cc-box { border-radius: calc(10 * var(--pv)); }
+  .cc-info { padding-right: calc(24 * var(--pv)); }
+  .cc-info__name { margin-top: calc(6 * var(--pv)); font-size: calc(35.2 * var(--pv)); line-height: calc(42 * var(--pv)); }
+  .cc-info__label--gap { margin-top: calc(40 * var(--pv)); }
+  .cc-info__text { margin-top: calc(6 * var(--pv)); font-size: max(11px, calc(17.6 * var(--pv))); line-height: calc(22 * var(--pv)); }
+  .cc-info__lead { margin-top: calc(40 * var(--pv)); font-size: calc(21.33 * var(--pv)); line-height: calc(28 * var(--pv)); }
+  .cc-statement__copy { padding: 0 calc(24 * var(--pv)); font-size: calc(28.16 * var(--pv)); line-height: calc(35.2 * var(--pv)); }
+
+  /* 6 — the dark frame holding two ink panels, 25.6 in and apart (the
+     draft's 24 x 1.0667) */
+  .cc-explainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: calc(25.6 * var(--pv));
+    padding: calc(76.8 * var(--pv));
+  }
+  .cc-explainer::before {
+    content: "";
+    position: absolute;
+    inset: calc(51.2 * var(--pv));
+    z-index: -1;
+    background: var(--cc-panel);
+  }
+  .cc-explainer__list { padding: calc(32 * var(--pv)) calc(34 * var(--pv)); }
+  .cc-explainer__mark { width: calc(231.7 * var(--pv)); }
+  .cc-explainer__items { margin-top: calc(28 * var(--pv)); border-top: 1px solid rgb(217 217 217 / 0.4); }
+  .cc-explainer__items li:first-child { padding: calc(10 * var(--pv)) 0; margin-bottom: calc(10 * var(--pv)); }
+  .cc-explainer__item {
+    gap: calc(14 * var(--pv));
+    padding: calc(8 * var(--pv)) 0;
+    font-size: calc(19.2 * var(--pv));
+    line-height: calc(24 * var(--pv));
+  }
+  .cc-explainer__icon { width: calc(26 * var(--pv)); }
+  .cc-explainer__detail { padding: calc(32 * var(--pv)) calc(34 * var(--pv)); overflow-y: auto; }
+  .cc-explainer__pair { column-gap: calc(24 * var(--pv)); }
+  .cc-explainer .cc-info__name,
+  .cc-info__area { margin-top: calc(6 * var(--pv)); font-size: calc(28.16 * var(--pv)); line-height: calc(35.2 * var(--pv)); }
+  .cc-explainer__text { margin-top: calc(32 * var(--pv)); font-size: max(11px, calc(17.6 * var(--pv))); line-height: calc(22 * var(--pv)); }
+  .cc-explainer__text p + p { margin-top: calc(14 * var(--pv)); }
+  .cc-explainer__lists { margin-top: calc(32 * var(--pv)); font-size: max(11px, calc(15.2 * var(--pv))); line-height: calc(22 * var(--pv)); }
+  .cc-explainer__lists ul { margin-top: calc(10 * var(--pv)); }
+  .cc-explainer__facts { padding-top: calc(32 * var(--pv)); }
+
+  /* 7 — a hairline frame on the margins, the app inside it */
+  .cc-app::before {
+    content: "";
+    position: absolute;
+    inset: calc(51.2 * var(--pv));
+    border: 0.5px solid var(--cc-line);
+  }
+  .cc-app__figure { position: absolute; inset: calc(96 * var(--pv)) calc(117 * var(--pv)); }
+}
+
+/* --- phones + tablets: one 390 column per slide ----------------------------- */
+@media (max-width: 1023px) {
+  .r11--ccos { --k: min(1.5px, calc(100cqw / 390)); }
+  .cc-frame {
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: safe center;
+    gap: calc(28 * var(--k));
+    padding: calc(56 * var(--k)) max(calc(28 * var(--k)), calc((100% - 334 * var(--k)) / 2)) calc(48 * var(--k));
+    overflow-y: auto;
+  }
+  .cc-box { border-radius: calc(10 * var(--k)); }
+  .cc-deck__next { bottom: 8px; font-size: 16px; }
+
+  .cc-hero::before { inset: 12px; }
+  .cc-hero__mark { left: 50%; top: 50%; width: calc(234 * var(--k)); height: auto; translate: -50% -50%; }
+  .cc-back { left: 12px; top: 12px; min-height: 24px; padding: 0 6px; }
+
+  .cc-intro__copy { font-size: calc(22 * var(--k)); line-height: calc(28 * var(--k)); }
+  .cc-intro__copy p + p { margin-top: calc(24 * var(--k)); }
+
+  .cc-info__name { margin-top: 4px; font-size: calc(28.16 * var(--k)); line-height: calc(35.2 * var(--k)); }
+  .cc-info__label--gap { margin-top: calc(20 * var(--k)); }
+  .cc-info__text { margin-top: 4px; font-size: calc(15.2 * var(--k)); line-height: calc(20 * var(--k)); }
+  .cc-info__lead { margin-top: calc(20 * var(--k)); font-size: calc(17.6 * var(--k)); line-height: calc(23 * var(--k)); }
+  .cc-statement__copy { font-size: calc(20 * var(--k)); line-height: calc(26 * var(--k)); }
+  .cc-statement--flip .cc-statement__art { order: 1; }
+
+  /* 6 — the list as a wrapping row of chips over the detail, which scrolls */
+  .cc-explainer { overflow: hidden; justify-content: flex-start; }
+  .cc-explainer__list { padding: 0; background: none; }
+  .cc-explainer__mark { width: calc(160 * var(--k)); }
+  .cc-explainer__items { display: flex; flex-wrap: wrap; gap: 6px; margin-top: calc(16 * var(--k)); }
+  .cc-explainer__items li:first-child { border-bottom: 0; }
+  .cc-explainer__item {
+    gap: 6px;
+    min-height: 32px;
+    padding: 0 8px 0 6px;
+    border: 1px solid rgb(217 217 217 / 0.4);
+    font-size: calc(13.2 * var(--k));
+  }
+  .cc-explainer__item[aria-pressed="true"] { border-color: var(--ccdv-panel); text-decoration: none; }
+  .cc-explainer__icon { width: 18px; }
+  .cc-explainer__detail {
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: calc(20 * var(--k)) calc(18 * var(--k));
+    overflow-y: auto;
+  }
+  .cc-explainer__pair { column-gap: calc(16 * var(--k)); }
+  .cc-explainer .cc-info__name,
+  .cc-info__area { margin-top: 4px; font-size: calc(20 * var(--k)); line-height: calc(26 * var(--k)); }
+  .cc-explainer__text { margin-top: calc(20 * var(--k)); font-size: calc(15.2 * var(--k)); line-height: calc(20 * var(--k)); }
+  .cc-explainer__text p + p { margin-top: calc(10 * var(--k)); }
+  .cc-explainer__lists { margin-top: calc(20 * var(--k)); font-size: calc(13.2 * var(--k)); line-height: calc(19 * var(--k)); }
+  .cc-explainer__lists ul { margin-top: 6px; }
+  .cc-explainer__facts { padding-top: calc(20 * var(--k)); }
+
+  .cc-app__figure { border: 0.5px solid var(--cc-line); padding: calc(10 * var(--k)); }
+  .cc-app__img { height: auto; }
+}
+@media (max-width: 767px) {
+  .cc-deck { height: calc(100svh - 50px); }
+}
+/* === end CC.OS DECK ========================================================= */

@@ -53,32 +53,19 @@ export function useTransitionLink() {
   );
 }
 
-/* GF09-F CORR03: the CCOS hub and its six leaves share ONE presence key. A
-   route swap normally exits (opacity 0) and remounts the stage; for a CCOS-to-
-   CCOS hop that dip is the visible flash (the page fades to the bare body
-   background and back, and the exiting node most likely re-renders the
-   already-incoming route, so the destination mounts twice). With a shared key AnimatePresence
-   sees no change: the stage node stays, the <Outlet /> inside it swaps the
-   route component in a single React commit, and the document is never empty,
-   transparent or shorter than the destination. No timers, no scroll writes:
-   the browser keeps scrollY (clamped to the new height) and the router's
-   ScrollRestoration honours the rail links' preventScrollReset. Entering or
-   leaving the CCOS family still uses the original per-path exit/enter. */
-const CCOS_ROOT = "/products/ccos";
-
-function isCcosPath(pathname: string) {
-  return pathname === CCOS_ROOT || pathname.startsWith(`${CCOS_ROOT}/`);
-}
-
 /* NAV-T3 (OPERATOR): Home <-> the scene routes. Leaving Home for Studio or
    Services the new page RISES from below over Home ("rise"); going back Home
    (collapse, Back) the scene page FALLS away and uncovers Home ("fall"). Any
    other swap keeps the fade. The direction is read from the pair of paths, so
    Back/Forward get it too, and is held per location key so the exiting
    route's variant cannot change mid-exit. Products V2 P1b: /products is a
-   scene route too (it used to fade in whole, cube first — the flash). */
+   scene route too (it used to fade in whole, cube first — the flash).
+   P2 (OPERATOR): the CC.OS deck rises out of /products the same way and falls
+   back to it (SCENE_PARENT). Its six leaf pages are gone, so the former
+   shared CCOS presence key (GF09-F CORR03) has nothing left to join. */
 type RouteMove = "rise" | "fall" | "fade" | "load";
 const SCENE_ROUTES = ["/studio", "/services", "/products"];
+const SCENE_PARENT: Record<string, string> = { "/products/ccos": "/products" };
 const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 const SLIDE_S = 0.7;
 const SLIDE_EASE: [number, number, number, number] = [0.22, 0.61, 0.36, 1];
@@ -86,6 +73,8 @@ const SLIDE_EASE: [number, number, number, number] = [0.22, 0.61, 0.36, 1];
 function routeMove(from: string, to: string): RouteMove {
   if (from === "/" && SCENE_ROUTES.includes(to)) return "rise";
   if (SCENE_ROUTES.includes(from) && to === "/") return "fall";
+  if (SCENE_PARENT[to] === from) return "rise";
+  if (SCENE_PARENT[from] === to) return "fall";
   return "fade";
 }
 
@@ -98,9 +87,7 @@ export function GlobalShell({ children }: { children: ReactNode }) {
   const transition = useTransitionCoordinator();
   const location = useLocation();
   const initialMount = useRef(true);
-  const mainNode = useRef<HTMLElement | null>(null);
-  const previousPath = useRef(location.pathname);
-  const routeKey = isCcosPath(location.pathname) ? CCOS_ROOT : location.pathname;
+  const routeKey = location.pathname;
 
   const shellRef = useRef<HTMLDivElement>(null);
   /* `from` is the outgoing page's scroll offset, read while rendering the new
@@ -156,7 +143,6 @@ export function GlobalShell({ children }: { children: ReactNode }) {
   // route swap remounts this node; the first mount is skipped so a cold page
   // load does not steal focus from the document.
   const focusRoute = useCallback((node: HTMLElement | null) => {
-    mainNode.current = node;
     if (!node) return;
     if (initialMount.current) {
       initialMount.current = false;
@@ -164,18 +150,6 @@ export function GlobalShell({ children }: { children: ReactNode }) {
     }
     node.focus({ preventScroll: true });
   }, []);
-
-  // CCOS-to-CCOS keeps the same <main> (see CCOS_ROOT), so the ref above does
-  // not fire. The clicked rail link is replaced with the new page, which would
-  // drop focus to <body>; give it to <main> exactly as a remount would.
-  useEffect(() => {
-    const previous = previousPath.current;
-    previousPath.current = location.pathname;
-    if (previous === location.pathname) return;
-    if (isCcosPath(previous) && isCcosPath(location.pathname)) {
-      mainNode.current?.focus({ preventScroll: true });
-    }
-  }, [location.pathname]);
 
   /* HOME-T1 (t_20261113_workv2 addendum): route swaps no longer flash. Under
      mode="wait" the outgoing route faded to 0 and unmounted BEFORE the

@@ -6,7 +6,7 @@ import type { ProductsEntry } from "../data/productsContent";
    disclosure button that drops its panel below the rail (phones: under the
    row; ProductsRail). The open slot takes the green look, the closed ones the
    source's dimmed look. CC.OS no longer links straight to its hub: its panel's
-   CTA does. The empty frames (03, 05-08) are ProductsEmptySlot. Desktop stacks
+   CTA does. CORR04: the empty frames are gone (three cards only). Desktop stacks
    index / label / icon / status down the card; phones lay the same nodes out
    as a row (CSS). */
 export function ProductsCard({
@@ -37,13 +37,5 @@ export function ProductsCard({
       <ProductsCardIcon kind={kind} />
       {status && <span className="pv-card__status">{status}</span>}
     </button>
-  );
-}
-
-export function ProductsEmptySlot({ index }: { index: string }) {
-  return (
-    <span className="pv-card pv-card--empty" aria-hidden="true">
-      <span className="pv-card__index">[ {index} ]</span>
-    </span>
   );
 }

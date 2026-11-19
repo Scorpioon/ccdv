@@ -1,3 +1,5 @@
+import type { TransitionTarget } from "../motion/transitionCoordinator";
+
 /* Products V2 content (t_20261117_products20, P1 / P1b).
 
    Layout source: PRODUCTS_v2.svg (desktop, OPERATOR D1; \\Our Software Code
@@ -84,8 +86,9 @@ export const PRODUCTS_TOPICS: ProductsTopic[] = [
 export interface ProductsPanel {
   title: string;
   body: string[];
-  /** CC.OS only: LS and iDS have no product page yet (OPERATOR) */
-  cta?: { label: string; href: string };
+  /** CC.OS only: LS and iDS have no product page yet (OPERATOR); a scene
+      route, so the CTA rises into it (P2) */
+  cta?: { label: string; href: TransitionTarget };
   art: "ccos" | "ls" | "ids";
 }
 
@@ -93,7 +96,7 @@ export interface ProductsEntry {
   index: string;
   label: string;
   kind: "ccos" | "triangle" | "pentagon";
-  /** the card's status line (02 / 04) */
+  /** the card's status line (02 / 03) */
   status?: string;
   /** what drops below the rail when the slot is opened */
   panel: ProductsPanel;
@@ -101,11 +104,12 @@ export interface ProductsEntry {
 
 export const PRODUCTS_STATUS = "[ Coming Soon ]";
 
-/* The rail's eight slots (P1b CORR03, OPERATOR): a product slot opens its
+/* The rail's products (P1b CORR03, OPERATOR): a product slot opens its
    panel below the rail (phones: under its row); 01 is open on load. Card 02 is
-   LocalScene, 04 iDS (2026-11-17 OPERATOR rename from PROJECT L; mixed case
-   kept). The former 03 (PROJECT VC) is removed with all its text (OPERATOR):
-   03 is an empty frame now, as 05-08.
+   LocalScene, 03 iDS (2026-11-17 OPERATOR rename from PROJECT L; mixed case
+   kept). The former 03 (PROJECT VC) is removed with all its text (OPERATOR).
+   CORR04 (OPERATOR): only these three remain — the empty frames are gone and
+   iDS moves up from 04 to 03; the cards keep their eight-column width.
 
    CC.OS: design title and CTA label; the body is copys_v2.txt "Collapse
    Creative Operating System" (the first four paragraphs) in place of the
@@ -144,7 +148,7 @@ export const PRODUCTS: ProductsEntry[] = [
     },
   },
   {
-    index: "04",
+    index: "03",
     label: "PROJECT iDS",
     kind: "pentagon",
     status: PRODUCTS_STATUS,
@@ -159,5 +163,4 @@ export const PRODUCTS: ProductsEntry[] = [
   },
 ];
 
-export const PRODUCTS_SLOTS = ["01", "02", "03", "04", "05", "06", "07", "08"];
 export const PRODUCTS_DEFAULT_OPEN = "01";

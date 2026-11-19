@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { useMotionPolicy } from "./reducedMotion";
-export type TransitionDirection = "to-studio" | "to-services" | "to-products" | "to-home" | null;
+export type TransitionDirection = "to-studio" | "to-services" | "to-products" | "to-ccos" | "to-home" | null;
 // NAV-T3 (OPERATOR): Services joins Studio as a scene route Home rises into,
 // and every `collapse` link returns through "/". Products V2 P1b
-// (t_20261117_products20): Products joins them.
-export type TransitionTarget = "/" | "/studio" | "/services" | "/products";
+// (t_20261117_products20): Products joins them; P2: /products/ccos rises out
+// of /products and falls back to it.
+export type TransitionTarget = "/" | "/studio" | "/services" | "/products" | "/products/ccos";
 // PROVISIONAL lifecycle timings. NOT a design decision and NOT canonical:
 // GF05-A and matrix v3.8 both forbid freezing duration/easing before the
 // visual pieces are confirmed. EXIT_LEAD_MS is the pre-navigation scene lead;
@@ -68,7 +69,9 @@ export function useTransitionCoordinator() {
           ? "to-services"
           : to === "/products"
             ? "to-products"
-            : "to-home",
+            : to === "/products/ccos"
+              ? "to-ccos"
+              : "to-home",
     );
     const startKey = locationKey.current;
     const leadMs = reduced ? 0 : EXIT_LEAD_MS;
