@@ -6017,3 +6017,24 @@ html:has(.r11--ccos) body { overflow: hidden; overscroll-behavior: none; }
   .cc-explainer__facts { margin-top: calc(22 * var(--k)); padding-top: calc(16 * var(--k)); }
 }
 /* === end CC.OS DECK ========================================================= */
+
+/* H1 SHELL FIRST PAINT & ERROR VIEW */
+/* root.tsx ErrorBoundary: standalone (outside .site-shell, so --u is not set):
+   plain px / clamp, panel type on the ink body ground; no motion */
+.not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  min-height: 100vh;
+  min-height: 100svh;
+  box-sizing: border-box;
+  padding: clamp(24px, 6vw, 96px);
+  color: var(--ccdv-panel);
+}
+.not-found__title { font-size: clamp(28px, 4vw, 56px); line-height: 1.1; }
+.not-found__title:focus { outline: none; }
+.not-found__text { max-width: 40ch; font-size: clamp(14px, 1.4vw, 18px); line-height: 1.5; }
+.not-found__link { font-size: clamp(14px, 1.4vw, 18px); padding: 8px 0; }
+.not-found__link:hover { text-decoration: underline; }
+/* === end H1 SHELL FIRST PAINT & ERROR VIEW ================================== */
