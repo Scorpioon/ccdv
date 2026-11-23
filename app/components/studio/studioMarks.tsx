@@ -125,19 +125,23 @@ export function CcosHexMark({ id }: { id: string }) {
    the Build copy left, so the lines follow: the card drops and the bus end at
    +g, the down-run to the title row stays at x585.5 (never under the centred
    CC.OS title) and the bus reaches back to it, the run to the copy ends at
-   215 - g, the arm to the CC.OS card at 1391.5 + g. g = 0 is the original. */
+   215 - g, the arm to the CC.OS card at 1391.5 + g. g = 0 is the original.
+   A4 (OPERATOR): CC.OS is recomposed to 880 tall (global.css), so the lilac
+   canvas is y2164..3580 and the CC.OS-side ends moved with it: the title row
+   2858.5 -> 2818, the copy arm 3009 -> 2968.5, the dev-notes return
+   3709 / 3672.5 -> 3556.9 / 3520.3. */
 const connectors = (g: number) => [
-  `M${585.5 + g} 2661.5V2698M${921.5 + g} 2661.5V2698M${1269 + g} 2661.5V2698M585.5 2698H${1269 + g}M585.5 2698V2858.5`,
-  `M646.5 2858.5H${215 - g}V2676`,
-  `M1193 2858.5H${1391.5 + g}V3009`,
-  `M${1241.5 + g} 3709H${1042 + g}V3672.5`,
+  `M${585.5 + g} 2661.5V2698M${921.5 + g} 2661.5V2698M${1269 + g} 2661.5V2698M585.5 2698H${1269 + g}M585.5 2698V2818`,
+  `M646.5 2818H${215 - g}V2676`,
+  `M1193 2818H${1391.5 + g}V2968.5`,
+  `M${1241.5 + g} 3556.9H${1042 + g}V3520.3`,
 ];
 
 export function StudioConnectors() {
   const svgRef = useRef<SVGSVGElement>(null);
   const g = useFrameSpread(svgRef, 1440);
   return (
-    <svg ref={svgRef} className="sc" viewBox="0 2164 1440 1736" fill="none" aria-hidden="true" focusable="false" data-scene>
+    <svg ref={svgRef} className="sc" viewBox="0 2164 1440 1416" fill="none" aria-hidden="true" focusable="false" data-scene>
       {connectors(g).map((d, i) => (
         <path key={i} className="sc__line" d={d} pathLength={1} style={{ "--i": i } as CSSProperties} />
       ))}

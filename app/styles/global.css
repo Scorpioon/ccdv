@@ -57,18 +57,47 @@ h1, h2, p { margin: 0; font-weight: 600; }
    full-height page from rendering are gone, which is reversible by restoring
    overflow/min-height here. */
 .site-shell { min-height: 100vh; container-type: inline-size; }
-.site-stage__route { display: block; }
+.site-stage__route { display: block; isolation: isolate; }
 /* HOME-T1: the stage anchors the popped (outgoing) route, which paints over
    the incoming one while it fades and never takes input. */
 .site-stage { position: relative; }
 .site-stage > [data-motion-pop-id] { z-index: 1; pointer-events: none; }
-/* P2 CORR02 (OPERATOR): one transition everywhere — the old page fades to the
-   ink ground (body, above) and the new one fades in (GlobalShell); NAV-T3's
-   rise / fall rules are gone. While the new page fades in (`data-arriving`,
-   ~0.7s) its arrival pieces show at once, so it arrives fully drawn instead
-   of building after the fade; a first load keeps its own entrance, and
-   reveals further down still play when they are scrolled to. */
-.site-shell[data-arriving] [data-spawn] { transition: none !important; }
+/* P2 CORR02 (OPERATOR): one transition everywhere; NAV-T3's rise / fall rules
+   are gone. H3-1: the new page's ground is there at once and the old page
+   dissolves over it.
+   N1 (OPERATOR): then the pieces arrive — a short, even beat for every page:
+   while the shell is arriving (`data-arriving`, ~0.4 s) the spawn pieces take
+   0.35 s with a 0.05 s step, instead of the scroll reveal's 0.7 s / 0.12 s.
+   The shared bar (below) fades in on the same beat. A first load keeps its
+   own entrance, and reveals further down still play when scrolled to. */
+.site-shell[data-arriving] [data-spawn] {
+  transition-duration: 0.35s !important;
+  transition-delay: calc(0.05s + var(--i, 0) * 0.05s) !important;
+}
+
+/* N1 (OPERATOR): the section pages' bar, rendered once by GlobalShell. No box
+   of its own: the bar (thin masthead >= 768, M1 bar + menu on phones) is a
+   child of .site-shell, so its sticky range is the whole page. The class pair
+   `r11 r11--<section>` is what every bar rule is scoped to. */
+.site-chrome { display: contents; }
+.site-chrome[data-chrome="leaving"] :is(.masthead, .smm__bar) { opacity: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .site-chrome[data-chrome="leaving"] :is(.masthead, .smm__bar) {
+    transition: opacity 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .site-chrome[data-chrome="in"] :is(.masthead, .smm__bar) {
+    animation: chrome-in 0.3s cubic-bezier(0.22, 0.61, 0.36, 1) 0.06s backwards;
+  }
+}
+@keyframes chrome-in {
+  from { opacity: 0; }
+}
+@media (max-width: 767px) {
+  /* the M1 bar overlays its page (no layout of its own), so it can come and
+     go without moving anything; the page reserves the 50px it used to take */
+  .site-chrome .smm__bar { margin-bottom: -50px; }
+  .site-stage .r11:is(.r11--studio, .r11--services, .r11--work, .r11--products) { padding-top: 50px; }
+}
 main { display: block; outline: none; }
 
 .r11 {
@@ -2663,6 +2692,11 @@ main { display: block; outline: none; }
   }
 }
 
+/* N1 A1: `data-nav-peek` (routeNav.ts: cursor near the top edge, or a tap in
+   the top 50px on touch) shows the bar over its arrival / scroll state. */
+.site-chrome[data-nav-peek] .masthead--collapsing { transform: none; translate: 0 0; }
+.site-chrome[data-nav-peek] .smm__bar { translate: 0 0; }
+
 /* --- chips (Whois, \\Studio Approach, Toolbelt) ---------------------------- */
 .chip {
   --chip-ground: var(--ccdv-ink);
@@ -2754,12 +2788,25 @@ main { display: block; outline: none; }
   .cv__sq--c { left: calc(1382 * var(--u)); top: calc(316 * var(--u)); background: none; border: calc(1 * var(--u)) solid var(--ccdv-ink); }
   .cv__sq--d { left: calc(48 * var(--u)); top: calc(1060 * var(--u)); }
   .cv__sq--e { left: calc(1382 * var(--u)); top: calc(1060 * var(--u)); }
+  /* A5 (OPERATOR: the ball comes with us): the orbit is a column from its old
+     top to the frame's end, and the sphere rides down it (sticky, as the
+     Whois copy beside it), at most one screen less 48u above and below, held
+     centred on the screen; so at the cover's second step it is whole and
+     centred. Before that it sits at its drawn top. */
   .cv__orbit {
     position: absolute;
     left: calc(694 * var(--u));
     top: calc(349 * var(--u));
     width: calc(713 * var(--u));
-    height: calc(713 * var(--u));
+    height: calc(769 * var(--u));            /* to the frame's end, y1118 */
+    --orbit-d: min(calc(713 * var(--u)), calc(100svh - 96 * var(--u)));
+  }
+  .cv__orbit .cv__sphere {
+    position: sticky;
+    top: calc((100svh - var(--orbit-d)) / 2);
+    width: var(--orbit-d);
+    height: var(--orbit-d);
+    margin-inline: auto;
   }
   /* stroke 0.419 at r356.3 in the original = 0.193 in the orbit's own units */
   .cv__sphere :is(circle, ellipse, path, line) { stroke-width: 0.193; }
@@ -2982,7 +3029,8 @@ main { display: block; outline: none; }
 
 @media (min-width: 1024px) {
   /* FB_R4_5 y2164..3900 is one fixed canvas: Build in its top 536, CC.OS below,
-     the connectors over both */
+     the connectors over both
+     A4: the block is 1560 tall now (NAV-T3 block); this base height is overridden. */
   .studio-lilac { height: calc(1736 * var(--u)); }
   .bu { position: absolute; left: 0; top: 0; width: 100%; height: calc(536 * var(--u)); }
   .bc { position: absolute; left: calc(48 * var(--u)); top: calc(48 * var(--u)); width: calc(317.066 * var(--u)); height: calc(99 * var(--u)); }
@@ -3115,23 +3163,31 @@ main { display: block; outline: none; }
   transition: stroke-dashoffset 0.5s var(--sm-ease) max(0s, calc(var(--i) * var(--cg-step, 0.32s) - 0.15s));
 }
 
+/* A4 (OPERATOR: one scene, one step): the chapter is recomposed to 880 tall
+   (was 1200) so, with the lilac's fit (--fit-h 880, NAV-T3 block), it shows
+   whole in one screen. Title row, copy and card move up 40.5; the globe is
+   640 (was 911), centred where it was and level with the card; the graph art
+   keeps its ratio at 305 x 330.2 (the viewBox slices, so a shorter box would
+   crop INT / SEC) centred in the card, and the caption sits 24 below it (was
+   48); the chip and the square follow the card. The CC.OS-side connector
+   ends (StudioConnectors) moved with them. */
 @media (min-width: 1024px) {
-  .cs { position: absolute; left: 0; top: calc(536 * var(--u)); width: 100%; height: calc(1200 * var(--u)); }   /* y2700..3900 */
+  .cs { position: absolute; left: 0; top: calc(536 * var(--u)); width: 100%; height: calc(880 * var(--u)); }   /* y2700..3580 */
   .cs__head {
     position: absolute;
     left: calc(680.494 * var(--u));
-    top: calc(88.56 * var(--u));
+    top: calc(48.06 * var(--u));
     gap: calc(26.7 * var(--u));
   }
   .cs__mark { margin-top: calc(20.44 * var(--u)); }
   .cs__title { font-size: calc(132.5 * var(--u)); }                 /* underline 361 wide, 6.02 thick */
-  .cs__copy { position: absolute; left: calc(983 * var(--u)); top: calc(262.55 * var(--u)); width: calc(409 * var(--u)); }
-  .cs__globe-wrap { position: absolute; left: calc(20 * var(--u)); top: calc(261 * var(--u)); width: calc(911 * var(--u)); height: calc(913 * var(--u)); }
-  .cs__card { position: absolute; left: calc(982 * var(--u)); top: calc(402.18 * var(--u)); width: calc(410 * var(--u)); min-height: calc(571.892 * var(--u)); }
-  .cs__art { width: calc(386 * var(--u)); height: calc(417.892 * var(--u)); }
-  .cs__caption { min-height: calc(82 * var(--u)); margin-top: calc(48 * var(--u)); }
-  .cs__cta { position: absolute; left: calc(1246 * var(--u)); top: calc(998.07 * var(--u)); width: calc(146 * var(--u)); }
-  .cs__sq { position: absolute; left: calc(1385.68 * var(--u)); top: calc(1145.68 * var(--u)); }
+  .cs__copy { position: absolute; left: calc(983 * var(--u)); top: calc(222.05 * var(--u)); width: calc(409 * var(--u)); }
+  .cs__globe-wrap { position: absolute; left: calc(155.5 * var(--u)); top: calc(216 * var(--u)); width: calc(640 * var(--u)); height: calc(641.4 * var(--u)); }
+  .cs__card { position: absolute; left: calc(982 * var(--u)); top: calc(361.68 * var(--u)); width: calc(410 * var(--u)); min-height: calc(460.2 * var(--u)); }
+  .cs__art { align-self: center; width: calc(305 * var(--u)); height: calc(330.2 * var(--u)); }
+  .cs__caption { min-height: calc(82 * var(--u)); margin-top: calc(24 * var(--u)); }
+  .cs__cta { position: absolute; left: calc(1246 * var(--u)); top: calc(845.88 * var(--u)); width: calc(146 * var(--u)); }
+  .cs__sq { position: absolute; left: calc(1385.68 * var(--u)); top: calc(868 * var(--u)); }
 }
 
 @media (max-width: 1023px) {
@@ -3272,24 +3328,25 @@ main { display: block; outline: none; }
   :is(.r11--studio .studio-approach, .r11--services .sv-index) > :is(.ap, .sv-ix) { min-height: 100svh; }
   :is(.r11--studio .scene-curtain > .studio-lilac, .r11--services .scene-curtain > .sv-red) { z-index: 3; }
 
-  /* PIN-T1 snap, FLOW-T1 (OPERATOR: Studio as Services): proximity only — it
-     settles a scroll that stops near a module start, never forces one (a
-     module taller than the screen stays fully reachable). Snap points: the
-     in-flow markers at the black module's and the lilac / red's natural tops,
-     and the second scene of the lilac / red (CC.OS / Formation). */
-  /* P2 CORR02: off while a page change is fading out (a snap could move the
-     window mid-fade) and never on the CC.OS deck (it pages itself) */
-  html:has(:is(.r11--studio, .r11--services, .r11--products)):not(:has(.site-stage > [data-motion-pop-id], .r11--ccos)) { scroll-snap-type: y proximity; }
-  :is(.r11--studio, .r11--services, .r11--products) .pin-snap { display: block; height: 0; scroll-snap-align: start; }
-  :is(.r11--studio .cs, .r11--services .sv-fm) { scroll-snap-align: start; }
+  /* A3 (OPERATOR, supersedes PIN-T1 / FLOW-T1's proximity snap and A2's
+     mandatory snap): no CSS snap. One wheel gesture plays one rise to the next
+     stop (motion/stepScroll.ts). The stops: the in-flow markers at the black
+     module's and the lilac / red's natural tops (a sticky element's own
+     position moves with it), and the second scene of the lilac / red. */
+  :is(.r11--studio, .r11--services, .r11--products) .pin-snap { display: block; height: 0; }
 
   /* FLOW-T1 rhythm in the lilac / red: the first scene (Build / Work with)
      starts 120 down (was 48: every scene of the block moves 72) and the
      block ends 120 below its last scene, so each boundary breathes the same.
      The connector layer moves with the scenes and keeps its drawn height. */
-  :is(.r11--studio .studio-lilac, .r11--services .sv-red) { height: calc(1880 * var(--u)); }
+  /* A4 (OPERATOR: one scene, one step): CC.OS and Formation are recomposed to
+     880 tall (was 1200), so each block is 536 + 880 drawn, + 72 above and
+     below (was 1880); and the block's unit fits 880 to the screen height (was
+     the shared 700 cap), so the second scene shows whole in one step. The
+     whole block scales as one, as its connectors / tether span both scenes. */
+  :is(.r11--studio .studio-lilac, .r11--services .sv-red) { --fit-h: 880; height: calc(1560 * var(--u)); }
   :is(.r11--studio :is(.bu, .cs, .sc), .r11--services :is(.sv-ww, .sv-fm)) { margin-top: calc(72 * var(--u)); }
-  .r11--studio .sc { height: calc(1736 * var(--u)); }
+  .r11--studio .sc { height: calc(1416 * var(--u)); }
 
   /* FLOW-T1: what a curtain fully covers is not painted (routeNav marks it;
      the animation loops inside it pause) */
@@ -3522,13 +3579,26 @@ main { display: block; outline: none; }
   .sv-cv__sq--d { left: calc(48 * var(--u)); top: calc(1060 * var(--u)); }
   .sv-cv__sq--e { left: calc(1382 * var(--u)); top: calc(1060 * var(--u)); }
   /* the Studio sphere's 713 box; the arrow's 241 window fills it, so the arrow
-     is about 474 x 437 and stays inside the box at any angle */
+     is about 474 x 437 and stays inside the box at any angle. A5 (OPERATOR):
+     as the Studio sphere, the art is a column to the frame's end and the
+     arrow's window rides down it (sticky), at most one screen less 48u above
+     and below, centred on the screen. The window is centred on the arrow's
+     own bounding box (ArrowTrace), so the drawn arrow is what is centred. */
   .sv-cv__art {
     position: absolute;
     left: calc(694 * var(--u));
     top: calc(349 * var(--u));
     width: calc(713 * var(--u));
-    height: calc(713 * var(--u));
+    height: calc(769 * var(--u));
+    --orbit-d: min(calc(713 * var(--u)), calc(100svh - 96 * var(--u)));
+  }
+  .sv-cv__art .sv-arrow {
+    display: block;
+    position: sticky;
+    top: calc((100svh - var(--orbit-d)) / 2);
+    width: var(--orbit-d);
+    height: var(--orbit-d);
+    margin-inline: auto;
   }
   /* desktop: the identity title is the drawn heading; the h1 is for AT only */
   .sv-cv__services {
@@ -3759,7 +3829,8 @@ main { display: block; outline: none; }
 
 @media (min-width: 1024px) {
   /* one canvas (SERVICES_v2 y2308..4160 x 0.9375 = 1736): Work with in its
-     top 536 (the Build geometry), Formation in the 1200 below */
+     top 536 (the Build geometry), Formation in the 1200 below
+     A4: the block is 1560 tall now (NAV-T3 block); this base height is overridden. */
   .sv-red { height: calc(1736 * var(--u)); }
   .sv-ww { position: absolute; left: calc((100% - 1440 * var(--u)) / 2); top: 0; width: calc(1440 * var(--u)); height: calc(536 * var(--u)); }
   .sv-ww .bc { position: absolute; left: calc(48 * var(--u)); top: calc(48 * var(--u)); width: calc(317.066 * var(--u)); height: calc(99 * var(--u)); }
@@ -3926,22 +3997,35 @@ main { display: block; outline: none; }
   }
 }
 
+/* A4 (OPERATOR: one scene, one step): Formation is recomposed to 880 tall
+   (was 1200) and the red block fits 880 to the screen (--fit-h; set here, as
+   the Services fit rule above would otherwise win). Title and intro move up
+   32; the cards rise to 320 (was 484.6) with tighter gaps (left 40, was
+   119.5; right 20, was 22.3) and the right pair 260 tall (was 298.5). The
+   figure layer keeps its size and drawing (phones share it) and moves up
+   184.6 as a box, so the pile sits between the cards again; FormationScene's
+   CARD_RECTS give the cards' new places in its units for the tether. */
 @media (min-width: 1024px) {
-  /* y536..1736 of the red canvas = SERVICES_v2 y2880..4160 */
-  .sv-fm { position: absolute; left: calc((100% - 1440 * var(--u)) / 2); top: calc(536 * var(--u)); width: calc(1440 * var(--u)); height: calc(1200 * var(--u)); }
-  .sv-fm__title { position: absolute; left: calc(48 * var(--u)); top: calc(80 * var(--u)); font-size: calc(120 * var(--u)); }
-  .sv-fm__intro { position: absolute; left: calc(1007.8 * var(--u)); top: calc(124 * var(--u)); width: calc(384 * var(--u)); }
-  /* the figure layer: the whole scene (viewBox 0..1536 x 2880..4160); round 3:
-     it draws past the frame's edges, so no cube is cut off at the margins */
-  .sv-fm__pile { position: absolute; inset: 0; }
+  /* A5 (OPERATOR: air below): the block fits 908 (the 880 scene + 28), so the
+     cards end 48 above the screen's edge, as the title starts 48 below it;
+     the whole block, type included, scales ~3% smaller. No coordinate moves. */
+  .r11--services .sv-red { --fit-h: 908; }
+  /* y536..1416 of the red canvas */
+  .sv-fm { position: absolute; left: calc((100% - 1440 * var(--u)) / 2); top: calc(536 * var(--u)); width: calc(1440 * var(--u)); height: calc(880 * var(--u)); }
+  .sv-fm__title { position: absolute; left: calc(48 * var(--u)); top: calc(48 * var(--u)); font-size: calc(120 * var(--u)); }
+  .sv-fm__intro { position: absolute; left: calc(1007.8 * var(--u)); top: calc(92 * var(--u)); width: calc(384 * var(--u)); }
+  /* the figure layer: 1440 x 1200 (viewBox 0..1536 x 2880..4160), from
+     -184.6 (A4); round 3: it draws past the frame's edges, so no cube is cut
+     off at the margins */
+  .sv-fm__pile { position: absolute; left: 0; top: calc(-184.6 * var(--u)); width: 100%; height: calc(1200 * var(--u)); }
   .sv-fm__pile .sv-vx { overflow: visible; }
   .sv-fm__card { position: absolute; width: calc(284.667 * var(--u)); }
-  .sv-fm__card--gear { left: calc(72.19 * var(--u)); top: calc(484.6 * var(--u)); height: calc(258 * var(--u)); }
-  .sv-fm__card--arrow { left: calc(72.19 * var(--u)); top: calc(862.1 * var(--u)); height: calc(242.1 * var(--u)); }
-  .sv-fm__card--network { left: calc(1131.9 * var(--u)); top: calc(484.6 * var(--u)); height: calc(298.5 * var(--u)); }
-  .sv-fm__card--toolmaking { left: calc(1131.9 * var(--u)); top: calc(805.4 * var(--u)); height: calc(298.5 * var(--u)); }
+  .sv-fm__card--gear { left: calc(72.19 * var(--u)); top: calc(320 * var(--u)); height: calc(258 * var(--u)); }
+  .sv-fm__card--arrow { left: calc(72.19 * var(--u)); top: calc(618 * var(--u)); height: calc(242.1 * var(--u)); }
+  .sv-fm__card--network { left: calc(1131.9 * var(--u)); top: calc(320 * var(--u)); height: calc(260 * var(--u)); }
+  .sv-fm__card--toolmaking { left: calc(1131.9 * var(--u)); top: calc(600 * var(--u)); height: calc(260 * var(--u)); }
   .sv-fm__card--gear .sv-fm__caption { min-height: calc(49.3 * var(--u)); }
-  .sv-fm__sq { position: absolute; left: calc(47.6 * var(--u)); top: calc(1145.7 * var(--u)); }
+  .sv-fm__sq { display: none; } /* A5 (OPERATOR): the corner dot is removed on desktop */
 }
 
 @media (max-width: 1023px) {
@@ -5059,6 +5143,9 @@ main { display: block; outline: none; }
 }
 .pv-code__cube,
 .pv-code__sq { display: none; }
+/* A5: the module's and the rail's copies of the persistent cube are desktop
+   only (the phone cube is .pv-code__cube) */
+:is(.pv-scene, .pv-next) > .pv-float { display: none; }
 .pv-topic__headline[data-pending] { opacity: 0.4; }
 .pv-code__page {
   box-sizing: border-box;
@@ -5168,6 +5255,17 @@ button.pv-card { cursor: pointer; }
 /* LS / iDS: the sources' dark art box */
 .pv-panel:not(.pv-panel--ccos) .pv-panel__art { overflow: hidden; background: var(--ccdv-ink); }
 .pv-panel__svg { display: block; width: 100%; height: 100%; }
+/* A6 (OPERATOR: the cube sits in the back): on desktop the panels that pass
+   over the persistent cube are frosted, a translucent ink fill and a
+   backdrop blur, so the cube blurs behind them instead of competing */
+@media (min-width: 1024px) {
+  .r11--products :is(.pv-topic__art, .pv-panel, .pv-card) {
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+  }
+  .r11--products .pv-topic__art { background-color: rgb(20 20 20 / 0.55); }
+  .r11--products .pv-panel { background: rgb(20 20 20 / 0.55); }
+}
 .pv-ids__name { font-family: inherit; font-size: 39.5px; }
 .pv-panel__copy { display: flex; flex: 1 1 auto; flex-direction: column; align-items: flex-start; }
 .pv-panel__title {
@@ -5310,6 +5408,35 @@ button.pv-card { cursor: pointer; }
   .pv-cover__sq--e { left: calc(1474.13 * var(--pv)); top: calc(1130.67 * var(--pv)); }
   /* the source box 563,50 1097 x 1267: past the artboard's right edge; .pv clips */
   .pv-cover__cube { left: calc(563 * var(--pv)); top: calc(50 * var(--pv)); width: calc(1097 * var(--pv)); height: calc(1267 * var(--pv)); }
+
+  /* A5 (OPERATOR): the persistent cube. Each scene's copy (`pv-float`) is
+     fixed at the same place on the screen — the cover's cube scaled by --ck,
+     its centre on the cover's x (1111.5, spread by --gx) and on the screen's
+     middle — at the cover's unit (--cu: the scenes' own --pv differ). A scene
+     clips its copy to itself (clip-path also clips fixed descendants), so the
+     rising scene's copy covers the last one exactly. Above the scene's grid
+     (z 0, first in the scene), under its panels (.pv-code, .pv-products z 1).
+     A6.1 (OPERATOR): the copies are FloatingCube, the phone cube in 3D on the
+     Studio sphere system (wobble, a kick per step); a square box one screen
+     tall, a quarter of it past the right edge and its centre at 42% of the
+     screen, the body at 0.55 and no blur (hairlines); the frosted panels (A6)
+     blur it. */
+  .r11--products :is(.pv-cover, .pv-scene, .pv-next) { clip-path: inset(0); }
+  .r11--products .pv-float {
+    --cube-s: 100svh;
+    display: block;
+    position: fixed;
+    z-index: 0;
+    left: calc(100cqw - 0.75 * var(--cube-s));
+    top: calc(42svh - 0.5 * var(--cube-s));
+    width: var(--cube-s);
+    height: var(--cube-s);
+    translate: none;
+    pointer-events: none;
+    overflow: visible;
+  }
+  .r11--products .pv-float .pv-float__body { opacity: 0.55; }
+  .r11--products .pv-products { position: relative; z-index: 1; }
   .pv-cover__whois {
     position: absolute;
     left: calc(51.2 * var(--pv));

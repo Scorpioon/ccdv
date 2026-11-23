@@ -1,11 +1,10 @@
 import { useRef } from "react";
-import { SiteMasthead } from "../components/SiteMasthead";
 import { SiteFooter } from "../components/SiteFooter";
-import { StudioMobileMenu } from "../components/StudioMobileMenu";
 import { WorkHero } from "../components/work/WorkHero";
 import { useMotionPolicy } from "../motion/reducedMotion";
 import { useSceneReveal } from "../motion/studioMotion";
 import { useBoundaryNav, useNavIdle } from "../motion/routeNav";
+import { useStepScroll } from "../motion/stepScroll";
 
 export function meta() {
   return [{ title: "CCDV — Work" }];
@@ -25,12 +24,10 @@ export default function Work() {
   useSceneReveal(rootRef, reduced);
   useBoundaryNav(rootRef, hubRef, ".masthead--work");
   useNavIdle(rootRef);
+  useStepScroll(rootRef, null, reduced); // A3: the hub, then the footer
 
   return (
     <div className="r11 r11--work r11--work-hub" ref={rootRef}>
-      <StudioMobileMenu current="/work" />
-      <SiteMasthead variant="work" compact />
-
       <div ref={hubRef}>
         <WorkHero reduced={reduced} />
       </div>

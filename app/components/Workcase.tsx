@@ -1,8 +1,6 @@
 import { useRef } from "react";
 import { Link } from "react-router";
-import { SiteMasthead } from "./SiteMasthead";
 import { SiteFooter } from "./SiteFooter";
-import { StudioMobileMenu } from "./StudioMobileMenu";
 import { useTransitionLink } from "./GlobalShell";
 import { useBoundaryNav, useNavIdle } from "../motion/routeNav";
 import { AVAILABLE_YEARS, type WorkProject, type WorkcaseData } from "../data/workProjects";
@@ -61,9 +59,6 @@ export function Workcase({ project, data }: { project: WorkProject; data: Workca
 
   return (
     <div className="r11 r11--work r11--workcase" ref={rootRef}>
-      <StudioMobileMenu current="/work" />
-      <SiteMasthead variant="work" compact />
-
       <section ref={bandRef} className="workcase-band" aria-label="Workcase">
         <div className="workcase-title">
           <Link className="workcase-title__back" to="/work/archive" state={RESTORE_STATE} aria-label="Back to the Work archive">

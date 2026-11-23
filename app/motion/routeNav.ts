@@ -1,14 +1,24 @@
-/* Thin-masthead behaviour for a scene route other than Studio (Services R1).
-   The same two mechanisms studio.tsx runs inline (R3 addenda A1/A3/A4),
-   written once as hooks so Services does not copy Studio's route code; Studio
-   itself still uses its own inline effects (unchanged).
+/* Thin-masthead behaviour for a scene route (Studio, Services, Work, Products).
+   The mechanisms of R3 addenda A1/A3/A4, written once as hooks.
 
-   useBoundaryNav  --nav-in = clamp((navH - edgeTop) / navH) on the root: the
+   N1 (OPERATOR): the bar is no longer part of a page. GlobalShell renders it
+   once, as `.site-chrome`, so it does not fade or move when one section page
+   gives way to another. The hooks therefore write to that element, not to the
+   page root.
+
+   useBoundaryNav  --nav-in = clamp((navH - edgeTop) / navH) on the chrome: the
                    bar's lower edge rides the top edge of the given section, so
                    the bar is hidden over everything above it.
-   useNavIdle      `data-nav-idle` on the root after STUDIO_MOTION.navIdle
+   useNavIdle      `data-nav-idle` on the chrome after STUDIO_MOTION.navIdle
                    (1.0 s) without a scroll, cleared by the next scroll; the CSS
-                   slides the bar away (0.30 s) and back (0.22 s). */
+                   slides the bar away (0.30 s) and back (0.22 s).
+
+   Ownership: the page that has just arrived claims the bar. The page leaving
+   is still mounted for its exit and still receives scrolls, so only the owner
+   may write. The bar is then HELD, hidden (A1: a clean view on every arrival),
+   until the reader's first scroll input; from then on the page's own rule
+   drives it. The cursor near the top edge, a tap there, or keyboard focus
+   shows it meanwhile (useNavIdle, `data-nav-peek`). */
 import { useEffect, useLayoutEffect } from "react";
 import type { RefObject } from "react";
 import { STUDIO_MOTION } from "./studioMotion";
@@ -16,6 +26,56 @@ import { STUDIO_MOTION } from "./studioMotion";
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
 const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 const NAV_IDLE_MIN_SCROLL = 50; // px: the M1 bar's height; nearer the top the bar stays
+const PEEK_EDGE = 70; // px from the top edge that reveals the bar (A1)
+const PEEK_SLACK = 24; // px below the bar before it is let go
+const PEEK_HIDE_MS = 250;
+const SCROLL_KEYS = new Set(["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "]);
+
+const getChrome = () => document.querySelector<HTMLElement>(".site-chrome");
+
+let barOwner: HTMLElement | null = null;
+let barHeld = false;
+let stopWatching: (() => void) | null = null;
+const releaseListeners = new Set<() => void>();
+
+function claimBar(root: HTMLElement) {
+  if (barOwner === root) return;
+  stopWatching?.();
+  barOwner = root;
+  barHeld = true;
+  const chrome = getChrome();
+  /* A1: every arrival is the clean view. The thin bar is out (--nav-in 0) and
+     the M1 bar is idle-hidden; the cursor or a scroll brings it back. */
+  chrome?.style.setProperty("--nav-in", "0");
+  chrome?.removeAttribute("data-nav-peek");
+  if (window.matchMedia("(max-width: 767px)").matches) chrome?.setAttribute("data-nav-idle", "");
+  else chrome?.removeAttribute("data-nav-idle");
+  const release = () => {
+    stopWatching?.();
+    stopWatching = null;
+    barHeld = false;
+    releaseListeners.forEach((listener) => listener());
+  };
+  const onKey = (event: KeyboardEvent) => {
+    if (SCROLL_KEYS.has(event.key)) release();
+  };
+  window.addEventListener("wheel", release, { passive: true });
+  window.addEventListener("touchmove", release, { passive: true });
+  window.addEventListener("keydown", onKey);
+  stopWatching = () => {
+    window.removeEventListener("wheel", release);
+    window.removeEventListener("touchmove", release);
+    window.removeEventListener("keydown", onKey);
+  };
+}
+
+function dropBar(root: HTMLElement) {
+  if (barOwner !== root) return;
+  stopWatching?.();
+  stopWatching = null;
+  barOwner = null;
+  barHeld = false;
+}
 
 /* NAV-T3 (OPERATOR): `leadSelector` names an element whose LOWER edge reveals
    the bar first (the cover lockup): the bar appears once the lockup has
@@ -29,13 +89,16 @@ export function useBoundaryNav(
   useIsomorphicLayoutEffect(() => {
     const root = rootRef.current;
     const edge = edgeRef.current;
-    const nav = root?.querySelector<HTMLElement>(navSelector);
-    if (!root || !edge || !nav) return;
+    const chrome = getChrome();
+    const nav = chrome?.querySelector<HTMLElement>(navSelector);
+    if (!root || !edge || !chrome || !nav) return;
     const lead = leadSelector ? root.querySelector<HTMLElement>(leadSelector) : null;
+    claimBar(root);
     let frame = 0;
     let last = "";
     const update = () => {
       frame = 0;
+      if (barOwner !== root || barHeld) return;
       const navH = nav.offsetHeight;
       const edgeTop = edge.getBoundingClientRect().top;
       const top = lead ? Math.min(edgeTop, lead.getBoundingClientRect().bottom) : edgeTop;
@@ -43,20 +106,21 @@ export function useBoundaryNav(
       const p = navH > 0 ? clamp01((navH - top) / navH).toFixed(4) : "1";
       if (p !== last) {
         last = p;
-        root.style.setProperty("--nav-in", p);
+        chrome.style.setProperty("--nav-in", p);
       }
     };
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update);
     };
-    update();
+    releaseListeners.add(schedule);
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule);
     return () => {
+      releaseListeners.delete(schedule);
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
       if (frame) cancelAnimationFrame(frame);
-      root.style.removeProperty("--nav-in");
+      dropBar(root);
     };
   }, [rootRef, edgeRef, navSelector, leadSelector]);
 }
@@ -142,22 +206,86 @@ export function usePinTop(ref: RefObject<HTMLElement | null>, nextRef?: RefObjec
 export function useNavIdle(rootRef: RefObject<HTMLElement | null>) {
   useEffect(() => {
     const root = rootRef.current;
-    if (!root) return;
+    const chrome = getChrome();
+    if (!root || !chrome) return;
+    claimBar(root);
     let timer = 0;
     const settle = () => {
       timer = 0;
-      if (window.scrollY > NAV_IDLE_MIN_SCROLL) root.setAttribute("data-nav-idle", "");
+      if (barOwner === root && !barHeld && window.scrollY > NAV_IDLE_MIN_SCROLL) {
+        chrome.setAttribute("data-nav-idle", "");
+      }
+    };
+
+    /* A1: `data-nav-peek` shows the bar on demand. Mouse: the cursor within
+       PEEK_EDGE of the top, armed only once it has been below the bar since
+       arrival (the click that navigated left it up there, and the bar must
+       stay closed). Touch: a tap in the top 50px. Keyboard: the CSS already
+       shows the bar on :focus-within. */
+    let peeking = false;
+    let touchPeek = false;
+    let armed = false;
+    let idleBeforePeek = false;
+    let peekTimer = 0;
+    const setPeek = (on: boolean) => {
+      if (on === peeking) return;
+      peeking = on;
+      if (on) {
+        idleBeforePeek = chrome.hasAttribute("data-nav-idle");
+        chrome.removeAttribute("data-nav-idle");
+        chrome.setAttribute("data-nav-peek", "");
+      } else {
+        touchPeek = false;
+        chrome.removeAttribute("data-nav-peek");
+        if (idleBeforePeek) chrome.setAttribute("data-nav-idle", "");
+      }
+    };
+    const onMove = (event: PointerEvent) => {
+      if (barOwner !== root || event.pointerType === "touch") return;
+      const bar = chrome.querySelector<HTMLElement>(".masthead--collapsing");
+      const hideBelow = (bar?.offsetHeight || NAV_IDLE_MIN_SCROLL) + PEEK_SLACK;
+      if (event.clientY <= PEEK_EDGE) {
+        window.clearTimeout(peekTimer);
+        peekTimer = 0;
+        if (armed) setPeek(true);
+      } else if (event.clientY > hideBelow) {
+        armed = true;
+        if (peeking && !peekTimer) peekTimer = window.setTimeout(() => {
+          peekTimer = 0;
+          setPeek(false);
+        }, PEEK_HIDE_MS);
+      }
+    };
+    const onDown = (event: PointerEvent) => {
+      if (barOwner !== root || event.pointerType !== "touch") return;
+      if (event.clientY <= NAV_IDLE_MIN_SCROLL) {
+        touchPeek = true;
+        setPeek(true);
+      }
     };
     const onScroll = () => {
-      if (root.hasAttribute("data-nav-idle")) root.removeAttribute("data-nav-idle");
+      if (barOwner !== root) return;
+      if (touchPeek) setPeek(false);
+      if (barHeld) return;
+      idleBeforePeek = false;
+      if (chrome.hasAttribute("data-nav-idle")) chrome.removeAttribute("data-nav-idle");
       window.clearTimeout(timer);
       timer = window.setTimeout(settle, STUDIO_MOTION.navIdle * 1000);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("pointermove", onMove, { passive: true });
+    window.addEventListener("pointerdown", onDown, { passive: true });
     return () => {
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerdown", onDown);
       window.clearTimeout(timer);
-      root.removeAttribute("data-nav-idle");
+      window.clearTimeout(peekTimer);
+      if (barOwner === root) {
+        chrome.removeAttribute("data-nav-idle");
+        chrome.removeAttribute("data-nav-peek");
+      }
+      dropBar(root);
     };
   }, [rootRef]);
 }

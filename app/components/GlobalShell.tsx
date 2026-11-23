@@ -5,16 +5,19 @@ import {
   useEffect,
   useLayoutEffect,
   useRef,
+  useState,
   type MouseEvent,
   type ReactNode,
 } from "react";
 import { useLocation, useNavigationType } from "react-router";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useIsPresent } from "motion/react";
 import {
   useTransitionCoordinator,
   type TransitionDirection,
   type TransitionTarget,
 } from "../motion/transitionCoordinator";
+import { SiteMasthead } from "./SiteMasthead";
+import { StudioMobileMenu } from "./StudioMobileMenu";
 
 type RouteMotion = {
   go: (to: TransitionTarget) => void;
@@ -64,16 +67,80 @@ export function useTransitionLink() {
    The direction (`data-route-dir`) is kept for a later direction-aware
    motion: "back" for Home, a parent page (/products from /products/ccos,
    /work from a case), and the browser's Back / Forward (POP); "forward"
-   otherwise. The fade itself does not use it. */
+   otherwise. The fade itself does not use it.
+
+   H3-1 (OPERATOR, Variant B): the ink beat is gone. The incoming page is
+   opaque from its first frame and only the outgoing page fades out above it
+   (the exit below is unchanged), so no ink shows between two pages. */
 type RouteMove = "fade" | "load";
 type RouteDir = "forward" | "back";
 const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 const FADE_OUT_S = 0.25;
-const FADE_IN_S = 0.4;
-const FADE_IN_DELAY_S = 0.12;
 const FADE_EASE: [number, number, number, number] = [0.22, 0.61, 0.36, 1];
-/* how long the arriving page counts as arriving (its pieces show at once) */
-const ARRIVE_MS = (FADE_IN_DELAY_S + FADE_IN_S) * 1000 + 150;
+/* how long the arriving page counts as arriving (its pieces show at once):
+   until the outgoing page, which fades over it, is gone */
+const ARRIVE_MS = FADE_OUT_S * 1000 + 150;
+
+/* H3-1 GH-A01: only the present route is the landmark. The route that is
+   fading out (popped, still mounted for the exit) is `inert` — out of the
+   accessibility tree and the tab order — and gives up the id, so the page
+   never carries two #main-content. Two <main> elements still coexist for the
+   length of the exit; only the incoming one is exposed. Lives inside the
+   route's motion.div so it reads that route's presence. */
+function RouteMain({
+  focusRef,
+  children,
+}: {
+  focusRef: (node: HTMLElement | null) => void;
+  children: ReactNode;
+}) {
+  const present = useIsPresent();
+  return (
+    <main ref={focusRef} tabIndex={-1} id={present ? "main-content" : undefined} inert={!present}>
+      {children}
+    </main>
+  );
+}
+
+/* N1 (OPERATOR): the navigation bar belongs to the shell, not to a page. The
+   four section pages share one thin bar (>= 768) and one M1 bar + menu
+   (phones), rendered once beside the stage, so a swap between two sections
+   never fades or moves it; only the current cell changes. Home, CC.OS and
+   Contact keep their own mastheads for now, so for them the bar fades out with
+   the page (and back in with the next section page).
+
+   `.site-chrome` is `display: contents` and carries the section's page class
+   (`r11 r11--work`), so every bar rule scoped to the page keeps matching and
+   the bar stays a direct child of `.site-shell` (sticky needs the tall box).
+   The page driving it (motion/routeNav.ts) writes --nav-in / data-nav-idle
+   here. Fade-out and fade-in are CSS (`data-chrome`), timed as the page. */
+type ChromeSection = "studio" | "services" | "work" | "products";
+type ChromePhase = "on" | "in" | "leaving";
+type ChromeState = { key: ChromeSection | null; shown: ChromeSection | null; phase: ChromePhase };
+const CHROME_ROUTE: Record<ChromeSection, string> = {
+  studio: "/studio",
+  services: "/services",
+  work: "/work",
+  products: "/products",
+};
+const CHROME_UNMOUNT_MS = FADE_OUT_S * 1000 + 60;
+
+function chromeSection(pathname: string): ChromeSection | null {
+  const path = pathname.replace(/\/+$/, "") || "/";
+  if (path === "/studio") return "studio";
+  if (path === "/services") return "services";
+  if (path === "/products") return "products";
+  if (path === "/work" || path.startsWith("/work/")) return "work";
+  return null;
+}
+
+function nextChrome(state: ChromeState, section: ChromeSection | null): ChromeState {
+  if (section) {
+    const present = state.shown !== null && state.phase !== "leaving";
+    return { key: section, shown: section, phase: present ? state.phase : "in" };
+  }
+  return { key: null, shown: state.shown, phase: "leaving" };
+}
 
 function routeDir(from: string, to: string, pop: boolean): RouteDir {
   if (pop || to === "/" || from.startsWith(`${to}/`)) return "back";
@@ -114,8 +181,27 @@ export function GlobalShell({ children }: { children: ReactNode }) {
   }
   const { move, dir } = moveRef.current;
 
-  /* while the new page fades in, its arrival pieces (cover lockups, labels:
-     data-spawn) show with it instead of building after it (global.css,
+  /* the shared bar: derived while rendering, so it is in the DOM in the same
+     commit as the incoming page (whose effects look it up); a bar that is
+     leaving stays mounted for its fade, then goes */
+  const section = chromeSection(location.pathname);
+  const [chrome, setChrome] = useState<ChromeState>(() => ({
+    key: section,
+    shown: section,
+    phase: section ? "on" : "leaving",
+  }));
+  if (chrome.key !== section) setChrome(nextChrome(chrome, section));
+  useEffect(() => {
+    if (chrome.phase !== "leaving" || chrome.shown === null) return;
+    const timer = window.setTimeout(
+      () => setChrome((current) => (current.phase === "leaving" ? { ...current, shown: null } : current)),
+      CHROME_UNMOUNT_MS,
+    );
+    return () => window.clearTimeout(timer);
+  }, [chrome.phase, chrome.shown]);
+
+  /* while the new page arrives, its pieces (cover lockups, labels: data-spawn)
+     come in on one short, even beat after the ground (global.css,
      [data-arriving]); a first load keeps its own entrance */
   useIsomorphicLayoutEffect(() => {
     const shell = shellRef.current;
@@ -176,12 +262,15 @@ export function GlobalShell({ children }: { children: ReactNode }) {
      collapsed document height, clamped scroll — the same dip GF09-F CORR03
      removed for CCOS-to-CCOS. mode="popLayout" mounts the incoming route at
      once, fully opaque, in flow; the outgoing route is popped out of layout
-     (absolute, `[data-motion-pop-id]`, stacked above and inert in global.css)
-     and fades out over it. The document is never empty. onExitComplete ->
-     endTransition is unchanged. P2 CORR02: the exit is a real fade (1 -> 0),
-     so Motion runs it instead of ending it at once; the incoming route
-     starts transparent and fades in a beat later, over the ink ground
-     (global.css). Reduced motion: the same swap, instant. */
+     (absolute, `[data-motion-pop-id]`, stacked above in global.css with
+     pointer-events off, and `inert` through RouteMain) and fades out over
+     it. The document is never empty. onExitComplete -> endTransition is
+     unchanged. P2 CORR02: the exit is a real fade (1 -> 0), so Motion runs
+     it instead of ending it at once. H3-1: the incoming route is opaque from
+     its first frame (no entry fade, no ink beat); `isolation` on
+     .site-stage__route keeps each route's z-indexes inside it, so the
+     incoming chrome never paints over the route that is leaving. Reduced
+     motion: the same swap, instant. */
   return (
     <NavigationContext.Provider value={transition}>
       <div
@@ -191,26 +280,30 @@ export function GlobalShell({ children }: { children: ReactNode }) {
         data-route-move={move}
         data-route-dir={dir}
       >
+        {chrome.shown && (
+          <div
+            className={`r11 r11--${chrome.shown} site-chrome`}
+            data-chrome={chrome.phase}
+            inert={chrome.phase === "leaving"}
+          >
+            <StudioMobileMenu current={CHROME_ROUTE[chrome.shown]} />
+            <SiteMasthead variant={chrome.shown} compact />
+          </div>
+        )}
         <div className="site-stage">
           <AnimatePresence mode="popLayout" initial={false} onExitComplete={transition.endTransition}>
             <motion.div
               key={routeKey}
               className="site-stage__route"
-              initial={move === "load" ? false : { opacity: 0 }}
+              initial={false}
               animate={{ opacity: 1 }}
               exit={{
                 opacity: 0,
                 transition: transition.reduced ? { duration: 0 } : { duration: FADE_OUT_S, ease: FADE_EASE },
               }}
-              transition={
-                transition.reduced
-                  ? { duration: 0 }
-                  : { duration: FADE_IN_S, delay: FADE_IN_DELAY_S, ease: FADE_EASE }
-              }
+              transition={transition.reduced ? { duration: 0 } : { duration: FADE_OUT_S, ease: FADE_EASE }}
             >
-              <main ref={focusRoute} tabIndex={-1} id="main-content">
-                {children}
-              </main>
+              <RouteMain focusRef={focusRoute}>{children}</RouteMain>
             </motion.div>
           </AnimatePresence>
         </div>

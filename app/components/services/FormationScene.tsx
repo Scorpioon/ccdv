@@ -40,12 +40,15 @@ import { FORMATION_CARDS, FORMATION_COPY, FORMATION_DEFAULT, FORMATION_LINK, FOR
 import { useFrameSpread } from "../../motion/frameSpread";
 import { index } from "../../motion/studioMotion";
 
-/* the four cards in SERVICES_v2 units (x, y, w, h), card order */
+/* the four cards in SERVICES_v2 units (x, y, w, h), card order. A4
+   (OPERATOR): desktop recompose (global.css): the figure layer starts at
+   -184.6u, so y = 2880 + (card top + 184.6) / 0.9375; the right pair is 260u
+   tall (was 3396.9 / 3799.58 / 3396.9 / 3739.35, the right pair 318.451) */
 const CARD_RECTS = [
-  [77, 3396.9, 303.644, 275.219],
-  [77, 3799.58, 303.644, 258.219],
-  [1207.36, 3396.9, 303.644, 318.451],
-  [1207.36, 3739.35, 303.644, 318.451],
+  [77, 3418.24, 303.644, 275.219],
+  [77, 3736.11, 303.644, 258.219],
+  [1207.36, 3418.24, 303.644, 277.333],
+  [1207.36, 3716.91, 303.644, 277.333],
 ] as const;
 const ISO = 21.427 / 37.373; // the cube edges' slope (30 deg isometric)
 /* LLM-T1: the wires follow their cubes (VoxelRain `links`) */

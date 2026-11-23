@@ -1,7 +1,5 @@
 import { useRef } from "react";
-import { SiteMasthead } from "../components/SiteMasthead";
 import { SiteFooter } from "../components/SiteFooter";
-import { StudioMobileMenu } from "../components/StudioMobileMenu";
 import { ServicesCover } from "../components/services/ServicesCover";
 import { ServiceIndex } from "../components/services/ServiceIndex";
 import { WorkWithScene } from "../components/services/WorkWithScene";
@@ -9,6 +7,7 @@ import { FormationScene } from "../components/services/FormationScene";
 import { useMotionPolicy } from "../motion/reducedMotion";
 import { useSceneReveal } from "../motion/studioMotion";
 import { useBoundaryNav, useNavIdle, usePinTop } from "../motion/routeNav";
+import { useStepScroll } from "../motion/stepScroll";
 
 export function meta() {
   return [{ title: "CCDV — Services" }];
@@ -45,17 +44,16 @@ export default function Services() {
   useBoundaryNav(rootRef, indexRef, ".masthead--services", ".sv-cv__lockup");
   useNavIdle(rootRef);
   usePinTop(indexRef, redRef);
+  // A3: one gesture, one rise; stops at the markers and the Formation scene
+  useStepScroll(rootRef, ".pin-snap, .sv-fm", reduced);
 
   return (
     <div className="r11 r11--services" ref={rootRef}>
-      <StudioMobileMenu current="/services" />
-      <SiteMasthead variant="services" compact />
-
       {/* NAV-T3 curtain + PIN-T1 pin (desktop, global.css): the cover pins
           while the index rises over it; the index then pins, one screen tall,
-          while the red rises over it. PIN-T1 snap (Services only, trial): the
-          two in-flow markers are the snap points, since a sticky element's
-          own snap position moves with it */}
+          while the red rises over it. The in-flow markers (`pin-snap`) are the
+          stepper's stops (motion/stepScroll.ts, A3), since a sticky element's
+          own position moves with it */}
       <div className="scene-curtain">
         <ServicesCover reduced={reduced} />
 

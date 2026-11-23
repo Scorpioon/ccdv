@@ -1,23 +1,18 @@
-import { useEffect, useLayoutEffect, useRef } from "react";
-import { SiteMasthead } from "../components/SiteMasthead";
+import { useRef } from "react";
 import { SiteFooter } from "../components/SiteFooter";
-import { StudioMobileMenu } from "../components/StudioMobileMenu";
 import { StudioCover } from "../components/studio/StudioCover";
 import { ApproachPanel } from "../components/studio/ApproachPanel";
 import { BuildScene } from "../components/studio/BuildScene";
 import { CcosScene } from "../components/studio/CcosScene";
 import { StudioConnectors } from "../components/studio/studioMarks";
 import { useMotionPolicy } from "../motion/reducedMotion";
-import { STUDIO_MOTION, useSceneReveal } from "../motion/studioMotion";
-import { usePinTop } from "../motion/routeNav";
+import { useSceneReveal } from "../motion/studioMotion";
+import { useBoundaryNav, useNavIdle, usePinTop } from "../motion/routeNav";
+import { useStepScroll } from "../motion/stepScroll";
 
 export function meta() {
   return [{ title: "CCDV — Studio" }];
 }
-
-const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
-
-const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 /* Studio page, R3 OPUS CORR01: the V2 originals' sequence of scenes in one
    natively scrolling document (no scroll snap, no nested scroller, no hijack).
@@ -50,7 +45,6 @@ const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffec
    direction, brings it back. The hide uses the CSS `translate` property, so it
    stacks on the --nav-in transform with its own easing. CSS keeps the bar while
    it holds focus, the pointer or (phones) the open menu. */
-const NAV_IDLE_MIN_SCROLL = 50; // px: the M1 bar's height; nearer the top the bar stays
 export default function Studio() {
   const { reduced } = useMotionPolicy();
 
@@ -60,78 +54,22 @@ export default function Studio() {
 
   useSceneReveal(rootRef, reduced);
   usePinTop(approachRef, lilacRef);
-
-  useIsomorphicLayoutEffect(() => {
-    const root = rootRef.current;
-    const approach = approachRef.current;
-    const nav = root?.querySelector<HTMLElement>(".masthead--studio");
-    if (!root || !approach || !nav) return;
-    // NAV-T3 (OPERATOR, supersedes A3's edge): the bar appears once the cover
-    // lockup's lower edge has scrolled past, or when the Approach arrives on a
-    // screen tall enough that the lockup never leaves
-    const lockup = root.querySelector<HTMLElement>(".cv__lockup");
-    let frame = 0;
-    let last = "";
-    const update = () => {
-      frame = 0;
-      // reads
-      const navH = nav.offsetHeight;
-      const approachTop = approach.getBoundingClientRect().top;
-      const edge = lockup ? Math.min(approachTop, lockup.getBoundingClientRect().bottom) : approachTop;
-      // write (navH is 0 on phones, where the bar is not rendered)
-      const p = navH > 0 ? clamp01((navH - edge) / navH).toFixed(4) : "1";
-      if (p !== last) {
-        last = p;
-        root.style.setProperty("--nav-in", p);
-      }
-    };
-    const schedule = () => {
-      if (!frame) frame = requestAnimationFrame(update);
-    };
-    update();
-    window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
-    return () => {
-      window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
-      if (frame) cancelAnimationFrame(frame);
-      root.style.removeProperty("--nav-in");
-    };
-  }, []);
-
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
-    let timer = 0;
-    const settle = () => {
-      timer = 0;
-      if (window.scrollY > NAV_IDLE_MIN_SCROLL) root.setAttribute("data-nav-idle", "");
-    };
-    const onScroll = () => {
-      if (root.hasAttribute("data-nav-idle")) root.removeAttribute("data-nav-idle");
-      window.clearTimeout(timer);
-      timer = window.setTimeout(settle, STUDIO_MOTION.navIdle * 1000);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.clearTimeout(timer);
-      root.removeAttribute("data-nav-idle");
-    };
-  }, []);
+  // NAV-T3 (OPERATOR, supersedes A3's edge): the bar appears once the cover
+  // lockup's lower edge has scrolled past, or when the Approach arrives on a
+  // screen tall enough that the lockup never leaves. N1: the bar itself is the
+  // shared GlobalShell chrome; this page only drives it (motion/routeNav.ts).
+  useBoundaryNav(rootRef, approachRef, ".masthead--studio", ".cv__lockup");
+  useNavIdle(rootRef);
+  // A3: one gesture, one rise; stops at the markers and the CC.OS scene
+  useStepScroll(rootRef, ".pin-snap, .cs", reduced);
 
   return (
     <div className="r11 r11--studio" ref={rootRef}>
-      {/* M1: operator-designed phone header + menu; hidden from 768px up, where
-          the thin masthead below takes over (and is hidden on phones). */}
-      <StudioMobileMenu />
-      <SiteMasthead variant="studio" />
-
       {/* NAV-T3 curtain + PIN-T1 pin (desktop, global.css): the cover pins
           while the Approach rises over it; the Approach then pins, one screen
-          tall, while the lilac rises over it. FLOW-T1 (OPERATOR): the Services
-          snap too — in-flow markers, since a sticky element's own snap
-          position moves with it */}
+          tall, while the lilac rises over it. The in-flow markers (`pin-snap`)
+          are the stepper's stops (motion/stepScroll.ts, A3), since a sticky
+          element's own position moves with it */}
       <div className="scene-curtain">
         <StudioCover />
 

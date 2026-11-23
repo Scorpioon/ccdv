@@ -1,8 +1,6 @@
 import { useEffect, useRef, type CSSProperties } from "react";
 import { useVisibleLoop } from "../studio/artworks";
 import { apply, mul, rotX, rotY, rotZ, type Mat3, type Vec3 } from "../marks/StudioMobileOrbit";
-import { LitFaces, type LitPattern } from "./LitCube";
-import { index } from "../../motion/studioMotion";
 
 /* Products V2 artwork. The hero cube and the card icons are transcribed from
    PRODUCTS_v2.svg: each viewBox is the drawing's own source box, so the path
@@ -19,45 +17,6 @@ import { index } from "../../motion/studioMotion";
    (useVisibleLoop); a selection replays it; reduced motion shows the rest
    pose. `Products demo cube (not use, recreate)` is not used anywhere here.
    All art is decorative. */
-
-/* hero wireframe cube: three nested hexagons (light / green / green-to-light)
-   and the green Y + light vertical that read as a cube. The source box runs
-   past the 1536 artboard on the right; the page clips it. P1b: the lit faces
-   (LitCube) sit under the outlines, on the hexagons' own centre and radii.
-   `spawn` makes it the cover's spawn step of that index (on the svg itself: a
-   transformed wrapper would become the absolute cube's containing block). */
-export function ProductsHeroCube({ className, pattern, spawn }: { className?: string; pattern: LitPattern; spawn?: number }) {
-  const outer = "M1111.5 53L1657.53 368.25V998.75L1111.5 1314L565.471 998.75V368.25L1111.5 53Z";
-  const middle = "M1111.47 179.104L1548.29 431.304V935.704L1111.47 1187.9L674.647 935.704V431.304L1111.47 179.104Z";
-  const inner = "M1111.49 355.635L1395.43 519.565V847.425L1111.49 1011.36L827.558 847.425V519.565L1111.49 355.635Z";
-  return (
-    <svg
-      className={className}
-      viewBox="563 50 1097 1267"
-      fill="none"
-      aria-hidden="true"
-      focusable="false"
-      data-spawn={spawn === undefined ? undefined : true}
-      style={spawn === undefined ? undefined : index(spawn)}
-    >
-      <defs>
-        <mask id="pv-cube-m0" fill="white"><path d={outer} /></mask>
-        <mask id="pv-cube-m1" fill="white"><path d={middle} /></mask>
-        <mask id="pv-cube-m2" fill="white"><path d={inner} /></mask>
-        <linearGradient id="pv-cube-g0" x1="1111.49" y1="355.635" x2="1132.51" y2="1276.16" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#5AE36F" />
-          <stop offset="1" stopColor="#F2F2F2" />
-        </linearGradient>
-      </defs>
-      <LitFaces cx={1111.5} cy={683.5} radii={[630.5, 504.4, 327.86]} pattern={pattern} />
-      <path d={outer} strokeWidth="4.53597" stroke="#F2F2F2" mask="url(#pv-cube-m0)" />
-      <path d={middle} strokeWidth="4.53597" stroke="#5AE36F" mask="url(#pv-cube-m1)" />
-      <path d={inner} strokeWidth="4.53597" stroke="url(#pv-cube-g0)" mask="url(#pv-cube-m2)" />
-      <path d="M676.086 431.754L1111.54 683.501L1546.99 431.754" strokeWidth="2.26799" stroke="#5AE36F" />
-      <path d="M1111.48 683.496V1185.84" strokeWidth="2.26799" stroke="#F2F2F2" />
-    </svg>
-  );
-}
 
 type ArtProps = { active: boolean; reduced: boolean };
 

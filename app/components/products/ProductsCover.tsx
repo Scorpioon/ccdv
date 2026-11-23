@@ -3,7 +3,7 @@ import { useTransitionLink } from "../GlobalShell";
 import { GearMark } from "../marks/GearMark";
 import { CcdvPixelMark } from "../marks/CcdvPixelMark";
 import { Chip } from "../studio/studioMarks";
-import { ProductsHeroCube } from "./ProductsArtwork";
+import { FloatingCube } from "./FloatingCube";
 import type { LitPattern } from "./LitCube";
 import { PRODUCTS_INTRO } from "../../data/productsContent";
 import { index } from "../../motion/studioMotion";
@@ -21,7 +21,7 @@ import { index } from "../../motion/studioMotion";
    P1b: the pieces spawn in reading order, as on Studio / Services (the cube
    last), so a swap into Products no longer paints the cube before the page;
    the cube shows the current lit pattern (LitCube). */
-export function ProductsCover({ pattern }: { pattern: LitPattern }) {
+export function ProductsCover({ pattern, reduced }: { pattern: LitPattern; reduced: boolean }) {
   const link = useTransitionLink();
   return (
     <section className="pv-cover" aria-label="CCDV">
@@ -52,7 +52,9 @@ export function ProductsCover({ pattern }: { pattern: LitPattern }) {
         <span className="pv-cover__sq pv-cover__sq--d" aria-hidden="true" data-spawn style={index(2)} />
         <span className="pv-cover__sq pv-cover__sq--e" aria-hidden="true" data-spawn style={index(2)} />
 
-        <ProductsHeroCube className="pv-cover__cube" pattern={pattern} spawn={4} />
+        {/* A5: on desktop the cover's copy of the persistent cube (pv-float);
+            A6: that copy is the 3D FloatingCube */}
+        <FloatingCube className="pv-cover__cube pv-float" pattern={pattern} reduced={reduced} spawn={4} />
 
         <div className="pv-cover__whois" data-spawn style={index(3)}>
           <Chip tone="ink" as="p" className="pv-chip pv-cover__chip">

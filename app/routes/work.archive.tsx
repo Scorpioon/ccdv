@@ -1,13 +1,13 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigationType } from "react-router";
-import { SiteMasthead } from "../components/SiteMasthead";
 import { SiteFooter } from "../components/SiteFooter";
-import { StudioMobileMenu } from "../components/StudioMobileMenu";
 import { GearMark } from "../components/marks/GearMark";
 import { ProjectList } from "../components/ProjectList";
 import { WorkIndexFilter } from "../components/work/WorkIndexFilter";
 import { WorkPreviewPane } from "../components/work/WorkPreviewPane";
 import { useBoundaryNav, useNavIdle } from "../motion/routeNav";
+import { useMotionPolicy } from "../motion/reducedMotion";
+import { useStepScroll } from "../motion/stepScroll";
 import { AVAILABLE_YEARS, DEFAULT_PREVIEW_ID, PROJECTS, TYPES, YEARS, typeLabel } from "../data/workProjects";
 
 export function meta() {
@@ -101,6 +101,8 @@ export default function WorkArchive() {
 
   useBoundaryNav(rootRef, resultsRef, ".masthead--work");
   useNavIdle(rootRef);
+  const { reduced } = useMotionPolicy();
+  useStepScroll(rootRef, null, reduced); // A3: the index, then the footer
 
   const [arrival] = useState<Arrival>(() => {
     const state = (location.state ?? null) as WorkNavState | null;
@@ -171,9 +173,6 @@ export default function WorkArchive() {
 
   return (
     <div className="r11 r11--work r11--work-archive" ref={rootRef}>
-      <StudioMobileMenu current="/work" />
-      <SiteMasthead variant="work" compact />
-
       <section
         ref={resultsRef}
         id="work-index"
