@@ -14,14 +14,22 @@
    (the right column is the corrected editorial panel of capture 09 because the
    data already holds that wording). Each category remembers its selected
    service; a new category opens on its remembered (else first) service.
-   Arrow/Home/End move inside either tab list. */
+   Arrow/Home/End move inside either tab list.
+
+   A11 (OPERATOR): the Studio Approach layout. Left: five category bars (lit
+   red for the active category, a click selects it; the tablist stays the
+   keyboard path) over the Rubik cube (RubikCube, which replaces IndexVoxel).
+   Right: the \\Service Index strip (a slot's height) and the category tabs
+   (the selected one red), then the lead, the services, the copy, and the two
+   Focus values under a "\\What we deliver" tag, each with its category's
+   mark instead of the gear. */
 import { useId, useRef, useState } from "react";
 import type { KeyboardEvent } from "react";
-import { ChipGear, Chip } from "../studio/studioMarks";
-import { IndexVoxel } from "./IndexVoxel";
+import { CategoryIcon, Chip } from "../studio/studioMarks";
+import { RubikCube } from "./RubikCube";
 import { DEFAULT_SERVICE_CATEGORY_ID, SERVICE_CATEGORIES } from "../../data/servicesContent";
 import { SERVICE_CATEGORY_LEADS } from "../../data/servicesScenes";
-import { indexPattern } from "../../data/servicesVoxels";
+import { indexGrids } from "../../data/servicesVoxels";
 import { index } from "../../motion/studioMotion";
 
 const DEFAULT_INDEX = Math.max(
@@ -49,6 +57,10 @@ export function ServiceIndex({ reduced, titleId }: { reduced: boolean; titleId: 
   const selected = Math.min(chosen[category.id] ?? 0, Math.max(0, services.length - 1));
   const service = services[selected];
   const lead = SERVICE_CATEGORY_LEADS[category.id];
+  /* the cube: the selected service's grid on the front, the category's other
+     two on top and right (only the first state's; moves own them after) */
+  const grids = indexGrids(category.id);
+  const others = grids.filter((_, i) => i !== selected);
 
   const selectCategory = (next: number, focus = false) => {
     if (next !== active) setActive(next);
@@ -86,41 +98,59 @@ export function ServiceIndex({ reduced, titleId }: { reduced: boolean; titleId: 
       data-active-service-id={service?.id}
       data-pattern={`${category.id}:${selected + 1}`}
     >
-      <div className="sv-ix__head" data-spawn style={index(0)}>
-        <Chip tone="red" as="h2" className="sv-ix__title" id={titleId}>
-          {"\\\\Service Index"}
-        </Chip>
-        <div className="sv-ix__slots" role="tablist" aria-labelledby={titleId} onKeyDown={onCategoryKey}>
-          {SERVICE_CATEGORIES.map((c, i) => (
-            <button
-              key={c.id}
-              ref={(node) => {
-                categoryRefs.current[i] = node;
-              }}
-              type="button"
-              role="tab"
-              id={categoryTab(i)}
-              className="sv-ix__slot"
-              aria-selected={active === i}
-              aria-controls={categoryPanel}
-              tabIndex={active === i ? 0 : -1}
-              onClick={() => selectCategory(i)}
-            >
-              <span className="sv-ix__slot-dot" aria-hidden="true" />
-              {c.label}
-            </button>
-          ))}
-        </div>
+      {/* A11: the bars switch categories for the pointer only (the tablist
+          is the keyboard path, so they stay out of the tab order) */}
+      <div className="sv-ix__bars" data-spawn style={index(0)}>
+        {SERVICE_CATEGORIES.map((c, i) => (
+          <button
+            key={c.id}
+            type="button"
+            tabIndex={-1}
+            className="sv-ix__bar"
+            data-active={active === i}
+            aria-label={`Show ${c.label}`}
+            onClick={() => selectCategory(i)}
+          />
+        ))}
       </div>
 
-      <div className="sv-ix__art" data-spawn style={index(1)}>
-        <IndexVoxel pattern={indexPattern(category.id, selected)} reduced={reduced} />
+      <div className="sv-ix__art">
+        <RubikCube
+          front={grids[selected] ?? grids[0]}
+          top={others[0] ?? grids[0]}
+          right={others[1] ?? grids[0]}
+          category={active}
+          reduced={reduced}
+        />
       </div>
 
       <div className="sv-ix__panel">
-        <span className="sv-ix__strip chip chip--red" aria-hidden="true" data-spawn style={index(1)}>
-          <ChipGear className="chip__gear" />
-        </span>
+        <div className="sv-ix__head" data-spawn style={index(1)}>
+          <Chip tone="red" as="h2" className="sv-ix__title" id={titleId}>
+            {"\\\\Service Index"}
+          </Chip>
+          <div className="sv-ix__slots" role="tablist" aria-labelledby={titleId} onKeyDown={onCategoryKey}>
+            {SERVICE_CATEGORIES.map((c, i) => (
+              <button
+                key={c.id}
+                ref={(node) => {
+                  categoryRefs.current[i] = node;
+                }}
+                type="button"
+                role="tab"
+                id={categoryTab(i)}
+                className="sv-ix__slot"
+                aria-selected={active === i}
+                aria-controls={categoryPanel}
+                tabIndex={active === i ? 0 : -1}
+                onClick={() => selectCategory(i)}
+              >
+                <span className="sv-ix__slot-dot" aria-hidden="true" />
+                {c.label}
+              </button>
+            ))}
+          </div>
+        </div>
 
         {/* wrapper takes the scene spawn; the keyed panel replays the CSS
             spawn on a new category (lead + services first, then the copy) */}
@@ -168,11 +198,13 @@ export function ServiceIndex({ reduced, titleId }: { reduced: boolean; titleId: 
                   {service.pending ? <p className="sv-ix__pending">[ pending ] · content slot {service.id}</p> : null}
                 </div>
                 <div className="sv-ix__focus">
-                  <h4 className="sv-visually-hidden">Focus</h4>
+                  <h4 className="sv-ix__focus-title">{"\\\\What we deliver"}</h4>
                   <ul className="sv-ix__chips">
                     {service.focus.map((value) => (
                       <li key={value}>
-                        <Chip tone="light">{value}</Chip>
+                        <Chip tone="light" icon={<CategoryIcon name={category.id} className="chip__gear" />}>
+                          {value}
+                        </Chip>
                       </li>
                     ))}
                   </ul>

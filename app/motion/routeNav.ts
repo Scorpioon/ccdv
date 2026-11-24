@@ -9,9 +9,10 @@
    useBoundaryNav  --nav-in = clamp((navH - edgeTop) / navH) on the chrome: the
                    bar's lower edge rides the top edge of the given section, so
                    the bar is hidden over everything above it.
-   useNavIdle      `data-nav-idle` on the chrome after STUDIO_MOTION.navIdle
-                   (1.0 s) without a scroll, cleared by the next scroll; the CSS
-                   slides the bar away (0.30 s) and back (0.22 s).
+   useNavIdle      A9 (OPERATOR), summon-only: `data-nav-idle` on the chrome
+                   while the reader steps or scrolls down, cleared by a step or
+                   scroll up and at the page's end; the CSS slides the bar away
+                   (0.30 s) and back (0.22 s).
 
    Ownership: the page that has just arrived claims the bar. The page leaving
    is still mounted for its exit and still receives scrolls, so only the owner
@@ -21,14 +22,13 @@
    shows it meanwhile (useNavIdle, `data-nav-peek`). */
 import { useEffect, useLayoutEffect } from "react";
 import type { RefObject } from "react";
-import { STUDIO_MOTION } from "./studioMotion";
-
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
 const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 const NAV_IDLE_MIN_SCROLL = 50; // px: the M1 bar's height; nearer the top the bar stays
 const PEEK_EDGE = 70; // px from the top edge that reveals the bar (A1)
 const PEEK_SLACK = 24; // px below the bar before it is let go
 const PEEK_HIDE_MS = 250;
+const SCROLL_DIR_MIN = 4; // px: smaller moves do not count as a direction (A9)
 const SCROLL_KEYS = new Set(["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "]);
 
 const getChrome = () => document.querySelector<HTMLElement>(".site-chrome");
@@ -213,13 +213,10 @@ export function useNavIdle(rootRef: RefObject<HTMLElement | null>) {
     const chrome = getChrome();
     if (!root || !chrome) return;
     claimBar(root);
-    let timer = 0;
-    const settle = () => {
-      timer = 0;
-      if (barOwner === root && !barHeld && window.scrollY > NAV_IDLE_MIN_SCROLL) {
-        chrome.setAttribute("data-nav-idle", "");
-      }
-    };
+    /* A9 (OPERATOR): summon-only. Stepping or scrolling down hides the bar,
+       up (or the page's end) shows it; no idle timer, so a step down never
+       flashes it in. */
+    let lastY = window.scrollY;
 
     /* A1: `data-nav-peek` shows the bar on demand. Mouse: the cursor within
        PEEK_EDGE of the top, armed only once it has been below the bar since
@@ -270,11 +267,15 @@ export function useNavIdle(rootRef: RefObject<HTMLElement | null>) {
     const onScroll = () => {
       if (barOwner !== root) return;
       if (touchPeek) setPeek(false);
+      const y = window.scrollY;
+      const dy = y - lastY;
+      if (Math.abs(dy) <= SCROLL_DIR_MIN) return;
+      lastY = y;
       if (barHeld) return;
-      idleBeforePeek = false;
-      if (chrome.hasAttribute("data-nav-idle")) chrome.removeAttribute("data-nav-idle");
-      window.clearTimeout(timer);
-      timer = window.setTimeout(settle, STUDIO_MOTION.navIdle * 1000);
+      const atEnd = y + window.innerHeight >= document.documentElement.scrollHeight - 2;
+      const show = dy < 0 || atEnd;
+      if (peeking) idleBeforePeek = !show;
+      else chrome.toggleAttribute("data-nav-idle", !show);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("pointermove", onMove, { passive: true });
@@ -283,7 +284,6 @@ export function useNavIdle(rootRef: RefObject<HTMLElement | null>) {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerdown", onDown);
-      window.clearTimeout(timer);
       window.clearTimeout(peekTimer);
       if (barOwner === root) {
         chrome.removeAttribute("data-nav-idle");

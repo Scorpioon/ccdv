@@ -49,17 +49,21 @@ function scrollsInside(target: EventTarget | null, deltaY: number, root: HTMLEle
 
 /* A4: `coverPages: false` plays the first segment (the cover) as one rise
    straight into the next stop, without paging its overflow (Products: the
-   cover's lower half carries nothing to read). A6.1: `onArrive` is told when
-   a step has landed (Products: the cube's kick and lighting change); a
-   cancelled step does not count. */
+   cover's lower half carries nothing to read). A10 (OPERATOR; was A6.1's
+   `onArrive`, told on landing): `onStep` is told when a step BEGINS, with its
+   direction and duration (0 under reduced motion), so Products can move its
+   cube during the scroll. */
 export function useStepScroll(
   rootRef: RefObject<HTMLElement | null>,
   stopSelector: string | null,
   reduced: boolean,
-  { coverPages = true, onArrive }: { coverPages?: boolean; onArrive?: (direction: 1 | -1) => void } = {},
+  {
+    coverPages = true,
+    onStep,
+  }: { coverPages?: boolean; onStep?: (direction: 1 | -1, durationMs: number) => void } = {},
 ) {
-  const arriveRef = useRef(onArrive);
-  arriveRef.current = onArrive;
+  const stepRef = useRef(onStep);
+  stepRef.current = onStep;
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
@@ -128,9 +132,10 @@ export function useStepScroll(
       const direction = distance > 0 ? 1 : -1;
       if (reduced) {
         window.scrollTo({ top: to, behavior: "instant" });
-        arriveRef.current?.(direction);
+        stepRef.current?.(direction, 0);
         return;
       }
+      stepRef.current?.(direction, STEP_S * 1000);
       animating = true;
       const begin = performance.now();
       const tick = (now: number) => {
@@ -141,7 +146,6 @@ export function useStepScroll(
         } else {
           frame = 0;
           animating = false;
-          arriveRef.current?.(direction);
         }
       };
       frame = requestAnimationFrame(tick);

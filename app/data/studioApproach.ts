@@ -5,8 +5,12 @@
    Build cards) the existing R3 copy is kept and the gap is an OPEN item in the
    R3 report. Spelling fixed, no new claims. */
 
+/** A9 (OPERATOR): each toollet chip shows a mark for what its text says (studioMarks.ToolletIcon) */
+export type ToolletIconName = "inspect" | "define" | "toolbox" | "iterate" | "code" | "person";
+
 export interface ApproachToollet {
   label: string;
+  icon: ToolletIconName;
   body: string;
 }
 
@@ -32,10 +36,12 @@ export const APPROACH_SLOTS: readonly ApproachSlot[] = [
     toollets: [
       {
         label: "Understanding",
+        icon: "inspect",
         body: "We study the current workflow, the people involved and the tools already in place.",
       },
       {
         label: "Defining",
+        icon: "define",
         body: "We establish what the system needs to do, how people will use it and which requirements matter.",
       },
     ],
@@ -52,10 +58,12 @@ export const APPROACH_SLOTS: readonly ApproachSlot[] = [
     toollets: [
       {
         label: "Toolbelt",
+        icon: "toolbox",
         body: "Project management, information and automation tools we built, and keep improving, for our own studio.",
       },
       {
         label: "Improving",
+        icon: "iterate",
         body: "We test, document and adjust what we build, so a tool stays understandable after its first release.",
       },
     ],
@@ -71,10 +79,12 @@ export const APPROACH_SLOTS: readonly ApproachSlot[] = [
     toollets: [
       {
         label: "Design meets code",
+        icon: "code",
         body: "Decisions made on screen have consequences behind it. We make them together.",
       },
       {
         label: "Human ownership",
+        icon: "person",
         body: "Clear interfaces, visible processes and documented decisions, especially where automation or AI is involved.",
       },
     ],

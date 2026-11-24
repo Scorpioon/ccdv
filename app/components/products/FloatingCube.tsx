@@ -1,20 +1,19 @@
 /* A6.1 (OPERATOR): the Products persistent cube, the phone cube (LitCube)
-   rebuilt in 3D and moved by the Studio sphere system. Three nested cubes,
-   orthographic, posed M = wobble(clock) · kick · ISO:
-   - the idle wobble is StudioMobileOrbit's (wobble);
-   - a step landing gives the cube a kick, which settles back to iso on a
-     damped spring (ArrowTrace's: stiffness 90, damping 11), so the lit faces
-     stay top / left / right;
-   - one shared driver draws every copy (cover / module / rail) on the same
-     clock, so the curtain shows no seam.
-   Not interactive. The loop follows useSphereMotion's rules: it runs only while
-   a copy is on screen and not under a curtain (routeNav data-covered), it pauses
-   otherwise, and the attributes are written straight to the DOM (no React state
-   per frame). The still iso pose is the server render, the first paint and the
-   reduced-motion drawing; phones and tablets keep it too. */
+   rebuilt in 3D. Three nested cubes, orthographic, posed M = tilt · ISO.
+   A10 (OPERATOR): the idle wobble and the spring kick on landing are gone (the
+   spring overshot: the cube rocked after every step). The cube rests in the
+   phone pose and moves once per step, DURING the scroll: tiltFloatingCube
+   tilts it out and back on the step's own cubic ease-in-out (zero speed at
+   both ends, no overshoot), and the lit pattern changes at the half-way point.
+   The nested cubes share the outer cube's front corner, so every layer's three
+   visible faces lie in the same three planes: at rest the drawing is the phone
+   cube's exactly, and tilted, the lit bands and the Y stay on their faces.
+   One shared driver draws every copy (cover / module / rail) with the same
+   pose, so the curtain shows no seam; attributes are written straight to the
+   DOM (no React state per frame). The still iso pose is the server render, the
+   first paint and the reduced-motion drawing; phones and tablets keep it too. */
 import { useEffect, useId, useRef } from "react";
-import { apply, mul, rotX, rotY, wobble, type Mat3, type Vec3 } from "../marks/StudioMobileOrbit";
-import { onCoverChange } from "../../motion/routeNav";
+import { apply, mul, rotX, rotY, type Mat3, type Vec3 } from "../marks/StudioMobileOrbit";
 import { index } from "../../motion/studioMotion";
 import { LIT_TONES, type LitPattern } from "./LitCube";
 
@@ -22,6 +21,10 @@ import { LIT_TONES, type LitPattern } from "./LitCube";
 const RADII = [100, 80, 52] as const;
 /* half-size of each nested cube */
 const H = RADII.map((r) => (r * Math.sqrt(1.5)) / 2);
+/* A10: each inner cube is moved along the diagonal so its front corner is the
+   outer cube's (h0, h0, h0); its centre still projects to the middle at iso */
+const OFFSET = H.map((h) => H[0] - h);
+const shift = (pts: Vec3[], o: number): Vec3[] => pts.map(([x, y, z]) => [x + o, y + o, z + o]);
 
 const ISO: Mat3 = mul(rotX(Math.atan(1 / Math.SQRT2)), rotY(-Math.PI / 4));
 
@@ -79,7 +82,7 @@ const silhouetteCorners = (h: number): Vec3[] => [
    0-8 lit (layer * 3 + face), 9-11 silhouettes (outer, middle, inner),
    12 the green Y, 13 the light vertical */
 function drawing(m: Mat3): string[] {
-  const faces = H.map(faceCorners);
+  const faces = H.map((h, layer) => faceCorners(h).map((pts) => shift(pts, OFFSET[layer])));
   const out: string[] = [];
   for (let layer = 0; layer < 3; layer++) {
     for (let face = 0; face < 3; face++) {
@@ -88,11 +91,19 @@ function drawing(m: Mat3): string[] {
       );
     }
   }
-  for (const h of H) out.push(outline(m, silhouetteCorners(h), true));
+  H.forEach((h, layer) => out.push(outline(m, shift(silhouetteCorners(h), OFFSET[layer]), true)));
   const mid = H[1];
-  const front: Vec3 = [mid, mid, mid];
-  out.push(outline(m, [[-mid, mid, mid], front, [mid, mid, -mid]], false));
-  out.push(outline(m, [front, [mid, -mid, mid]], false));
+  const [front, left, right, down] = shift(
+    [
+      [mid, mid, mid],
+      [-mid, mid, mid],
+      [mid, mid, -mid],
+      [mid, -mid, mid],
+    ],
+    OFFSET[1],
+  );
+  out.push(outline(m, [left, front, right], false));
+  out.push(outline(m, [front, down], false));
   return out;
 }
 
@@ -103,54 +114,53 @@ const LIT = [0, 1, 2].flatMap((layer) =>
   [0, 1, 2].map((face) => ({ layer, face, k: layer * 3 + face })),
 );
 
-/* one driver for every copy on the page */
-type Copy = { draw: (m: Mat3) => void; node: SVGSVGElement; visible: boolean };
+/* one driver for every copy on the page; every copy is drawn on every frame
+   of a tilt (three small SVGs for 0.7 s), so none is left tilted under a
+   curtain */
+type Copy = { draw: (m: Mat3) => void };
 const copies = new Set<Copy>();
 let frame = 0;
-let last = 0;
-let clock = 0;
-let kx = 0;
-let ky = 0;
-let vx = 0;
-let vy = 0;
+let start = 0;
+let span = 0;
+let dir: 1 | -1 = 1;
+let midway: (() => void) | null = null;
 let reducedAll = false;
 
-const live = (copy: Copy) => copy.visible && !copy.node.closest("[data-covered]");
+const TILT_Y = 0.32; // rad (~18 deg) about the screen's vertical at the peak
+const TILT_X = 0.14; // rad (~8 deg) about the screen's horizontal
+/* stepScroll.ts's ease, so the tilt rides the scroll */
+const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
-const active = () => {
-  for (const copy of copies) if (live(copy)) return true;
-  return false;
-};
+const pose = (a: number): Mat3 => (a === 0 ? ISO : mul(mul(rotY(dir * TILT_Y * a), rotX(-dir * TILT_X * a)), ISO));
+
+function runMidway() {
+  const fn = midway;
+  midway = null;
+  fn?.();
+}
 
 function tick(now: number) {
-  const dt = Math.min(0.1, Math.max(0, (now - last) / 1000));
-  last = now;
-  clock += dt;
-  vx += (-90 * kx - 11 * vx) * dt;
-  kx += vx * dt;
-  vy += (-90 * ky - 11 * vy) * dt;
-  ky += vy * dt;
-  const m = mul(wobble(clock), mul(mul(rotX(kx), rotY(ky)), ISO));
-  for (const copy of copies) if (live(copy)) copy.draw(m);
-  frame = active() ? requestAnimationFrame(tick) : 0;
+  const t = Math.min(1, (now - start) / span);
+  if (t >= 0.5) runMidway();
+  const m = pose(t < 1 ? Math.sin(Math.PI * ease(t)) : 0);
+  for (const copy of copies) copy.draw(m);
+  frame = t < 1 ? requestAnimationFrame(tick) : 0;
 }
 
-function sync() {
-  if (active() && !frame && !reducedAll) {
-    last = performance.now();
-    frame = requestAnimationFrame(tick);
-  } else if (!active() && frame) {
-    cancelAnimationFrame(frame);
-    frame = 0;
+/* A10: a step began: tilt out and back over its duration (rest -> peak ->
+   rest), and change the lit faces half-way. Reduced motion, no copy on the
+   page or no duration: only the change. */
+export function tiltFloatingCube(direction: 1 | -1, durationMs: number, onMidway: () => void) {
+  runMidway(); // a tilt still running hands over its change first
+  if (reducedAll || copies.size === 0 || durationMs <= 0) {
+    onMidway();
+    return;
   }
-}
-
-/* a step landed: a light kick about the screen's y and x, settling back to iso */
-export function kickFloatingCube(direction: 1 | -1) {
-  if (reducedAll || copies.size === 0) return;
-  vy += direction * 1.4;
-  vx += direction * 0.5;
-  sync();
+  dir = direction;
+  start = performance.now();
+  span = durationMs;
+  midway = onMidway;
+  if (!frame) frame = requestAnimationFrame(tick);
 }
 
 export function FloatingCube({
@@ -178,38 +188,20 @@ export function FloatingCube({
     if (reduced || !node || !window.matchMedia("(min-width: 1024px)").matches) return;
 
     const copy: Copy = {
-      node,
-      visible: false,
       draw: (m) => {
         const d = drawing(m);
         paths.current.forEach((p, k) => p?.setAttribute("d", d[k]));
       },
     };
     copies.add(copy);
-    const observer =
-      typeof IntersectionObserver === "undefined"
-        ? null
-        : new IntersectionObserver(([entry]) => {
-            copy.visible = entry.isIntersecting;
-            sync();
-          });
-    if (observer) observer.observe(node);
-    else copy.visible = true;
-    const off = onCoverChange(sync);
-    sync();
 
     return () => {
-      observer?.disconnect();
-      off();
       copies.delete(copy);
       copy.draw(ISO);
-      sync();
-      if (copies.size === 0) {
-        clock = 0;
-        kx = 0;
-        ky = 0;
-        vx = 0;
-        vy = 0;
+      if (copies.size === 0 && frame) {
+        cancelAnimationFrame(frame);
+        frame = 0;
+        midway = null;
       }
     };
   }, [reduced]);

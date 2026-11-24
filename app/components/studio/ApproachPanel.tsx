@@ -1,8 +1,8 @@
 /* Studio Approach (R3 M03/M04, rebuilt in OPUS CORR01 OC01-03/04 from
    FB_R4_5.svg y1118..2164 and STUDIO_resp3-1.svg y1118..2636).
 
-     frames   three progress bars (desktop: led by an 18 x 18 square); bar i is
-              lit for slot i
+     frames   three progress bars; bar i is lit for slot i. A9 (OPERATOR): the
+              lead square is removed and a bar click selects its slot
      sphere   circle, "+" hairlines, a dotted axis and THREE discs strung on
               that axis: the middle one is the great circle (largest), the
               upper and lower ones are parallel latitude discs (smaller, higher
@@ -20,7 +20,7 @@ import { useId, useRef, useState } from "react";
 import type { KeyboardEvent, MutableRefObject } from "react";
 import { IDENT, apply, axisLine, mul, ringEllipse, useSphereMotion, wobble, writeEllipse, writeLine } from "../marks/StudioMobileOrbit";
 import type { Mat3, SphereControl, Vec3 } from "../marks/StudioMobileOrbit";
-import { Chip } from "./studioMarks";
+import { Chip, ToolletIcon } from "./studioMarks";
 import { APPROACH_DEFAULT_SLOT, APPROACH_SLOTS } from "../../data/studioApproach";
 import { STUDIO_MOTION, index } from "../../motion/studioMotion";
 
@@ -170,10 +170,19 @@ export function ApproachPanel({ reduced, titleId }: { reduced: boolean; titleId:
 
   return (
     <div className="ap" data-scene>
-      <div className="ap__bars" aria-hidden="true" data-spawn style={index(0)}>
-        <span className="ap__mark" />
+      {/* A9 (OPERATOR): the bars switch slots too, for the pointer only (the
+          tablist is the keyboard path, so they stay out of the tab order) */}
+      <div className="ap__bars" data-spawn style={index(0)}>
         {APPROACH_SLOTS.map((s, i) => (
-          <span key={s.key} className="ap__bar" data-active={active === i} />
+          <button
+            key={s.key}
+            type="button"
+            tabIndex={-1}
+            className="ap__bar"
+            data-active={active === i}
+            aria-label={`Show ${s.label}`}
+            onClick={() => select(i)}
+          />
         ))}
       </div>
 
@@ -234,7 +243,7 @@ export function ApproachPanel({ reduced, titleId }: { reduced: boolean; titleId:
           <div className="ap__toollets">
             {slot.toollets.map((toollet) => (
               <div key={toollet.label} className="ap__toollet">
-                <Chip tone="light" as="h3">
+                <Chip tone="light" as="h3" icon={<ToolletIcon name={toollet.icon} className="chip__gear" />}>
                   {toollet.label}
                 </Chip>
                 <p>{toollet.body}</p>

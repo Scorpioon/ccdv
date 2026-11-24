@@ -44,7 +44,9 @@ export function meta() {
    masthead and phone M1 bar alike) up out of view; the next scroll, either
    direction, brings it back. The hide uses the CSS `translate` property, so it
    stacks on the --nav-in transform with its own easing. CSS keeps the bar while
-   it holds focus, the pointer or (phones) the open menu. */
+   it holds focus, the pointer or (phones) the open menu.
+   A9 (OPERATOR): summon-only. The idle timer is gone; stepping or scrolling
+   down hides the bar, up (or the page's end) brings it back. */
 export default function Studio() {
   const { reduced } = useMotionPolicy();
 

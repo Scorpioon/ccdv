@@ -9,6 +9,7 @@
 import { useRef } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { useFrameSpread } from "../../motion/frameSpread";
+import type { ToolletIconName } from "../../data/studioApproach";
 
 /* The small eight-tooth gear of the chips (Whois, \\Studio Approach, Toolbelt):
    FB_R4_5 Whois chip, box 60..73.19 x 318..331.19. The centre dot is the chip's
@@ -25,26 +26,136 @@ export function ChipGear({ className }: { className?: string }) {
   );
 }
 
+/* A9 (OPERATOR): the Approach toollet chips carry a mark for what their text
+   says instead of the gear. Drawn here, not copied from an original, in the
+   chip gear's own grammar: the same 13.1875 box, solid currentColor, rounded
+   joints, at most one knock-out in `--chip-ground` (the gear's centre dot). */
+export function ToolletIcon({ name, className }: { name: ToolletIconName; className?: string }) {
+  const ground = "var(--chip-ground)";
+  return (
+    <svg className={className} viewBox="0 0 13.1875 13.1875" aria-hidden="true" focusable="false">
+      {name === "inspect" && (
+        <>
+          <circle cx="5.4" cy="5.4" r="4.6" fill="currentColor" />
+          <circle cx="5.4" cy="5.4" r="2.3" fill={ground} />
+          <line x1="8.7" y1="8.7" x2="12" y2="12" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+        </>
+      )}
+      {name === "define" && (
+        <>
+          <rect x="1.6" y="0" width="10" height="13.1875" rx="0.35" fill="currentColor" />
+          <path d="M3.6 3H9.6V4.1H3.6ZM3.6 6H9.6V7.1H3.6ZM3.6 9H7.4V10.1H3.6Z" fill={ground} />
+        </>
+      )}
+      {name === "toolbox" && (
+        <>
+          <path d="M4 5V1.35C4 1.16 4.16 1 4.35 1H8.84C9.03 1 9.19 1.16 9.19 1.35V5H7.99V2.2H5.2V5Z" fill="currentColor" />
+          <rect x="0" y="4.4" width="13.1875" height="8.4" rx="0.35" fill="currentColor" />
+          <rect x="0" y="7.6" width="13.1875" height="0.9" fill={ground} />
+          <rect x="5.6" y="6.9" width="2" height="2.3" rx="0.35" fill="currentColor" />
+        </>
+      )}
+      {name === "iterate" && (
+        <>
+          <path d="M10.41 8.8A4.4 4.4 0 1 1 10.73 5.1" fill="none" stroke="currentColor" strokeWidth="2.2" />
+          <path d="M12.31 3.89L11.35 6.79L8.73 5.19Z" fill="currentColor" stroke="currentColor" strokeWidth="0.7" strokeLinejoin="round" />
+        </>
+      )}
+      {name === "code" && (
+        <g fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3.9 2.8L0.9 6.6L3.9 10.4" />
+          <path d="M9.3 2.8L12.3 6.6L9.3 10.4" />
+          <path d="M7.6 1.6L5.6 11.6" />
+        </g>
+      )}
+      {name === "person" && (
+        <>
+          <circle cx="6.59" cy="3.4" r="2.9" fill="currentColor" />
+          <path d="M0.9 13.1875V11.2C0.9 8.6 3 7.2 6.59 7.2C10.2 7.2 12.29 8.6 12.29 11.2V13.1875Z" fill="currentColor" />
+        </>
+      )}
+    </svg>
+  );
+}
+
+/* A11 (OPERATOR): one mark per Service Index category, on that category's
+   "\\What we deliver" chips; the same grammar as ToolletIcon. Strategy a
+   crosshair, Product an app window, Experience a pointer, AI / R&D a spark,
+   Automation a bolt; an unknown id keeps the gear. */
+export function CategoryIcon({ name, className }: { name: string; className?: string }) {
+  const ground = "var(--chip-ground)";
+  const join = { stroke: "currentColor", strokeWidth: 0.6, strokeLinejoin: "round" as const };
+  let mark: ReactNode;
+  switch (name) {
+    case "strategy":
+      mark = (
+        <>
+          <circle cx="6.59" cy="6.59" r="4.3" fill="none" stroke="currentColor" strokeWidth="1.5" />
+          <circle cx="6.59" cy="6.59" r="1.5" fill="currentColor" />
+          <path
+            d="M6.59 0.5V2.6M6.59 10.6V12.7M0.5 6.59H2.6M10.6 6.59H12.7"
+            stroke="currentColor"
+            strokeWidth="1.3"
+            strokeLinecap="round"
+          />
+        </>
+      );
+      break;
+    case "product":
+      mark = (
+        <>
+          <rect x="0.6" y="1.4" width="12" height="10.4" rx="0.35" fill="currentColor" />
+          <rect x="1.8" y="4.2" width="9.6" height="6.4" fill={ground} />
+        </>
+      );
+      break;
+    case "experience":
+      mark = <path d="M2.2 0.8L11.4 7.2L7.3 7.9L9.6 12.2L7.8 13.1L5.5 8.8L2.2 11.6Z" fill="currentColor" {...join} />;
+      break;
+    case "ai-rnd":
+      mark = (
+        <path
+          d="M6.59 0.4C7.1 4.4 8.8 6.1 12.8 6.59C8.8 7.1 7.1 8.8 6.59 12.8C6.1 8.8 4.4 7.1 0.4 6.59C4.4 6.1 6.1 4.4 6.59 0.4Z"
+          fill="currentColor"
+        />
+      );
+      break;
+    case "automatization":
+      mark = <path d="M7.8 0.4L1.8 7.6H6L5.2 12.8L11.4 5.4H7.2Z" fill="currentColor" {...join} />;
+      break;
+    default:
+      return <ChipGear className={className} />;
+  }
+  return (
+    <svg className={className} viewBox="0 0 13.1875 13.1875" aria-hidden="true" focusable="false">
+      {mark}
+    </svg>
+  );
+}
+
 /* A label chip: gear + text on a solid plate. `ink` is the Whois chip (black
    plate, light text), `light` the Toolbelt chips (light plate, black text),
    `lilac` the \\Studio Approach strip. `red` is the Services R1 strip (the same
-   strip in the Services accent; its CSS lives in the SERVICES R1 block). */
+   strip in the Services accent; its CSS lives in the SERVICES R1 block).
+   `icon` (A9) replaces the gear. */
 export function Chip({
   tone,
   as: Tag = "span",
   className,
   id,
+  icon,
   children,
 }: {
   tone: "ink" | "light" | "lilac" | "red";
   as?: "span" | "p" | "h2" | "h3" | "h4";
   className?: string;
   id?: string;
+  icon?: ReactNode;
   children: ReactNode;
 }) {
   return (
     <Tag className={`chip chip--${tone}${className ? ` ${className}` : ""}`} id={id}>
-      <ChipGear className="chip__gear" />
+      {icon ?? <ChipGear className="chip__gear" />}
       <span className="chip__text">{children}</span>
     </Tag>
   );

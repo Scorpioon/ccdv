@@ -4,7 +4,7 @@ import { ProductsCover } from "../components/products/ProductsCover";
 import { ProductsSoftwareCode } from "../components/products/ProductsSoftwareCode";
 import { ProductsRail } from "../components/products/ProductsRail";
 import { DEFAULT_LIT, randomLit } from "../components/products/LitCube";
-import { FloatingCube, kickFloatingCube } from "../components/products/FloatingCube";
+import { FloatingCube, tiltFloatingCube } from "../components/products/FloatingCube";
 import { useMotionPolicy } from "../motion/reducedMotion";
 import { useSceneReveal } from "../motion/studioMotion";
 import { useBoundaryNav, useNavIdle, usePinTop } from "../motion/routeNav";
@@ -33,7 +33,7 @@ export function meta() {
    column, as on Studio.
 
    Navigation follows the global V2 routes: the thin masthead appears once the
-   cover lockup has scrolled past and idles away (motion/routeNav.ts); phones
+   cover lockup has scrolled past and, A9, only on a step up (motion/routeNav.ts); phones
    get the M1 bar and menu instead. P1b: Products is a scene route (it rises
    out of Home, falls back on `collapse`) and its cover spawns like Studio's
    (useSceneReveal, armed before the first paint).
@@ -51,7 +51,9 @@ export function meta() {
    phone cube in 3D on the Studio sphere system, and share the one lit
    pattern; every step landing (useStepScroll `onArrive`, desktop only) rolls
    a new one and kicks the cube — the phone's per-selection lighting change,
-   applied to the steps. Phones are unchanged. */
+   applied to the steps. Phones are unchanged. A10 (OPERATOR): no kick on
+   landing; the cube tilts during the step (`onStep`) and the faces change
+   half-way. */
 export default function Products() {
   const { reduced } = useMotionPolicy();
   const rootRef = useRef<HTMLDivElement>(null);
@@ -59,11 +61,9 @@ export default function Products() {
   const nextRef = useRef<HTMLDivElement>(null);
   const [pattern, setPattern] = useState(DEFAULT_LIT);
   const reroll = useCallback(() => setPattern((current) => randomLit(current)), []);
-  const onArrive = useCallback(
-    (direction: 1 | -1) => {
-      reroll();
-      kickFloatingCube(direction);
-    },
+  // A10: the cube tilts during the step and its faces change half-way
+  const onStep = useCallback(
+    (direction: 1 | -1, durationMs: number) => tiltFloatingCube(direction, durationMs, reroll),
     [reroll],
   );
 
@@ -72,7 +72,7 @@ export default function Products() {
   useNavIdle(rootRef);
   usePinTop(moduleRef, nextRef);
   // A3: one gesture, one rise; A4: the cover rises straight into the module
-  useStepScroll(rootRef, ".pin-snap", reduced, { coverPages: false, onArrive });
+  useStepScroll(rootRef, ".pin-snap", reduced, { coverPages: false, onStep });
   useEffect(reroll, [reroll]);
 
   return (

@@ -88,3 +88,54 @@ export const FALLBACK_PATTERN: IndexPattern = INDEX_PATTERNS.experience[0];
 export function indexPattern(categoryId: string, serviceIndex: number): IndexPattern {
   return INDEX_PATTERNS[categoryId]?.[serviceIndex] ?? FALLBACK_PATTERN;
 }
+
+/* A11 (OPERATOR): the Service Index is a Rubik cube (RubikCube.tsx), so every
+   state is a strict 3 x 3 face — no 2- or 4-cuts, a piece never resizes. The
+   15 band patterns above are re-expressed here (row-major, top row first),
+   each category keeping its motif:
+     strategy        a heavy top row
+     product         a checker
+     experience      the red middle column (service 1 = SERVICES_v2, exact)
+     ai-rnd          column-led (Frame 357's columns)
+     automatization  diagonal steps
+   The band patterns are kept only for IndexVoxel, which the cube replaces. */
+export type VoxelGrid = readonly [
+  VoxelFill, VoxelFill, VoxelFill,
+  VoxelFill, VoxelFill, VoxelFill,
+  VoxelFill, VoxelFill, VoxelFill,
+];
+
+export const INDEX_GRIDS: Readonly<Record<string, readonly [VoxelGrid, VoxelGrid, VoxelGrid]>> = {
+  strategy: [
+    [1, 1, 0, 0, h, 0, 1, h, 1],
+    [0, 1, 1, h, 0, 1, 1, 0, h],
+    [h, 1, 1, 0, 1, 0, 0, h, 1],
+  ],
+  product: [
+    [1, 0, h, 0, h, 1, h, 0, 1],
+    [1, 0, h, 0, 1, 0, h, 0, 1],
+    [h, 1, 0, 1, 0, h, 0, 1, h],
+  ],
+  experience: [
+    [h, 1, 0, 0, 1, h, 0, 1, 0],
+    [0, 1, h, h, 1, 0, 0, 1, 0],
+    [h, 1, 0, 0, 1, 1, 0, 1, 0],
+  ],
+  "ai-rnd": [
+    [0, 0, 1, 1, h, h, 1, 0, 1],
+    [h, 1, 0, 1, 0, 1, 0, h, 1],
+    [1, h, 0, 0, 1, 1, h, 1, h],
+  ],
+  automatization: [
+    [1, 0, 0, 0, 1, 0, h, h, 1],
+    [1, h, 0, 0, 1, h, 0, 0, 1],
+    [1, 0, h, h, 1, 0, 0, h, 1],
+  ],
+};
+
+const FALLBACK_GRIDS = INDEX_GRIDS.experience;
+
+/** the category's three service grids (selected first is the caller's job) */
+export function indexGrids(categoryId: string): readonly [VoxelGrid, VoxelGrid, VoxelGrid] {
+  return INDEX_GRIDS[categoryId] ?? FALLBACK_GRIDS;
+}

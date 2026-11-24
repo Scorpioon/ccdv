@@ -2656,8 +2656,10 @@ main { display: block; outline: none; }
 }
 
 /* --- Addendum A1: idle hide ------------------------------------------------
-   studio.tsx sets `data-nav-idle` after STUDIO_MOTION.navIdle (1.0 s, A4)
-   without a scroll and clears it on the next one. `translate` is separate from
+   routeNav.useNavIdle sets `data-nav-idle` while the reader steps or scrolls
+   down and clears it on a step up or at the page's end (A9, OPERATOR:
+   summon-only; it was 1.0 s after each scroll, which flashed the bar in on
+   every step). `translate` is separate from
    the --nav-in `transform`, so the two stack and ease independently. The bar
    stays while it holds focus or the pointer (desktop) or while the M1 menu is
    open (phones; no :hover there, it sticks after a tap). Reduced motion: same
@@ -2803,7 +2805,8 @@ main { display: block; outline: none; }
   }
   .cmh__gear { width: calc(26 * var(--cm)); height: calc(26 * var(--cm)); }
   .cmh__pixel { justify-self: start; width: calc(113.7 * var(--cm)); height: calc(26 * var(--cm)); }
-  .cmh__label { align-self: start; font-size: max(10px, calc(10 * var(--cm))); }
+  /* A9: pinned to the first row's end (auto-placement dropped it under the meta) */
+  .cmh__label { grid-row: 1; grid-column: 3; align-self: start; justify-self: end; font-size: max(10px, calc(10 * var(--cm))); }
   .cmh__title { grid-column: 1 / -1; margin-top: calc(16 * var(--cm)); font-size: calc(34 * var(--cm)); line-height: 1.2; }
   .cmh__title span {
     text-decoration-thickness: calc(2 * var(--cm));
@@ -2915,14 +2918,27 @@ main { display: block; outline: none; }
 /* --- S2 Approach (OC01-03/04) ----------------------------------------------- */
 .studio-approach { position: relative; z-index: 2; overflow: clip; background: var(--ccdv-ink); color: var(--ccdv-panel); }
 .ap { position: relative; }
+/* A9 (OPERATOR): the lead square is gone; the three bars share its span and
+   are pointer controls for the slots (the tablist stays the keyboard path).
+   A transparent band above and below each bar widens its hit area. */
 .ap__bars { display: flex; gap: calc(16 * var(--s)); }
-.ap__mark,
 .ap__bar {
+  position: relative;
+  flex: 1;
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
   border: max(0.5px, calc(0.5 * var(--s))) solid var(--ccdv-panel);
+  background: transparent;
+  cursor: pointer;
   transition: background-color 0.45s var(--sm-ease), border-color 0.45s var(--sm-ease);
 }
+.ap__bar::before { content: ""; position: absolute; inset: -10px 0; }
+.ap__bar:focus { outline: none; }
 .ap__bar[data-active="true"] { background: var(--ccdv-purple-card); border-color: var(--ccdv-purple-card); }
+@media (hover: hover) {
+  .ap__bar:hover { border-color: var(--ccdv-purple-card); }
+}
 .ap__sphere { display: block; width: 100%; height: 100%; overflow: visible; color: var(--ccdv-panel); }
 .ap__line { stroke: var(--ccdv-panel); stroke-width: 0.752677; fill: none; }
 /* the lit disc: FB_R4_5 fills it #CC8AD3 in color-dodge over the ink ground,
@@ -2942,7 +2958,7 @@ main { display: block; outline: none; }
 .r11--studio[data-motion="on"] .ap:not([data-seen="true"]) .ap__disc { fill-opacity: 0; }
 .ap__axis { stroke: var(--ccdv-panel); stroke-width: 0.752677; stroke-dasharray: 0.75 2.25; }
 .ap__head { position: relative; z-index: 1; }
-.ap__title { width: 100%; }
+.ap__title { width: 100%; min-height: max(24px, calc(30 * var(--s))); }   /* A9: a slot's height */
 .ap__slots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .ap__slot {
   display: flex;
@@ -2970,6 +2986,8 @@ main { display: block; outline: none; }
   height: calc(4 * var(--s));
   border: max(1px, calc(1 * var(--s))) solid currentColor;
 }
+/* A9: the selected slot takes the strip's lilac, like its bar and its disc */
+.ap__slot[aria-selected="true"] { background: var(--ccdv-purple-card); color: var(--ccdv-ink); }
 .ap__slot[aria-selected="true"] .ap__slot-dot { background: currentColor; }
 .ap__copy p { margin: 0; }
 .ap__toollet p { margin: calc(20.9 * var(--s)) 0 0; font-size: var(--t-small); line-height: calc(16 * var(--s)); }
@@ -2987,9 +3005,7 @@ main { display: block; outline: none; }
     min-height: calc(1046 * var(--u));
     padding: calc(143.5 * var(--u)) calc(48 * var(--u)) calc(96 * var(--u)) calc(744 * var(--u));
   }
-  .ap__bars { position: absolute; left: calc(48 * var(--u)); top: calc(143.5 * var(--u)); height: calc(18 * var(--u)); }
-  .ap__mark { width: calc(18 * var(--u)); }
-  .ap__bar { width: calc(194 * var(--u)); }
+  .ap__bars { position: absolute; left: calc(48 * var(--u)); top: calc(143.5 * var(--u)); width: calc(648 * var(--u)); height: calc(18 * var(--u)); }
   .ap__art { position: absolute; left: calc(129 * var(--u)); top: calc(280 * var(--u)); width: calc(486 * var(--u)); height: calc(486 * var(--u)); }
   .ap::after {
     content: "";
@@ -3009,7 +3025,6 @@ main { display: block; outline: none; }
   }
   .ap__copy p + p { margin-top: calc(32 * var(--u)); }
   .ap__toollets { display: grid; grid-template-columns: repeat(2, calc(300 * var(--u))); column-gap: calc(24 * var(--u)); }
-  .ap__slot[aria-selected="true"] { color: var(--ccdv-panel); }
 }
 
 @media (max-width: 1023px) {
@@ -3017,13 +3032,11 @@ main { display: block; outline: none; }
      by the screen edges), the strip + slots over the sphere's foot, copy, two
      stacked toollets */
   .ap { padding: calc(48 * var(--k)) calc(var(--x0) + 48 * var(--k)); }
-  .ap__mark { display: none; }
-  .ap__bar { flex: 1; height: calc(8 * var(--k)); }
+  .ap__bar { height: calc(8 * var(--k)); }
   .ap__art { width: calc(486 * var(--k)); height: calc(486 * var(--k)); margin-left: calc(-96 * var(--k)); }
   .ap__head { margin-top: calc(-61 * var(--k)); }
   .ap__slots { grid-template-columns: minmax(0, 1fr); }
   .ap__slot + .ap__slot { border-left-width: max(0.5px, calc(0.5 * var(--k))); border-top-width: 0; }
-  .ap__slot[aria-selected="true"] { background: var(--ccdv-panel); color: var(--ccdv-ink); }
   .ap__body { margin-top: calc(39.6 * var(--k)); }
   .ap__copy { font-size: calc(26.4 * var(--k)); line-height: calc(32 * var(--k)); }
   .ap__copy p + p { margin-top: calc(32 * var(--k)); }
@@ -3468,7 +3481,7 @@ main { display: block; outline: none; }
   .r11--services :is(.sv-cv__frame, .sv-ix, .sv-red) {
     --gx: clamp(0px, calc((100cqw - 1440 * var(--u)) / 2), calc(120 * var(--u)));
   }
-  .r11--services :is(.sv-cv__whatis-col, .sv-cv__sq--d, .sv-ix__head, .sv-ix__art, .sv-ww .bc, .sv-ww__copy, .sv-fm__title, .sv-fm__card--gear, .sv-fm__card--arrow, .sv-fm__sq) {
+  .r11--services :is(.sv-cv__whatis-col, .sv-cv__sq--d, .sv-ix__bars, .sv-ix__art, .sv-ww .bc, .sv-ww__copy, .sv-fm__title, .sv-fm__card--gear, .sv-fm__card--arrow, .sv-fm__sq) {
     translate: calc(-1 * var(--gx)) 0;
   }
   .r11--services :is(.sv-cv__sq--c, .sv-cv__sq--e, .sv-cv__art, .sv-ix__panel, .sv-ww__cards-wrap, .sv-sc, .sv-fm__intro, .sv-fm__card--network, .sv-fm__card--toolmaking) {
@@ -3488,9 +3501,10 @@ main { display: block; outline: none; }
     padding-top: calc(120 * var(--u));
     padding-bottom: calc(120 * var(--u));
   }
-  .r11--services .sv-ix__head { top: calc(120 * var(--u)); }
-  .r11--services .sv-ix__art { top: calc(231 * var(--u)); }
-  .r11--services .sv-ix__body { margin-top: calc(74.3 * var(--u)); }
+  /* A11: bars, cube and body at the compact Studio Approach's places */
+  .r11--services .sv-ix__bars { top: calc(120 * var(--u)); }
+  .r11--services .sv-ix__art { top: calc(208.5 * var(--u)); }
+  .r11--services .sv-ix__body { margin-top: calc(101.6 * var(--u)); }
   .r11--services .sv-ix__services { margin-top: calc(48 * var(--u)); }
   .r11--services .sv-ix__detail { margin-top: calc(32 * var(--u)); }
 }
@@ -3664,18 +3678,40 @@ main { display: block; outline: none; }
    face left, editorial right) ------------------------------------------------ */
 .sv-index { position: relative; z-index: 2; overflow: clip; background: var(--ccdv-ink); color: var(--ccdv-panel); }
 .sv-ix { position: relative; }
-/* the voxel face (IndexVoxel): faces and box sides in the route red, the face
-   opacity is the tile's fill (written per frame); hairline edges */
+/* A11 (OPERATOR): the Studio Approach layout. Five category bars (as .ap__bar,
+   in the red; pointer controls, a band above and below widens the hit area)
+   over the Rubik cube (RubikCube: ink cubies with red hairlines, stickers in
+   the red at their fill, blank stickers a hairline only) */
+.sv-ix__bars { display: flex; gap: calc(16 * var(--s)); }
+.sv-ix__bar {
+  position: relative;
+  flex: 1;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: max(0.5px, calc(0.5 * var(--s))) solid var(--ccdv-panel);
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 0.45s var(--sm-ease), border-color 0.45s var(--sm-ease);
+}
+.sv-ix__bar::before { content: ""; position: absolute; inset: -10px 0; }
+.sv-ix__bar:focus { outline: none; }
+.sv-ix__bar[data-active="true"] { background: var(--ccdv-red); border-color: var(--ccdv-red); }
+@media (hover: hover) {
+  .sv-ix__bar:hover { border-color: var(--ccdv-red); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sv-ix__bar { transition: none; }
+}
 .sv-ix__art { position: relative; }
-.sv-vf { display: block; width: 100%; height: auto; overflow: visible; }
-.sv-vf__face,
-.sv-vf__side { fill: var(--ccdv-red); stroke: var(--ccdv-red); stroke-width: 0.5; stroke-linejoin: round; }
-.sv-vf__side { stroke-opacity: 0.55; }
-/* the editorial column stays over the face if a lean ever reaches it */
+.rc { display: block; width: 100%; height: 100%; overflow: visible; }
+.rc path { stroke: var(--ccdv-red); stroke-width: 0.75; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.rc .rc__body { fill: var(--ccdv-ink); stroke-opacity: 0.45; }
+.rc .rc__sticker { fill: var(--ccdv-red); }
+/* the editorial column stays over the cube if a lean ever reaches it */
 .sv-ix__panel { position: relative; z-index: 1; }
-.sv-ix__strip { box-sizing: border-box; width: 100%; }
 .sv-ix__head { position: relative; z-index: 1; }
-.sv-ix__title { width: 100%; }
+.sv-ix__title { width: 100%; min-height: max(24px, calc(30 * var(--s))); }   /* A11: a slot's height, as Studio (A9) */
 .sv-ix__slots { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
 .sv-ix__slot {
   display: flex;
@@ -3705,7 +3741,9 @@ main { display: block; outline: none; }
   height: calc(4 * var(--s));
   border: max(1px, calc(1 * var(--s))) solid currentColor;
 }
-.sv-ix__slot[aria-selected="true"] .sv-ix__slot-dot { background: var(--ccdv-red); border-color: var(--ccdv-red); }
+/* A11: the selected category takes the strip's red, as its bar (Studio A9) */
+.sv-ix__slot[aria-selected="true"] { background: var(--ccdv-red); color: var(--ccdv-ink); }
+.sv-ix__slot[aria-selected="true"] .sv-ix__slot-dot { background: currentColor; }
 .sv-ix__lead { margin: 0; }
 .sv-ix__services { display: grid; }
 .sv-ix__service {
@@ -3733,6 +3771,14 @@ main { display: block; outline: none; }
 .sv-ix__copy p { margin: 0; }
 .sv-ix__pending { font-size: var(--t-small); }
 .sv-ix__chips { display: flex; flex-wrap: wrap; gap: calc(12 * var(--s)); margin: 0; padding: 0; list-style: none; }
+/* A11: the tag that says what the chips are */
+.sv-ix__focus-title {
+  margin: 0 0 calc(12 * var(--s));
+  font: inherit;
+  font-size: var(--t-small);
+  line-height: 1.2;
+  color: var(--ccdv-red);
+}
 @media (prefers-reduced-motion: no-preference) {
   .sv-ix__content > :is(.sv-ix__lead, .sv-ix__services) { animation: sm-spawn var(--sm-dur-text) var(--sm-ease) both; }
   .sv-ix__detail > .sv-ix__copy { animation: sm-spawn var(--sm-dur-text) var(--sm-ease) 0.12s both; }
@@ -3749,10 +3795,12 @@ main { display: block; outline: none; }
     min-height: calc(1042 * var(--u));
     padding: calc(143.5 * var(--u)) calc(48 * var(--u)) calc(96 * var(--u)) calc(744 * var(--u));
   }
-  .sv-ix__head { position: absolute; left: calc(48 * var(--u)); top: calc(143.5 * var(--u)); width: calc(648 * var(--u)); }
-  .sv-ix__art { position: absolute; left: calc(48 * var(--u)); top: calc(302.5 * var(--u)); width: calc(648 * var(--u)); height: calc(600 * var(--u)); }
+  /* A11: bars and cube where Studio has its bars and sphere (.ap__bars,
+     .ap__art); the strip + tabs head the right column */
+  .sv-ix__bars { position: absolute; left: calc(48 * var(--u)); top: calc(143.5 * var(--u)); width: calc(648 * var(--u)); height: calc(18 * var(--u)); }
+  .sv-ix__art { position: absolute; left: calc(129 * var(--u)); top: calc(280 * var(--u)); width: calc(486 * var(--u)); height: calc(486 * var(--u)); }
   .sv-ix__panel { width: calc(648 * var(--u)); }
-  .sv-ix__body { margin-top: calc(122.3 * var(--u)); }
+  .sv-ix__body { margin-top: calc(149.6 * var(--u)); }
   .sv-ix__lead { font-size: calc(26.4 * var(--u)); line-height: calc(32 * var(--u)); }
   .sv-ix__services { margin-top: calc(92 * var(--u)); font-size: calc(17.6 * var(--u)); line-height: calc(22 * var(--u)); }
   .sv-ix__detail { margin-top: calc(56 * var(--u)); }
@@ -3766,19 +3814,15 @@ main { display: block; outline: none; }
      wide), then the editorial strip and the category content; every slot and
      service row is a 44px target */
   .sv-ix { padding: calc(48 * var(--k)) calc(var(--x0) + 48 * var(--k)); }
-  /* §13.1 (OPERATOR, parity with the Studio Approach): the face comes first,
-     wider than the column and cropped by the screen edges (as .ap__art, 486 at
-     -96), and the strip + slots sit over its foot (as .ap__head, -61). Only the
-     visual order changes: the face holds nothing focusable, so the tab and
-     reading order stay strip, slots, face, editorial. */
-  .sv-ix { display: flex; flex-direction: column; }
-  .sv-ix__art { order: -1; width: calc(486 * var(--k)); margin-left: calc(-96 * var(--k)); }
-  .sv-ix__head { margin-top: calc(-61 * var(--k)); }
-  .sv-ix__panel { margin-top: calc(48 * var(--k)); }
+  /* A11 (OPERATOR, as the Studio Approach on phones): the bars, then the
+     cube wider than the column and cropped by the screen edges (as .ap__art,
+     486 at -96), then the strip + slots over its foot (as .ap__head, -61) */
+  .sv-ix__bar { height: calc(8 * var(--k)); }
+  .sv-ix__art { width: calc(486 * var(--k)); height: calc(486 * var(--k)); margin-left: calc(-96 * var(--k)); }
+  .sv-ix__panel { margin-top: calc(-61 * var(--k)); }
   .sv-ix__slots { grid-template-columns: minmax(0, 1fr); }
   .sv-ix__slot { height: auto; min-height: 44px; }
   .sv-ix__slot + .sv-ix__slot { border-left-width: max(0.5px, calc(0.5 * var(--k))); border-top-width: 0; }
-  .sv-ix__slot[aria-selected="true"] { background: var(--ccdv-panel); color: var(--ccdv-ink); }
   .sv-ix__body { margin-top: calc(39.6 * var(--k)); }
   .sv-ix__lead { font-size: calc(22 * var(--k)); line-height: calc(28 * var(--k)); }
   .sv-ix__services { margin-top: calc(28 * var(--k)); font-size: max(14px, calc(15.4 * var(--k))); line-height: 1.25; }
@@ -5381,7 +5425,7 @@ button.pv-card { cursor: pointer; }
      A6.1 (OPERATOR): the copies are FloatingCube, the phone cube in 3D on the
      Studio sphere system (wobble, a kick per step); a square box one screen
      tall, a quarter of it past the right edge and its centre at 42% of the
-     screen, the body at 0.55 and no blur (hairlines); the frosted panels (A6)
+     screen, the body at 0.55 (A10: 1) and no blur (hairlines); the frosted panels (A6)
      blur it. */
   .r11--products :is(.pv-cover, .pv-scene, .pv-next) { clip-path: inset(0); }
   .r11--products .pv-float {
@@ -5397,7 +5441,7 @@ button.pv-card { cursor: pointer; }
     pointer-events: none;
     overflow: visible;
   }
-  .r11--products .pv-float .pv-float__body { opacity: 0.55; }
+  /* A10 (OPERATOR): full strength, as the phone cube (was 0.55) */
   .r11--products .pv-products { position: relative; z-index: 1; }
   .pv-cover__whois {
     position: absolute;
