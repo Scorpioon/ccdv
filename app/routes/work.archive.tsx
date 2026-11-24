@@ -1,66 +1,44 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { useLocation, useNavigationType } from "react-router";
-import { SiteFooter } from "../components/SiteFooter";
-import { GearMark } from "../components/marks/GearMark";
-import { ProjectList } from "../components/ProjectList";
-import { WorkIndexFilter } from "../components/work/WorkIndexFilter";
-import { WorkPreviewPane } from "../components/work/WorkPreviewPane";
-import { useBoundaryNav, useNavIdle } from "../motion/routeNav";
-import { useMotionPolicy } from "../motion/reducedMotion";
-import { useStepScroll } from "../motion/stepScroll";
-import { AVAILABLE_YEARS, DEFAULT_PREVIEW_ID, PROJECTS, TYPES, YEARS, typeLabel } from "../data/workProjects";
+import { WorkSidebar } from "../components/work/WorkSidebar";
+import { WorkArchiveTable } from "../components/work/WorkArchiveTable";
+import { WorkArchivePreview } from "../components/work/WorkArchivePreview";
+import { ARCHIVE_ROWS, DEFAULT_ARCHIVE_ROW, V3_ARCHIVE_CATEGORIES, V3_YEARS, typeLabel } from "../data/workProjects";
 
 export function meta() {
   return [{ title: "CCDV — Work Archive" }];
 }
 
-/* Work archive (WORK-T2): the Work Index that used to close /work, now its own
-   page, reached from the hub's `View all projects`. Thin masthead (as Studio /
-   Services) and the M1 bar on phones.
-   WORK-T3 (OPERATOR retouch): one screen tall on desktop. A top row carries
-   the `\\Work Index` bar and both filters on one line; below it the project
-   list (left) and the preview (right: a wide lead image over three cards,
-   then the caption) for the active row.
+/* N3 Work V3 Archive (t_20261124_ccdvn3work, OPERATOR, WORK V3 _ archive.svg
+   1536 x 994): the same rail (its Year / Category lists are the filters, AND),
+   the archive card with the project table (WorkArchiveTable) and the preview
+   column (WorkArchivePreview). No shared bar, no footer. Rows are the
+   artboard's (OPERATOR decision); hover or focus selects one, the ADG-ARC row
+   by default.
 
-   The six projects, YEARS and TYPES live in app/data/workProjects.ts (shared
-   with Workcase). The Year filter is live for the years that have records
-   (AVAILABLE_YEARS: 2026, 2025); 2024/2023 are drawn but native-disabled
-   (D3). Year and Type are independent filters and combine (AND). D4: one view,
-   no List / Mosaic switch. */
-
-/* MTG02 — archive context restoration. The archive unmounts when a Workcase
-   opens, so its Year/Type filters and scroll are kept in sessionStorage (per
-   tab; survives a hard refresh; every access is try/catch-guarded and the page
-   works without it).
-     - `year` / `type` are written whenever they change.
-     - `scrollY` (+ the history `scrollKey` it belongs to) is written just
-       before a project link navigates to its Workcase.
-   Arrival intent, decided once on mount:
-     - POP (Back/Forward/reload)        -> restore year + type; scroll only if
-                                           the saved scrollKey is this entry
-                                           (otherwise the router's own scroll
-                                           restoration stands).
-     - PUSH with state.restore (the Workcase return links)
-                                        -> restore year + type + scroll.
-     - PUSH with state.filter (Workcase Year or Type link)
-                                        -> select exactly that filter and clear
-                                           the other, NO stale scroll, focus the
-                                           Work Index.
-     - anything else                    -> defaults. */
+   Context restoration (MTG02, kept): the archive unmounts when a Workcase
+   opens, so its filters and scroll are kept in sessionStorage (per tab, every
+   access guarded).
+     - POP (Back / Forward / reload)  -> restore the filters; scroll only if the
+                                         saved scrollKey is this entry.
+     - PUSH with state.restore        -> restore filters + scroll (the Workcase
+                                         return links).
+     - PUSH with state.filter         -> exactly that one filter (Workcase's
+                                         Year / Type links, the Featured rail);
+                                         a legacy Type maps to its category.
+     - anything else                  -> no filter. */
 const CONTEXT_KEY = "ccdv.work.context";
-
-const UNAVAILABLE_YEARS = YEARS.filter((year) => !AVAILABLE_YEARS.includes(year));
 
 interface WorkContext {
   year: string | null;
-  type: string | null;
+  category: string | null;
   scrollY?: number;
   scrollKey?: string;
 }
 
 interface WorkNavState {
   restore?: boolean;
-  filter?: { year?: string; type?: string };
+  filter?: { year?: string; type?: string; category?: string };
 }
 
 function readContext(): Partial<WorkContext> {
@@ -80,29 +58,28 @@ function writeContext(patch: Partial<WorkContext>) {
   }
 }
 
-function validType(value: unknown): string | null {
-  return typeof value === "string" && TYPES.includes(value) ? value : null;
-}
+const hasRows = (field: "year" | "category", value: string) => ARCHIVE_ROWS.some((entry) => entry[field] === value);
 
 function validYear(value: unknown): string | null {
-  return typeof value === "string" && AVAILABLE_YEARS.includes(value) ? value : null;
+  return typeof value === "string" && V3_YEARS.includes(value) && hasRows("year", value) ? value : null;
+}
+
+/* a category, or a legacy V2 Type key (Workcase sends `type`: "WEBSITE",
+   "CC:OS" -> "CC.OS"); one with no rows is not selectable */
+function validCategory(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const category = V3_ARCHIVE_CATEGORIES.includes(value) ? value : typeLabel(value);
+  return V3_ARCHIVE_CATEGORIES.includes(category) && hasRows("category", category) ? category : null;
 }
 
 type Arrival =
   | { kind: "fresh" }
   | { kind: "restore"; scroll: boolean }
-  | { kind: "filter"; year: string | null; type: string | null };
+  | { kind: "filter"; year: string | null; category: string | null };
 
 export default function WorkArchive() {
   const location = useLocation();
   const navigationType = useNavigationType();
-  const rootRef = useRef<HTMLDivElement>(null);
-  const resultsRef = useRef<HTMLElement | null>(null);
-
-  useBoundaryNav(rootRef, resultsRef, ".masthead--work");
-  useNavIdle(rootRef);
-  const { reduced } = useMotionPolicy();
-  useStepScroll(rootRef, null, reduced); // A3: the index, then the footer
 
   const [arrival] = useState<Arrival>(() => {
     const state = (location.state ?? null) as WorkNavState | null;
@@ -110,8 +87,8 @@ export default function WorkArchive() {
     if (state?.filter) {
       // a metadata link carries ONE filter; the other is cleared
       const filterYear = validYear(state.filter.year);
-      const filterType = filterYear ? null : validType(state.filter.type);
-      if (filterYear || filterType) return { kind: "filter", year: filterYear, type: filterType };
+      const filterCategory = filterYear ? null : validCategory(state.filter.category ?? state.filter.type);
+      if (filterYear || filterCategory) return { kind: "filter", year: filterYear, category: filterCategory };
     }
     if (state?.restore) return { kind: "restore", scroll: true };
     return { kind: "fresh" };
@@ -122,16 +99,16 @@ export default function WorkArchive() {
     if (arrival.kind === "restore") return validYear(readContext().year);
     return null;
   });
-  const [type, setType] = useState<string | null>(() => {
-    if (arrival.kind === "filter") return arrival.type;
-    if (arrival.kind === "restore") return validType(readContext().type);
+  const [category, setCategory] = useState<string | null>(() => {
+    if (arrival.kind === "filter") return arrival.category;
+    if (arrival.kind === "restore") return validCategory(readContext().category);
     return null;
   });
-  const [previewId, setPreviewId] = useState<string>(DEFAULT_PREVIEW_ID);
+  const [selectedId, setSelectedId] = useState(DEFAULT_ARCHIVE_ROW);
 
   useEffect(() => {
-    writeContext({ year, type });
-  }, [year, type]);
+    writeContext({ year, category });
+  }, [year, category]);
 
   useLayoutEffect(() => {
     if (arrival.kind !== "restore" || !arrival.scroll) return;
@@ -139,75 +116,35 @@ export default function WorkArchive() {
     if (typeof scrollY === "number") window.scrollTo(0, scrollY);
   }, [arrival]);
 
-  // Passive effect: runs after GlobalShell has attached <main> (and focused it),
-  // so the Work Index is the final focus owner.
-  useEffect(() => {
-    if (arrival.kind !== "filter") return;
-    const node = resultsRef.current;
-    if (!node) return;
-    node.focus({ preventScroll: true });
-    node.scrollIntoView({ block: "start" });
-  }, [arrival]);
-
-  const saveScrollForCase = () => {
-    writeContext({ year, type, scrollY: window.scrollY, scrollKey: location.key });
-  };
-
-  // Years without records are native-disabled options (derived from the
-  // data, not from position). The guard below is defense in depth: a year
-  // that would return empty results can never be selected.
-  const selectYear = (value: string | null) => {
-    if (value === null || AVAILABLE_YEARS.includes(value)) setYear(value);
-  };
-
-  const filtered = useMemo(
-    () =>
-      PROJECTS.filter(
-        (project) => (!year || project.year === year) && (!type || project.typeFilter === type),
-      ),
-    [year, type],
+  const rows = useMemo(
+    () => ARCHIVE_ROWS.filter((entry) => (!year || entry.year === year) && (!category || entry.category === category)),
+    [year, category],
   );
 
-  const previewProject =
-    PROJECTS.find((project) => project.id === previewId) ?? PROJECTS.find((project) => project.id === DEFAULT_PREVIEW_ID)!;
+  // the preview follows the selection while it is listed, else the first row shown
+  const selected =
+    rows.find((entry) => entry.id === selectedId) ?? rows[0] ?? ARCHIVE_ROWS.find((entry) => entry.id === DEFAULT_ARCHIVE_ROW)!;
+
+  const saveScrollForCase = () => {
+    writeContext({ year, category, scrollY: window.scrollY, scrollKey: location.key });
+  };
 
   return (
-    <div className="r11 r11--work r11--work-archive" ref={rootRef}>
-      <section
-        ref={resultsRef}
-        id="work-index"
-        tabIndex={-1}
-        className="work-index"
-        aria-labelledby="work-index-title"
-      >
-        <div className="work-index__filters">
-          <h1 className="work-index__title" id="work-index-title">
-            <GearMark className="work-index__gear" fill="#141414" dotFill="#FEF36A" />
-            {"\\\\Work Index"}
-          </h1>
-          <WorkIndexFilter
-            label="Year"
-            options={YEARS}
-            value={year}
-            onChange={selectYear}
-            disabledOptions={UNAVAILABLE_YEARS}
-          />
-          <WorkIndexFilter label="Type" options={TYPES} value={type} onChange={setType} formatLabel={typeLabel} />
-        </div>
-
-        <div className="work-index__list" onMouseLeave={() => setPreviewId(DEFAULT_PREVIEW_ID)}>
-          <ProjectList
-            projects={filtered}
-            activeId={previewId}
-            onActiveChange={setPreviewId}
-            onCaseNavigate={saveScrollForCase}
-          />
-        </div>
-
-        <WorkPreviewPane project={previewProject} />
-      </section>
-
-      <SiteFooter />
+    <div className="r11 wv3" data-view="archive">
+      <div className="wv3__frame">
+        <WorkSidebar
+          view="archive"
+          marked={{ year: selected.year, category: selected.category }}
+          year={year}
+          category={category}
+          onYear={setYear}
+          onCategory={setCategory}
+        />
+        <section className="wv3-archive" id="work-index" aria-labelledby="work-title">
+          <WorkArchiveTable rows={rows} selectedId={selected.id} onSelect={setSelectedId} />
+          <WorkArchivePreview entry={selected} onCaseNavigate={saveScrollForCase} />
+        </section>
+      </div>
     </div>
   );
 }

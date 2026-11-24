@@ -3,6 +3,21 @@ import adgArcShowcase1 from "../assets/workcase/workcase_r11_source_image_1.webp
 import adgArcShowcase2 from "../assets/workcase/workcase_r11_source_image_2.webp";
 import adgArcShowcase3 from "../assets/workcase/workcase_r11_source_image_3.webp";
 import adgArcDetailMobile from "../assets/work/work_v2_adg_arc_detail_mobile.webp";
+/* N3 Work V3 imagery (see the WORK V3 block at the end) */
+import adgLandingDesktop from "../assets/work/v3/adg-landing-desktop.webp";
+import adgMapCity from "../assets/work/v3/adg-map-city.webp";
+import adgMapDhub from "../assets/work/v3/adg-map-dhub.webp";
+import adgPassportDesktop from "../assets/work/v3/adg-passport-desktop.webp";
+import adgSheetDhub from "../assets/work/v3/adg-sheet-dhub.webp";
+import adgSpecimenLores from "../assets/work/v3/adg-specimen-lores.webp";
+import adgPhoneLanding from "../assets/work/v3/adg-phone-landing.webp";
+import adgPhoneMapHint from "../assets/work/v3/adg-phone-map-hint.webp";
+import adgPhonePassport from "../assets/work/v3/adg-phone-passport.webp";
+import adgPhoneMediapro from "../assets/work/v3/adg-phone-mediapro.webp";
+import adgPhoneStamp from "../assets/work/v3/adg-phone-stamp.webp";
+import adgPhoneRoute from "../assets/work/v3/adg-phone-route.webp";
+import adgSpecimenTt from "../assets/work/v3/adg-specimen-tt.svg";
+import adgSpecimenGg from "../assets/work/v3/adg-specimen-gg.svg";
 
 /* Shared Work / Workcase project registry (MTG02). Moved verbatim out of
    work.tsx so Work and Workcase read ONE collection: same six projects, same
@@ -213,4 +228,210 @@ export const WORK_PREVIEWS: Record<string, WorkPreview> = {
     ],
     caption: "passport_menu.png",
   },
+};
+
+/* === N3 WORK V3 (t_20261124_ccdvn3work, OPERATOR) =============================
+   Work V3 data. Kept apart from the registry above, which Workcase, the
+   unused V2 hub and the old archive components still read.
+
+   Archive rows: OPERATOR decision (N3 DECISION, "Artboard rows are the data")
+   — every row is transcribed verbatim from work_assets/webdesign_work_v3/
+   WORK V3 _ archive.svg, in its order, spelling and trailing glyph.
+   `projectId` links a row to the registry where a project record exists. No
+   URL is derived: a case study opens only where WORKCASES has one (ADG-ARC),
+   and no live-site URL is known, so none is listed. */
+
+/** sidebar lists, as each artboard draws them */
+export const V3_YEARS = ["2026", "2025", "2024", "2023"];
+export const V3_FEATURED_CATEGORIES = ["WEBSITE", "TOOL", "CC.OS", "PRODUCT"];
+export const V3_ARCHIVE_CATEGORIES = ["WEBSITE", "TOOL", "CC.OS", "PLATFORM", "PRODUCT"];
+
+export type ArchiveGlyph = "[+]" | "[↗]" | "[x]";
+
+export interface ArchiveRow {
+  id: string;
+  year: string;
+  category: string;
+  responsibility: string;
+  name: string;
+  client: string;
+  /** the artboard's trailing glyph, verbatim; `[x]` is drawn subdued */
+  glyph: ArchiveGlyph;
+  /** a registry project behind the row, when one exists */
+  projectId?: string;
+}
+
+const archiveRow = (
+  id: string,
+  year: string,
+  category: string,
+  responsibility: string,
+  name: string,
+  client: string,
+  glyph: ArchiveGlyph,
+  projectId?: string,
+): ArchiveRow => ({ id, year, category, responsibility, name, client, glyph, projectId });
+
+export const ARCHIVE_ROWS: ArchiveRow[] = [
+  archiveRow("project-ls", "2027", "PLATFORM", "UX/UI & Development", "Project LS", "CCDV Product", "[x]"),
+  archiveRow("project-l", "2027", "PLATFORM", "UX/UI & Development", "Project L", "# # # # #", "[x]"),
+  archiveRow("panoptes", "2027", "CC.OS", "Development", "PANOPTES", "CCDV Product", "[+]"),
+  archiveRow("kairon", "2027", "CC.OS", "Development", "KAIRON", "CCDV Product", "[+]"),
+  archiveRow("kron", "2027", "CC.OS", "Development", "KRON", "CCDV Product", "[+]"),
+  archiveRow("aethernos", "2026", "CC.OS", "Development", "AETHERNOS", "CCDV Product", "[↗]"),
+  archiveRow("kaia", "2026", "CC.OS", "Development", "KAIA", "CCDV Product", "[↗]"),
+  archiveRow("wrkops", "2026", "CC.OS", "Development", "WRKOPS", "CCDV Product", "[↗]"),
+  archiveRow("adg-arc", "2026", "WEBSITE", "UX/UI, Code & Motion", "Arquitectura y Tipografía", "ADG-FAD", "[+]", "adg-arc"),
+  archiveRow("adg-laus-2026", "2026", "SERVICE", "Code", "ADG Laus Scripts", "ADG-FAD ET", "[x]"),
+  archiveRow("htw-website", "2025", "WEBSITE", "UX/UI & Code", "Hacking The World", "Fran & Berta", "[+]", "htw-website"),
+  archiveRow("htw-tool", "2025", "TOOL", "UX/UI & Code", "Hacking The World", "Fran & Berta", "[+]", "htw-tool"),
+  archiveRow("par-banya", "2025", "WEBSITE", "UX/UI + Implement", "Par Banya Web", "Par Banya Barcelona", "[+]"),
+  archiveRow("adg-laus-2025", "2025", "SERVICE", "Code", "ADG Laus Scripts", "ADG-FAD ET", "[x]"),
+  archiveRow("binomial", "2024", "WEBSITE", "UX/UI Responsive Only", "Binomial", "Binomial (Morillas)", "[+]"),
+  archiveRow("equivalenza", "2024", "WEBSITE", "UX/UI", "Equivalenza", "Equivalenza (Morillas)", "[+]"),
+  archiveRow("adg-laus-2024", "2024", "SERVICE", "Code", "ADG Laus Scripts", "ADG-FAD ET", "[x]"),
+  archiveRow("adg-laus-2023", "2023", "SERVICE", "Code", "ADG Laus Scripts", "ADG-FAD ET", "[x]"),
+];
+
+/** the artboard's selected row */
+export const DEFAULT_ARCHIVE_ROW = "adg-arc";
+
+/** years in the order the archive groups them; the 2027 rows lead, subdued */
+export const ARCHIVE_GROUP_YEARS = ["2027", "2026", "2025", "2024", "2023"];
+export const FUTURE_YEARS = ["2027"];
+
+/* The preview column's title: the registry name where a project exists
+   (ADG-ARC, as drawn), else the row's own name. */
+export function archiveTitle(entry: ArchiveRow): string {
+  const project = entry.projectId ? findProject(entry.projectId) : undefined;
+  return project ? project.displayName ?? project.name : entry.name;
+}
+
+/* ADG-ARC imagery (N3 DECISION). All from the OPERATOR's capture set
+   work_assets/images 4 we b/wrk_adg_arc: the 1x PNG exports converted to WebP
+   by the OPERATOR, and two type specimens copied as is from their SVGs. */
+export interface V3Image {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  /** a type specimen: drawn whole on the light ground, never cropped */
+  specimen?: boolean;
+}
+
+const LANDING_DESKTOP: V3Image = {
+  src: adgLandingDesktop,
+  alt: "ADG-ARC desktop landing: “Arquitectura y tipografía en diálogo”, Barcelona 2026 Capital Mundial de l’Arquitectura, on yellow and white stripes",
+  width: 1919,
+  height: 870,
+};
+const MAP_CITY: V3Image = {
+  src: adgMapCity,
+  alt: "ADG-ARC city map of Barcelona with twenty numbered stops and the sea in yellow",
+  width: 1919,
+  height: 871,
+};
+const MAP_DHUB: V3Image = {
+  src: adgMapDhub,
+  alt: "ADG-ARC 3D map around Plaça de les Glòries with the yellow detail panel for stop 7, DHub Barcelona",
+  width: 1919,
+  height: 870,
+};
+const PASSPORT_DESKTOP: V3Image = {
+  src: adgPassportDesktop,
+  alt: "ADG-ARC desktop passport: numbered buildings in black and white, the first five named",
+  width: 1176,
+  height: 767,
+};
+const SHEET_DHUB: V3Image = {
+  src: adgSheetDhub,
+  alt: "ADG-ARC phone data sheet for DHub Barcelona: author, movement, year and address",
+  width: 539,
+  height: 869,
+};
+const SPECIMEN_LORES: V3Image = {
+  src: adgSpecimenLores,
+  alt: "ADG-ARC phone specimen panel for the Lo-Res typeface at Edifici Mediapro",
+  width: 539,
+  height: 869,
+};
+const PHONE_LANDING: V3Image = {
+  src: adgPhoneLanding,
+  alt: "ADG-ARC phone landing: “Arquitectura y tipografía en diálogo” with the Explorar Barcelona button",
+  width: 946,
+  height: 1615,
+};
+const PHONE_MAP_HINT: V3Image = {
+  src: adgPhoneMapHint,
+  alt: "ADG-ARC phone map with the hint “Arrastra para explorar · Pellizca para acercar”",
+  width: 946,
+  height: 1615,
+};
+const PHONE_PASSPORT: V3Image = {
+  src: adgPhonePassport,
+  alt: "ADG-ARC phone passport carousel at stop 14, Edifici Mediapro",
+  width: 946,
+  height: 1615,
+};
+const PHONE_MEDIAPRO: V3Image = {
+  src: adgPhoneMediapro,
+  alt: "ADG-ARC phone detail for stop 14, Edifici Mediapro: a black and white photograph with yellow windows",
+  width: 946,
+  height: 1615,
+};
+const PHONE_STAMP: V3Image = {
+  src: adgPhoneStamp,
+  alt: "ADG-ARC phone screen “Sello conseguido 2/20” with the next three destinations",
+  width: 946,
+  height: 1615,
+};
+const PHONE_ROUTE: V3Image = {
+  src: adgPhoneRoute,
+  alt: "ADG-ARC phone walking route from stop 15 to stop 18, La Escocesa, 810 m",
+  width: 946,
+  height: 1615,
+};
+const SPECIMEN_TT: V3Image = {
+  src: adgSpecimenTt,
+  alt: "ADG-ARC type specimen: Tt on yellow",
+  width: 291,
+  height: 291,
+  specimen: true,
+};
+const SPECIMEN_GG: V3Image = {
+  src: adgSpecimenGg,
+  alt: "ADG-ARC type specimen: Gg",
+  width: 327,
+  height: 283,
+  specimen: true,
+};
+
+/* The Featured mosaic (N3 DECISION, "Pages of ADG-ARC"): three pages, one
+   per indicator square, each a wide capture over a bottom row, sized from the
+   images' own ratios — the 2.2 : 1 captures span the canvas; four 0.586 phone
+   captures share the row below (page 3: the 1.53 : 1 passport and the two
+   specimens). */
+export type MosaicLayout = "wide-four" | "wide-passport";
+
+export interface FeaturedPage {
+  id: string;
+  layout: MosaicLayout;
+  top: V3Image;
+  bottom: V3Image[];
+}
+
+export const FEATURED_PAGES: FeaturedPage[] = [
+  { id: "adg-1", layout: "wide-four", top: LANDING_DESKTOP, bottom: [PHONE_MEDIAPRO, SHEET_DHUB, PHONE_STAMP, PHONE_ROUTE] },
+  { id: "adg-2", layout: "wide-four", top: MAP_CITY, bottom: [PHONE_MAP_HINT, PHONE_PASSPORT, SPECIMEN_LORES, PHONE_LANDING] },
+  { id: "adg-3", layout: "wide-passport", top: MAP_DHUB, bottom: [PASSPORT_DESKTOP, SPECIMEN_TT, SPECIMEN_GG] },
+];
+
+/** the Featured caption and the project's year / category, as WORK V3.svg draws them */
+export const FEATURED_CAPTION = "ADG ARC - INTERACTIVE WEBSITE - ADG-FAD";
+export const FEATURED_YEAR = "2026";
+export const FEATURED_CATEGORY = "WEBSITE";
+
+/** the archive's poster, by row (only ADG-ARC has one) */
+export const ARCHIVE_POSTERS: Record<string, V3Image> = {
+  "adg-arc": PHONE_LANDING,
 };

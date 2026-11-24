@@ -6309,3 +6309,334 @@ html:has(.r11--ccos) body { overflow: hidden; overscroll-behavior: none; }
   }
 }
 /* === end N2 CONTACT ========================================================= */
+
+/* === N3 WORK V3 (t_20261124_ccdvn3work, OPERATOR) ==============================
+   /work (Featured, WORK V3.svg 1536 x 1193) and /work/archive (WORK V3 _
+   archive.svg 1536 x 994): one Work workspace, no shared bar, no footer.
+   Desktop (>= 1024): the artboard is drawn in --u = one artboard px, scaled to
+   fit the screen width and height (as the Services frames), centred on the
+   gray ground with the Work grid (1.067 lines, rows 49.689, columns 52.968,
+   ink 5%, as the V2 hub). Positions below are artboard px:
+     rail      51.2 / 51.2, 185 wide, radius 12, #F2F2F2
+     Featured  canvas 284.2 / 51.2, 1200.6 x 1064.1, gutter 8; caption label
+               and squares at 1123.3
+     Archive   card 260.2 / 51.2, 1225 x 892; table 915.3 wide, preview
+               237.7, 24 apart
+   Below 1024: the rail is a top band, the mosaic one column of the images at
+   their own ratios, the archive a list grouped by year, the preview under it.
+   Ink #1A1A1A and the row gray #D2D2D2 are the artboards' own values. */
+.wv3 {
+  --wv3-ink: #1a1a1a;
+  --wv3-line: calc(0.533 * var(--u)) solid var(--wv3-ink);
+  --wv3-t: max(10px, calc(12.8 * var(--u)));
+  --sm-rise: calc(16 * var(--u));
+  --sm-ease: var(--studio-ease, cubic-bezier(0.22, 0.61, 0.36, 1));
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  color: var(--wv3-ink);
+  background-color: var(--ccdv-light);
+  background-image:
+    repeating-linear-gradient(to bottom, rgb(20 20 20 / 0.05) 0 calc(1.067 * var(--u)), transparent calc(1.067 * var(--u)) calc(49.689 * var(--u))),
+    repeating-linear-gradient(to right, rgb(20 20 20 / 0.05) 0 calc(1.067 * var(--u)), transparent calc(1.067 * var(--u)) calc(52.968 * var(--u)));
+  font-size: var(--wv3-t);
+  line-height: 1;
+  -webkit-tap-highlight-color: transparent;
+}
+.wv3 :is(a, button):focus { outline: none; }
+.wv3 :is(a, button):focus-visible { outline: 1px solid var(--wv3-ink); outline-offset: 2px; }
+.wv3 ul { margin: 0; padding: 0; list-style: none; }
+.wv3 p,
+.wv3 h1 { margin: 0; }
+.wv3 button { font: inherit; color: inherit; }
+
+/* --- rail --------------------------------------------------------------- */
+.wv3-side { box-sizing: border-box; background: var(--ccdv-panel); text-align: center; }
+.wv3-side__home { display: block; color: inherit; }
+.wv3-side__gear,
+.wv3-side__pixel { display: block; }
+.wv3-side__title,
+.wv3-side__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  border: var(--wv3-line);
+  background: transparent;
+  font: inherit;
+  font-size: var(--wv3-t);
+  color: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.wv3-side__title { gap: calc(6 * var(--u)); font-weight: 400; background: var(--ccdv-white); }
+.wv3[data-view="archive"] .wv3-side__title { background: var(--ccdv-yellow); }
+.wv3-side__title-gear { width: calc(11 * var(--u)); height: calc(11 * var(--u)); }
+.wv3-side__list li + li { margin-top: calc(-0.533 * var(--u)); }
+.wv3-side__item { cursor: pointer; }
+.wv3-side__item[data-marked] { background: var(--ccdv-white); }
+.wv3-side__item[aria-pressed="true"] { background: var(--ccdv-yellow); }
+.wv3-side__item[aria-disabled="true"] { opacity: 0.35; cursor: default; }
+@media (hover: hover) {
+  .wv3-side__item:is(a, button):hover { background: var(--ccdv-white); }
+  .wv3-side__item[aria-pressed="true"]:hover { background: var(--ccdv-yellow); }
+}
+.wv3-side__unit { display: flex; align-items: center; justify-content: space-between; white-space: nowrap; }
+.wv3-side__sq { width: calc(8 * var(--u)); height: calc(8 * var(--u)); background: var(--wv3-ink); }
+.wv3-side__section { display: block; color: inherit; text-decoration: none; }
+.wv3-side__section:hover { text-decoration: underline; }
+.wv3-side__view { display: inline-flex; align-items: center; gap: calc(6 * var(--u)); color: inherit; text-decoration: underline; text-underline-offset: 0.2em; }
+.wv3-side__view-icon { width: calc(12 * var(--u)); height: calc(12 * var(--u)); min-width: 10px; min-height: 10px; }
+
+/* --- Featured canvas ----------------------------------------------------- */
+.wv3-mosaic { margin: 0; }
+.wv3-mosaic__grid { display: grid; gap: calc(8 * var(--u)); }
+.wv3-mosaic__tile { position: relative; overflow: hidden; background: var(--wv3-ink); }
+.wv3-mosaic__tile img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.wv3-mosaic__tile[data-specimen] { background: var(--ccdv-panel); }
+.wv3-mosaic__tile[data-specimen] img { object-fit: contain; padding: calc(24 * var(--u)); box-sizing: border-box; }
+.wv3-feature__foot { display: flex; align-items: center; justify-content: space-between; gap: calc(16 * var(--u)); }
+.wv3-feature__caption { padding: calc(3 * var(--u)) calc(4 * var(--u)); background: var(--ccdv-panel); white-space: nowrap; }
+.wv3-feature__caption a { color: inherit; text-decoration: underline; text-underline-offset: 0.2em; }
+.wv3-feature__pages { display: flex; gap: calc(10 * var(--u)); }
+.wv3-feature__page {
+  box-sizing: border-box;
+  width: max(12px, calc(12 * var(--u)));
+  height: max(12px, calc(12 * var(--u)));
+  padding: 0;
+  border: calc(1.067 * var(--u)) solid var(--wv3-ink);
+  background: var(--wv3-ink);
+  cursor: pointer;
+}
+.wv3-feature__page[aria-pressed="true"] { background: transparent; }
+/* a page switch: the canvas fades out, the new tiles come up in order */
+@media (prefers-reduced-motion: no-preference) {
+  .wv3-mosaic__grid { transition: opacity 0.25s var(--sm-ease); }
+  .wv3-mosaic[data-phase="out"] .wv3-mosaic__grid { opacity: 0; }
+  .wv3-mosaic[data-phase="in"] .wv3-mosaic__tile {
+    animation: sm-spawn 0.6s var(--sm-ease) both;
+    animation-delay: calc(var(--i, 0) * 0.08s);
+  }
+}
+
+/* --- Archive: one column grid for the head, every row, every group -------- */
+.wv3-table {
+  --wv3-cols: calc(88 * var(--u)) calc(112 * var(--u)) calc(200 * var(--u)) calc(208 * var(--u)) minmax(0, 1fr) calc(32 * var(--u));
+  --wv3-gap: calc(12 * var(--u));
+  --wv3-pad: calc(8 * var(--u));
+  min-width: 0;
+}
+.wv3-table__bar,
+.wv3-preview__bar {
+  display: flex;
+  align-items: center;
+  gap: calc(6 * var(--u));
+  box-sizing: border-box;
+  height: calc(26.68 * var(--u));
+  padding-inline: var(--wv3-pad, calc(8 * var(--u)));
+  border: var(--wv3-line);
+  background: var(--ccdv-yellow);
+  white-space: nowrap;
+}
+.wv3-table__gear,
+.wv3-preview__gear { flex: none; width: calc(11 * var(--u)); height: calc(11 * var(--u)); }
+.wv3-row {
+  display: grid;
+  grid-template-columns: var(--wv3-cols);
+  column-gap: var(--wv3-gap);
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  height: calc(26 * var(--u));
+  margin: 0;
+  padding: 0 var(--wv3-pad);
+  border: var(--wv3-line);
+  background: var(--ccdv-white);
+  font: inherit;
+  font-size: var(--wv3-t);
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.wv3-row--head { margin-top: calc(-0.533 * var(--u)); cursor: default; }
+.wv3-cell { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; justify-self: start; }
+.wv3-cell--glyph { justify-self: end; }
+.wv3-cell--glyph[data-off] { opacity: 0.2; }
+.wv3-group { margin-top: calc(12 * var(--u)); }
+.wv3-row--head + .wv3-group,
+.wv3-row--head + .wv3-table__empty { margin-top: calc(24 * var(--u)); }
+.wv3-group li + li .wv3-row { margin-top: calc(-0.533 * var(--u)); }
+.wv3-group[data-future] .wv3-cell { opacity: 0.5; }
+.wv3-group[data-future] .wv3-cell--glyph[data-off] { opacity: 0.2; }
+.wv3-row[aria-pressed="true"] { background: #d2d2d2; }
+.wv3-table__empty { padding: calc(8 * var(--u)); }
+
+.wv3-preview { min-width: 0; }
+.wv3-preview__actions { margin-top: calc(12 * var(--u)); }
+.wv3-preview__actions li + li { margin-top: calc(-0.533 * var(--u)); }
+.wv3-preview__action {
+  display: flex;
+  align-items: center;
+  gap: calc(6 * var(--u));
+  box-sizing: border-box;
+  height: calc(26.68 * var(--u));
+  padding-inline: calc(12 * var(--u));
+  border: var(--wv3-line);
+  background: var(--ccdv-white);
+  color: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.wv3-preview__glyph { margin-left: auto; }
+.wv3-preview__action[aria-disabled="true"] { color: rgb(26 26 26 / 0.35); }
+.wv3-preview__action[aria-disabled="true"] .wv3-preview__gear { opacity: 0.35; }
+@media (hover: hover) {
+  a.wv3-preview__action:hover { background: var(--ccdv-yellow); }
+}
+.wv3-preview__poster {
+  box-sizing: border-box;
+  margin-top: calc(12 * var(--u));
+  aspect-ratio: 237.2 / 405.3;
+  border: calc(0.5 * var(--u)) solid #000;
+  background: var(--ccdv-white);
+  overflow: hidden;
+}
+.wv3-preview__poster img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.wv3-preview__poster[data-empty] { display: grid; place-items: center; color: rgb(26 26 26 / 0.5); }
+
+@media (min-width: 1024px) {
+  /* the fit unit is set on .wv3 itself, so the tokens declared there (type,
+     lines, grid) resolve on it */
+  .wv3 {
+    --wv3-h: 1193;
+    --u: min(calc(1cqw / 15.36), calc(100svh / var(--wv3-h)));
+  }
+  .wv3[data-view="archive"] { --wv3-h: 994; }
+  .wv3__frame {
+    position: relative;
+    width: calc(1536 * var(--u));
+    height: calc(var(--wv3-h) * var(--u));
+    margin-inline: auto;
+  }
+  .wv3-side {
+    position: absolute;
+    left: calc(51.2 * var(--u));
+    top: calc(51.2 * var(--u));
+    width: calc(185 * var(--u));
+    height: calc(1090.13 * var(--u));
+    border-radius: calc(12 * var(--u));
+    /* rail rows, from the rail's top (artboard y - 51.2) */
+    --t-title: 439.36;
+    --t-years: 490.04;
+    --t-cats: 618.04;
+    --t-nav: 836;
+  }
+  .wv3[data-view="archive"] .wv3-side {
+    height: calc(892 * var(--u));
+    --t-title: 347.32;
+    --t-years: 398;
+    --t-cats: 552;
+    --t-nav: 730;
+  }
+  .wv3-side > * { position: absolute; left: calc(24 * var(--u)); width: calc(137 * var(--u)); }
+  .wv3-side__home { top: calc(24 * var(--u)); }
+  .wv3-side__gear { width: calc(137 * var(--u)); height: calc(137 * var(--u)); }
+  .wv3-side__pixel { width: calc(136.5 * var(--u)); height: calc(136.5 * var(--u)); margin-top: calc(23.8 * var(--u)); }
+  .wv3-side__title { top: calc(var(--t-title) * var(--u)); height: calc(26.68 * var(--u)); }
+  .wv3-side__list--years { top: calc(var(--t-years) * var(--u)); }
+  .wv3-side__list--categories { top: calc(var(--t-cats) * var(--u)); }
+  .wv3-side__item { height: calc(26 * var(--u)); }
+  .wv3-side__nav { top: calc(var(--t-nav) * var(--u)); line-height: calc(22 * var(--u)); }
+  .wv3-side__unit { margin-bottom: calc(0 * var(--u)); }
+  .wv3-side__view { left: 0; right: 0; width: auto; bottom: calc(21 * var(--u)); justify-content: center; }
+
+  .wv3-feature {
+    position: absolute;
+    left: calc(284.2 * var(--u));
+    top: calc(51.2 * var(--u));
+    width: calc(1200.6 * var(--u));
+  }
+  .wv3-mosaic__grid { height: calc(1064.1 * var(--u)); grid-template-rows: calc(545.7 * var(--u)) minmax(0, 1fr); }
+  .wv3-mosaic[data-layout="wide-four"] .wv3-mosaic__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .wv3-mosaic[data-layout="wide-passport"] .wv3-mosaic__grid { grid-template-columns: calc(781 * var(--u)) minmax(0, 1fr) minmax(0, 1fr); }
+  .wv3-mosaic__tile:first-child { grid-column: 1 / -1; }
+  .wv3-feature__foot { margin-top: calc(8.03 * var(--u)); height: calc(18 * var(--u)); padding-right: calc(3.4 * var(--u)); }
+
+  .wv3-archive {
+    position: absolute;
+    left: calc(260.2 * var(--u));
+    top: calc(51.2 * var(--u));
+    display: grid;
+    grid-template-columns: calc(915.3 * var(--u)) calc(237.7 * var(--u));
+    column-gap: calc(24.3 * var(--u));
+    align-items: start;
+    box-sizing: border-box;
+    width: calc(1225 * var(--u));
+    height: calc(892 * var(--u));
+    padding: calc(24 * var(--u));
+    border-radius: calc(12 * var(--u));
+    background: var(--ccdv-panel);
+    overflow: auto;
+  }
+}
+
+@media (max-width: 1023px) {
+  .wv3 {
+    --u: min(1.5px, calc(100cqw / 390));
+    --wv3-t: max(11px, calc(12 * var(--u)));
+    padding: 12px 12px 24px;
+  }
+  .wv3__frame { display: grid; gap: 12px; max-width: 760px; margin-inline: auto; }
+  .wv3-side {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 12px 16px;
+    align-items: start;
+    padding: 16px;
+    border-radius: 12px;
+    text-align: start;
+  }
+  .wv3-side__home { grid-row: span 2; display: flex; flex-direction: column; gap: 8px; }
+  .wv3-side__gear,
+  .wv3-side__pixel { width: 56px; height: 56px; }
+  .wv3-side__title { justify-content: flex-start; padding-inline: 8px; height: 32px; }
+  .wv3-side__list { display: flex; flex-wrap: wrap; }
+  .wv3-side__list li { flex: 1 1 auto; }
+  .wv3-side__list li + li { margin-top: 0; margin-left: -0.5px; }
+  .wv3-side__list,
+  .wv3-side__nav,
+  .wv3-side__view { grid-column: 1 / -1; }
+  .wv3-side__item { min-height: 32px; padding-inline: 8px; }
+  .wv3-side__nav { text-align: center; line-height: 2; }
+  .wv3-side__nav ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 16px; }
+  .wv3-side__section { padding-block: 6px; }
+  .wv3-side__view { justify-self: center; padding-block: 8px; }
+
+  .wv3-mosaic__grid { grid-template-columns: minmax(0, 1fr); }
+  .wv3-mosaic__tile img { height: auto; }
+  .wv3-mosaic__tile[data-specimen] img { max-height: 320px; margin-inline: auto; }
+  .wv3-feature__foot { flex-wrap: wrap; margin-top: 8px; }
+  .wv3-feature__caption { white-space: normal; }
+
+  .wv3-archive { display: grid; gap: 12px; padding: 12px; border-radius: 12px; background: var(--ccdv-panel); }
+  .wv3-row--head { display: none; }
+  .wv3-row--head + .wv3-group,
+  .wv3-row--head + .wv3-table__empty { margin-top: 12px; }
+  .wv3-row {
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+    grid-template-areas: "year name glyph" ". categ categ" ". resp client";
+    row-gap: 4px;
+    height: auto;
+    padding-block: 8px;
+  }
+  .wv3-row .wv3-cell:nth-child(1) { grid-area: year; }
+  .wv3-row .wv3-cell:nth-child(2) { grid-area: categ; }
+  .wv3-row .wv3-cell:nth-child(3) { grid-area: resp; }
+  .wv3-row .wv3-cell:nth-child(4) { grid-area: name; }
+  .wv3-row .wv3-cell:nth-child(5) { grid-area: client; justify-self: end; }
+  .wv3-row .wv3-cell:nth-child(6) { grid-area: glyph; }
+  .wv3-preview { max-width: 360px; }
+}
+/* === end N3 WORK V3 ========================================================= */

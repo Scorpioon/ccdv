@@ -132,7 +132,10 @@ function chromeSection(pathname: string): ChromeSection | null {
   if (path === "/services") return "services";
   if (path === "/products") return "products";
   if (path === "/contact") return "contact";
-  if (path === "/work" || path.startsWith("/work/")) return "work";
+  /* N3 Work V3 (OPERATOR): the Work workspace (Featured, Archive) has no bar
+     — its rail carries Home and the sections; a case study keeps the bar */
+  if (path === "/work" || path === "/work/archive") return null;
+  if (path.startsWith("/work/")) return "work";
   return null;
 }
 

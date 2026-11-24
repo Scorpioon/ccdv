@@ -1,38 +1,27 @@
-import { useRef } from "react";
-import { SiteFooter } from "../components/SiteFooter";
-import { WorkHero } from "../components/work/WorkHero";
+import { WorkSidebar } from "../components/work/WorkSidebar";
+import { WorkMosaic } from "../components/work/WorkMosaic";
 import { useMotionPolicy } from "../motion/reducedMotion";
-import { useSceneReveal } from "../motion/studioMotion";
-import { useBoundaryNav, useNavIdle } from "../motion/routeNav";
-import { useStepScroll } from "../motion/stepScroll";
+import { FEATURED_CATEGORY, FEATURED_YEAR } from "../data/workProjects";
 
 export function meta() {
   return [{ title: "CCDV — Work" }];
 }
 
-/* Work hub (WORK-T2, OPERATOR): /work is an overview of the studio's work, not
-   the index. The R1.1 five-cell masthead is gone; the thin masthead (shared
-   with Studio / Services, motion/routeNav.ts) sits over the hub, and phones
-   get the M1 bar. The hub's `View all projects` opens the archive
-   (routes/work.archive.tsx), which carries the filters, the project list and
-   the Workcase return context. */
+/* N3 Work V3 Featured (t_20261124_ccdvn3work, OPERATOR, WORK V3.svg 1536 x
+   1193): a dedicated Work workspace on the gray grid ground — the light rail
+   (WorkSidebar) and the ADG-ARC mosaic (WorkMosaic). No shared bar and no
+   footer (GlobalShell gives /work no chrome); Home and the other sections are
+   in the rail, as /products/ccos is its own surface. Desktop: one screen,
+   the artboard scaled to fit (global.css, WORK V3). Below 1024: the rail is a
+   top band and the mosaic one column. Replaces the V2 hub (WorkHero). */
 export default function Work() {
   const { reduced } = useMotionPolicy();
-  const rootRef = useRef<HTMLDivElement>(null);
-  const hubRef = useRef<HTMLDivElement>(null);
-
-  useSceneReveal(rootRef, reduced);
-  useBoundaryNav(rootRef, hubRef, ".masthead--work");
-  useNavIdle(rootRef);
-  useStepScroll(rootRef, null, reduced); // A3: the hub, then the footer
-
   return (
-    <div className="r11 r11--work r11--work-hub" ref={rootRef}>
-      <div ref={hubRef}>
-        <WorkHero reduced={reduced} />
+    <div className="r11 wv3" data-view="featured">
+      <div className="wv3__frame">
+        <WorkSidebar view="featured" marked={{ year: FEATURED_YEAR, category: FEATURED_CATEGORY }} />
+        <WorkMosaic reduced={reduced} />
       </div>
-
-      <SiteFooter />
     </div>
   );
 }
