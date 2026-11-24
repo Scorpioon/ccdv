@@ -1,8 +1,5 @@
-import { useRef } from "react";
 import { Link } from "react-router";
-import { SiteFooter } from "./SiteFooter";
 import { useTransitionLink } from "./GlobalShell";
-import { useBoundaryNav, useNavIdle } from "../motion/routeNav";
 import { AVAILABLE_YEARS, type WorkProject, type WorkcaseData } from "../data/workProjects";
 
 /* Reusable Workcase page (MTG02 / `CCDV-FBI-022`), composed per R1.1
@@ -41,7 +38,13 @@ import { AVAILABLE_YEARS, type WorkProject, type WorkcaseData } from "../data/wo
    yellow band is the boundary edge, so the bar shows from the top; phones get
    the M1 bar.
    NAV-T3 (OPERATOR): `collapse` now goes Home (global rule); the arrow,
-   `[Work]`, Year and Type still open the archive. */
+   `[Work]`, Year and Type still open the archive.
+   N3 W-A1 (OPERATOR): a case is no longer a page. The Work workspace
+   (WorkWorkspace) slides it in from the right beside its rail, so it has no
+   bar, no footer and no scroll of its own on the window: it sits in the
+   workspace's scroll area, sized to it (`--pu` is measured on that area, a
+   size container). The links back move the workspace (no page load, no
+   scroll reset); the archive keeps its filters across the visit. */
 
 const RESTORE_STATE = { restore: true } as const;
 
@@ -51,26 +54,28 @@ function Pending() {
 
 export function Workcase({ project, data }: { project: WorkProject; data: WorkcaseData }) {
   const link = useTransitionLink();
-  const rootRef = useRef<HTMLDivElement>(null);
-  const bandRef = useRef<HTMLElement>(null);
-
-  useBoundaryNav(rootRef, bandRef, ".masthead--work");
-  useNavIdle(rootRef);
 
   return (
-    <div className="r11 r11--work r11--workcase" ref={rootRef}>
-      <section ref={bandRef} className="workcase-band" aria-label="Workcase">
+    <div className="r11 r11--workcase">
+      <section className="workcase-band" aria-label="Workcase">
         <div className="workcase-title">
-          <Link className="workcase-title__back" to="/work/archive" state={RESTORE_STATE} aria-label="Back to the Work archive">
+          <Link
+            className="workcase-title__back"
+            to="/work/archive"
+            state={RESTORE_STATE}
+            preventScrollReset
+            aria-label="Back to the Work archive"
+          >
             (←)
           </Link>
-          <Link className="workcase-title__work" to="/work/archive" state={RESTORE_STATE}>
+          <Link className="workcase-title__work" to="/work/archive" state={RESTORE_STATE} preventScrollReset>
             [Work]
           </Link>
           <span className="workcase-title__sep" aria-hidden="true">
             \
           </span>
-          <h1 className="workcase-title__slug">{data.slug}</h1>
+          {/* W-A1: the workspace's h1 is the rail's `Work` */}
+          <h2 className="workcase-title__slug">{data.slug}</h2>
         </div>
         {/* NAV-T3 (OPERATOR): `collapse` goes Home everywhere; (←) and [Work]
             still return to the archive */}
@@ -110,6 +115,7 @@ export function Workcase({ project, data }: { project: WorkProject; data: Workca
                     className="workcase-meta__year"
                     to="/work/archive"
                     state={{ filter: { year: project.year } }}
+                    preventScrollReset
                     aria-label={`Year: ${project.year} — show in the Work archive`}
                   >
                     {project.year}
@@ -126,6 +132,7 @@ export function Workcase({ project, data }: { project: WorkProject; data: Workca
                   className="workcase-meta__type"
                   to="/work/archive"
                   state={{ filter: { type: project.typeFilter } }}
+                  preventScrollReset
                   aria-label={`Type: ${project.tag} — show ${project.typeFilter} projects in the Work archive`}
                 >
                   {project.tag}
@@ -171,8 +178,6 @@ export function Workcase({ project, data }: { project: WorkProject; data: Workca
           />
         ))}
       </section>
-
-      <SiteFooter />
     </div>
   );
 }

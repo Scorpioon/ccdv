@@ -1,4 +1,4 @@
-import { CcdvIdentityMark, CollapseCreativeMark } from "./marks/ContactIdentityMarks";
+import { CollapseCreativeMark } from "./marks/ContactIdentityMarks";
 
 /* Contact's two-column directory (`CTC-010`-`CTC-024`).
 
@@ -54,10 +54,8 @@ export function ContactDirectory() {
     <div className="contact-directory">
       <div className="contact-directory__brand">
         <span className="contact-directory__anchor" aria-hidden="true" />
-        <div className="contact-directory__identity">
-          <p className="contact-directory__caption">[ Collapse Creative: Development Unit ]</p>
-          <CcdvIdentityMark className="contact-directory__ccdv" />
-        </div>
+        {/* N3 Pass G2 (OPERATOR): the CCDV identity (caption + long lockup)
+            is removed; the V3 card above already names CCDV */}
         <div className="contact-directory__identity">
           <p className="contact-directory__caption">[ Part of: Collapse Creative ]</p>
           <a href={COLLAPSE_CREATIVE_URL} aria-label="Collapse Creative">

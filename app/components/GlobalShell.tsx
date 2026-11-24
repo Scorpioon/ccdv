@@ -132,10 +132,9 @@ function chromeSection(pathname: string): ChromeSection | null {
   if (path === "/services") return "services";
   if (path === "/products") return "products";
   if (path === "/contact") return "contact";
-  /* N3 Work V3 (OPERATOR): the Work workspace (Featured, Archive) has no bar
-     — its rail carries Home and the sections; a case study keeps the bar */
-  if (path === "/work" || path === "/work/archive") return null;
-  if (path.startsWith("/work/")) return "work";
+  /* N3 Work V3 (OPERATOR): the Work workspace has no bar — its rail carries
+     Home and the sections. W-A1: a case study is part of the workspace too */
+  if (path === "/work" || path.startsWith("/work/")) return null;
   return null;
 }
 
@@ -161,7 +160,9 @@ export function GlobalShell({ children }: { children: ReactNode }) {
   const transition = useTransitionCoordinator();
   const location = useLocation();
   const initialMount = useRef(true);
-  const routeKey = location.pathname;
+  /* N3 W-A1: every /work path is one page (the Work workspace moves between
+     its views itself), so it keeps one key and never fades or remounts */
+  const routeKey = location.pathname === "/work" || location.pathname.startsWith("/work/") ? "/work" : location.pathname;
 
   const shellRef = useRef<HTMLDivElement>(null);
   /* `from` is the outgoing page's scroll offset, read while rendering the new
