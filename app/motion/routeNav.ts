@@ -12,7 +12,9 @@
    useNavIdle      A9 (OPERATOR), summon-only: `data-nav-idle` on the chrome
                    while the reader steps or scrolls down, cleared by a step or
                    scroll up and at the page's end; the CSS slides the bar away
-                   (0.30 s) and back (0.22 s).
+                   (0.30 s) and back (0.22 s). A12: the direction is read
+                   from the reader's input (wheel, keys, touch), not the
+                   scroll offset.
 
    Ownership: the page that has just arrived claims the bar. The page leaving
    is still mounted for its exit and still receives scrolls, so only the owner
@@ -22,6 +24,7 @@
    shows it meanwhile (useNavIdle, `data-nav-peek`). */
 import { useEffect, useLayoutEffect } from "react";
 import type { RefObject } from "react";
+
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
 const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 const NAV_IDLE_MIN_SCROLL = 50; // px: the M1 bar's height; nearer the top the bar stays
@@ -29,6 +32,8 @@ const PEEK_EDGE = 70; // px from the top edge that reveals the bar (A1)
 const PEEK_SLACK = 24; // px below the bar before it is let go
 const PEEK_HIDE_MS = 250;
 const SCROLL_DIR_MIN = 4; // px: smaller moves do not count as a direction (A9)
+const INPUT_RECENT_MS = 900; // A12: a scroll this soon after wheel / key / touch is that input's (a 0.7 s step included)
+const SCROLL_ONLY_MIN = 40; // px: A12, a scroll with no input behind it (scrollbar) must travel this far
 const SCROLL_KEYS = new Set(["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "]);
 
 const getChrome = () => document.querySelector<HTMLElement>(".site-chrome");
@@ -215,8 +220,23 @@ export function useNavIdle(rootRef: RefObject<HTMLElement | null>) {
     claimBar(root);
     /* A9 (OPERATOR): summon-only. Stepping or scrolling down hides the bar,
        up (or the page's end) shows it; no idle timer, so a step down never
-       flashes it in. */
+       flashes it in. A12 (OPERATOR: it still popped up): the direction is the
+       reader's INPUT — wheel, keys, a finger — not the scroll offset, which
+       also moves by itself (the stepper's settle glide, scroll anchoring,
+       curtains covering) and read as "up". Only without recent input (a
+       scrollbar drag) does the offset count, past SCROLL_ONLY_MIN. */
     let lastY = window.scrollY;
+    let lastInput = -Infinity;
+    let touchY: number | null = null;
+    const setHidden = (hidden: boolean) => {
+      if (barOwner !== root || barHeld) return;
+      if (peeking) idleBeforePeek = hidden;
+      else chrome.toggleAttribute("data-nav-idle", hidden);
+    };
+    const intent = (down: boolean) => {
+      lastInput = performance.now();
+      setHidden(down);
+    };
 
     /* A1: `data-nav-peek` shows the bar on demand. Mouse: the cursor within
        PEEK_EDGE of the top, armed only once it has been below the bar since
@@ -264,24 +284,59 @@ export function useNavIdle(rootRef: RefObject<HTMLElement | null>) {
         setPeek(true);
       }
     };
+    const onWheel = (event: WheelEvent) => {
+      if (event.ctrlKey || Math.abs(event.deltaY) <= Math.abs(event.deltaX) || event.deltaY === 0) return;
+      intent(event.deltaY > 0);
+    };
+    const onKey = (event: KeyboardEvent) => {
+      if (event.altKey || event.ctrlKey || event.metaKey) return;
+      const el = event.target instanceof Element ? event.target : null;
+      if (el?.closest("input, textarea, select, [contenteditable]")) return;
+      if (event.key === "ArrowDown" || event.key === "PageDown" || event.key === "End") intent(true);
+      else if (event.key === "ArrowUp" || event.key === "PageUp" || event.key === "Home") intent(false);
+      else if (event.key === " " && !el?.closest("button, a, summary, [role='button']")) intent(!event.shiftKey);
+    };
+    const onTouchStart = (event: TouchEvent) => {
+      touchY = event.touches[0]?.clientY ?? null;
+    };
+    const onTouchMove = (event: TouchEvent) => {
+      const y = event.touches[0]?.clientY;
+      if (touchY === null || y === undefined || Math.abs(y - touchY) <= SCROLL_DIR_MIN * 2) return;
+      intent(y < touchY); // finger up = the page scrolls down
+      touchY = y;
+    };
     const onScroll = () => {
       if (barOwner !== root) return;
       if (touchPeek) setPeek(false);
       const y = window.scrollY;
-      const dy = y - lastY;
-      if (Math.abs(dy) <= SCROLL_DIR_MIN) return;
-      lastY = y;
-      if (barHeld) return;
       const atEnd = y + window.innerHeight >= document.documentElement.scrollHeight - 2;
-      const show = dy < 0 || atEnd;
-      if (peeking) idleBeforePeek = !show;
-      else chrome.toggleAttribute("data-nav-idle", !show);
+      if (atEnd) {
+        lastY = y;
+        setHidden(false);
+        return;
+      }
+      const dy = y - lastY;
+      if (performance.now() - lastInput < INPUT_RECENT_MS) {
+        lastY = y;
+        return;
+      }
+      if (Math.abs(dy) <= SCROLL_ONLY_MIN) return;
+      lastY = y;
+      setHidden(dy > 0);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("wheel", onWheel, { passive: true });
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
     window.addEventListener("pointermove", onMove, { passive: true });
     window.addEventListener("pointerdown", onDown, { passive: true });
     return () => {
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerdown", onDown);
       window.clearTimeout(peekTimer);

@@ -1,23 +1,23 @@
 /* A11 (OPERATOR): the Service Index cube — a 3 x 3 x 3 Rubik cube, the Services
    counterpart of the Studio Approach sphere, replacing IndexVoxel's morphing
-   face. Seen from a three-quarter view (front, top and right faces showing),
-   orthographic; 27 ink cubies, each outer face carrying a red / half-red /
+   face. A12 (OPERATOR): at rest it faces the reader square on (the front face
+   only, as the approved index); the pointer, anywhere over the Service Index,
+   tilts and turns it (up to ~20 / ~28 deg) on a critically damped spring.
+   Orthographic; 27 ink cubies, each outer face carrying a red / half-red /
    blank sticker. The FRONT face always shows the selected service's 3 x 3 grid
-   (servicesVoxels INDEX_GRIDS); top and right show what the moves left there,
-   as on a real cube.
+   (servicesVoxels INDEX_GRIDS); the other faces show what the moves left
+   there, as on a real cube.
 
    Rules — the engine never does anything else:
      1  a move is a quarter turn (90 deg) of one layer or of the whole cube,
         about one axis, on a cubic ease-in-out; nothing slides diagonally,
         nothing resizes;
-     2  a new CATEGORY turns the whole cube once: the next category to the
-        right brings the hidden left face round to the front (about the
-        vertical), an earlier one tumbles the hidden bottom face up;
-     3  a new SERVICE turns only the rows that differ, one layer at a time,
-        each bringing its row in from the hidden left face;
-     4  a sticker changes colour only while it is on a hidden face (left /
-        bottom, never seen from this view): it is painted just before the move
-        that brings it to the front;
+     2  a new CATEGORY turns the whole cube once: a later category about the
+        vertical (sideways), an earlier one about the horizontal (a tumble);
+     3  a new SERVICE turns only the rows that differ, one layer at a time;
+     4  a sticker changes colour only while it is on a face turned away from
+        the reader: each turn brings its stickers from whichever of its two
+        sides faces away at that moment (A12), painted just before the move;
      5  a new choice mid-move lets the running quarter turn finish, drops the
         queued ones and plans again from there;
      6  reduced motion: the front face is repainted at once, no move.
@@ -26,7 +26,7 @@
    (useVisibleLoop); between moves, once the lean has settled, it stops
    writing. Decorative: the tabs are the control. */
 import { useEffect, useRef } from "react";
-import { apply, mul, rotX, rotY, type Mat3 } from "../marks/StudioMobileOrbit";
+import { IDENT, apply, mul, rotX, rotY, type Mat3 } from "../marks/StudioMobileOrbit";
 import { useVisibleLoop } from "../studio/artworks";
 import type { VoxelGrid } from "../../data/servicesVoxels";
 
@@ -44,9 +44,9 @@ interface Cubie {
 interface Move {
   axis: Axis;
   layer: number | null; // null: the whole cube
-  s: Sign;
+  s: Sign; // chosen when the move starts (A12: from the side turned away)
   dur: number;
-  paint: (cubies: Cubie[]) => void;
+  target: VoxelGrid;
 }
 interface Quad {
   d: string;
@@ -54,8 +54,10 @@ interface Quad {
   f: number;
 }
 
-const VIEW: Mat3 = mul(rotX(0.42), rotY(-Math.PI / 6));
-const SCALE = 118; // px per cubie
+/* A12 (OPERATOR): at rest the cube faces the reader (the front face square
+   on, as the approved index); the pointer tilts and turns it */
+const VIEW: Mat3 = IDENT;
+const SCALE = 150; // px per cubie (A12: the square-on face fills the box, as the approved index)
 const HALF = 0.47; // cubie half-size (0.06 gaps)
 const INSET = 0.39; // sticker half-size
 const LAYERS = [-1, 0, 1] as const;
@@ -71,8 +73,8 @@ const POOL = 27 * 3 * 2; // at most three faces of a box show, each with its sti
 const CUBE_S = 0.6; // s, a whole-cube turn
 const ROW_S = 0.34; // s, a layer turn
 const GAP_S = 0.05; // s between two moves
-const LEAN = { x: 0.1, y: 0.14 };
-const SPRING = { k: 38, c: 9 };
+const LEAN = { x: 0.35, y: 0.5 }; // rad (~20 / ~28 deg), A12: the pointer turns it clearly
+const SPRING = { k: 30, c: 11 }; // critically damped: smooth, no wobble
 
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 const same = (a: V, b: V) => a[0] === b[0] && a[1] === b[1] && a[2] === b[2];
@@ -108,22 +110,26 @@ function face(cubies: Cubie[], p: V, n: V) {
   return cubies.find((c) => same(c.p, p))?.faces.find((fc) => same(fc.n, n));
 }
 
-/* rule 4: the hidden faces that a move brings to the front */
-function paintLeft(cubies: Cubie[], target: VoxelGrid, row: number | null) {
+/* the face a quarter turn brings to the front: about the vertical, +1 brings
+   the left face, -1 the right; about the horizontal, -1 the bottom, +1 the top */
+const sourceNormal = (axis: Axis, s: Sign): V =>
+  axis === 1 ? [-s, 0, 0] : [0, s, 0];
+
+/* rule 4: paint the source face's stickers with the cells they will land on */
+function paintSource(cubies: Cubie[], m: Move) {
+  const n = sourceNormal(m.axis, m.s);
   for (const c of cubies) {
-    if (c.p[0] !== -1 || (row !== null && c.p[1] !== row)) continue;
-    const fc = c.faces.find((x) => same(x.n, [-1, 0, 0]));
-    /* after the turn about the vertical, (-1, y, z) stands at x = z on the front */
-    if (fc) fc.f = target[(1 - c.p[1]) * 3 + (c.p[2] + 1)];
+    if (!inMove(m, c.p)) continue;
+    const fc = c.faces.find((x) => same(x.n, n));
+    if (fc) fc.f = m.target[frontCell(turn(c.p, m.axis, m.s))];
   }
 }
-function paintBottom(cubies: Cubie[], target: VoxelGrid) {
-  for (const c of cubies) {
-    if (c.p[1] !== -1) continue;
-    const fc = c.faces.find((x) => same(x.n, [0, -1, 0]));
-    /* after the tumble, (x, -1, z) stands at y = z on the front */
-    if (fc) fc.f = target[(1 - c.p[2]) * 3 + (c.p[0] + 1)];
-  }
+
+/* A12: the cube faces the reader and leans, so a side may be in view: a turn
+   brings its stickers from whichever of its two sides faces away */
+function awaySign(view: Mat3, axis: Axis): Sign {
+  const z = (s: Sign) => apply(view, sourceNormal(axis, s))[2];
+  return z(1) <= z(-1) ? 1 : -1;
 }
 function paintFront(cubies: Cubie[], target: VoxelGrid) {
   for (const c of cubies) {
@@ -135,16 +141,12 @@ function paintFront(cubies: Cubie[], target: VoxelGrid) {
 
 /* rules 2 and 3 */
 function plan(cubies: Cubie[], target: VoxelGrid, category: 0 | Sign): Move[] {
-  if (category === 1) {
-    return [{ axis: 1, layer: null, s: 1, dur: CUBE_S, paint: (c) => paintLeft(c, target, null) }];
-  }
-  if (category === -1) {
-    return [{ axis: 0, layer: null, s: -1, dur: CUBE_S, paint: (c) => paintBottom(c, target) }];
-  }
+  if (category === 1) return [{ axis: 1, layer: null, s: 1, dur: CUBE_S, target }];
+  if (category === -1) return [{ axis: 0, layer: null, s: 1, dur: CUBE_S, target }];
   const moves: Move[] = [];
   for (const y of [1, 0, -1]) {
     const differs = LAYERS.some((x) => face(cubies, [x, y, 1], [0, 0, 1])?.f !== target[frontCell([x, y, 1])]);
-    if (differs) moves.push({ axis: 1, layer: y, s: 1, dur: ROW_S, paint: (c) => paintLeft(c, target, y) });
+    if (differs) moves.push({ axis: 1, layer: y, s: 1, dur: ROW_S, target });
   }
   return moves;
 }
@@ -299,7 +301,8 @@ export function RubikCube({
       }
       if (!s.move && s.queue.length > 0 && clock >= s.nextAt) {
         const next = s.queue.shift()!;
-        next.paint(s.cubies);
+        next.s = awaySign(leanView(s.pose.rx, s.pose.ry), next.axis);
+        paintSource(s.cubies, next);
         s.move = next;
         s.t0 = clock;
       }
@@ -349,6 +352,9 @@ export function RubikCube({
     const s = sim.current;
     if (!node || !s || reduced) return;
     const aim = s.aim;
+    /* A12: the whole Service Index is the pointer's zone, so the cube follows
+       smoothly from anywhere in the module, not only over itself */
+    const zone: Element = node.closest(".sv-ix") ?? node;
     const onMove = (event: PointerEvent) => {
       const r = node.getBoundingClientRect();
       if (!r.width || !r.height) return;
@@ -366,17 +372,19 @@ export function RubikCube({
     const onUp = (event: PointerEvent) => {
       if (event.pointerType !== "mouse") onLeave();
     };
-    node.addEventListener("pointermove", onMove);
-    node.addEventListener("pointerdown", onMove);
-    node.addEventListener("pointerleave", onLeave);
-    node.addEventListener("pointercancel", onLeave);
-    node.addEventListener("pointerup", onUp);
+    const move = onMove as EventListener;
+    const up = onUp as EventListener;
+    zone.addEventListener("pointermove", move);
+    zone.addEventListener("pointerdown", move);
+    zone.addEventListener("pointerleave", onLeave);
+    zone.addEventListener("pointercancel", onLeave);
+    zone.addEventListener("pointerup", up);
     return () => {
-      node.removeEventListener("pointermove", onMove);
-      node.removeEventListener("pointerdown", onMove);
-      node.removeEventListener("pointerleave", onLeave);
-      node.removeEventListener("pointercancel", onLeave);
-      node.removeEventListener("pointerup", onUp);
+      zone.removeEventListener("pointermove", move);
+      zone.removeEventListener("pointerdown", move);
+      zone.removeEventListener("pointerleave", onLeave);
+      zone.removeEventListener("pointercancel", onLeave);
+      zone.removeEventListener("pointerup", up);
       onLeave();
     };
   }, [reduced]);

@@ -3501,12 +3501,17 @@ main { display: block; outline: none; }
     padding-top: calc(120 * var(--u));
     padding-bottom: calc(120 * var(--u));
   }
-  /* A11: bars, cube and body at the compact Studio Approach's places */
+  /* A11: bars and cube at the compact Studio Approach's places. A12
+     (OPERATOR: the module read as two steps): with the strip + tabs now
+     heading the right column, the longest service (~10 copy lines) ran to
+     ~1005 of the 994.5 fit, so the stepper paged it; the column's gaps are
+     tightened to ~907 */
   .r11--services .sv-ix__bars { top: calc(120 * var(--u)); }
   .r11--services .sv-ix__art { top: calc(208.5 * var(--u)); }
-  .r11--services .sv-ix__body { margin-top: calc(101.6 * var(--u)); }
-  .r11--services .sv-ix__services { margin-top: calc(48 * var(--u)); }
-  .r11--services .sv-ix__detail { margin-top: calc(32 * var(--u)); }
+  .r11--services .sv-ix__body { margin-top: calc(40 * var(--u)); }
+  .r11--services .sv-ix__services { margin-top: calc(32 * var(--u)); }
+  .r11--services .sv-ix__detail { margin-top: calc(24 * var(--u)); }
+  .r11--services .sv-ix__focus { margin-top: calc(24 * var(--u)); }
 }
 
 .sv-visually-hidden {
@@ -3773,7 +3778,7 @@ main { display: block; outline: none; }
 .sv-ix__chips { display: flex; flex-wrap: wrap; gap: calc(12 * var(--s)); margin: 0; padding: 0; list-style: none; }
 /* A11: the tag that says what the chips are */
 .sv-ix__focus-title {
-  margin: 0 0 calc(12 * var(--s));
+  margin: 0 0 calc(8 * var(--s));
   font: inherit;
   font-size: var(--t-small);
   line-height: 1.2;
