@@ -1,7 +1,4 @@
-import { Link } from "react-router";
-import { useTransitionLink } from "../GlobalShell";
-import { GearMark } from "../marks/GearMark";
-import { CcdvPixelMark } from "../marks/CcdvPixelMark";
+import { CoverMasthead } from "../CoverMasthead";
 import { Chip } from "../studio/studioMarks";
 import { FloatingCube } from "./FloatingCube";
 import type { LitPattern } from "./LitCube";
@@ -20,34 +17,19 @@ import { index } from "../../motion/studioMotion";
    title is brand text, not the page heading — the route's h1 is "Products".
    P1b: the pieces spawn in reading order, as on Studio / Services (the cube
    last), so a swap into Products no longer paints the cube before the page;
-   the cube shows the current lit pattern (LitCube). */
+   the cube shows the current lit pattern (LitCube).
+
+   A8 (OPERATOR): the lockup, `collapse` and squares a / b are Masthead V3
+   (CoverMasthead), the light card on the ink. Phones now show the cover for
+   the card alone (global.css). */
 export function ProductsCover({ pattern, reduced }: { pattern: LitPattern; reduced: boolean }) {
-  const link = useTransitionLink();
   return (
     <section className="pv-cover" aria-label="CCDV">
       {/* P1b CORR03: the 1536 x 1243.73 frame; on desktop it scales to fit
           the screen height and centres, as the Studio / Services cover frames
           (global.css) */}
       <div className="pv-cover__frame">
-        <div className="pv-cover__lockup" data-spawn style={index(0)}>
-          <GearMark className="pv-cover__gear" fill="#F2F2F2" dotFill="#5AE36F" />
-          <CcdvPixelMark variant="stack" className="pv-cover__pixel" fill="#F2F2F2" />
-          <p className="pv-cover__title">
-            <span>Collapse Creative</span> <span>Development Unit</span>
-          </p>
-          <div className="pv-cover__meta">
-            <div>[ COLLAPSE CREATIVE : DEV UNIT ]</div>
-            <div>[ hello[@]collapsecreative.com ]</div>
-            <div>
-              [ Part of <a href="https://collapsecreative.com">collapsecreative.com</a> ]
-            </div>
-          </div>
-        </div>
-        <Link className="pv-cover__label" aria-label="collapse — back to Home" data-spawn style={index(1)} {...link("/")}>
-          collapse
-        </Link>
-        <span className="pv-cover__sq pv-cover__sq--a" aria-hidden="true" data-spawn style={index(2)} />
-        <span className="pv-cover__sq pv-cover__sq--b" aria-hidden="true" data-spawn style={index(2)} />
+        <CoverMasthead page="Products" />
         <span className="pv-cover__sq pv-cover__sq--c" aria-hidden="true" data-spawn style={index(2)} />
         <span className="pv-cover__sq pv-cover__sq--d" aria-hidden="true" data-spawn style={index(2)} />
         <span className="pv-cover__sq pv-cover__sq--e" aria-hidden="true" data-spawn style={index(2)} />

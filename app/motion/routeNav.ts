@@ -93,16 +93,20 @@ export function useBoundaryNav(
     const nav = chrome?.querySelector<HTMLElement>(navSelector);
     if (!root || !edge || !chrome || !nav) return;
     const lead = leadSelector ? root.querySelector<HTMLElement>(leadSelector) : null;
+    const phoneBar = chrome.querySelector<HTMLElement>(".smm__bar");
     claimBar(root);
     let frame = 0;
     let last = "";
     const update = () => {
       frame = 0;
       if (barOwner !== root || barHeld) return;
-      const navH = nav.offsetHeight;
+      /* A8 (OPERATOR): phones follow the same rule with the M1 bar (the thin
+         masthead is not rendered there, height 0); a lead that is not
+         displayed (no box) does not count */
+      const navH = nav.offsetHeight || phoneBar?.offsetHeight || 0;
       const edgeTop = edge.getBoundingClientRect().top;
-      const top = lead ? Math.min(edgeTop, lead.getBoundingClientRect().bottom) : edgeTop;
-      /* navH is 0 on phones, where the bar is not rendered */
+      const top =
+        lead && lead.getClientRects().length > 0 ? Math.min(edgeTop, lead.getBoundingClientRect().bottom) : edgeTop;
       const p = navH > 0 ? clamp01((navH - top) / navH).toFixed(4) : "1";
       if (p !== last) {
         last = p;

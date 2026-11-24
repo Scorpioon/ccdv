@@ -11,44 +11,23 @@
    carries the h1 for assistive tech only (visually hidden), since the desktop
    cover grammar has no page label. NAV-T3 (OPERATOR): the thin masthead
    appears once the lockup's lower edge has scrolled past the top; `collapse`
-   is a link Home (global); the pieces spawn in reading order as on Studio. */
+   is a link Home (global); the pieces spawn in reading order as on Studio.
+   A8 (OPERATOR): the lockup, `collapse` and squares a / b are Masthead V3
+   (CoverMasthead). */
 import { Fragment } from "react";
-import { Link } from "react-router";
-import { useTransitionLink } from "../GlobalShell";
-import { GearMark } from "../marks/GearMark";
-import { CcdvPixelMark } from "../marks/CcdvPixelMark";
+import { CoverMasthead } from "../CoverMasthead";
 import { Chip } from "../studio/studioMarks";
-import { INK, LIGHT } from "../studio/artworks";
 import { ArrowTrace } from "./ArrowTrace";
 import { SERVICES_WHATIS } from "../../data/servicesScenes";
 import { index } from "../../motion/studioMotion";
 
 export function ServicesCover({ reduced }: { reduced: boolean }) {
-  const link = useTransitionLink();
   return (
     <section className="sv-cv sv-grid" aria-labelledby="services-title">
       {/* R1 CORR01: the 1440 x 1118 frame; on desktop it scales to fit the
           screen height and centres (global.css, "fit") */}
       <div className="sv-cv__frame">
-        <div className="sv-cv__lockup" data-spawn style={index(0)}>
-          <GearMark className="sv-cv__gear" fill={INK} dotFill={LIGHT} />
-          <CcdvPixelMark variant="stack" className="sv-cv__pixel" fill={INK} />
-          <p className="sv-cv__title">
-            <span>Collapse Creative</span> <span>Development Unit</span>
-          </p>
-          <div className="sv-cv__meta">
-            <div>[ COLLAPSE CREATIVE : DEV UNIT ]</div>
-            <div>[ hello[@]collapsecreative.com ]</div>
-            <div>
-              [ Part of <a href="https://collapsecreative.com">collapsecreative.com</a> ]
-            </div>
-          </div>
-        </div>
-        <Link className="sv-cv__label" aria-label="collapse — back to Home" data-spawn style={index(1)} {...link("/")}>
-          collapse
-        </Link>
-        <span className="sv-cv__sq sv-cv__sq--a" aria-hidden="true" data-spawn style={index(2)} />
-        <span className="sv-cv__sq sv-cv__sq--b" aria-hidden="true" data-spawn style={index(2)} />
+        <CoverMasthead page="Services" />
         <span className="sv-cv__sq sv-cv__sq--c" aria-hidden="true" data-spawn style={index(2)} />
         <span className="sv-cv__sq sv-cv__sq--d" aria-hidden="true" data-spawn style={index(2)} />
         <span className="sv-cv__sq sv-cv__sq--e" aria-hidden="true" data-spawn style={index(2)} />

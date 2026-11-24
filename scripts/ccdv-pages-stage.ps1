@@ -163,11 +163,12 @@ Step 'base-path' 'root base "/" (valid for the domain root only)'
 $allAssets = Get-ChildItem -LiteralPath (Join-Path $Build 'assets') -File
 $css = @($allAssets | Where-Object { $_.Name -like '*.css' })
 $js = @($allAssets | Where-Object { $_.Name -like '*.js' })
-if (-not ($css | Select-String -SimpleMatch -Pattern '.mobile-notice' -List)) { Fail 'built CSS lacks .mobile-notice - build predates GF09-D' }
+# A7 (OPERATOR): the GF09-D mobile notice is retired; fail if a stale build still carries it
+if ($css | Select-String -SimpleMatch -Pattern '.mobile-notice' -List) { Fail 'built CSS still has .mobile-notice - build predates A7' }
 foreach ($needle in 'we are working on the responsive', 'check on desktop!') {
-  if (-not ($js | Select-String -SimpleMatch -Pattern $needle -List)) { Fail "built JS lacks notice copy fragment '$needle'" }
+  if ($js | Select-String -SimpleMatch -Pattern $needle -List) { Fail "built JS still has notice copy fragment '$needle' - build predates A7" }
 }
-Step 'notice-in-build' 'CSS rule and exact copy present in compiled output'
+Step 'notice-removed' 'GF09-D notice absent from compiled output'
 
 # ---- stage ----------------------------------------------------------------
 if ($StageRoot.StartsWith($RepoRoot + '\', [System.StringComparison]::OrdinalIgnoreCase) -or $StageRoot -eq $RepoRoot) { Fail 'StageRoot must be outside the repository tree' }

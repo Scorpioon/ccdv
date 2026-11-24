@@ -40,8 +40,8 @@ export default function Services() {
   const redRef = useRef<HTMLDivElement>(null);
 
   useSceneReveal(rootRef, reduced);
-  // NAV-T3: the bar appears once the cover lockup has scrolled past
-  useBoundaryNav(rootRef, indexRef, ".masthead--services", ".sv-cv__lockup");
+  // NAV-T3: the bar appears once the cover lockup (A8: the V3 card) has scrolled past
+  useBoundaryNav(rootRef, indexRef, ".masthead--services", ".cmh");
   useNavIdle(rootRef);
   usePinTop(indexRef, redRef);
   // A3: one gesture, one rise; stops at the markers and the Formation scene

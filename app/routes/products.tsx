@@ -68,7 +68,7 @@ export default function Products() {
   );
 
   useSceneReveal(rootRef, reduced);
-  useBoundaryNav(rootRef, moduleRef, ".masthead--products", ".pv-cover__lockup");
+  useBoundaryNav(rootRef, moduleRef, ".masthead--products", ".cmh"); // A8: the V3 card
   useNavIdle(rootRef);
   usePinTop(moduleRef, nextRef);
   // A3: one gesture, one rise; A4: the cover rises straight into the module

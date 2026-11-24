@@ -58,7 +58,8 @@ export default function Studio() {
   // lockup's lower edge has scrolled past, or when the Approach arrives on a
   // screen tall enough that the lockup never leaves. N1: the bar itself is the
   // shared GlobalShell chrome; this page only drives it (motion/routeNav.ts).
-  useBoundaryNav(rootRef, approachRef, ".masthead--studio", ".cv__lockup");
+  // A8: the lockup is the V3 card (.cmh)
+  useBoundaryNav(rootRef, approachRef, ".masthead--studio", ".cmh");
   useNavIdle(rootRef);
   // A3: one gesture, one rise; stops at the markers and the CC.OS scene
   useStepScroll(rootRef, ".pin-snap, .cs", reduced);

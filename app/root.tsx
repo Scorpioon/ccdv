@@ -55,12 +55,7 @@ export function Layout({ children }: { children: ReactNode }) {
 }
 export default function Root() {
   return (
-    <>
-      {/* GF09-D: mobile-only notice. In flow above the shell, so it never covers
-          the masthead or navigation; hidden outside the mobile query in global.css. */}
-      <p className="mobile-notice" role="note">we are working on the responsive <span role="img" aria-label="construction">🚧</span>, check on desktop!</p>
-      <GlobalShell><Outlet /></GlobalShell>
-    </>
+    <GlobalShell><Outlet /></GlobalShell>
   );
 }
 /* H1 D7: the ink ground is the loading state (replaces React Router's

@@ -15,42 +15,23 @@
    NAV-T3 (OPERATOR): the thin masthead appears once the lockup's lower edge
    has scrolled past the top (studio.tsx). `collapse` is a link Home (global),
    and the cover's pieces spawn in reading order: lockup, `collapse`, squares,
-   Whois, sphere (after the page's rise when arriving from Home). */
-import { Link } from "react-router";
-import { useTransitionLink } from "../GlobalShell";
-import { GearMark } from "../marks/GearMark";
-import { CcdvPixelMark } from "../marks/CcdvPixelMark";
+   Whois, sphere (after the page's rise when arriving from Home).
+
+   A8 (OPERATOR): the lockup, `collapse` and squares a / b are Masthead V3
+   (CoverMasthead); the h1 is [Studio] at every width (visually hidden on
+   desktop, as on Services). */
+import { CoverMasthead } from "../CoverMasthead";
 import { StudioMobileOrbit } from "../marks/StudioMobileOrbit";
 import { Chip } from "./studioMarks";
-import { INK, LIGHT } from "./artworks";
 import { index } from "../../motion/studioMotion";
 
 export function StudioCover() {
-  const link = useTransitionLink();
   return (
     <section className="cv studio-grid" aria-label="Studio">
       {/* Services R1 CORR01 addendum (fit): the 1440 x 1118 frame; on desktop
           it scales to fit the screen height and centres (global.css) */}
       <div className="cv__frame">
-        <div className="cv__lockup" data-spawn style={index(0)}>
-          <GearMark className="cv__gear" fill={INK} dotFill={LIGHT} />
-          <CcdvPixelMark variant="stack" className="cv__pixel" fill={INK} />
-          <h1 className="cv__title">
-            <span>Collapse Creative</span> <span>Development Unit</span>
-          </h1>
-          <div className="cv__meta">
-            <div>[ COLLAPSE CREATIVE : DEV UNIT ]</div>
-            <div>[ hello[@]collapsecreative.com ]</div>
-            <div>
-              [ Part of <a href="https://collapsecreative.com">collapsecreative.com</a> ]
-            </div>
-          </div>
-        </div>
-        <Link className="cv__label" aria-label="collapse — back to Home" data-spawn style={index(1)} {...link("/")}>
-          collapse
-        </Link>
-        <span className="cv__sq cv__sq--a" aria-hidden="true" data-spawn style={index(2)} />
-        <span className="cv__sq cv__sq--b" aria-hidden="true" data-spawn style={index(2)} />
+        <CoverMasthead page="Studio" />
         <span className="cv__sq cv__sq--c" aria-hidden="true" data-spawn style={index(2)} />
         <span className="cv__sq cv__sq--d" aria-hidden="true" data-spawn style={index(2)} />
         <span className="cv__sq cv__sq--e" aria-hidden="true" data-spawn style={index(2)} />
