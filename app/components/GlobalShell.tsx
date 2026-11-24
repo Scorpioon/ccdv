@@ -105,16 +105,16 @@ function RouteMain({
 /* N1 (OPERATOR): the navigation bar belongs to the shell, not to a page. The
    four section pages share one thin bar (>= 768) and one M1 bar + menu
    (phones), rendered once beside the stage, so a swap between two sections
-   never fades or moves it; only the current cell changes. Home, CC.OS and
-   Contact keep their own mastheads for now, so for them the bar fades out with
-   the page (and back in with the next section page).
+   never fades or moves it; only the current cell changes. Home and CC.OS keep
+   their own mastheads for now, so for them the bar fades out with the page
+   (and back in with the next section page). N2 (OPERATOR): Contact joins.
 
    `.site-chrome` is `display: contents` and carries the section's page class
    (`r11 r11--work`), so every bar rule scoped to the page keeps matching and
    the bar stays a direct child of `.site-shell` (sticky needs the tall box).
    The page driving it (motion/routeNav.ts) writes --nav-in / data-nav-idle
    here. Fade-out and fade-in are CSS (`data-chrome`), timed as the page. */
-type ChromeSection = "studio" | "services" | "work" | "products";
+type ChromeSection = "studio" | "services" | "work" | "products" | "contact";
 type ChromePhase = "on" | "in" | "leaving";
 type ChromeState = { key: ChromeSection | null; shown: ChromeSection | null; phase: ChromePhase };
 const CHROME_ROUTE: Record<ChromeSection, string> = {
@@ -122,6 +122,7 @@ const CHROME_ROUTE: Record<ChromeSection, string> = {
   services: "/services",
   work: "/work",
   products: "/products",
+  contact: "/contact",
 };
 const CHROME_UNMOUNT_MS = FADE_OUT_S * 1000 + 60;
 
@@ -130,6 +131,7 @@ function chromeSection(pathname: string): ChromeSection | null {
   if (path === "/studio") return "studio";
   if (path === "/services") return "services";
   if (path === "/products") return "products";
+  if (path === "/contact") return "contact";
   if (path === "/work" || path.startsWith("/work/")) return "work";
   return null;
 }

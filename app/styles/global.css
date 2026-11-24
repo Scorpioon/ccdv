@@ -1041,14 +1041,9 @@ main { display: block; outline: none; }
 .identity-mark__long { display: block; width: calc(652.3 * var(--u)); height: auto; aspect-ratio: 507 / 93; }
 .contact-directory__ccdv { display: flex; align-items: center; }
 
-.identity-mark__rings { display: block; width: calc(220 * var(--u)); height: calc(140 * var(--u)); }
-.identity-mark__word {
-  display: block;
-  font-size: calc(48 * var(--u));
-  line-height: calc(48 * var(--u));
-  text-transform: uppercase;
-  margin-top: calc(8 * var(--u));
-}
+/* N2 A2 (OPERATOR): the real Collapse Creative lockup (648 x 120) at its own
+   artboard size, the CCDV lockup's width above it (652.3 x 119.7) */
+.identity-mark__cc { display: block; width: calc(648 * var(--u)); height: auto; aspect-ratio: 648 / 120; color: var(--ccdv-ink); }
 .contact-directory__collapse { display: block; }
 
 .contact-directory__groups { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between; font-size: calc(16 * var(--u)); }
@@ -2593,7 +2588,7 @@ main { display: block; outline: none; }
 /* --- OC01-02: the thin masthead (E10 "to be", Frame 334) --------------------
    One state, shared by every route that renders the compact masthead (Studio,
    Services, Work — WORK-T2 merged the per-route copies; Products V2 joined in
-   t_20261117_products20). Sticky with a negative
+   t_20261117_products20; Contact in N2). Sticky with a negative
    margin, so it takes no height; it is translated out by (1 - --nav-in), which
    each route derives from one section's top edge (A3). Focus inside the bar
    always shows it. Phones keep the M1 bar (masthead not rendered).
@@ -2606,7 +2601,7 @@ main { display: block; outline: none; }
    P2 CORR02 (OPERATOR): the mark at label scale — 18 tall (gear 220 -> 18,
    inline mark 78.75 x 18), centred in the 48 bar. */
 @media (min-width: 768px) {
-  :is(.r11--studio, .r11--services, .r11--work, .r11--products) .masthead--collapsing {
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products, .r11--contact) .masthead--collapsing {
     --cell-h: calc(32 * var(--u));
     --nav-h: calc(var(--cell-h) + 16 * var(--u));
     position: sticky;
@@ -2616,30 +2611,30 @@ main { display: block; outline: none; }
     margin-bottom: calc(-1 * var(--nav-h));
     transform: translateY(calc((var(--nav-in, 0) - 1) * 100%));
   }
-  :is(.r11--studio, .r11--services, .r11--work, .r11--products) .masthead--collapsing:focus-within { transform: none; }
-  :is(.r11--studio, .r11--services, .r11--work, .r11--products) .masthead--collapsing .masthead__mark {
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products, .r11--contact) .masthead--collapsing:focus-within { transform: none; }
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products, .r11--contact) .masthead--collapsing .masthead__mark {
     left: calc(8 * var(--u));
     top: calc(15 * var(--u));
     width: calc(99.34 * var(--u));
     height: calc(18 * var(--u));
     overflow: clip;
   }
-  :is(.r11--studio, .r11--services, .r11--work, .r11--products) .masthead--collapsing .masthead__gear { transform: scale(0.081818); }   /* 220 -> 18 */
-  :is(.r11--studio, .r11--services, .r11--work, .r11--products) .masthead--collapsing :is(.masthead__pixel, .cell__tile) { display: none; }
-  :is(.r11--studio, .r11--services, .r11--work, .r11--products) .masthead--collapsing .masthead__pixel-inline {
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products, .r11--contact) .masthead--collapsing .masthead__gear { transform: scale(0.081818); }   /* 220 -> 18 */
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products, .r11--contact) .masthead--collapsing :is(.masthead__pixel, .cell__tile) { display: none; }
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products, .r11--contact) .masthead--collapsing .masthead__pixel-inline {
     left: calc(20.59 * var(--u));
     width: calc(78.75 * var(--u));
     height: calc(18 * var(--u));
     opacity: 1;
   }
-  :is(.r11--studio, .r11--services, .r11--work, .r11--products) .masthead--collapsing .cells { top: calc(8 * var(--u)); left: calc(224 * var(--u)); }
-  :is(.r11--studio, .r11--services, .r11--work, .r11--products) .masthead--collapsing .cell { width: calc(241.6 * var(--u)); height: var(--cell-h); }
-  :is(.r11--studio, .r11--services, .r11--work, .r11--products) .masthead--collapsing .cell__label {
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products, .r11--contact) .masthead--collapsing .cells { top: calc(8 * var(--u)); left: calc(224 * var(--u)); }
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products, .r11--contact) .masthead--collapsing .cell { width: calc(241.6 * var(--u)); height: var(--cell-h); }
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products, .r11--contact) .masthead--collapsing .cell__label {
     left: calc(6 * var(--u));
     top: calc(5 * var(--u));
     font-size: max(10px, calc(8.8 * var(--u)));
   }
-  :is(.r11--studio, .r11--services, .r11--work, .r11--products) .masthead--collapsing .cell__dot {
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products, .r11--contact) .masthead--collapsing .cell__dot {
     left: calc(6 * var(--u));
     top: calc(var(--cell-h) - 12 * var(--u));
     width: calc(6 * var(--u));
@@ -2647,33 +2642,34 @@ main { display: block; outline: none; }
   }
 }
 @media (min-width: 768px) and (max-width: 1023px) and (pointer: coarse) {
-  :is(.r11--studio, .r11--services, .r11--work, .r11--products) .masthead--collapsing { --cell-h: max(calc(32 * var(--u)), 2.75rem); }
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products, .r11--contact) .masthead--collapsing { --cell-h: max(calc(32 * var(--u)), 2.75rem); }
 }
 @media (prefers-reduced-motion: no-preference) {
   /* A4: back in 0.22 s, decelerating (the transition of the state reached) */
-  :is(.r11--studio, .r11--services, .r11--work, .r11--products) .masthead--collapsing { transition: transform 0.12s linear, translate 0.22s var(--sm-ease); }
-  :is(.r11--studio, .r11--services, .r11--work, .r11--products) .smm__bar { transition: transform 0.12s linear, translate 0.22s var(--sm-ease); }
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products, .r11--contact) .masthead--collapsing { transition: transform 0.12s linear, translate 0.22s var(--sm-ease); }
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products, .r11--contact) .smm__bar { transition: transform 0.12s linear, translate 0.22s var(--sm-ease); }
 }
 
 /* --- Addendum A1: idle hide ------------------------------------------------
    routeNav.useNavIdle sets `data-nav-idle` while the reader steps or scrolls
-   down and clears it on a step up or at the page's end (A9, OPERATOR:
+   down and clears it on a step up or, after a scrollbar drag, at the
+   page's end (N2: a step down onto the end keeps it hidden) (A9, OPERATOR:
    summon-only; it was 1.0 s after each scroll, which flashed the bar in on
    every step). `translate` is separate from
    the --nav-in `transform`, so the two stack and ease independently. The bar
    stays while it holds focus or the pointer (desktop) or while the M1 menu is
    open (phones; no :hover there, it sticks after a tap). Reduced motion: same
    states, no slide. */
-:is(.r11--studio, .r11--services, .r11--work, .r11--products)[data-nav-idle] .masthead--collapsing:not(:hover):not(:focus-within),
-:is(.r11--studio, .r11--services, .r11--work, .r11--products)[data-nav-idle] .smm__bar:not([data-open="true"]):not(:focus-within) {
+:is(.r11--studio, .r11--services, .r11--work, .r11--products, .r11--contact)[data-nav-idle] .masthead--collapsing:not(:hover):not(:focus-within),
+:is(.r11--studio, .r11--services, .r11--work, .r11--products, .r11--contact)[data-nav-idle] .smm__bar:not([data-open="true"]):not(:focus-within) {
   translate: 0 -100%;
 }
 /* A4: away in 0.3 s, starting soft and accelerating out */
 @media (prefers-reduced-motion: no-preference) {
-  :is(.r11--studio, .r11--services, .r11--work, .r11--products)[data-nav-idle] .masthead--collapsing:not(:hover):not(:focus-within) {
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products, .r11--contact)[data-nav-idle] .masthead--collapsing:not(:hover):not(:focus-within) {
     transition: transform 0.12s linear, translate 0.3s cubic-bezier(0.4, 0, 1, 1);
   }
-  :is(.r11--studio, .r11--services, .r11--work, .r11--products)[data-nav-idle] .smm__bar:not([data-open="true"]):not(:focus-within) {
+  :is(.r11--studio, .r11--services, .r11--work, .r11--products, .r11--contact)[data-nav-idle] .smm__bar:not([data-open="true"]):not(:focus-within) {
     transition: transform 0.12s linear, translate 0.3s cubic-bezier(0.4, 0, 1, 1);
   }
 }
@@ -6177,3 +6173,139 @@ html:has(.r11--ccos) body { overflow: hidden; overscroll-behavior: none; }
 .not-found__link { font-size: clamp(14px, 1.4vw, 18px); padding: 8px 0; }
 .not-found__link:hover { text-decoration: underline; }
 /* === end H1 SHELL FIRST PAINT & ERROR VIEW ================================== */
+
+/* === N2 CONTACT (t_20261124_ccdvn2contact, OPERATOR) ===========================
+   /contact as one module in the Studio / Services grammar on the Contact blue
+   under the 5% ink grid, then the footer. Desktop draws a 1440 x 1016 frame
+   that scales to fit the screen height (as the Services cover / index) and
+   spreads by --gx (capped 120u, as /studio):
+     V3 card (.cmh, shared rules)    48 / 48, 1344 x 191
+     [Contact] <3 (.ct__head)        48 / 287, 62 tall
+     directory panel                 48 / 397, 1344 x 571 (its own rect)
+   Phones and tablets: the V3 card re-flow, the heading, the panel stacked in
+   one column of the 390k column. The directory's markup, wording and the logo
+   marks' scaling rules (.identity-mark__*, --u) are reused unchanged; only
+   the panel's placement and, below 1024, its text and spacing (--k) are set
+   here. The shared bar joins via the :is lists in the thin-masthead block. */
+.r11--contact {
+  --s: var(--u);
+  --mh-p: 1;
+  --sm-ease: var(--studio-ease, cubic-bezier(0.22, 0.61, 0.36, 1));
+  --sm-dur-block: 0.7s;
+  --sm-step: 0.12s;
+  --sm-rise: calc(16 * var(--u));
+  --ct-grid: calc(48 * var(--u));
+  --t-small: max(11px, calc(13.2 * var(--s)));
+  background: var(--ccdv-ink);           /* a sub-pixel seam shows ink, as Services */
+  -webkit-tap-highlight-color: transparent;
+}
+@media (max-width: 1023px) {
+  .r11--contact {
+    --k: min(1.5px, calc(100cqw / 390));
+    --s: var(--k);
+    --x0: calc((100% - 390 * var(--k)) / 2);
+    --sm-rise: 16px;
+    --ct-grid: 24px;
+  }
+}
+.r11--contact[data-motion="on"] [data-spawn]:not([data-seen="true"]) {
+  opacity: 0;
+  transform: translateY(var(--sm-rise));
+}
+.r11--contact[data-motion="on"] [data-spawn][data-seen="true"] {
+  transition:
+    opacity var(--sm-dur-block) var(--sm-ease) calc(var(--i, 0) * var(--sm-step)),
+    transform var(--sm-dur-block) var(--sm-ease) calc(var(--i, 0) * var(--sm-step));
+}
+
+/* the shared bar: active cell ink with a blue square; phones the M1 bar */
+.r11--contact .masthead--collapsing .cell[aria-current="page"] .cell__dot { background: var(--ccdv-blue); }
+@media (max-width: 767px) {
+  .r11--contact .masthead--contact { display: none; }
+  .r11--contact .smm__route[aria-current="page"] .smm__square { border-color: var(--ccdv-blue); background: var(--ccdv-blue); }
+  .r11--contact :is(.smm__toggle, .smm__home):focus-visible { outline-color: var(--ccdv-blue); }
+  .r11--contact .smm__panel a:focus-visible { outline-color: var(--ccdv-blue); }
+}
+
+.ct {
+  position: relative;
+  color: var(--ccdv-ink);
+  background-color: var(--ccdv-blue);
+  background-image:
+    linear-gradient(rgb(20 20 20 / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(20 20 20 / 0.05) 1px, transparent 1px);
+  background-size: var(--ct-grid) var(--ct-grid);
+}
+.ct__head { display: flex; justify-content: space-between; align-items: baseline; line-height: 1; white-space: nowrap; }
+.ct__title { margin: 0; font: inherit; }
+.ct__directory { border-radius: calc(12 * var(--u)); }
+.r11--contact .contact-directory a:focus { outline: none; }
+.r11--contact .contact-directory a:focus-visible { outline: 1px solid currentColor; outline-offset: 3px; }
+
+@media (min-width: 1024px) {
+  .r11--contact .ct__frame {
+    --fit-h: 1016;
+    --u: min(calc(1cqw / 14.4), calc(100svh / var(--fit-h)));
+    --s: var(--u);
+    --t-small: max(11px, calc(13.2 * var(--s)));
+    --sm-rise: calc(16 * var(--u));
+    --gx: clamp(0px, calc((100cqw - 1440 * var(--u)) / 2), calc(120 * var(--u)));
+    position: relative;
+    width: calc(1440 * var(--u));
+    height: calc(1016 * var(--u));
+    margin-inline: auto;
+  }
+  .ct__head {
+    position: absolute;
+    left: calc(48 * var(--u) - var(--gx));
+    top: calc(287 * var(--u));
+    width: calc(1344 * var(--u) + 2 * var(--gx));
+    font-size: calc(62 * var(--u));
+  }
+  .ct__directory {
+    position: absolute;
+    left: calc(48 * var(--u) - var(--gx));
+    top: calc(397 * var(--u));
+    width: calc(1344 * var(--u) + 2 * var(--gx));
+  }
+}
+
+@media (max-width: 1023px) {
+  .ct { padding-bottom: calc(45 * var(--k)); }
+  /* A3: the heading is twenty glyphs and <3 two: 26k keeps the row inside
+     366k (22 x 0.6em = 343k); it may wrap, <3 staying at the end */
+  .ct__head {
+    flex-wrap: wrap;
+    column-gap: calc(12 * var(--k));
+    margin: calc(40 * var(--k)) calc(var(--x0) + 12 * var(--k)) 0;
+    font-size: calc(26 * var(--k));
+    white-space: normal;
+  }
+  .r11--contact .ct__directory {
+    height: auto;
+    margin: calc(24 * var(--k)) calc(var(--x0) + 12 * var(--k)) 0;
+    padding: calc(24 * var(--k));
+    border-radius: calc(8 * var(--k));
+  }
+  .r11--contact .contact-directory { flex-direction: column; gap: calc(32 * var(--k)); }
+  .r11--contact .contact-directory__brand { flex: none; }
+  .r11--contact .contact-directory__anchor { width: calc(7 * var(--k)); height: calc(7 * var(--k)); }
+  .r11--contact .contact-directory__identity { margin: calc(16 * var(--k)) 0; }
+  .r11--contact .contact-directory__caption { font-size: var(--t-small); margin: 0 0 calc(8 * var(--k)); }
+  .r11--contact .contact-directory__groups { font-size: var(--t-small); }
+  .r11--contact .contact-directory__group { margin-bottom: calc(16 * var(--k)); }
+  .r11--contact .contact-directory__group-heading { margin: 0 0 calc(8 * var(--k)); }
+  .r11--contact .contact-directory__row {
+    gap: calc(12 * var(--k));
+    padding: calc(8 * var(--k)) 0;
+    border-bottom-width: 0.5px;
+  }
+  .r11--contact .contact-directory__value { padding: calc(1 * var(--k)) calc(6 * var(--k)); overflow-wrap: anywhere; }
+  .r11--contact .contact-directory__legal {
+    flex-wrap: wrap;
+    gap: calc(8 * var(--k)) calc(16 * var(--k));
+    margin-top: calc(16 * var(--k));
+    font-size: var(--t-small);
+  }
+}
+/* === end N2 CONTACT ========================================================= */

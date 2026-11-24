@@ -14,7 +14,8 @@
                    scroll up and at the page's end; the CSS slides the bar away
                    (0.30 s) and back (0.22 s). A12: the direction is read
                    from the reader's input (wheel, keys, touch), not the
-                   scroll offset.
+                   scroll offset. N2: the end shows it only after a scroll
+                   with no input (scrollbar), never after a step down.
 
    Ownership: the page that has just arrived claims the bar. The page leaving
    is still mounted for its exit and still receives scrolls, so only the owner
@@ -310,9 +311,12 @@ export function useNavIdle(rootRef: RefObject<HTMLElement | null>) {
       if (touchPeek) setPeek(false);
       const y = window.scrollY;
       const atEnd = y + window.innerHeight >= document.documentElement.scrollHeight - 2;
+      /* N2 (OPERATOR: up showed the bar, but down did not hide it again): a
+         step down that lands on the page's end is still a step down, so the
+         end shows the bar only for a scroll with no input behind it */
       if (atEnd) {
         lastY = y;
-        setHidden(false);
+        if (performance.now() - lastInput >= INPUT_RECENT_MS) setHidden(false);
         return;
       }
       const dy = y - lastY;
