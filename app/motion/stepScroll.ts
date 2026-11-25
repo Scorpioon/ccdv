@@ -22,10 +22,7 @@
 
    N4 P-K C: a step takes STEP_S for up to one screen and scales with the
    distance beyond that, capped at STEP_MAX_S (the Products cover rise, about
-   1.67 screens, takes about 1.17 s).
-   N4 P-K D: a `.page-pin` child of the root (the legacy footer curtain, which
-   holds the page while the footer rises) is shifted up by the pinned offset,
-   so the stops inside it are measured at their natural position. */
+   1.67 screens, takes about 1.17 s). */
 import { useEffect, useRef } from "react";
 import type { RefObject } from "react";
 
@@ -90,18 +87,8 @@ export function useStepScroll(
       const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
       const points = [0, max];
       if (stopSelector) {
-        /* N4 P-K D: once the page-pin holds, its stops sit `shift` px lower than
-           their natural place (the footer's top less the pin's own height is
-           where the pin would be unpinned) */
-        const pin = root.querySelector<HTMLElement>(":scope > .page-pin");
-        const after = pin?.nextElementSibling;
-        let shift = 0;
-        if (pin && after instanceof HTMLElement) {
-          const r = pin.getBoundingClientRect();
-          shift = Math.max(0, r.top - (after.getBoundingClientRect().top - r.height));
-        }
         root.querySelectorAll<HTMLElement>(stopSelector).forEach((el) => {
-          points.push(el.getBoundingClientRect().top + window.scrollY - (pin?.contains(el) ? shift : 0));
+          points.push(el.getBoundingClientRect().top + window.scrollY);
         });
       }
       const stops = [...new Set(points.map((p) => Math.round(Math.min(max, Math.max(0, p)))))].sort((a, b) => a - b);

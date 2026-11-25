@@ -42,8 +42,13 @@ export function ProductsCover({ pattern, reduced }: { pattern: LitPattern; reduc
           <Chip tone="ink" as="p" className="pv-chip pv-cover__chip">
             {"Whois\\\\"}
           </Chip>
-          {PRODUCTS_INTRO.map((line) => (
-            <p key={line}>{line}</p>
+          {/* N4 P-M: the text is staged over the cover's two pages; the first
+              paragraph is on the first, the rest arrive with the second
+              (data-later, global.css, read with the root's data-stage2) */}
+          {PRODUCTS_INTRO.map((line, i) => (
+            <p key={line} {...(i >= 1 ? { "data-later": "", style: index(i - 1) } : {})}>
+              {line}
+            </p>
           ))}
         </div>
       </div>

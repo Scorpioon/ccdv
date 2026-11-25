@@ -8,6 +8,9 @@
    right (713 box at 694, 349). The Whois block is sticky inside a column that
    ends at the sphere's lower edge, so the copy travels down beside the sphere
    as the page scrolls and stops where it ends (E11 arrow).
+   N4 P-M: on desktop the Whois copy is staged. Only the first paragraph shows
+   at step 1; the second and third (`data-later`, `--i` stagger) appear once the
+   root carries `data-stage2` (studioMotion useCoverStage). CSS owns the hide.
    Phones (STUDIO_resp3-1.svg y0..1118): the lockup at 0.699, the meta lines and
    a square, the sphere, the large [Studio] label, then Whois. One sphere
    component (StudioMobileOrbit) serves both: its geometry is the same drawing.
@@ -50,12 +53,12 @@ export function StudioCover() {
               {"Whois\\\\"}
             </Chip>
             <p>The CCDV. is a technical studio working across design, software development and applied research.</p>
-            <p>
+            <p data-later style={index(0)}>
               Our background <strong>is in visual design and digital experiences.</strong> Today, we use that
               knowledge to <strong>build web applications</strong>, custom <strong>tools</strong> and{" "}
               <strong>software</strong> around how people actually work.
             </p>
-            <p>We approach development and strategy through the interface, the underlying logic and the people who will use it.</p>
+            <p data-later style={index(1)}>We approach development and strategy through the interface, the underlying logic and the people who will use it.</p>
           </div>
         </div>
       </div>

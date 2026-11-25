@@ -1,8 +1,6 @@
-import { useRef } from "react";
 import { SiteMasthead } from "../components/SiteMasthead";
 import { SiteFooter } from "../components/SiteFooter";
 import { NavBand } from "../components/NavBand";
-import { usePinTop } from "../motion/routeNav";
 
 export function meta() {
   return [
@@ -30,27 +28,20 @@ const BANDS = [
 ] as const;
 
 /* N4 P-I A-04: GF09-G D2.1's "focus the Work band on return from Work" effect
-   is gone: nothing pushes `state.from === "work"` since the V2 Work hub.
-   N4 P-K D (OPERATOR): masthead and main sit in one `page-pin` wrapper that
-   holds at the page end (desktop) while the footer rises over it. */
+   is gone: nothing pushes `state.from === "work"` since the V2 Work hub. */
 export default function Home() {
-  const pageRef = useRef<HTMLDivElement>(null);
-  usePinTop(pageRef);
-
   return (
     <div className="r11 r11--home">
-      <div className="page-pin" ref={pageRef}>
-        <SiteMasthead variant="home" />
+      <SiteMasthead variant="home" />
 
-        {/* N4 P-H A-14: masthead (banner) and footer (contentinfo) sit outside main */}
-        <main>
-          <ul className="bands">
-            {BANDS.map((band) => (
-              <NavBand key={band.slug} {...band} />
-            ))}
-          </ul>
-        </main>
-      </div>
+      {/* N4 P-H A-14: masthead (banner) and footer (contentinfo) sit outside main */}
+      <main>
+        <ul className="bands">
+          {BANDS.map((band) => (
+            <NavBand key={band.slug} {...band} />
+          ))}
+        </ul>
+      </main>
 
       <SiteFooter />
     </div>

@@ -64,3 +64,43 @@ export function useSceneReveal(rootRef: RefObject<HTMLElement | null>, reduced: 
     };
   }, [rootRef, reduced]);
 }
+
+/* N4 P-M: staged cover text on desktop. `data-stage2="true"` is set on the root
+   once the page has scrolled past a threshold on the cover (40% of the cover's
+   overscroll distance, or 25% of the viewport when the cover is not taller than
+   the screen) and removed again on the way back up, so the second and third
+   Whois / Whatis paragraphs hide again when the reader returns to the top.
+   Only armed when motion is on and the viewport is >= 1024px; otherwise the
+   attribute is never set and every paragraph shows. Checked once on mount (a
+   restored scroll position), then on scroll and resize, one check per frame. */
+export function useCoverStage(rootRef: RefObject<HTMLElement | null>, coverSelector: string, reduced: boolean) {
+  useIsomorphicLayoutEffect(() => {
+    const root = rootRef.current;
+    if (!root || reduced) return;
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      if (!window.matchMedia("(min-width: 1024px)").matches) {
+        root.removeAttribute("data-stage2");
+        return;
+      }
+      const cover = root.querySelector<HTMLElement>(coverSelector);
+      const dist = Math.max(0, (cover?.offsetHeight ?? 0) - window.innerHeight);
+      const threshold = dist > 0 ? dist * 0.4 : window.innerHeight * 0.25;
+      if (window.scrollY > threshold) root.setAttribute("data-stage2", "true");
+      else root.removeAttribute("data-stage2");
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      if (frame) cancelAnimationFrame(frame);
+      root.removeAttribute("data-stage2");
+    };
+  }, [rootRef, coverSelector, reduced]);
+}

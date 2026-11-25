@@ -6,22 +6,27 @@ import { WorkFilterLists } from "./WorkFilterLists";
 import type { WorkView } from "./useWorkDeck";
 
 /* N3 Work V3 rail (OPERATOR, WORK V3.svg / WORK V3 _ archive.svg). It stays
-   put while the workspace's content moves (W-A1):
+   put while the workspace's content moves (W-A1). Parts, top to bottom:
      - the gear and the 2 x 2 pixel mark (WorkPixelBlock): Home;
-     - the gray `Work` box (the page heading; N4 P-K: was yellow);
+     - N4 P-M (OPERATOR, Figma): the section nav, a gray rounded box: `CC: DEV
+       UNIT` and the five sections, the current page (WORK) in bold as a span
+       with aria-current, not a link;
+     - the gray `Work` / `Archive` box (the page heading; N4 P-K: was yellow);
      - Year and Category, the archive's filters (AND; a head clears its
        group). W-A1 (OPERATOR: "I removed the filters from the upper screen;
        when going down, the filters appear"): hidden and inert on Featured,
        they open as the content moves down;
-     - CC: DEV UNIT and the four other sections;
      - the view switch: `All projects ↓` / `Featured ↑`, which move the
        content (no page load); W-A1: plain typeface arrows.
    The two filter lists are WorkFilterLists (N4 P-J, shared with the phone /
    tablet layout). Desktop (>= 1024) only since P-J. */
 
-const SECTIONS = [
+/* N4 P-M: the five sections in rail order; WORK is the current page, so it has
+   no `to` and is drawn as a span */
+const SECTIONS: { label: string; to?: string }[] = [
   { label: "STUDIO", to: "/studio" },
   { label: "SERVICES", to: "/services" },
+  { label: "WORK" },
   { label: "PRODUCTS", to: "/products" },
   { label: "CONTACT", to: "/contact" },
 ];
@@ -50,17 +55,6 @@ export function WorkSidebar({
         <WorkPixelBlock className="wv3-side__pixel" />
       </Link>
 
-      <h1 className="wv3-side__title" id="work-title">
-        <GearMark className="wv3-side__title-gear" fill="#1A1A1A" dotFill="#D9D9D9" />
-        Work
-      </h1>
-
-      <div className="wv3-side__filters" data-shown={filtersShown ? "" : undefined} inert={!filtersShown}>
-        <div className="wv3-side__filters-inner">
-          <WorkFilterLists year={year} category={category} onYear={onYear} onCategory={onCategory} />
-        </div>
-      </div>
-
       <nav className="wv3-side__nav" aria-label="Sections">
         <p className="wv3-side__unit">
           <span className="wv3-side__sq" aria-hidden="true" />
@@ -69,14 +63,33 @@ export function WorkSidebar({
         </p>
         <ul>
           {SECTIONS.map(({ label, to }) => (
-            <li key={to}>
-              <Link className="wv3-side__section" to={to}>
-                {label}
-              </Link>
+            <li key={label}>
+              {/* N4 P-M: the current page is a span, not a link (like the desktop bar's current cell) */}
+              {to ? (
+                <Link className="wv3-side__section" to={to}>
+                  {label}
+                </Link>
+              ) : (
+                <span className="wv3-side__section" aria-current="page">
+                  {label}
+                </span>
+              )}
             </li>
           ))}
         </ul>
       </nav>
+
+      <h1 className="wv3-side__title" id="work-title">
+        <GearMark className="wv3-side__title-gear" fill="#1A1A1A" dotFill="#D9D9D9" />
+        {/* N4 P-L: the heading names the view: Work on Featured, Archive otherwise */}
+        {view === "featured" ? "Work" : "Archive"}
+      </h1>
+
+      <div className="wv3-side__filters" data-shown={filtersShown ? "" : undefined} inert={!filtersShown}>
+        <div className="wv3-side__filters-inner">
+          <WorkFilterLists year={year} category={category} onYear={onYear} onCategory={onCategory} />
+        </div>
+      </div>
 
       {view === "featured" ? (
         <Link className="wv3-side__view" to="/work/archive" preventScrollReset>

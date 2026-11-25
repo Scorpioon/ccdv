@@ -29,7 +29,14 @@ const SYSTEMS: { label: string; to: string }[] = [
   { label: "CC.OS", to: "/products/ccos" },
 ];
 
-const LEGAL = ["Privacy", "Terms of use", "Legal", "Onlyfans"];
+/* N4 P-M (OPERATOR): Onlyfans is an inside joke. It links out and is attenuated
+   to 50% in CSS (`.smm__joke`), so it reads as an easter egg. */
+const LEGAL: { label: string; href?: string }[] = [
+  { label: "Privacy" },
+  { label: "Terms of use" },
+  { label: "Legal" },
+  { label: "Onlyfans", href: "https://matias.me/nsfw/" },
+];
 
 const LIGHT = "#F2F2F2";
 const INK = "#141414";
@@ -183,7 +190,15 @@ export function StudioMobileMenu({ current: currentRoute = "/studio" }: { curren
           </div>
           <ul className="smm__legal">
             {LEGAL.map((item) => (
-              <li key={item}>{item}</li>
+              <li key={item.label}>
+                {item.href ? (
+                  <a className="smm__joke" href={item.href} target="_blank" rel="noopener noreferrer">
+                    {item.label}
+                  </a>
+                ) : (
+                  item.label
+                )}
+              </li>
             ))}
           </ul>
           <div className="smm__year">[ © 2026 ]</div>

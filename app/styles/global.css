@@ -43,7 +43,12 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 /* MTG05 FBI-013: --u is ~0.22px at 320 and ~0.27px at 390, so the 3u ring fell
    under 1px on phones. Floor it at 2px; at >=667px the 3u value already
    exceeds 2px, so desktop rendering is unchanged. */
-:where(a, button):focus-visible { outline: max(2px, calc(3 * var(--u, 1px))) solid #2469ff; outline-offset: max(2px, calc(3 * var(--u, 1px))); }
+:where(a, button):focus-visible { outline: max(2px, calc(3 * var(--u, 1px))) solid var(--route-accent, #2469ff); outline-offset: max(2px, calc(3 * var(--u, 1px))); }
+/* N4 P-L: per-route accent; inherited by the page and the shared bar, read by the focus ring and the cell hover */
+.r11--studio { --route-accent: var(--ccdv-purple-card); }
+.r11--services { --route-accent: var(--ccdv-red); }
+.r11--products { --route-accent: var(--ccdv-green); }
+.r11--contact { --route-accent: var(--ccdv-blue); }
 ul { margin: 0; padding: 0; list-style: none; }
 /* 600, not 400: the only face loaded is Victor Mono SemiBold, and leaving the
    UA's bold on h1/h2 would ask for 700 and get a synthesised bold instead of
@@ -446,11 +451,11 @@ main { display: block; outline: none; }
 /* P2 CORR03 (OPERATOR): footer links are not underlined */
 .footer__col a { text-decoration: none; }
 .footer__col a:hover { opacity: 0.7; }
-
-/* N4 P-K D (OPERATOR): legacy footer curtain — at the page end the page holds and the footer (z-index 1) rises over it (desktop) */
-@media (min-width: 1024px) {
-  .r11 > .page-pin { position: sticky; top: var(--pin-top, 0px); }
-}
+/* N4 P-M (OPERATOR): the Onlyfans easter egg is attenuated to half strength */
+.footer__col a.footer__joke { opacity: 0.5; color: inherit; }
+.footer__col a.footer__joke:hover { opacity: 0.75; }
+.smm__legal a.smm__joke { color: inherit; text-decoration: none; opacity: 0.5; }
+.smm__legal a.smm__joke:hover { opacity: 0.75; }
 
 /* "collapse" is 13.2: the two l of "collapse" are 7.19 apart. */
 .hero__watermark {
@@ -1046,6 +1051,26 @@ main { display: block; outline: none; }
     opacity var(--sm-dur-block) var(--sm-ease) calc(var(--i, 0) * var(--sm-step)),
     transform var(--sm-dur-block) var(--sm-ease) calc(var(--i, 0) * var(--sm-step));
 }
+/* N4 P-M (OPERATOR): staged cover text (desktop, motion on). Step 1 shows the
+   chip and the first paragraph; paragraphs 2 and 3 (`data-later`) come in once
+   the cover has moved on (`data-stage2` on the route root, studioMotion
+   useCoverStage). Only opacity and transform change, so no space moves; going
+   back up hides them again. Reduced motion never arms `data-motion`, so
+   everything shows. Studio, Services and Products share it. */
+@media (min-width: 1024px) {
+  :is(.r11--studio, .r11--services, .r11--products)[data-motion="on"] [data-later] {
+    opacity: 0;
+    transform: translateY(var(--sm-rise));
+    transition: opacity 0.2s var(--sm-ease), transform 0.2s var(--sm-ease);
+  }
+  :is(.r11--studio, .r11--services, .r11--products)[data-motion="on"][data-stage2] [data-later] {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity var(--sm-dur-block) var(--sm-ease) calc(var(--i, 0) * var(--sm-step)),
+      transform var(--sm-dur-block) var(--sm-ease) calc(var(--i, 0) * var(--sm-step));
+  }
+}
 @keyframes sm-spawn {
   from { opacity: 0; transform: translateY(var(--sm-rise)); }
   to { opacity: 1; transform: none; }
@@ -1124,6 +1149,19 @@ main { display: block; outline: none; }
 @media (min-width: 768px) and (max-width: 1023px) and (pointer: coarse) {
   :is(.r11--studio, .r11--services, .r11--products, .r11--contact) .masthead--collapsing { --cell-h: max(calc(32 * var(--u)), 2.75rem); }
 }
+/* N4 P-L: a non-current cell wipes to ink on hover (fine pointers) or keyboard focus; label and dot sit above the wipe.
+   Reduced motion is covered by the global zero-duration rule above, so these carry no transition: none of their own. */
+.masthead--collapsing .cell:not([aria-current="page"])::before { content: ""; position: absolute; inset: 0; background: var(--ccdv-ink); transform: scaleY(0); transform-origin: bottom; transition: transform 0.3s var(--sm-ease, ease); pointer-events: none; }
+.masthead--collapsing .cell:not([aria-current="page"]) .cell__label { z-index: 1; transition: color 0.2s ease; }
+.masthead--collapsing .cell:not([aria-current="page"]) .cell__dot { z-index: 1; transition: background-color 0.2s ease, border-color 0.2s ease; }
+@media (hover: hover) {
+  .masthead--collapsing .cell:not([aria-current="page"]):hover::before { transform: scaleY(1); }
+  .masthead--collapsing .cell:not([aria-current="page"]):hover .cell__label { color: var(--ccdv-panel); }
+  .masthead--collapsing .cell:not([aria-current="page"]):hover .cell__dot { background: var(--route-accent); border-color: var(--route-accent); }
+}
+.masthead--collapsing .cell:not([aria-current="page"]):focus-visible::before { transform: scaleY(1); }
+.masthead--collapsing .cell:not([aria-current="page"]):focus-visible .cell__label { color: var(--ccdv-panel); }
+.masthead--collapsing .cell:not([aria-current="page"]):focus-visible .cell__dot { background: var(--route-accent); border-color: var(--route-accent); }
 @media (prefers-reduced-motion: no-preference) {
   /* A4: back in 0.22 s, decelerating (the transition of the state reached) */
   :is(.r11--studio, .r11--services, .r11--products, .r11--contact) .masthead--collapsing { transition: transform 0.12s linear, translate 0.22s var(--sm-ease); }
@@ -1231,7 +1269,7 @@ main { display: block; outline: none; }
     position: absolute;
     z-index: 1;                              /* over the Products cube */
     left: calc(48 * var(--cm) - var(--gx, 0px));
-    top: calc(48 * var(--cm));
+    top: calc(60 * var(--cm));               /* N4 P-M (OPERATOR): 12 of air under the shared bar (was 48, flush with its edge) */
     width: calc(1344 * var(--cm) + 2 * var(--gx, 0px));
     height: calc(191 * var(--cm));
     border-radius: calc(12 * var(--cm));
@@ -3214,6 +3252,27 @@ button.pv-card { cursor: pointer; }
     min-height: 100svh;
   }
   .r11--products .pv-next { position: relative; z-index: 3; min-height: 100svh; }
+  /* N4 P-M (OPERATOR): the rail is the same ink + grid as the module, so its
+     rising edge was invisible and chopped the module mid-content. It is now a
+     slightly lighter sheet with a hairline drawn INSIDE (the scenes clip to
+     themselves), and the module dims and lifts with --rise (routeNav.usePinTop)
+     while the rail covers it. */
+  .r11--products .pv-next { background-color: color-mix(in srgb, var(--ccdv-panel) 4%, var(--ccdv-ink)); }
+  .r11--products .pv-next::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    background: rgb(242 242 242 / 0.22);
+    z-index: 1;
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .r11--products .pv-scene > .pv-code {
+      opacity: calc(1 - 0.55 * var(--rise, 0));
+      translate: 0 calc(-24 * var(--pv) * var(--rise, 0));
+    }
+  }
   .r11--products :is(.pv-cover__whois, .pv-cover__sq--d, .pv-code__title) {
     translate: calc(-1 * var(--gx)) 0;
   }
@@ -3254,17 +3313,17 @@ button.pv-card { cursor: pointer; }
      (z 0, first in the scene), under its panels (.pv-code, .pv-products z 1).
      A6.1 (OPERATOR): the copies are FloatingCube, the phone cube in 3D on the
      Studio sphere system (wobble, a kick per step); a square box one screen
-     tall, a quarter of it past the right edge and its centre at 42% of the
-     screen, the body at 0.55 (A10: 1) and no blur (hairlines); the frosted panels (A6)
+     tall (N4 P-M: 1.08 screens, its centre at 91.5% across and 48.5% down;
+     was a quarter of it past the right edge, centre at 42%), the body at 0.55 (A10: 1) and no blur (hairlines); the frosted panels (A6)
      blur it. */
   .r11--products :is(.pv-cover, .pv-scene, .pv-next) { clip-path: inset(0); }
   .r11--products .pv-float {
-    --cube-s: 100svh;
+    --cube-s: 108svh;                        /* N4 P-M (OPERATOR, Figma): the hexagon is 90% of the screen height */
     display: block;
     position: fixed;
     z-index: 0;
-    left: calc(100cqw - 0.75 * var(--cube-s));
-    top: calc(42svh - 0.5 * var(--cube-s));
+    left: calc(91.5cqw - 0.5 * var(--cube-s));   /* centre 91.5% across, 48.5% down (was 88.7% / 42%) */
+    top: calc(48.5svh - 0.5 * var(--cube-s));
     width: var(--cube-s);
     height: var(--cube-s);
     translate: none;
@@ -3351,9 +3410,42 @@ button.pv-card { cursor: pointer; }
      row, top-aligned; switching slots cross-fades in that one cell (the
      closing panel collapses as the new one opens). The panel slides in from
      the left here instead of dropping. */
-  .pv-drop { grid-row: 1; grid-column: 4 / -1; align-self: start; }
-  .pv-drop .pv-panel { translate: -12px 0; }
-  .pv-drop[data-open="true"] .pv-panel { translate: 0 0; }
+  /* N4 P-L (OPERATOR): an ancestor with opacity < 1 is a backdrop root, so the
+     panel's blur only showed once the drop's fade ended. Here the drop never
+     fades (visibility only, delayed on close); the panel itself slides out of
+     the cards on its left: a wipe from its left edge, a 40px slide and its own
+     opacity. The row opens at full height at once (the wipe is the reveal) and
+     collapses only after the wipe on close. */
+  .pv-drop {
+    grid-row: 1;
+    grid-column: 4 / -1;
+    align-self: start;
+    opacity: 1;
+    transition:
+      grid-template-rows 0.45s var(--sm-ease) 0.55s,
+      visibility 0s linear 0.55s;
+  }
+  .pv-drop[data-open="true"] { opacity: 1; transition: grid-template-rows 0s, visibility 0s; }
+  .pv-drop .pv-panel {
+    translate: -40px 0;
+    opacity: 0;
+    clip-path: inset(0 100% 0 0 round 0 calc(12.09 * var(--pv)) 0 0);
+    transition:
+      translate 0.55s var(--sm-ease),
+      opacity 0.55s var(--sm-ease),
+      clip-path 0.55s var(--sm-ease);
+  }
+  .pv-drop[data-open="true"] .pv-panel {
+    translate: 0 0;
+    opacity: 1;
+    clip-path: inset(0 0 0 0 round 0 calc(12.09 * var(--pv)) 0 0);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pv-drop,
+    .pv-drop[data-open="true"],
+    .pv-drop .pv-panel,
+    .pv-drop[data-open="true"] .pv-panel { transition: none; }
+  }
   .pv-card { height: calc(263 * var(--pv)); }
   .pv-card__index { left: calc(13 * var(--pv)); top: calc(10.8 * var(--pv)); }
   .pv-card__label,
@@ -3370,23 +3462,39 @@ button.pv-card { cursor: pointer; }
      with its source proportions — CC.OS Studio's graph (490 x 530.5 ->
      420 x 454.7, 45.31 down), LS / iDS the dark art box (909.932 x 502.879 /
      463 -> 420 x 232.1 / 213.7, 58.121 down, rx 10). */
+  /* N4 P-L (OPERATOR): all three panels take the CC.OS height */
   .pv-panel {
-    min-height: calc(263 * var(--pv));
-    padding: calc(55.37 * var(--pv)) 0 calc(36.3 * var(--pv)) calc(36.34 * var(--pv));
+    min-height: calc(545.31 * var(--pv));
+    padding: calc(55.37 * var(--pv)) calc(36.34 * var(--pv)) calc(36.3 * var(--pv)) calc(36.34 * var(--pv));
     border-top-right-radius: calc(12.09 * var(--pv));
   }
-  .pv-panel--ccos { min-height: calc(545.31 * var(--pv)); }
-  .pv-panel--ls { min-height: calc(348.34 * var(--pv)); }
-  .pv-panel--ids { min-height: calc(329.94 * var(--pv)); }
   .pv-panel__index { left: calc(13 * var(--pv)); top: calc(10.8 * var(--pv)); font-size: max(7px, calc(7.04 * var(--pv))); }
-  .pv-panel__art { left: calc(430 * var(--pv)); width: calc(420 * var(--pv)); }
-  .pv-panel--ccos .pv-panel__art { top: calc(45.31 * var(--pv)); height: calc(454.7 * var(--pv)); }
-  .pv-panel:not(.pv-panel--ccos) .pv-panel__art {
-    top: calc(58.121 * var(--pv));
-    border-radius: calc(10 * var(--pv));
+  /* N4 P-L (OPERATOR): the art is the right half, from the copy column's end
+     (36.34 + 380) to the right padding over the inner height, each piece
+     centred and sized to ~70-80% of the box's short side (cqmin), with no dark
+     box. The LS / iDS viewBoxes are the sources' wide art boxes centred on the
+     mark (942.3), so the svg is sized from its content (LS disc ~428 of 909.9,
+     iDS hexagon 184 tall) and overflows the box, drawing nothing outside it. */
+  .pv-panel__art {
+    left: calc(416.34 * var(--pv));
+    right: calc(36.34 * var(--pv));
+    top: calc(55.37 * var(--pv));
+    bottom: calc(36.3 * var(--pv));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    container-type: size;
+    pointer-events: none;
   }
-  .pv-panel--ls .pv-panel__art { height: calc(232.1 * var(--pv)); }
-  .pv-panel--ids .pv-panel__art { height: calc(213.7 * var(--pv)); }
+  .pv-panel:not(.pv-panel--ccos) .pv-panel__art { overflow: visible; background: none; border-radius: 0; }
+  .pv-panel__art > :is(svg, .cg) { flex: none; overflow: visible; }
+  .pv-panel--ccos .pv-panel__art > .cg { height: 78cqmin; width: calc(78cqmin * 386 / 417.892); }
+  .pv-panel--ls .pv-panel__art > .pv-panel__svg { width: 160cqmin; height: auto; }
+  .pv-panel--ids .pv-panel__art > .pv-panel__svg { width: 345cqmin; height: auto; }
+  /* N4 P-L: the flashing band on the open card (hypothesis: the blurred
+     backdrop re-rasterised by repaints nearby) — own layers, contained paint */
+  .pv-card { isolation: isolate; transform: translateZ(0); }
+  .pv-panel--ls .pv-panel__art { contain: paint; }
   .pv-panel__copy { width: calc(380 * var(--pv)); }
   .pv-panel__title { font-size: calc(35.2 * var(--pv)); line-height: calc(35.2 * var(--pv)); }
   .pv-panel__body { font-size: max(11px, calc(17.6 * var(--pv))); line-height: calc(22 * var(--pv)); }
@@ -4075,6 +4183,8 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
 .r11--contact .contact-directory a:focus-visible { outline: 1px solid currentColor; outline-offset: 3px; }
 
 @media (min-width: 1024px) {
+  /* N4 P-M (OPERATOR): Contact has no footer; its blue fills the screen */
+  .ct { min-height: 100svh; }
   .r11--contact .ct__frame {
     --fit-h: 1016;
     --u: min(calc(1cqw / 14.4), calc(100svh / var(--fit-h)));
@@ -4214,9 +4324,10 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
   background: var(--ccdv-panel);
   text-align: center;
 }
-.wv3-side__home { display: flex; flex-direction: column; align-items: center; gap: calc(16 * var(--u)); color: inherit; }
+/* N4 P-M (OPERATOR): the mark is 112 (was 128) and its gap 12 (was 16) so the archive rail still fits with the section box above the title */
+.wv3-side__home { display: flex; flex-direction: column; align-items: center; gap: calc(12 * var(--u)); color: inherit; }
 .wv3-side__gear,
-.wv3-side__pixel { display: block; width: calc(128 * var(--u)); height: auto; aspect-ratio: 1; }
+.wv3-side__pixel { display: block; width: calc(112 * var(--u)); height: auto; aspect-ratio: 1; }
 .wv3-side__title,
 .wv3-side__item {
   display: flex;
@@ -4236,7 +4347,9 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
 .wv3-side__title { gap: calc(6 * var(--u)); min-height: calc(30.68 * var(--u)); font-weight: 400; background: var(--wv3-fill); }
 .wv3-side__title-gear { width: calc(11 * var(--u)); height: calc(11 * var(--u)); }
 .wv3-side__item { min-height: calc(26 * var(--u)); cursor: pointer; }
-.wv3-side__list li + li { margin-top: calc(-0.533 * var(--u)); }
+/* N4 P-L (OPERATOR): stacked boxes drop their top border instead of overlapping by a
+   fractional margin, which rendered as a double line */
+.wv3-side__list li + li .wv3-side__item { border-top: 0; }
 .wv3-side__item[aria-pressed="true"] { background: var(--wv3-on); }
 .wv3-side__item[aria-disabled="true"] { opacity: 0.35; cursor: default; }
 @media (hover: hover) {
@@ -4258,20 +4371,32 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
 .wv3-side__filters-inner { display: flex; flex-direction: column; gap: var(--wv3-gap); min-height: 0; overflow: hidden; }
 .wv3-side__unit { display: flex; align-items: center; justify-content: space-between; white-space: nowrap; }
 .wv3-side__sq { width: calc(8 * var(--u)); height: calc(8 * var(--u)); background: var(--wv3-ink); }
-.wv3-side__nav { line-height: calc(19 * var(--u)); }
+/* N4 P-M (OPERATOR, Figma): the sections sit in a gray rounded box, the current page (WORK) bold */
+.wv3-side__nav {
+  line-height: calc(19 * var(--u));
+  background: var(--wv3-fill);
+  border-radius: calc(8 * var(--u));
+  padding: calc(8 * var(--u));
+}
+.wv3-side__section[aria-current="page"] { -webkit-text-stroke: 0.035em currentColor; }
 .wv3-side__section { display: block; color: inherit; text-decoration: none; }
 .wv3-side__section:hover { text-decoration: underline; }
 .wv3-side__view { margin-top: auto; align-self: center; color: inherit; text-decoration: underline; text-underline-offset: 0.2em; white-space: nowrap; }
 
 /* --- Featured -------------------------------------------------------------- */
 .wv3-feature { display: grid; grid-template-rows: minmax(0, 1fr) auto; row-gap: calc(8 * var(--u)); box-sizing: border-box; }
-.wv3-mosaic { min-height: 0; margin: 0; }
-.wv3-mosaic__grid { display: grid; gap: calc(8 * var(--u)); }
-.wv3-mosaic__row { display: grid; gap: calc(8 * var(--u)); min-height: 0; }
-.wv3-mosaic__tile { position: relative; min-width: 0; min-height: 0; overflow: hidden; background: var(--wv3-ink); }
-.wv3-mosaic__tile img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: var(--focus, 50% 50%); }
+/* N4 P-L (OPERATOR): the mosaic is a horizontal scroller in a rounded frame, two
+   equal rows; every tile keeps its image's own ratio (--ar, set by the tile) */
+.wv3-mosaic { min-height: 0; height: 100%; margin: 0; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; border-radius: calc(12 * var(--u)); scrollbar-width: thin; }
+.wv3-mosaic__grid { display: grid; grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); gap: calc(8 * var(--u)); width: max-content; height: 100%; }
+.wv3-mosaic__row { display: flex; gap: calc(8 * var(--u)); height: 100%; min-height: 0; }
+.wv3-mosaic__tile { position: relative; flex: none; height: 100%; aspect-ratio: var(--ar); min-height: 0; overflow: hidden; border-radius: calc(12 * var(--u)); background: var(--wv3-ink); }
+.wv3-mosaic__tile img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .wv3-mosaic__tile[data-specimen] { background: var(--ground, var(--ccdv-panel)); }
 .wv3-mosaic__tile[data-specimen] img { box-sizing: border-box; padding: calc(24 * var(--u)); object-fit: contain; }
+/* N4 P-L: the Tt specimen is the project's app icon, small, leading the top row */
+.wv3-mosaic__tile[data-icon] { width: calc(96 * var(--u)); height: calc(96 * var(--u)); aspect-ratio: 1; align-self: flex-start; border-radius: 22%; }
+.wv3-mosaic__tile[data-icon] img { padding: calc(10 * var(--u)); }
 .wv3-feature__foot { display: flex; align-items: center; justify-content: space-between; gap: calc(16 * var(--u)); min-height: calc(18 * var(--u)); }
 .wv3-feature__caption { padding: calc(3 * var(--u)) calc(4 * var(--u)); background: var(--ccdv-panel); white-space: nowrap; }
 .wv3-feature__caption a { color: inherit; text-decoration: underline; text-underline-offset: 0.2em; }
@@ -4311,7 +4436,7 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
   align-items: center;
   gap: calc(6 * var(--u));
   box-sizing: border-box;
-  height: calc(26.68 * var(--u));
+  height: calc(30.68 * var(--u)); /* N4 P-L: the rail title's height */
   padding-inline: calc(13 * var(--u));
   border: var(--wv3-line);
   background: var(--wv3-fill);
@@ -4326,7 +4451,7 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
   align-items: center;
   box-sizing: border-box;
   width: 100%;
-  height: calc(26 * var(--u));
+  height: calc(30 * var(--u)); /* N4 P-L: the rail row's height */
   margin: 0;
   padding: 0 var(--wv3-pad);
   border: var(--wv3-line);
@@ -4337,7 +4462,10 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
   text-align: start;
   cursor: pointer;
 }
-.wv3-row--head { margin-top: calc(-0.533 * var(--u)); cursor: default; }
+.wv3-row--head { border-top: 0; cursor: default; }
+/* N4 P-L: the bar and the head are bold (one 600 face: a stroke, as .cv__whois strong) */
+.wv3-table__bar,
+.wv3-row--head { -webkit-text-stroke: 0.035em currentColor; }
 /* N4: a live glyph (`[+]` opens the case, `[↗]` goes to its page) is a control
    over the row's last column, a sibling of the row button */
 .wv3-item { position: relative; }
@@ -4366,29 +4494,24 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
 }
 .wv3-cell { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; justify-self: start; }
 .wv3-cell--glyph { justify-self: end; }
-.wv3-cell--glyph[data-off] { opacity: 0.2; }
-/* N4 P-H B-04: a `[+]` with no case yet, "not available (yet)" */
-.wv3-cell--glyph[data-soon] { opacity: 0.35; }
 .wv3-group { margin-top: calc(12 * var(--u)); }
 .wv3-row--head + .wv3-group,
 .wv3-row--head + .wv3-table__empty { margin-top: calc(24 * var(--u)); }
-.wv3-group li + li .wv3-row { margin-top: calc(-0.533 * var(--u)); }
+.wv3-group li + li .wv3-row { border-top: 0; }
 .wv3-group[data-future] .wv3-cell,
 .wv3-group[data-future] .wv3-item__glyph { opacity: 0.5; }
-.wv3-group[data-future] .wv3-cell--glyph[data-off] { opacity: 0.2; }
-.wv3-group[data-future] .wv3-cell--glyph[data-soon] { opacity: 0.35; }
 .wv3-row[aria-pressed="true"] { background: #d2d2d2; }
 .wv3-table__empty { padding: calc(8 * var(--u)); }
 
 .wv3-preview { min-width: 0; }
 .wv3-preview__actions { margin-top: calc(12 * var(--u)); }
-.wv3-preview__actions li + li { margin-top: calc(-0.533 * var(--u)); }
+.wv3-preview__actions li + li .wv3-preview__action { border-top: 0; }
 .wv3-preview__action {
   display: flex;
   align-items: center;
   gap: calc(6 * var(--u));
   box-sizing: border-box;
-  height: calc(26.68 * var(--u));
+  height: calc(30 * var(--u)); /* N4 P-L */
   padding-inline: calc(12 * var(--u));
   border: var(--wv3-line);
   background: var(--ccdv-white);
@@ -4458,9 +4581,6 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
   .wv3-panel--case { left: calc(100% + var(--wv3-gap)); top: calc(100% + var(--wv3-gap)); }
 
   .wv3-feature { height: 100%; padding-left: var(--wv3-gap); }
-  .wv3-mosaic__grid { height: 100%; grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); }
-  .wv3-mosaic__row--top { grid-template-columns: minmax(0, 2.208fr) minmax(0, 1fr); }
-  .wv3-mosaic__row--bottom { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 
   .wv3-archive {
     display: grid;

@@ -27,7 +27,14 @@ const COLUMN_B: { label: string; to?: string }[] = [
   { label: "Products", to: "/products" },
   { label: "Contact", to: "/contact" },
 ];
-const COLUMN_C = ["Privacy", "Terms of use", "Legal", "Onlyfans"];
+/* N4 P-M (OPERATOR): Onlyfans is an inside joke. It links out (href) and is
+   attenuated to 50% in CSS (`.footer__joke`), so it reads as an easter egg. */
+const COLUMN_C: { label: string; href?: string }[] = [
+  { label: "Privacy" },
+  { label: "Terms of use" },
+  { label: "Legal" },
+  { label: "Onlyfans", href: "https://matias.me/nsfw/" },
+];
 
 export function SiteFooter() {
   return (
@@ -54,7 +61,15 @@ export function SiteFooter() {
 
       <div className="footer__col footer__col--c">
         {COLUMN_C.map((item) => (
-          <div key={item}>{item}</div>
+          <div key={item.label}>
+            {item.href ? (
+              <a className="footer__joke" href={item.href} target="_blank" rel="noopener noreferrer">
+                {item.label}
+              </a>
+            ) : (
+              item.label
+            )}
+          </div>
         ))}
       </div>
     </footer>

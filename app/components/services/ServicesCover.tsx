@@ -45,8 +45,10 @@ export function ServicesCover({ reduced }: { reduced: boolean }) {
             <Chip tone="ink" as="p" className="sv-cv__chip">
               {"Whatis\\\\"}
             </Chip>
+            {/* N4 P-M: the first paragraph is the step-1 copy; the rest stage in
+                on desktop (data-later, --i stagger; see studioMotion useCoverStage) */}
             {SERVICES_WHATIS.map((runs, i) => (
-              <p key={i}>
+              <p key={i} data-later={i >= 1 || undefined} style={i >= 1 ? index(i - 1) : undefined}>
                 {runs.map((run, j) =>
                   typeof run === "string" ? <Fragment key={j}>{run}</Fragment> : <strong key={j}>{run.strong}</strong>,
                 )}

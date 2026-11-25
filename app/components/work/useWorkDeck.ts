@@ -13,8 +13,10 @@ import type { RefObject } from "react";
    ArrowLeft out of a case. A 48 px swipe pages up or down. An area that can
    still scroll that way (`data-deck-scroll`: a tall archive, a case) scrolls
    first; a case never pages up or down, its own content scrolls. After a move
-   input is held for the move (MOVE_MS; 0 under reduced motion). Desktop
-   (>= 1024) only: phones scroll natively. */
+   input is held for the move (MOVE_MS; 0 under reduced motion). N4 P-L: a
+   vertical wheel over the Featured mosaic (`data-deck-hscroll`, a horizontal
+   strip) scrolls it sideways first; the deck moves only once the strip is at
+   its end (down) or start (up). Desktop (>= 1024) only: phones scroll natively. */
 
 export type WorkView = "featured" | "archive" | "case";
 export type WorkMove = "down" | "up" | "in" | "out";
@@ -31,6 +33,15 @@ function scrollsFurther(target: EventTarget | null, dir: number) {
   if (!area || area.scrollHeight <= area.clientHeight + 1) return false;
   if (!/(auto|scroll)/.test(getComputedStyle(area).overflowY)) return false;
   return dir > 0 ? area.scrollTop + area.clientHeight < area.scrollHeight - 1 : area.scrollTop > 0;
+}
+
+/* N4 P-L: the nearest `data-deck-hscroll` strip (the Featured mosaic), when it can still scroll that way */
+function hScrollArea(target: EventTarget | null, dir: number) {
+  const strip = target instanceof Element ? target.closest<HTMLElement>("[data-deck-hscroll]") : null;
+  if (!strip || strip.scrollWidth <= strip.clientWidth + 1) return null;
+  if (!/(auto|scroll)/.test(getComputedStyle(strip).overflowX)) return null;
+  const more = dir > 0 ? strip.scrollLeft + strip.clientWidth < strip.scrollWidth - 1 : strip.scrollLeft > 1;
+  return more ? strip : null;
 }
 
 export function useWorkDeck({
@@ -81,6 +92,14 @@ export function useWorkDeck({
       const dir = event.deltaY > 0 ? 1 : -1;
       if (viewRef.current === "case" || scrollsFurther(event.target, dir)) {
         state.sum = 0;
+        return;
+      }
+      /* N4 P-L: the Featured mosaic takes the vertical wheel sideways first (passive: no preventDefault) */
+      const strip = hScrollArea(event.target, dir);
+      if (strip) {
+        state.sum = 0;
+        state.tail = true; // the gesture that reaches the strip's end needs a pause before it moves the deck
+        strip.scrollLeft += event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? strip.clientWidth : 1);
         return;
       }
       if (now < lockedUntil.current) return;

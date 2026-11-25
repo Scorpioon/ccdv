@@ -214,8 +214,10 @@ export interface V3Image {
   height: number;
   /** a type specimen: drawn whole, never cropped */
   specimen?: boolean;
-  /** W-A1: the crop's object-position where the centre is not the subject */
+  /** W-A1: the crop's object-position where the centre is not the subject (phone views; the desktop mosaic no longer crops) */
   focus?: string;
+  /** N4 P-L: a small app icon (the Tt specimen), the first tile of the desktop mosaic's top row */
+  icon?: boolean;
   /** W-A1: the ground a specimen sits on (its own colour, so the tile reads as one) */
   ground?: string;
 }
@@ -267,12 +269,12 @@ const SPECIMEN_TT: V3Image = {
 /* The Featured mosaic. W-A1 (OPERATOR): one composition per featured
    project and one square per project — the squares switch between featured
    projects, and for now ADG-ARC is the only one. Its composition follows the
-   artboard's grammar (a wide tile and a narrow one on top, a row below): the
-   landing beside the Tt specimen (the project's icon), then four phone
-   captures. Tiles fill the canvas (cover, at `focus`); the specimen is drawn
-   whole on its own yellow. N3 C1: the spare captures left the bundle; their
-   sources stay in work_assets/images 4 we b/wrk_adg_arc for later
-   compositions. */
+   artboard's grammar: the Tt specimen (the project's icon, `icon`) leads the
+   top row, then the landing; the bottom row is four phone captures. N4 P-L
+   (OPERATOR): desktop tiles keep their natural aspect ratio (no crop) and the
+   two rows scroll sideways inside the frame; the specimen is drawn whole on
+   its own yellow. N3 C1: the spare captures left the bundle; their sources
+   stay in work_assets/images 4 we b/wrk_adg_arc for later compositions. */
 export interface FeaturedProject {
   id: string;
   /** the registry project, for its case study */
@@ -299,7 +301,8 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     caption: "ADG ARC - INTERACTIVE WEBSITE - ADG-FAD",
     year: "2026",
     category: "WEBSITE",
-    top: [{ ...LANDING_DESKTOP, focus: "62% 50%" }, { ...SPECIMEN_TT, ground: "#FEED01" }],
+    /* N4 P-L: the Tt icon leads the top row; the landing no longer needs `focus` (no crop on desktop) */
+    top: [{ ...SPECIMEN_TT, ground: "#FEED01", icon: true }, LANDING_DESKTOP],
     bottom: [PHONE_MEDIAPRO, SHEET_DHUB, PHONE_STAMP, PHONE_ROUTE],
     description:
       "Arquitectura y Tipografía en diálogo — a curated route by ADG-FAD for Barcelona 2026, World Capital of Architecture. Twenty Barcelona buildings are paired with contemporary typefaces to reveal what they share: geometry, rhythm, proportion, structure. We designed and built the explorable collection — map, data sheets and Passport — ten stops on the street with QR codes, ten online.",

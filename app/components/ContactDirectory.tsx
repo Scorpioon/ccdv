@@ -15,7 +15,7 @@ import { CollapseCreativeMark } from "./marks/ContactIdentityMarks";
      render as plain visual rows, not live links.
    - The large CCDV logo (`CTC-012`) is inert (`CTC-DEC-004`), distinct from
      the small shared masthead logo elsewhere on the page.
-   - Privacy/Legal and the version/build line (`CTC-023`/`024`) are visual
+   - Privacy/Terms of use/Legal and the version/build line (`CTC-023`/`024`) are visual
      placeholders with no route. */
 
 const COLLAPSE_CREATIVE_URL = "https://collapsecreative.com";
@@ -87,6 +87,7 @@ export function ContactDirectory() {
         <div className="contact-directory__legal">
           <span>[ Privacy ]</span>
           <span>[ Legal ]</span>
+          <span>[ Terms of use ]</span>
           <span className="contact-directory__version">[ v.0.1.2 Built with Wrkops © 2026 ]</span>
         </div>
       </div>

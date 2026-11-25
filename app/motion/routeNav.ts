@@ -152,9 +152,10 @@ export function useBoundaryNav(
    is read to its end first and pins by its bottom, so nothing is cut. Only
    the CSS at >= 1024px reads the property. Re-measured on resize and when
    the module changes size.
-   N4 P-K D: also the legacy pages' `.page-pin` (Home, Studio, Services,
-   Products, Contact): the whole page body holds at the page end while the
-   footer rises over it, so the same bottom-aligned pin applies. */
+   N4 P-M: with `next`, also --rise (0..1) on the module: how far the next
+   section has risen over it. The Products rail is the same ink + grid as the
+   module, so its rising edge is invisible; the module reads --rise to dim and
+   lift as the rail covers it. */
 /* FLOW-T1 (OPERATOR): what a curtain fully covers is marked `data-covered` —
    the pinned module once the next section's top has reached the top of the
    screen, and the cover (the curtain's first child) once the module has. The
@@ -176,6 +177,7 @@ export function usePinTop(ref: RefObject<HTMLElement | null>, nextRef?: RefObjec
     const first = node.parentElement?.firstElementChild;
     const cover = first instanceof HTMLElement && first !== node ? first : null;
     let last = "";
+    let lastRise = "";
     let frame = 0;
     const measure = () => {
       const top = `${Math.min(0, window.innerHeight - node.offsetHeight)}px`;
@@ -191,7 +193,15 @@ export function usePinTop(ref: RefObject<HTMLElement | null>, nextRef?: RefObjec
     };
     const check = () => {
       frame = 0;
-      const moduleCovered = !!next && next.getBoundingClientRect().top <= 0;
+      const nextTop = next ? next.getBoundingClientRect().top : Infinity;
+      const moduleCovered = !!next && nextTop <= 0;
+      if (next) {
+        const rise = clamp01(1 - nextTop / window.innerHeight).toFixed(3);
+        if (rise !== lastRise) {
+          lastRise = rise;
+          node.style.setProperty("--rise", rise);
+        }
+      }
       const coverCovered = node.getBoundingClientRect().top <= 0;
       const changed = [mark(node, moduleCovered), mark(cover, coverCovered)].some(Boolean);
       if (changed) coverListeners.forEach((listener) => listener());
@@ -221,6 +231,7 @@ export function usePinTop(ref: RefObject<HTMLElement | null>, nextRef?: RefObjec
       window.removeEventListener("scroll", schedule);
       if (frame) cancelAnimationFrame(frame);
       node.style.removeProperty("--pin-top");
+      node.style.removeProperty("--rise");
       const changed = [mark(node, false), mark(cover, false)].some(Boolean);
       if (changed) coverListeners.forEach((listener) => listener());
     };

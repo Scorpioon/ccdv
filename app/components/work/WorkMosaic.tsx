@@ -7,10 +7,12 @@ import { index } from "../../motion/studioMotion";
 /* N3 Work V3 Featured canvas (OPERATOR, WORK V3.svg). The artboard's black
    boxes are only its compositional language: the tiles are the real ADG-ARC
    captures (FEATURED_PROJECTS). W-A1 (OPERATOR): one composition per featured
-   project, in the artboard's grammar — a wide tile and a narrow one on top
-   (the landing and the Tt specimen, the project's icon), four tiles below —
-   filling the canvas the workspace gives it (tiles cover, at their focus;
-   the specimen is drawn whole on its own yellow). One square per featured
+   project. N4 P-L (OPERATOR, desktop >= 1024): tiles keep their natural
+   aspect ratio (`--ar`, no crop) with 12u corners; the two rows (the Tt icon
+   and the landing on top, four phone captures below) scroll sideways inside
+   the frame (`data-deck-hscroll`), and the Work deck's wheel handling moves
+   the mosaic first, the deck only at its end or start. The icon tile
+   (`data-icon`) is a small app icon, not a full tile. One square per featured
    project; the open square is the one shown, and a switch fades the canvas
    out and brings the new tiles up in order (instant under reduced motion).
    For now ADG-ARC is the only featured project. The caption opens its case. */
@@ -18,13 +20,19 @@ import { index } from "../../motion/studioMotion";
 const SWITCH_OUT_MS = 250;
 
 function Tile({ image, eager, i }: { image: V3Image; eager: boolean; i: number }) {
+  /* N4 P-L: the tile's box takes the image's own ratio, so the image is never cropped */
   const style = {
     ...index(i),
-    ...(image.focus ? { "--focus": image.focus } : null),
+    "--ar": `${image.width} / ${image.height}`,
     ...(image.ground ? { "--ground": image.ground } : null),
   } as CSSProperties;
   return (
-    <div className="wv3-mosaic__tile" data-specimen={image.specimen ? "" : undefined} style={style}>
+    <div
+      className="wv3-mosaic__tile"
+      data-specimen={image.specimen ? "" : undefined}
+      data-icon={image.icon ? "" : undefined}
+      style={style}
+    >
       <img
         src={image.src}
         alt={image.alt}
@@ -65,7 +73,7 @@ export function WorkMosaic({ reduced }: { reduced: boolean }) {
 
   return (
     <section className="wv3-feature" aria-label="Featured">
-      <figure className="wv3-mosaic" data-phase={phase} aria-labelledby="wv3-caption">
+      <figure className="wv3-mosaic" data-phase={phase} data-deck-hscroll aria-labelledby="wv3-caption">
         <div className="wv3-mosaic__grid" key={project.id}>
           <div className="wv3-mosaic__row wv3-mosaic__row--top">
             {project.top.map((image, i) => (

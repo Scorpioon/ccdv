@@ -20,13 +20,13 @@ import { ARCHIVE_GROUP_YEARS, FUTURE_YEARS, workcaseHref, type ArchiveRow } from
 
    N4 glyphs (OPERATOR): `[+]` opens the project's case study (only where a
    Workcase exists), `[↗]` goes to the page that explains the project
-   (`explainerHref`, /products/ccos for CC.OS), `[x]` is inert. A live glyph is
-   a control laid over the row's last column, a sibling of the row button, so
-   no interactive element is nested and the grid does not move. */
+   (`explainerHref`, /products/ccos for CC.OS). N4 P-M (OPERATOR: "they don't
+   add value"): `[x]` and a `[+]` with no case are no longer drawn; a row
+   without a live glyph keeps an empty last cell. A live glyph is a control
+   laid over the row's last column, a sibling of the row button, so no
+   interactive element is nested and the grid does not move. */
 
-function Cells({ entry, live }: { entry: Pick<ArchiveRow, "year" | "category" | "responsibility" | "name" | "client" | "glyph">; live: boolean }) {
-  /* N4 P-H B-04 (OPERATOR): a `[+]` with no case yet is drawn dimmed, as "not available (yet)" */
-  const soon = entry.glyph === "[+]" && !live;
+function Cells({ entry }: { entry: Pick<ArchiveRow, "year" | "category" | "responsibility" | "name" | "client"> }) {
   return (
     <>
       <span className="wv3-cell">{entry.year}</span>
@@ -34,15 +34,8 @@ function Cells({ entry, live }: { entry: Pick<ArchiveRow, "year" | "category" | 
       <span className="wv3-cell">{entry.responsibility}</span>
       <span className="wv3-cell">{entry.name}</span>
       <span className="wv3-cell">{entry.client}</span>
-      <span
-        className="wv3-cell wv3-cell--glyph"
-        data-off={entry.glyph === "[x]" ? "" : undefined}
-        data-soon={soon ? "" : undefined}
-        title={soon ? "Case study not available yet" : undefined}
-        aria-hidden={live ? "true" : undefined}
-      >
-        {live ? "" : entry.glyph}
-      </span>
+      {/* N4 P-M: the glyph cell stays as the last column (grid unchanged) but is always empty; live glyphs are sibling controls */}
+      <span className="wv3-cell wv3-cell--glyph" aria-hidden="true" />
     </>
   );
 }
@@ -69,11 +62,12 @@ export function WorkArchiveTable({
         Work
       </p>
       <div className="wv3-row wv3-row--head" aria-hidden="true">
+        {/* N4 P-L: header labels normalised to one bracket spacing */}
         <span className="wv3-cell">[ YEAR ]</span>
         <span className="wv3-cell">[ CATEG. ]</span>
         <span className="wv3-cell">[ ROLE ]</span>
-        <span className="wv3-cell">[ PROJECT NAME]</span>
-        <span className="wv3-cell">[CLIENT]</span>
+        <span className="wv3-cell">[ PROJECT NAME ]</span>
+        <span className="wv3-cell">[ CLIENT ]</span>
         <span className="wv3-cell wv3-cell--glyph">[+]</span>
       </div>
 
@@ -90,7 +84,6 @@ export function WorkArchiveTable({
             {group.rows.map((entry) => {
               const caseHref = entry.glyph === "[+]" && entry.projectId ? workcaseHref(entry.projectId) : undefined;
               const explainer = entry.glyph === "[↗]" ? entry.explainerHref : undefined;
-              const live = Boolean(caseHref || explainer);
               return (
                 <li key={entry.id} className="wv3-item" onPointerEnter={() => onSelect(entry.id)}>
                   <button
@@ -101,7 +94,7 @@ export function WorkArchiveTable({
                     onFocus={() => onSelect(entry.id)}
                     onClick={() => onSelect(entry.id)}
                   >
-                    <Cells entry={entry} live={live} />
+                    <Cells entry={entry} />
                   </button>
                   {caseHref ? (
                     <button

@@ -6,7 +6,7 @@ import { ProductsRail } from "../components/products/ProductsRail";
 import { DEFAULT_LIT, randomLit } from "../components/products/LitCube";
 import { FloatingCube, tiltFloatingCube } from "../components/products/FloatingCube";
 import { useMotionPolicy } from "../motion/reducedMotion";
-import { useSceneReveal } from "../motion/studioMotion";
+import { useCoverStage, useSceneReveal } from "../motion/studioMotion";
 import { useBoundaryNav, useNavIdle, usePinTop } from "../motion/routeNav";
 import { useStepScroll } from "../motion/stepScroll";
 
@@ -31,8 +31,9 @@ export function meta() {
      module     \\Our Software Code rises over it, fits the screen and pins,
                 one screen tall (PIN-T1, usePinTop)
      next       the Products rail rises over the pinned module
-   with the page stepped by motion/stepScroll.ts (A3/A4: one gesture, one
-   rise; the cover rises straight into the module). Phones scroll as one
+   with the page stepped by motion/stepScroll.ts (A3: one gesture, one rise;
+   N4 P-M: the cover rests on a second page as Studio / Services, with its
+   text staged over the two, then rises into the module). Phones scroll as one
    column, as on Studio.
 
    Navigation follows the global V2 routes: the thin masthead appears once the
@@ -62,7 +63,6 @@ export default function Products() {
   const rootRef = useRef<HTMLDivElement>(null);
   const moduleRef = useRef<HTMLDivElement>(null);
   const nextRef = useRef<HTMLDivElement>(null);
-  const pageRef = useRef<HTMLElement>(null);
   const [pattern, setPattern] = useState(DEFAULT_LIT);
   const reroll = useCallback(() => setPattern((current) => randomLit(current)), []);
   // A10: the cube tilts during the step and its faces change half-way
@@ -72,20 +72,18 @@ export default function Products() {
   );
 
   useSceneReveal(rootRef, reduced);
+  useCoverStage(rootRef, ".pv-cover", reduced); // N4 P-M: the cover's second page (data-stage2)
   useBoundaryNav(rootRef, moduleRef, ".masthead--products", ".cmh"); // A8: the V3 card
   useNavIdle(rootRef);
   usePinTop(moduleRef, nextRef);
-  usePinTop(pageRef); // N4 P-K D: the page holds at its end while the footer rises over it
-  // A3: one gesture, one rise; A4: the cover rises straight into the module
-  useStepScroll(rootRef, ".pin-snap", reduced, { coverPages: false, onStep });
+  // A3: one gesture, one rise; N4 P-M: the cover rests on a second page (as Studio / Services), then rises into the module
+  useStepScroll(rootRef, ".pin-snap", reduced, { onStep });
   useEffect(reroll, [reroll]);
 
   return (
     <div className="r11 r11--products" ref={rootRef}>
-      {/* N4 P-H A-14: the page body is the main landmark; the footer is its contentinfo.
-          N4 P-K D (OPERATOR): `page-pin` makes it hold at the page end (desktop)
-          while the footer rises over it */}
-      <main className="pv page-pin" ref={pageRef}>
+      {/* N4 P-H A-14: the page body is the main landmark; the footer is its contentinfo. */}
+      <main className="pv">
         <h1 className="pv-visually-hidden">Products</h1>
 
         <div className="scene-curtain">
