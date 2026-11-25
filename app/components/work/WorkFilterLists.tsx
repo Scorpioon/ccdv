@@ -1,22 +1,19 @@
-import { ARCHIVE_ROWS, V3_ARCHIVE_CATEGORIES, V3_YEARS } from "../../data/workProjects";
+import { V3_ARCHIVE_CATEGORIES, V3_YEARS, hasRows } from "../../data/workProjects";
 
 /* N4 P-J: the archive's Year and Category filters, shared by the desktop rail
    (WorkSidebar) and the phone / tablet filters (WorkPhoneFilters); moved out
    of WorkSidebar unchanged. AND between the lists; a head clears its list.
-   Fills: yellow is the active choice of a list (a head when nothing is
-   chosen); white marks the year and category of the project in view. A
-   value without rows is drawn but inert. */
-
-const hasRows = (field: "year" | "category", value: string) => ARCHIVE_ROWS.some((entry) => entry[field] === value);
+   N4 P-K: ONE highlight per list (gray, the Work V3 fill): the pressed
+   option, or the head ([ YEAR ] / [ CATEGORY ], "all") when nothing is
+   chosen. The "project in view" mark (`marked`) is gone. A value without
+   rows is drawn but inert. */
 
 export function WorkFilterLists({
-  marked,
   year,
   category,
   onYear,
   onCategory,
 }: {
-  marked: { year: string | null; category: string | null };
   year: string | null;
   category: string | null;
   onYear: (value: string | null) => void;
@@ -50,7 +47,6 @@ export function WorkFilterLists({
         type="button"
         className="wv3-side__item"
         aria-pressed={active}
-        data-marked={marked[field] === value && !active ? "" : undefined}
         onClick={() => set(active ? null : value)}
       >
         {text}

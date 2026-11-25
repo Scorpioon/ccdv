@@ -447,37 +447,13 @@ main { display: block; outline: none; }
 .footer__col a { text-decoration: none; }
 .footer__col a:hover { opacity: 0.7; }
 
-/* --- Studio sections -----------------------------------------------------
-   Heights are the literal rect heights from pages_studio.svg and sum to
-   3208.12 with the masthead, so the page flows without absolute positioning. */
-.section { position: relative; display: block; }
-/* copy on the two dark sections is #B2B2B2 in R1.1, not the panel grey */
-.section--intro { height: calc(392 * var(--u)); background: var(--ccdv-ink); color: var(--ccdv-bg); }
-/* GF09-E: the reference heights (392 intro / 389 cards / 692 CC.OS) become
-   minimums. The corrected Studio copy is longer than the R1.1 draft, and the
-   children of these sections are now in flow, so the section grows with its
-   text instead of clipping it. Intro is shared with Services (which sets its
-   own 165 height below), so only Studio's is overridden here. */
-.r11--studio .section--intro {
-  height: auto;
-  min-height: calc(392 * var(--u));
-  padding: calc(38.9 * var(--u)) 0 calc(48 * var(--u)) calc(48 * var(--u));
-}
-.section--cards {
-  min-height: calc(389 * var(--u));
-  padding: calc(48 * var(--u));
-  background: var(--ccdv-panel);
-}
-.section--ccos {
-  min-height: calc(692 * var(--u));
-  padding: calc(311.4 * var(--u)) calc(48 * var(--u)) calc(72 * var(--u));
-  background: var(--ccdv-purple);
-  color: var(--ccdv-ink);
+/* N4 P-K D (OPERATOR): legacy footer curtain — at the page end the page holds and the footer (z-index 1) rises over it (desktop) */
+@media (min-width: 1024px) {
+  .r11 > .page-pin { position: sticky; top: var(--pin-top, 0px); }
 }
 
 /* "collapse" is 13.2: the two l of "collapse" are 7.19 apart. */
-.hero__watermark,
-.clip-row__watermark {
+.hero__watermark {
   position: absolute;
   left: calc(1358 * var(--u));
   z-index: 4;
@@ -486,479 +462,10 @@ main { display: block; outline: none; }
   color: var(--ccdv-bg);
 }
 .hero__watermark { top: calc(22.3 * var(--u)); }      /* baseline 34 */
-.clip-row__watermark { top: calc(23.3 * var(--u)); }  /* baseline 35 */
 
-
-/* GF07-D: the indicator is state, not a button — it must never win the click
-   over the full-row toggle beneath it, even where it visually overlaps it. */
-.clip-row__chevron,
-.clip-row__watermark { pointer-events: none; }
-
-/* VIS-05 sibling. Pitch 19.1875 -> 32, baselines 43 apart, paragraphs 98
-   apart. The wrap width had to come down from 740: at 32 the reference's
-   third line is exactly "tools and human centered experiences." (37 cells,
-   ending at 751.04), which only breaks that way for a width under 38 cells. */
-.intro__copy {
-  position: absolute;
-  left: calc(48 * var(--u));
-  top: calc(38.9 * var(--u));              /* first baseline 74 */
-  width: calc(720 * var(--u));
-  font-size: calc(35.2 * var(--u));        /* advance still 19.2 */
-  line-height: calc(43 * var(--u));
-}
-.intro__copy p + p { margin-top: calc(55 * var(--u)); }
-/* GF09-E: Studio's intro copy is three longer paragraphs. Same type, same
-   first baseline (the section's padding-top replaces `top`), a wider measure
-   that still stops short of the figure at 960, and in-flow so the section
-   height follows the text. */
-.r11--studio .intro__copy {
-  position: relative;
-  left: auto;
-  top: auto;
-  width: calc(840 * var(--u));
-}
-.r11--studio .intro__copy p + p { margin-top: calc(43 * var(--u)); }
-
-.intro__figure {
-  position: absolute;
-  left: calc(960.26 * var(--u));
-  top: calc(48.31 * var(--u));
-  width: calc(255.88 * var(--u));
-  height: calc(295.46 * var(--u));
-}
-
-/* --- Studio principle cards ---------------------------------------------- */
-/* GF09-E: the cards carry no fill. The single lilac square (STD-DEC-005/015/
-   016) is one element behind them: it is mounted only while it has a target
-   (hover, keyboard focus or the selected card), so with every fan closed and
-   the pointer away nothing lilac exists. It is as tall as the row, so it
-   always covers the whole of the card it sits behind, however long that
-   card's copy runs. Moving between targets is a transform transition, a
-   re-mount (hidden -> shown) just fades in. Both durations are zeroed under
-   prefers-reduced-motion by the global rule at the end of this file. */
-.cards { position: relative; display: flex; gap: calc(48 * var(--u)); }
-
-.cards__lilac {
-  position: absolute;
-  z-index: 0;
-  left: 0;
-  top: 0;
-  width: calc(300 * var(--u));
-  height: 100%;
-  background: var(--ccdv-purple-card);
-  transform: translateX(calc(var(--i, 0) * 348 * var(--u)));
-  transition: transform 0.32s ease;
-  animation: cards-lilac-in 0.2s ease;
-  pointer-events: none;
-}
-@keyframes cards-lilac-in { from { opacity: 0; } }
-
-.card {
-  position: relative;
-  z-index: 1;
-  display: block;
-  width: calc(300 * var(--u));
-  min-height: calc(293 * var(--u));
-  padding: calc(51.8 * var(--u)) 0 calc(24 * var(--u));
-  text-align: left;
-}
-
-/* Both entries start at the card's own x, not inset: the 2.17 and 2.88 of
-   GF07-C were bracket and "W" ink. Label pitch is 8.3945 over the 19 advances
-   of "[ Our own toolbelt ]" -> 14. */
-.card__label {
-  position: absolute;
-  left: 0;
-  top: calc(-2.65 * var(--u));             /* baseline 11 from card top */
-  font-size: calc(15.4 * var(--u));
-  line-height: 1;
-  white-space: nowrap;
-}
-
-/* VIS-02. Pitch between the two "o" of "our own" is 14.3905, and the baselines
-   are 32 apart, against the 16/23 GF07-C estimated. The 290 wrap width is kept
-   and the advance is still 14.4, so this reproduces R1.1's breaks on all four
-   cards exactly (16/16/20/14/16/20/16 cells on the second card, measured and
-   matched). */
-.card__body {
-  display: block;                          /* first baseline 78 from card top (card padding) */
-  width: calc(290 * var(--u));
-  font-size: calc(26.4 * var(--u));
-  line-height: calc(32 * var(--u));
-}
-.card__para { display: block; }
-.card__para + .card__para { margin-top: calc(32 * var(--u)); }
-
-/* GF09-E: the CP squares are real buttons. Keyboard focus gets the global
-   :focus-visible outline; the lilac preview for it is driven from the page. */
-.card--select { cursor: pointer; }
-
-/* The step columns inside a fan panel — the R1.1 "plain text columns on the
-   panel" treatment: no fill, label then body stacked in flow. Label baseline
-   59 and first body baseline 126 below the block top. */
-.columns { display: flex; gap: calc(48 * var(--u)); padding: calc(45.35 * var(--u)) calc(48 * var(--u)) calc(48 * var(--u)); }
-.columns .card { min-height: 0; padding: 0; }
-.columns .card__label { position: static; display: block; }
-.columns .card__body { margin-top: calc(39.05 * var(--u)); }
-
-/* --- Studio clipped heading rows ----------------------------------------
-   VIS-03. These rows are NOT bare page ground: in pages_studio.svg each row
-   is a filled #CACAC8 path (masked, so it reads as a gap in the rect stack and
-   was missed when only <rect> elements were enumerated), the same panel grey
-   as the sections above and below. The band of darker ground the comparison
-   shows is the defect, not the reference. Only these four rows change; the
-   page ground, the dark sections, the purple bands and the cards are already
-   correct and are left alone.
-
-   The rows are 98, 98, 97 and 97 tall — not a uniform 97.67 — with a 1 rule
-   on each row's top edge.
-
-   GF09-E: each row now sits in a `.fan` together with the panel it controls,
-   so an open panel opens in place under its own row and pushes the later rows
-   down (STD-DEC-012); the row order never changes. */
-.fans { display: block; background: var(--ccdv-panel); }
-.fan { position: relative; display: block; background: var(--ccdv-panel); }
-
-.clip-row { position: relative; display: block; height: calc(98 * var(--u)); }
-.fan:nth-child(n + 3) .clip-row { height: calc(97 * var(--u)); }
-
-/* A fan panel animates 0 -> content height with the grid-rows trick, since
-   its content is no longer a fixed artboard height. The inner box clips (the
-   closing rule and the dark panel must not leak at height 0) and is also made
-   non-focusable/non-visible once closed, after the collapse has played. */
-.fan__panel {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.32s ease;
-}
-.fan__panel[data-open="true"] { grid-template-rows: 1fr; }
-
-.fan__inner {
-  position: relative;
-  min-height: 0;
-  overflow: hidden;
-  visibility: hidden;
-  transition: visibility 0s 0.32s;
-}
-.fan__panel[data-open="true"] .fan__inner { visibility: visible; transition-delay: 0s; }
-
-/* the rule that closes the row above, as the old `.clip-rows + .section` did */
-.fan__inner::before {
-  content: "";
-  position: absolute;
-  z-index: 4;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: calc(1 * var(--u));
-  background: var(--ccdv-ink);
-}
-
-.fan__body {
-  position: relative;
-  opacity: 0;
-  transition: opacity 0.32s ease;
-}
-.fan__panel[data-open="true"] .fan__body { opacity: 1; }
-
-.fan__copy {
-  width: calc(900 * var(--u));
-  padding: calc(45.35 * var(--u)) calc(48 * var(--u)) calc(48 * var(--u));
-  font-size: calc(26.4 * var(--u));
-  line-height: calc(32 * var(--u));
-}
-.fan__copy p + p { margin-top: calc(32 * var(--u)); }
-/* the columns block follows the copy directly, so it drops its own top gap */
-.fan__copy + .columns { padding-top: 0; }
-
-/* FAN04 (WRKOPS) is the dark panel with the ring cube, as .section--wrkops was.
-   Its copy is the larger 35.2 / 43 setting used on the other dark sections. */
-.fan[data-tone="ink"] .fan__panel { background: var(--ccdv-ink); color: var(--ccdv-bg); }
-.fan[data-tone="ink"] .fan__body { min-height: calc(289 * var(--u)); }
-.fan[data-tone="ink"] .fan__copy {
-  width: calc(790 * var(--u));
-  padding-top: calc(79.4 * var(--u));      /* first baseline 114.5 */
-  font-size: calc(35.2 * var(--u));
-  line-height: calc(43 * var(--u));
-}
-.fan[data-tone="ink"] .fan__copy p + p { margin-top: calc(43 * var(--u)); }
-
-.fan__figure {
-  position: absolute;
-  left: calc(916.65 * var(--u));
-  top: calc(48 * var(--u));
-  width: calc(343.08 * var(--u));
-  height: calc(396.16 * var(--u));
-}
-
-.clip-row::before {
-  content: "";
-  position: absolute;
-  z-index: 4;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: calc(1 * var(--u));
-  background: var(--ccdv-ink);
-}
-
-/* 99 confirmed two ways (bracket-to-bracket over the 16 advances of
-   "[Designer to dev]" gives a 53.965 pitch; the bracket's own 98.10 ink height
-   against the face's 0.9909 em bracket gives 99.0), on the same origin grid as
-   the band labels — 24, not the 37.95 bracket ink. */
-.clip-row__label {
-  position: absolute;
-  z-index: 3;
-  left: calc(24 * var(--u));
-  /* baseline 97 from row top. 9.25 = 97 - 87.75, the ascent share of the 99
-     face; --fit (set by ClippedHeading for labels over 24 characters, else
-     1) scales the size and moves the offset so the baseline stays at 97. */
-  top: calc((97 - 87.75 * var(--fit, 1)) * var(--u));
-  font-size: calc(99 * var(--fit, 1) * var(--u));
-  line-height: 1;
-  white-space: nowrap;
-}
-
-/* GF07-D disclosure control. Same text metrics as .clip-row__label above, but
-   sized to the full row (not shrink-wrapped to the glyphs) so the whole row
-   is the hit area, not just the bracketed text. The text position is then
-   reproduced with padding instead of left/top, landing on the identical
-   pixel origin. */
-.clip-row__toggle {
-  position: absolute;
-  z-index: 3;
-  inset: 0;
-  display: block;
-  text-align: left;
-  padding: calc((97 - 87.75 * var(--fit, 1)) * var(--u)) 0 0 calc(24 * var(--u));
-  font-size: calc(99 * var(--fit, 1) * var(--u));
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.clip-row__chevron {
-  position: absolute;
-  z-index: 4;
-  left: calc(1408 * var(--u));
-  top: calc(23.3 * var(--u));              /* baseline 35 */
-  font-size: calc(13.2 * var(--u));
-  line-height: 1;
-  color: var(--ccdv-bg);                   /* #B2B2B2 on the panel row */
-}
-
-/* --- Studio CC.OS --------------------------------------------------------- */
-.ccos__figure {
-  position: absolute;
-  left: calc(58.28 * var(--u));
-  top: calc(72.5 * var(--u));
-  width: calc(132.9 * var(--u));
-  height: calc(153.46 * var(--u));
-}
-
-/* left is already the origin here and stays: R1.1's own underline runs
-   233.458..805.084, exactly five 114.325 advances, which pins both the origin
-   and the size independently of the band labels. The rule measures 9.53 thick
-   at 23.83 below the baseline, which the shared 0.04545em pair reproduces. */
-.ccos__wordmark {
-  position: absolute;
-  left: calc(233.46 * var(--u));
-  top: calc(40.2 * var(--u));              /* baseline 225.96 */
-  font-size: calc(209.57 * var(--u));
-  line-height: 1;
-  white-space: nowrap;
-  text-decoration: underline;
-  text-underline-offset: 0.04545em;
-  text-decoration-thickness: 0.04545em;
-}
-
-/* 740 is kept — the advance is unchanged at 19.2, so it still reproduces
-   R1.1's five breaks exactly. */
-/* GF09-E: in flow below the absolutely placed figure and wordmark. The
-   section's padding-top is the old `top` (first baseline 346.5), so the first
-   line does not move; three paragraphs now follow it, so the section grows. */
-.ccos__copy {
-  width: calc(740 * var(--u));
-  font-size: calc(35.2 * var(--u));
-  line-height: calc(43 * var(--u));
-}
-.ccos__copy p + p { margin-top: calc(43 * var(--u)); }
-
-/* same size as the card copy: "Read dev notes →" is 16 characters and R1.1's
-   underline spans 48..278.259, i.e. 16 x 14.4. Its baseline sits on the white
-   plate's bottom edge, which the padding puts it on. */
-.ccos__action {
-  display: block;
-  margin-top: calc(56 * var(--u));
-  width: calc(231 * var(--u));
-  height: calc(29 * var(--u));
-  background: var(--ccdv-white);
-  color: var(--ccdv-ink);
-  font-size: calc(26.4 * var(--u));
-  line-height: calc(29 * var(--u));
-  text-align: left;
-  padding-top: calc(4.3 * var(--u));       /* baseline 29 = plate bottom */
-  text-decoration: underline;
-  text-underline-offset: 0.04545em;
-  text-decoration-thickness: 0.04545em;
-}
-
-.ccos__dot {
-  position: absolute;
-  left: calc(1382 * var(--u));
-  bottom: calc(72.5 * var(--u));           /* was top 609.5 of the 692 section */
-  width: calc(10 * var(--u));
-  height: calc(10 * var(--u));
-  background: var(--ccdv-ink);
-}
-
-/* === GF08-A2 — Work + Services ===========================================
-   Visual-first per CLAUDE.md's GF08-A2 product priority: section rhythm and
-   macro layout trace to the literal rect heights in pages_work.svg /
-   pages_services.svg (noted inline below); internal arrangement inside each
-   section uses normal flow (flex) rather than exhaustive per-glyph absolute
-   positioning the way GF07-C did for Home/Studio — fine motion and sub-pixel
-   polish are GF09's, not this movement's. */
-
-/* Services' intro is 165 tall, not Studio's 392 — only the height differs;
-   the dark-ink / #B2B2B2-copy treatment is inherited unchanged from the
-   base .section--intro rule. */
-.r11--services .section--intro { height: calc(165 * var(--u)); }
-
-/* MTG04 CORR01: the 707u artboard height is a floor-less reference, not a cap.
-   Expanded 3-paragraph copy needs more than the old 707u budget, so the section
-   sizes to its content (the footer follows in normal flow) and the lower detail
-   box carries its own minimum height instead. */
-.section--services-panel { height: auto; background: var(--ccdv-panel); padding: calc(48 * var(--u)); }
-
-/* --- Services categories (`SVC-DEC-001`) ----------------------------------
-   Pitch between the five bottom-left dots is a uniform 268.7 across all five
-   cells (`pages_services.svg`), so the row is five equal flex cells rather
-   than individually measured widths. */
-.svc-categories { display: flex; }
-
-.svc-category {
-  position: relative;
-  flex: 1 1 0;
-  height: calc(266 * var(--u));
-  border: calc(1 * var(--u)) solid var(--ccdv-ink);
-  border-left-width: 0;
-  text-align: left;
-  padding: calc(12 * var(--u));
-}
-.svc-category:first-child { border-left-width: calc(1 * var(--u)); }
-.svc-category--active { background: var(--ccdv-red); }
-
-.svc-category__label { font-size: calc(16 * var(--u)); white-space: nowrap; }
-.svc-category__dot {
-  position: absolute;
-  left: calc(12 * var(--u));
-  bottom: calc(12 * var(--u));
-  width: calc(10 * var(--u));
-  height: calc(10 * var(--u));
-  background: var(--ccdv-ink);
-}
-
-/* --- Services detail panel (`SVC-DEC-002/003/004`) ------------------------ */
-.svc-detail {
-  display: flex;
-  min-height: calc(380 * var(--u));
-  border: calc(1 * var(--u)) solid var(--ccdv-ink);
-  border-top: 0;
-}
-
-.svc-detail__blocks {
-  position: relative;
-  flex: 1 1 0;
-  display: flex;
-  flex-direction: column;
-  gap: calc(8 * var(--u));
-  padding: calc(24 * var(--u));
-  font-size: calc(20 * var(--u));
-}
-.svc-detail__block {
-  display: flex;
-  align-items: center;
-  align-self: flex-start;
-  text-align: left;
-}
-
-/* Brackets are the hover/keyboard-focus cue only (MTG03 D4). They are always
-   laid out, just hidden, so showing them never shifts the row. :focus-visible
-   (not :focus) so a mouse click does not leave them stuck after mouse-leave. */
-.svc-detail__bracket { visibility: hidden; white-space: pre; }
-.svc-detail__block:hover .svc-detail__bracket,
-.svc-detail__block:focus-visible .svc-detail__bracket { visibility: visible; }
-
-/* PROVISIONAL persistent selected cue (D16 pending OPERATOR visual decision):
-   the existing red accent-square vocabulary, reserved width so unselected rows
-   stay aligned. */
-.svc-detail__mark {
-  flex: none;
-  width: calc(10 * var(--u));
-  height: calc(10 * var(--u));
-  margin-right: calc(12 * var(--u));
-  background: transparent;
-}
-.svc-detail__block[aria-pressed="true"] .svc-detail__mark { background: var(--ccdv-red); }
-
-/* #D9D9D9, same token as the gear/hex "light" accent — sourced directly off
-   the right pane's own fill in pages_services.svg. */
-.svc-detail__description {
-  position: relative;
-  flex: 1 1 0;
-  background: var(--ccdv-light);
-  /* bottom padding keeps the last line (Focus) clear of the red D16 dot */
-  padding: calc(24 * var(--u)) calc(24 * var(--u)) calc(64 * var(--u));
-  font-size: calc(16 * var(--u));
-  line-height: 1.5;
-}
-
-.svc-detail__dot {
-  position: absolute;
-  left: calc(24 * var(--u));
-  bottom: calc(24 * var(--u));
-  width: calc(10 * var(--u));
-  height: calc(10 * var(--u));
-  background: var(--ccdv-ink);
-}
-.svc-detail__dot--accent { background: var(--ccdv-red); }
-
-.svc-detail__description p + p { margin-top: calc(12 * var(--u)); }
-.svc-detail__context { font-size: calc(12 * var(--u)); }
-.svc-detail__pending { font-size: calc(12 * var(--u)); }
-.svc-detail__focus { font-size: calc(12 * var(--u)); overflow-wrap: anywhere; }
-.svc-detail__description .svc-detail__focus { margin-top: calc(20 * var(--u)); }
-
-/* <=767px: --u is ~0.26px here, so the 5-cell row, split panel and fixed
-   707u section height would be unreadable; reflow with px sizes. Categories
-   wrap into a grid, the detail panel stacks, rows keep a 44px touch target. */
-@media (max-width: 767px) {
-  .section--services-panel { height: auto; padding: 16px 12px; }
-  .svc-categories { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .svc-category {
-    height: 72px;
-    padding: 10px;
-    border-width: 1px;
-    margin: 0 -1px -1px 0;
-  }
-  .svc-category:first-child { border-left-width: 1px; }
-  .svc-category__label { font-size: 14px; white-space: normal; }
-  .svc-category__dot { left: 10px; bottom: 10px; width: 8px; height: 8px; }
-  .svc-detail { flex-direction: column; min-height: 0; margin-top: 1px; border-top-width: 1px; }
-  .svc-detail__blocks { gap: 0; padding: 12px 12px 36px; font-size: 18px; }
-  .svc-detail__block { min-height: 44px; }
-  .svc-detail__mark { width: 8px; height: 8px; margin-right: 10px; }
-  .svc-detail__description { padding: 16px 12px 36px; font-size: 14px; min-height: 140px; }
-  .svc-detail__description p + p { margin-top: 10px; }
-  .svc-detail__description .svc-detail__focus { margin-top: 16px; }
-  .svc-detail__context,
-  .svc-detail__focus,
-  .svc-detail__pending { font-size: 12px; }
-  .svc-detail__dot { left: 12px; bottom: 12px; width: 8px; height: 8px; }
-}
 
 /* === GF08-B — Products + Contact + CCOS ==================================
-   Same visual-first discipline as GF08-A2: macro section rhythm from the
+   Visual-first: macro section rhythm from the
    literal rect heights in pages_products.svg / pages_contact.svg /
    pages_products_ccos.svg (noted inline below), internal arrangement by
    normal flow (flex) rather than exhaustive absolute positioning. */
@@ -1030,251 +537,23 @@ main { display: block; outline: none; }
   }
 }
 
-/* --- MTG05 R4-B01: Studio scroll choreography (`CCDV-FBI-040..047`) ----------
-   Everything below is scoped to `.r11--studio`; Services, CCOS and the other
-   routes that share `.card`, `.columns`, `.clip-row` and `.ccos__*` are not
-   touched. Sizes are read off FB_R4_5/6/7: the SVG artboards are 1440 wide
-   (1u = 1px; the 2000px PNG shows 1.389px per u). Measured: strip ~58, row
-   pitch ~49, heading ~35, card copy ~20 on a 27 line, intro copy unchanged at
-   35.2 (same 19.2 advance as before). No token is added or changed. */
+/* --- MTG05 R4-B01 (kept part): the Studio strip height and the focus scroll margin, still read by .r11--studio :where(a, button) below. */
 .r11--studio { --studio-strip-h: calc(58 * var(--u)); }
 
 /* keyboard focus must never land under the sticky strip (R4-B02: nor under the
    compact masthead above it, once the collapsing header is armed) */
 .r11--studio :where(a, button) { scroll-margin-top: calc(var(--studio-stick-h, var(--studio-strip-h)) + 12px); }
 
-.studio-strip {
-  position: sticky;
-  top: var(--studio-strip-top, 0px);
-  z-index: 6;
-  height: var(--studio-strip-h);
-  overflow: hidden;
-  background: var(--ccdv-purple-card);
-}
-/* R4-B07 (B07-01): label and :P are one inline title group on a shared
-   baseline, so :P follows the closing bracket instead of sitting at a fixed
-   x (which left a ~48u gap: the label advance is 0.545em, not 0.6em). */
-.studio-strip__title {
-  position: absolute;
-  left: calc(24 * var(--u));
-  top: calc(10 * var(--u));                /* baseline ~47, bracket clipped by the strip */
-  font-size: calc(41 * var(--u));
-  line-height: 1;
-  white-space: nowrap;
-  color: var(--ccdv-ink);
-}
-.studio-strip__suffix {
-  margin-left: calc(8 * var(--u));
-  font-size: calc(17 * var(--u));
-  line-height: 1;
-  color: var(--ccdv-ink);
-}
-
-/* R4-B03 (B03-01/03/04/05): hero, intro and approach, in that order.
-   Hero: full lilac, 610u under the 268u masthead footprint so the black edge
-   starts at 878u as in FB_R4_5. It is sticky inside `.studio-top`, so the black
-   intro (painted above it) slides over it instead of pushing it away. */
-.studio-top { position: relative; }
-.studio-hero {
-  position: sticky;
-  top: 0;
-  z-index: 0;
-  /* B04-02: ends on the [Studio] baseline (label top 242 + 207/2 + 0.386364 *
-     207 = 425.5), so the black intro's top edge is the baseline and clips the
-     brackets and the :P suffix below it. */
-  height: calc(425.5 * var(--u));
-  background: var(--ccdv-purple-card);
-  color: var(--ccdv-ink);
-}
-.studio-hero__label {
-  position: absolute;
-  left: calc(24 * var(--u));
-  top: calc(242 * var(--u));               /* B04-01: 24 less, like the masthead */
-  font-size: calc(207 * var(--u));
-  line-height: 1;
-  white-space: nowrap;
-}
-.studio-hero__suffix {
-  position: absolute;
-  /* B05-02: one title group. `[Studio]` ends at x~927 (8 x 112.9 from x24); the
-     suffix starts just after it with its baseline (top + 53.5 + 0.386 x 107 =
-     top + 94.8) 12u above the hero edge at 425.5, so the black edge never
-     crops it. */
-  left: calc(936 * var(--u));
-  top: calc(318.7 * var(--u));
-  font-size: calc(107 * var(--u));
-  line-height: 1;
-}
-
-/* Black intro: three beats, alternating sides (text/cube, orbit/text, text/gear
-   as in FB_R4_6). Each beat is its own stretch of scroll. */
-.studio-intro {
-  position: relative;
-  z-index: 2;
-  /* B05-01: black breathing interval before the first beat. The lead-in is a
-     fraction of the viewport height, so it is scroll distance, not a timer. */
-  padding: max(calc(96 * var(--u)), 55vh) calc(48 * var(--u)) calc(96 * var(--u));
-  padding-top: max(calc(96 * var(--u)), 55svh);
-  background: var(--ccdv-ink);
-  color: var(--ccdv-bg);
-  /* R4-B07 (B07-03): Figma large narrative text is 28 (was 35.2u, ~37px in the
-     OPERATOR's browser at a ~1520 container). --u is 1px at a 1440 container,
-     so 28u is 28px at the 1440 reference and scales with --u elsewhere. Line
-     height keeps the old 43/35.2 ratio (34u). Not 28pt (37.33px). */
-  font-size: calc(28 * var(--u));
-  line-height: calc(34 * var(--u));
-}
-.studio-beat {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  align-items: center;
-  /* R4-B06: more scroll runway per beat (was 62svh / 560u) */
-  min-height: clamp(calc(340 * var(--u)), 88svh, calc(780 * var(--u)));
-}
-/* R4-B07-CORR01-A: figures sit on the centre of their HALF of the page (360u /
-   1080u at 1440), not of the padded column (384u / 1056u). The beat grid is
-   widened by the intro's side padding (`--studio-pad`, 48u) so its two cells
-   are exactly the page halves 0..720 and 720..1440 (centres W/4 and 3W/4 at any
-   width). The text keeps its edges by taking the padding back on its outer
-   side: left text spans 48..720, right text 720..1392, as before. */
-.studio-beat {
-  --studio-pad: calc(48 * var(--u));
-  margin-inline: calc(-1 * var(--studio-pad));
-}
-.studio-beat__text { max-width: calc(720 * var(--u)); padding-left: var(--studio-pad); }
-.studio-beat[data-side="right"] .studio-beat__text { padding-left: 0; padding-right: var(--studio-pad); }
-.studio-beat__figure { justify-self: center; width: calc(256 * var(--u)); }
-.studio-beat[data-side="right"] .studio-beat__text { order: 2; }
-.studio-beat[data-side="right"] .studio-beat__figure { order: 1; }
 .studio-art { display: block; width: 100%; height: auto; overflow: visible; }
-.studio-hex { display: block; width: 100%; height: auto; }
 
 /* Approach: the lilac strip heads the principles/accordion region and pins
    under the compact masthead while that region scrolls. */
 .studio-approach { position: relative; z-index: 2; }
 
-/* the accordion stage: four squares + four rows */
-.studio-stage { background: var(--ccdv-panel); }
-/* B04-05: strip + stage own the viewport once the strip is pinned under the
-   compact masthead: the stage is the viewport minus that stick height, the four
-   squares take the free space and the closed rows sit at its bottom. Open rows
-   simply make the stage taller. */
-.studio-stage__stack {
-  display: flex;
-  flex-direction: column;
-  min-height: calc(100vh - var(--studio-stick-h, var(--studio-strip-h)));
-  min-height: calc(100svh - var(--studio-stick-h, var(--studio-strip-h)));
-  border-bottom: calc(1 * var(--u)) solid var(--ccdv-ink);
-}
-.studio-stage__stack > .fan { flex: none; }
-.r11--studio .section--cards {
-  flex: 1 0 auto;
-  min-height: 0;
-  padding: calc(40 * var(--u)) calc(48 * var(--u)) calc(48 * var(--u));
-}
-.r11--studio .card { min-height: 0; padding: calc(40 * var(--u)) 0 calc(12 * var(--u)); }  /* B07-03: 38 -> 40 (4-grid) */
-.r11--studio .card__label { font-size: calc(14 * var(--u)); }
-.r11--studio .card__body { font-size: calc(20 * var(--u)); line-height: calc(27 * var(--u)); }
-.r11--studio .card__para + .card__para { margin-top: calc(27 * var(--u)); }
-.r11--studio .columns { padding: 0 calc(48 * var(--u)) calc(28 * var(--u)); }
-.r11--studio .columns .card { padding: 0; }
-.r11--studio .columns .card__body { margin-top: calc(16 * var(--u)); font-size: calc(19 * var(--u)); line-height: calc(26 * var(--u)); }
-
-.r11--studio .fan .clip-row { height: calc(49 * var(--u)); }
-.r11--studio .clip-row__toggle {
-  padding: calc(6 * var(--u)) 0 0 calc(24 * var(--u));
-  font-size: calc(35 * var(--u));
-}
-.r11--studio .clip-row__chevron,
-.r11--studio .clip-row__watermark { top: calc(14 * var(--u)); }
-
-.r11--studio .fan__copy {
-  width: auto;
-  columns: 2;
-  column-gap: calc(48 * var(--u));
-  padding: calc(28 * var(--u)) calc(48 * var(--u)) calc(20 * var(--u));
-  font-size: calc(20 * var(--u));
-  line-height: calc(27 * var(--u));
-}
-.r11--studio .fan__copy p { break-inside: avoid; margin: 0 0 calc(27 * var(--u)); }
-.r11--studio .fan__copy p:last-child { margin-bottom: 0; }
-.r11--studio .fan__copy + .columns { padding-top: calc(8 * var(--u)); }
-.r11--studio .fan[data-tone="ink"] .fan__body { min-height: 0; }
-
-/* Build with WrkOps™: the long exception. Ground runs ink -> lilac with --wo
-   (0..1, set from scroll); type flips with --wo-text. Without color-mix the
-   panel simply stays black with light type, which is still legible. */
-.wo {
-  position: relative;
-  background: var(--ccdv-ink);
-  color: var(--ccdv-bg);
-  background: color-mix(in srgb, var(--ccdv-ink), var(--ccdv-purple) calc(var(--wo, 0) * 100%));
-  color: color-mix(in srgb, var(--ccdv-bg), var(--ccdv-ink) calc(var(--wo-text, 0) * 100%));
-  /* R4-B07 (B07-03): same 28u / 34u as the black intro (was 30u / 38u). The
-     CC.OS wordmark and the "Read dev notes" link set their own sizes. */
-  font-size: calc(28 * var(--u));
-  line-height: calc(34 * var(--u));
-}
-.wo__lead {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: calc(72 * var(--u)) calc(160 * var(--u)) calc(48 * var(--u)) calc(48 * var(--u));
-}
-.wo__lead p { width: calc(790 * var(--u)); max-width: 100%; }
-.wo__cube { flex: none; width: calc(260 * var(--u)); }
-.wo__explain { padding: calc(72 * var(--u)) calc(48 * var(--u)); }
-.wo__explain p { width: calc(790 * var(--u)); max-width: 100%; }
-.wo__explain p ~ p { margin-top: calc(34 * var(--u)); }  /* R1-FB001: a figure now sits between the two p's */
-.wo__ccos { position: relative; padding: calc(48 * var(--u)) calc(48 * var(--u)) calc(96 * var(--u)); }
-.wo__ccos-head { display: flex; align-items: center; gap: calc(36 * var(--u)); }
-.wo__ccos-cube { width: calc(100 * var(--u)); flex: none; }
-.r11--studio .wo .ccos__wordmark {
-  position: static;
-  font-size: calc(140 * var(--u));
-}
-.wo__ccos-copy { width: calc(740 * var(--u)); max-width: 100%; margin-top: calc(48 * var(--u)); }
-.wo__ccos-copy p + p { margin-top: calc(34 * var(--u)); }
-.wo .ccos__action { margin-top: calc(48 * var(--u)); color: var(--ccdv-ink); }
-/* reduced motion: no scroll-linked colour; CC.OS sits on its lilac plate */
-.wo[data-reduced="true"] .wo__ccos { background: var(--ccdv-purple); color: var(--ccdv-ink); }
-
-/* progressive reveals (fallback where scroll timelines are missing): hidden
-   start state only while motion is armed. R4-B02: slower and eased, so a reveal
-   reads as a settle rather than a pop. */
-.r11--studio[data-motion="on"] [data-reveal] {
-  opacity: 0;
-  transform: translateY(calc(28 * var(--u)));
-  transition:
-    opacity 0.9s cubic-bezier(0.22, 0.61, 0.36, 1) var(--rd, 0s),
-    transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1) var(--rd, 0s);
-}
-.r11--studio[data-motion="on"] [data-reveal][data-seen="true"] { opacity: 1; transform: none; }
-
 /* --- MTG05 R4-B02: Studio public QA corrections (`CCDV-FBI-048..055`) --------
-   Studio only, apart from the one deliberate global token override below. */
+   Studio only. */
 
-/* FBI-051: the global light surface. `--ccdv-panel` (tokens.css, loaded before
-   this file) is the page/section surface behind masthead, bands, panels and
-   cards. Only that token moves, from #CACAC8 to #F2F2F2. NOT touched: `--ccdv-bg`
-   (#B2B2B2, used as light type on ink), `--ccdv-white`, `--ccdv-light` and every
-   literal white/#CACAC8 fill inside the artwork marks. Needs cross-route QA.
-   STUDIO-RESP T1 (C03): the value now lives in tokens.css; this override is
-   removed with zero rendered delta. */
-
-/* FBI-048/049: collapsing + sticky header (legacy geometry). N4 P-I: nothing
-   sets `data-collapse` or writes --mh-p from script any more; the section
-   pages pin --mh-p to 1 in their own rules, so the bar is always the thin,
-   fully collapsed one. This block's scroll-driven shrink no longer runs; its
-   dead parts are listed for the dead-CSS pass (P-E). */
-.r11--studio {
-  --mh-full: calc(244.12 * var(--u));          /* R4-B04: 12u padding, was 268.12 */
-  --mh-compact: calc(88 * var(--u));           /* was 112 */
-  --mh-range: calc(156.12 * var(--u));
-  --mh-h: calc(var(--mh-full) - var(--mh-p, 0) * var(--mh-range));
-}
-/* N4 C03-4: the `[data-collapse="on"]` rules were removed; nothing sets `data-collapse` any more. */
-
+/* FBI-048/049: the compact section bar (masthead--collapsing). --mh-p is pinned to 1 by every section page, so these rules only ever render the fully collapsed state; the thin-bar block (OC01-02) overrides most of the geometry. */
 /* B03-01/02: the masthead starts full lilac (the hero's own colour, so there is
    no seam under it) and turns into the compact white one as the black edge
    pushes it. Active cell: #F2F2F2 -> ink, its label and dot following. The
@@ -1342,347 +621,31 @@ main { display: block; outline: none; }
    Studio surfaces, it shows ink, not the light page ground. */
 .r11--studio { background: var(--ccdv-ink); }
 
-/* B03-07 / B03-08. tokens.css is outside the allowlist, so both are overrides
-   here (global.css loads after it, root.tsx:3-4):
-   - dark ground: `--ccdv-ink` #202020 -> #1A1A1A. It is the one token used for
-     dark sections, the footer AND dark type on light surfaces, so all of those
-     move together.
-   - lilac: `--ccdv-purple` #8654B3 (stripes, CCOS accents, active tiles) ->
-     #A864E2, equal to `--ccdv-purple-card`, which is already #A864E2.
-   Literal #202020 / #8654B3 in the other components' SVG props and fills are
-   NOT reachable from here and stay as they were.
-   STUDIO-RESP T1 (C03): both values now live in tokens.css; this override is
-   removed with zero rendered delta. */
-
-/* FBI-050: scroll-tied intro. Only where CSS scroll timelines exist and motion
-   is allowed; elsewhere (and without JS) the paragraphs are simply there. */
-@keyframes studio-beat-in {
-  from { opacity: 0; transform: translateY(calc(40 * var(--u))); }
-  to { opacity: 1; transform: none; }
-}
-@keyframes studio-rise {
-  from { opacity: 0; transform: translateY(calc(32 * var(--u))); }
-  to { opacity: 1; transform: none; }
-}
-@keyframes studio-cube-in {
-  from { opacity: 0; transform: scale(0.88); }
-  to { opacity: 1; transform: none; }
-}
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    /* R4-B06: a slow start, a peak and a long soft landing (the OPERATOR's
-       sketch), over a longer entry range; nothing animates on exit, so a
-       revealed beat stays revealed. */
-    .studio-beat__text {
-      animation: studio-beat-in var(--studio-ease-env) both;
-      animation-timeline: view();
-      animation-range: entry 5% entry 100%;
-    }
-    .studio-beat__figure {
-      animation: studio-cube-in var(--studio-ease-env) both;
-      animation-timeline: view();
-      animation-range: entry 15% entry 105%;
-    }
-    /* FBI-055: WrkOps reveals follow scroll distance and reverse with it */
-    .r11--studio[data-motion="on"] [data-reveal] {
-      opacity: 1;
-      transform: none;
-      transition: none;
-      animation: studio-rise var(--studio-ease-env) both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 100%;
-    }
-  }
-}
-
-/* The fan's clip must not be a scroll container, or `view()` timelines of the
-   content inside would bind to it instead of the page. `clip` clips the same
-   way (the earlier `hidden` stays as the fallback). */
-.r11--studio .fan__inner { overflow: hidden; overflow: clip; }
-
-/* FBI-052: the squares are plain text blocks now */
-.r11--studio .cards .card { cursor: default; }
-
-/* FBI-054 (kept in B03): closed rows grow their label a touch on hover and
-   keyboard focus. Scale, not font-size, so nothing reflows and the hit area (the
-   whole row) never changes. The open row toggles closed again (B03-06). */
-.r11--studio .clip-row__text {
-  display: inline-block;
-  transform-origin: 0 50%;
-  transition: transform 0.28s cubic-bezier(0.22, 0.61, 0.36, 1);
-}
-.r11--studio .clip-row__toggle[aria-expanded="false"]:focus-visible .clip-row__text {
-  transform: scale(1.04);
-}
-@media (hover: hover) {
-  .r11--studio .clip-row__toggle[aria-expanded="false"]:hover .clip-row__text {
-    transform: scale(1.04);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .r11--studio .clip-row__toggle[aria-expanded="false"]:focus-visible .clip-row__text,
-  .r11--studio .clip-row__toggle[aria-expanded="false"]:hover .clip-row__text {
-    transform: none;
-  }
-}
-
 /* --- MTG05 R4-B06: Studio Approach disclosure, WrkOps chapter, motion -------
    Studio only. */
 .r11--studio {
   /* ease-out with a long tail, for disclosures and reveals */
   --studio-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
-  /* scroll-tied envelope: slow in, soft long landing (OPERATOR sketch) */
-  --studio-ease-env: cubic-bezier(0.5, 0, 0.1, 1);
 }
 
-/* B06-02 / B06-04: the strip is a button. Same box, label and :P as before. */
-.studio-strip__heading { margin: 0; font: inherit; }
-.studio-strip__toggle {
-  position: absolute;
-  inset: 0;
-  display: block;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-.studio-strip__toggle:focus-visible {
-  outline: 2px solid var(--ccdv-ink);
-  outline-offset: -4px;
-}
-/* explicit open/closed affordance: v closed, flipped when open */
-.studio-strip__chevron {
-  position: absolute;
-  right: calc(24 * var(--u));
-  top: calc(22 * var(--u));
-  font-size: calc(13.2 * var(--u));
-  line-height: 1;
-  color: var(--ccdv-ink);
-  transition: transform 0.45s var(--studio-ease);
-}
-.studio-strip[data-open="true"] .studio-strip__chevron { transform: rotate(180deg); }
-
-.studio-wrkops { position: relative; z-index: 2; }
-
-/* Group disclosure: grid track 0fr -> 1fr (no display:none mid-animation, no
-   measured heights), content fades and rises. Closed content is also
-   visibility:hidden after the collapse, so it leaves the tab order and the
-   accessibility tree; aria-hidden is set on the same element. */
-.studio-disc {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.55s var(--studio-ease);
-}
-.studio-disc[data-open="true"] { grid-template-rows: 1fr; }
-.studio-disc__inner {
-  min-height: 0;
-  overflow: hidden;
-  overflow: clip;
-  visibility: hidden;
-  transition: visibility 0s 0.55s;
-}
-.studio-disc[data-open="true"] > .studio-disc__inner { visibility: visible; transition-delay: 0s; }
-.studio-disc__body {
-  opacity: 0;
-  transform: translateY(calc(18 * var(--u)));
-  transition:
-    opacity 0.45s var(--studio-ease) 0.05s,
-    transform 0.55s var(--studio-ease) 0.05s;
-}
-.studio-disc[data-open="true"] > .studio-disc__inner > .studio-disc__body {
-  opacity: 1;
-  transform: none;
-}
-
-/* child rows: same rise on opening, a touch slower than before */
-.r11--studio .fan__panel { transition: grid-template-rows 0.5s var(--studio-ease); }
-.r11--studio .fan__inner { transition: visibility 0s 0.5s; }
-.r11--studio .fan__body {
-  transform: translateY(calc(14 * var(--u)));
-  transition:
-    opacity 0.45s var(--studio-ease) 0.05s,
-    transform 0.5s var(--studio-ease) 0.05s;
-}
-.r11--studio .fan__panel[data-open="true"] .fan__body { transform: none; }
-
-/* B06-05 / R4-B07 (B07-04): WrkOps beats get the intro's runway (same clamp as
-   `.studio-beat`), so each text beat holds as long as the black intro's. */
-.wo__lead { min-height: clamp(calc(340 * var(--u)), 88svh, calc(780 * var(--u))); }
-.wo__explain {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-height: clamp(calc(340 * var(--u)), 88svh, calc(780 * var(--u)));
-}
-
-/* B07-04: the WrkOps reveals use the intro's envelope (same keyframes, easing
-   and entry range as `.studio-beat__text` / `__figure`), only where scroll
-   timelines and motion exist; the cube scales in like the intro figures. */
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .r11--studio[data-motion="on"] .wo [data-reveal] {
-      animation-name: studio-beat-in;
-      animation-range: entry 5% entry 100%;
-    }
-    .r11--studio[data-motion="on"] .wo .wo__cube[data-reveal] {
-      animation-name: studio-cube-in;
-      animation-range: entry 15% entry 105%;
-    }
-  }
-}
-
-/* --- MTG05 R4-B07-CORR01-B: the three accordion row headings ----------------
-   rest -> held -> covered, with native sticky only. Each row is sticky inside
-   its own `.fan` (row + panel), under the Approach strip. A closed fan is just
-   its row, so there is nothing to stick to and every closed row rests fully
-   readable in place. While a row's panel is open the row is held under the
-   strip as the panel scrolls beneath it; at the end of the fan it is pushed out
-   as the next fan's row arrives, which is opaque (panel ground) and takes over
-   the same line, so headings never stack. Strip is z 6, row 5, panel content
-   below; the row has no animation, so it cannot freeze half way. Without
-   `overflow: clip` (older engines) the ancestor clip disables sticky and the
-   rows simply stay in flow. */
-.r11--studio .fan .clip-row {
-  position: sticky;
-  top: calc(var(--studio-strip-top, 0px) + var(--studio-strip-h));
-  z-index: 5;
-  background: var(--ccdv-panel);
-}
-
-/* reduced motion: immediate, readable states */
-@media (prefers-reduced-motion: reduce) {
-  .studio-disc,
-  .studio-disc__inner,
-  .studio-disc__body,
-  .studio-strip__chevron,
-  .r11--studio .fan__panel,
-  .r11--studio .fan__inner,
-  .r11--studio .fan__body {
-    transition: none;
-  }
-  .studio-disc__body,
-  .r11--studio .fan__body { transform: none; }
-}
-
-/* === STUDIO-RESP T1 — responsive Studio, UI-first (t_20261107_studiot1) =====
-   Everything from here to the end marker is the T1 layout proposal. Blocks:
-     T1-0  all widths   open-row chevron parity (ClippedHeading data-expanded)
-     T1-1  >=768        rem floors, written as max(rem, N*u): inert at 1440
-     T1-2  768-1023     tablet reflow (2x2 tiles/steps, 1-column panel copy)
-     T1-3  768-1023 coarse pointer: 44px compact cells, strip and rows
-     T1-4  <=767        phone composition (masthead, hero, beats, stage, rows,
-                        WrkOps, CC.OS, shared footer stack)
-     T1-5  <=767 nav families: M3 (590-767) and M1 (<406, 3+2 cells)
-   Not here (T2): masthead unpin (X1a), row-hold gating, short-height policy,
-   any MH_* / WO_* or motion change. The rAF/IO hooks are not touched; the
-   per-layout --mh-full / --mh-compact / --mh-range values below are what the
-   existing A/B footprint and stick offsets already read. */
-
-/* T1-0. Desktop shows the watermark on the open row and the chevron on closed
-   rows, as before; phones (T1-4) show the chevron on every row. */
-.clip-row[data-expanded="true"] .clip-row__chevron { display: none; }
+/* === STUDIO-RESP T1 — responsive Studio (t_20261107_studiot1), what is left: >=768 type floors for the compact bar cells; touch-tablet 44px strip; phones: the Studio base size, the phone masthead geometry (see E-A-030 in the N4 dead-code audit), the .studio-art hairline rule and the shared footer stack. */
 
 /* T1-1. Floors (C01). Each max() picks the u value at 1440 (and above), so the
    1440 composition is unchanged; below ~1024 type and targets stop shrinking. */
 @media (min-width: 768px) {
   .r11--studio {
     --studio-strip-h: max(calc(58 * var(--u)), 2.5rem);
-    --studio-row-h: max(calc(49 * var(--u)), 2.25rem);
   }
 
   .masthead--collapsing .cell__label { font-size: max(0.75rem, calc(13.2 * var(--u))); }
   .masthead--collapsing .cell__tile { top: max(calc(30.47 * var(--u)), 1.25rem); }
 
-  /* strip contents move down by half of whatever the floor adds to the strip */
-  .studio-strip__title {
-    top: calc(10 * var(--u) + (var(--studio-strip-h) - 58 * var(--u)) / 2);
-    font-size: max(1.5rem, calc(41 * var(--u)));
-  }
-  .studio-strip__suffix { font-size: max(calc(1.5rem * 17 / 41), calc(17 * var(--u))); }
-  .studio-strip__chevron {
-    top: calc(22 * var(--u) + (var(--studio-strip-h) - 58 * var(--u)) / 2);
-    font-size: max(0.75rem, calc(13.2 * var(--u)));
-  }
-
-  .studio-intro,
-  .wo {
-    font-size: max(1.125rem, calc(28 * var(--u)));
-    line-height: max(1.375rem, calc(34 * var(--u)));
-  }
-
-  .r11--studio .card__label { font-size: max(0.75rem, calc(14 * var(--u))); }
-  .r11--studio .card__body {
-    font-size: max(1rem, calc(20 * var(--u)));
-    line-height: max(1.35rem, calc(27 * var(--u)));
-  }
-  .r11--studio .card__para + .card__para { margin-top: max(1.35rem, calc(27 * var(--u))); }
-  .r11--studio .columns .card__body {
-    font-size: max(1rem, calc(19 * var(--u)));
-    line-height: max(1.375rem, calc(26 * var(--u)));
-  }
-  .r11--studio .fan__copy {
-    font-size: max(1rem, calc(20 * var(--u)));
-    line-height: max(1.35rem, calc(27 * var(--u)));
-  }
-  .r11--studio .fan__copy p { margin-bottom: max(1.35rem, calc(27 * var(--u))); }
-
-  .r11--studio .fan .clip-row { height: var(--studio-row-h); }
-  .r11--studio .clip-row__toggle {
-    padding-top: calc(6 * var(--u) + (var(--studio-row-h) - 49 * var(--u)) / 2);
-    font-size: max(1.5rem, calc(35 * var(--u)));
-  }
-  .r11--studio .clip-row__chevron,
-  .r11--studio .clip-row__watermark {
-    top: calc(14 * var(--u) + (var(--studio-row-h) - 49 * var(--u)) / 2);
-    font-size: max(0.75rem, calc(13.2 * var(--u)));
-  }
-
-  /* hairlines stay at least one CSS px */
-  .r11--studio .clip-row::before,
-  .r11--studio .fan__inner::before { height: max(1px, calc(1 * var(--u))); }
-  .studio-stage__stack { border-bottom-width: max(1px, calc(1 * var(--u))); }
-}
-
-/* T1-2. Tablet: the desktop composition is kept (masthead, hero, two-column
-   beats on the page halves, WrkOps rows); only blocks that become cramped at
-   half the artboard reflow. */
-@media (min-width: 768px) and (max-width: 1023px) {
-  .r11--studio .cards { flex-wrap: wrap; row-gap: 2rem; }
-  .r11--studio .cards .card { width: calc((100% - 48 * var(--u)) / 2); }
-  .r11--studio .card__body { width: auto; }
-
-  .r11--studio .columns { flex-wrap: wrap; row-gap: 1.5rem; }
-  .r11--studio .columns .card { width: calc((100% - 48 * var(--u)) / 2); }
-
-  /* one column with a readable measure (two would be ~40 characters wide) */
-  .r11--studio .fan__copy { columns: auto; }
-  .r11--studio .fan__copy p { max-width: 38rem; }
-
-  /* at 1358u the floored "collapse" would run past the right edge */
-  .r11--studio .clip-row__watermark { left: auto; right: calc(24 * var(--u)); }
-
-  /* the plate follows its text once the 16px floor outgrows 231u */
-  .wo .ccos__action {
-    width: max-content;
-    height: 1.0985em;                        /* 29 / 26.4, as at 1440 */
-    font-size: max(1rem, calc(26.4 * var(--u)));
-    line-height: 1.0985em;
-    padding-top: 0.1629em;                   /* 4.3 / 26.4: baseline on the plate edge */
-  }
 }
 
 /* T1-3. Touch tablets: compact cells, strips and rows reach 44px. */
 @media (min-width: 768px) and (max-width: 1023px) and (pointer: coarse) {
   .r11--studio {
     --studio-strip-h: max(calc(58 * var(--u)), 2.75rem);
-    --studio-row-h: max(calc(49 * var(--u)), 2.75rem);
-    --mh-compact: calc(max(calc(64 * var(--u)), 2.75rem) + 24 * var(--u));
-    --mh-range: calc(var(--mh-full) - var(--mh-compact));
   }
   .masthead--collapsing { --cell-h: max(calc((220 - 156 * var(--mh-p, 0)) * var(--u)), 2.75rem); }
 }
@@ -1695,8 +658,6 @@ main { display: block; outline: none; }
     font-size: var(--ccdv-t-body-m);
     --studio-strip-h: 48px;
     --mh-full: 144px;                        /* 12 + mark 64 + 12 + cells 44 + 12 */
-    --mh-compact: 100px;                     /* 8 + mark 32 + 8 + cells 44 + 8 */
-    --mh-range: 44px;
   }
 
   /* Masthead: the lockup row over a full-width row of five equal cells. Both
@@ -1749,183 +710,11 @@ main { display: block; outline: none; }
   .masthead--collapsing .cell:not([aria-current="page"]) .cell__dot { border-width: 1px; }
   .masthead--collapsing .cell__tile { display: none; }
 
-  /* Hero: [Studio] and :P as one baseline group under the A footprint. The
-     size is fallback-font safe (PF-5: 5.51 = 10 glyph advances at 0.61em) and
-     the hero still ends on the title baseline, so the black edge cuts it. */
-  .studio-hero {
-    --hero-f: min(calc((100cqw - 40px) / 5.51), 110px);
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    height: calc(var(--mh-full) + 0.886364 * var(--hero-f));
-    padding: var(--mh-full) var(--ccdv-gutter-m) 0;
-    overflow-x: clip;
-  }
-  .studio-hero__label { position: static; font-size: var(--hero-f); }
-  .studio-hero__suffix {
-    position: relative;
-    left: auto;
-    top: calc(-0.058 * var(--hero-f));       /* baseline 12/207 of the title above the edge */
-    font-size: calc(0.516908 * var(--hero-f)); /* 107 / 207 */
-  }
-
-  /* Intro: a short black lead-in, then each beat is text over its centred
-     drawing, one beat per ~two-thirds of a screen. */
-  .studio-intro {
-    padding: 30vh var(--ccdv-gutter-m) 48px;
-    padding-top: 30svh;
-    font-size: var(--ccdv-t-narrative-m);
-    line-height: 1.3;
-  }
-  .studio-beat {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 48px;
-    min-height: 100vh;
-    min-height: 100svh;   /* R2-FB003-07: one text + drawing beat per screen */
-    margin-inline: 0;
-  }
-  .studio-beat__text,
-  .studio-beat[data-side="right"] .studio-beat__text { max-width: none; padding: 0; order: 0; }
-  .studio-beat[data-side="right"] .studio-beat__figure { order: 0; }
-  .studio-beat__figure { align-self: center; width: clamp(144px, 55%, 256px); }
-  .wo__cube { align-self: center; width: clamp(144px, 55%, 256px); }
-
   /* hairlines would fall to ~0.1px at phone scale */
-  .r11--studio .studio-art :is(path, circle),
-  .r11--studio .studio-hex path {
+  .r11--studio .studio-art :is(path, circle) {
     vector-effect: non-scaling-stroke;
     stroke-width: 0.75px;
   }
-
-  /* Chapter strips: 48px buttons, title sized so it never clips during the
-     font swap (F03-b: 20 glyphs at 0.61em + 46.5px of insets and :P). */
-  .studio-strip__title {
-    left: var(--ccdv-gutter-m);
-    top: calc(50% - 0.5em);
-    font-size: min(1.5rem, calc((100cqw - 46.5px) / 12.2));
-  }
-  .studio-strip__suffix { margin-left: 8px; font-size: 0.41463em; } /* 17 / 41 */
-  .studio-strip__chevron {
-    right: var(--ccdv-gutter-m);
-    top: calc(50% - 0.375rem);
-    font-size: 0.75rem;
-  }
-
-  /* Approach stage: content-height, four principles as one readable column */
-  .studio-stage__stack { min-height: 0; border-bottom-width: 1px; }
-  .r11--studio .section--cards { padding: 32px var(--ccdv-gutter-m) 40px; }
-  .r11--studio .cards { flex-direction: column; gap: 32px; }
-  .r11--studio .card { width: auto; padding: 0; }
-  .r11--studio .card__label {
-    position: static;
-    display: block;
-    font-size: var(--ccdv-t-label-m);
-    line-height: 1.4;
-  }
-  .r11--studio .card__body {
-    width: auto;
-    margin-top: 8px;
-    font-size: var(--ccdv-t-body-m);
-    line-height: 1.5;
-  }
-  .r11--studio .card__para + .card__para { margin-top: 1.5em; }
-
-  /* Rows (F02): the toggle is in flow so a two-line heading grows the row;
-     no font shrink; chevron in the right gutter on the first line. */
-  .r11--studio .fan .clip-row { height: auto; min-height: 48px; }
-  .r11--studio .clip-row__toggle {
-    position: relative;
-    inset: auto;
-    display: flex;
-    align-items: center;
-    min-height: 48px;
-    padding: 8px 32px 8px var(--ccdv-gutter-m);
-    font-size: var(--ccdv-t-row-m);
-    line-height: 1.2;
-    white-space: normal;
-  }
-  .r11--studio .clip-row__chevron {
-    left: auto;
-    right: var(--ccdv-gutter-m);
-    top: 18px;
-    font-size: 0.75rem;
-    transition: transform 0.45s var(--studio-ease);
-  }
-  .r11--studio .clip-row[data-expanded="true"] .clip-row__chevron {
-    display: block;
-    transform: rotate(180deg);
-  }
-  .r11--studio .clip-row__watermark { display: none; }
-  .r11--studio .clip-row::before,
-  .r11--studio .fan__inner::before { height: 1px; }
-
-  .r11--studio .fan__copy {
-    columns: auto;
-    padding: 24px var(--ccdv-gutter-m);
-    font-size: var(--ccdv-t-body-m);
-    line-height: 1.5;
-  }
-  .r11--studio .fan__copy p { margin-bottom: 1.5em; }
-  .r11--studio .fan__copy + .columns { padding-top: 0; }
-  .r11--studio .columns { flex-direction: column; gap: 24px; padding: 0 var(--ccdv-gutter-m) 32px; }
-  .r11--studio .columns .card { width: auto; }
-  .r11--studio .columns .card__body {
-    margin-top: 8px;
-    font-size: var(--ccdv-t-body-m);
-    line-height: 1.5;
-  }
-
-  /* WrkOps: the same text-over-drawing beats as the intro */
-  .wo { font-size: var(--ccdv-t-narrative-m); line-height: 1.3; }
-  .wo__lead {
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: center;
-    gap: 48px;
-    min-height: 70vh;
-    min-height: 70svh;
-    padding: 64px var(--ccdv-gutter-m) 48px;
-  }
-  .wo__lead p,
-  .wo__explain p { width: auto; }
-  .wo__explain {
-    min-height: 70vh;
-    min-height: 70svh;
-    padding: 48px var(--ccdv-gutter-m);
-  }
-  .wo__explain p + p { margin-top: 1.3em; }
-
-  /* CC.OS: 48px cube + wordmark (fallback-safe: 5 glyphs at 0.61em + 96px) */
-  .wo__ccos { padding: 64px var(--ccdv-gutter-m) 72px; }
-  .wo__ccos-head { gap: 16px; }
-  .wo__ccos-cube { width: 48px; }
-  .r11--studio .wo .ccos__wordmark {
-    margin: 0;
-    font-size: min(4.5rem, calc((100cqw - 96px) / 3.05));
-  }
-  .wo__ccos-copy { width: auto; margin-top: 32px; }
-  .wo__ccos-copy p + p { margin-top: 1.3em; }
-  .wo .ccos__action {
-    position: relative;
-    width: max-content;
-    height: 1.0985em;
-    margin-top: 40px;
-    font-size: var(--ccdv-t-body-m);
-    line-height: 1.0985em;
-    padding-top: 0.1629em;
-  }
-  .wo .ccos__action::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 50%;
-    height: var(--ccdv-tap);
-    transform: translateY(-50%);
-  }
-  .wo .ccos__dot { left: auto; right: var(--ccdv-gutter-m); bottom: 32px; width: 8px; height: 8px; }
 
   /* Shared footer (all routes): lockup, address column, then the two link
      columns side by side as 44px rows. The lockup keeps its 1440 size. */
@@ -1964,7 +753,6 @@ main { display: block; outline: none; }
 /* M3, 590-767: in state B the inline lockup and the five cells share one
    60px bar; the cells slide right as the mark shrinks. */
 @media (min-width: 36.875em) and (max-width: 767px) {
-  .r11--studio { --mh-compact: 60px; --mh-range: 84px; }
   .masthead--collapsing {
     --mm-mark-top: calc(12px + 2px * var(--mh-p, 0));
     --mm-nav-top: calc(88px - 80px * var(--mh-p, 0));
@@ -1974,7 +762,7 @@ main { display: block; outline: none; }
 /* M1, under 406: equal cells do not fit five across, so 3 + 2 on a six-column
    grid (DOM order kept, no empty slot). */
 @media (max-width: 767px) and (max-width: 25.37em) {
-  .r11--studio { --mh-full: 188px; --mh-compact: 144px; }
+  .r11--studio { --mh-full: 188px; }
   .masthead--collapsing .cells { grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .masthead--collapsing .cell { grid-column: span 2; }
   .masthead--collapsing .cell:nth-child(n + 4) { grid-column: span 3; margin-top: -1px; }
@@ -1991,17 +779,13 @@ main { display: block; outline: none; }
    box follow the whole page) with a negative bottom margin, so opening it never
    changes the layout under it. No script writes the scroll position. */
 .smm__bar,
-.smm__panel,
-.studio-hero__orbit { display: none; }
+.smm__panel { display: none; }
 
 @media (max-width: 767px) {
-  /* the T1 masthead is replaced; its sticky-header variables collapse to the
-     50px bar so the chapter strips still pin right under it */
+  /* the compact masthead is replaced by the M1 bar below */
   .r11--studio .masthead--studio { display: none; }
   .r11--studio {
     --mh-full: 50px;
-    --mh-compact: 50px;
-    --mh-range: 0px;
   }
 
   .smm__bar {
@@ -2149,48 +933,9 @@ main { display: block; outline: none; }
   /* Collapse Creative mark, small, light ink (its paths carry a dark fill) */
   /* A5: the 648 x 120 lockup at 146 wide (27 tall), STUDIO_resp2's logo box */
   .smm__brand { display: block; flex: none; width: 146px; height: auto; aspect-ratio: 648 / 120; color: var(--ccdv-panel); }
-  .smm__foot-gear { display: block; width: 26px; height: 26px; }
   .smm__year { align-self: flex-end; margin-top: auto; text-align: right; }
   .smm__contact a { position: relative; text-decoration: underline; text-underline-offset: 3px; }
   .smm__contact a::after { content: ""; position: absolute; inset: -11px -4px; }
-
-  /* Hero: lilac from under the 50px bar to a black edge 75px above the bottom
-     of a 844px screen; [Studio] is large and sits on that edge (baseline = edge,
-     so the black cuts the brackets). Size: 66px at 390, 54px at 320, from the
-     container width (fallback-font safe: 8 glyphs at 0.61em still fit). */
-  .studio-hero {
-    --hero-f: clamp(44px, 16.9cqw, 84px);
-    top: 50px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: flex-start;
-    box-sizing: border-box;
-    height: max(calc(100vh - 125px), 420px);
-    height: max(calc(100svh - 125px), 420px);
-    padding: 0 var(--ccdv-gutter-m);
-    overflow: clip;
-  }
-  .studio-hero__label {
-    position: relative;
-    top: auto;                                  /* the desktop rule's top/left are in u */
-    left: auto;
-    z-index: 1;
-    margin: 0 0 calc(-0.114 * var(--hero-f));   /* baseline on the hero's bottom edge */
-  }
-  .studio-hero__suffix { display: none; }
-
-  /* orbit: 84.3% wide (328.8 of 390), centre 45.8% down the lilac area */
-  .studio-hero__orbit {
-    position: absolute;
-    left: 50%;
-    top: 45.84%;
-    display: block;
-    width: min(84.3%, 420px);
-    height: auto;
-    transform: translate(-50%, -50%);
-    pointer-events: auto;                       /* R1-FB002-09: the hero sphere can be turned */
-  }
 }
 /* === end STUDIO-RESP M1 ===================================================== */
 
@@ -2200,8 +945,6 @@ main { display: block; outline: none; }
    Everything animated is opt-in (`no-preference`); reduced motion keeps the
    static drawings and the static lilac/white highlight. One solid lilac only:
    `--ccdv-purple-card`. The only gradients are that lilac blended with white. */
-.cards__clip { display: contents; }   /* wrapper is invisible to the existing layouts */
-
 /* Turnable spheres (hero orbit, both gyros). R2-FB003-06: a finger that starts on
    the drawing owns both axes of its drag (touch-action none, set before the
    gesture starts), so the page does not scroll under it; outside the drawing the
@@ -2224,76 +967,11 @@ main { display: block; outline: none; }
 .studio-sphere:focus { outline: none; }
 .studio-sphere:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
 
-/* Lilac gyro blocks (artboard 390 x 596 each). Phones: the whole artboard, width
-   100%, capped by the screen so the slice crops only margins. Tablet/desktop
-   (FB002-06): a wide band, the drawing scaled to the band's width ("slice") so
-   the circle fills the page and is cropped by the band's top and bottom edges.
-   R2-FB003-01: flat canonical lilac; the white radial highlights are removed. */
-.studio-gyro {
-  display: grid;
-  overflow: clip;
-  aspect-ratio: 390 / 596;
-  max-height: calc(100svh - var(--studio-stick-h, 50px));
-  background-color: var(--ccdv-purple-card);
-}
-.studio-gyro > .studio-art { width: 100%; height: 100%; }
-@media (min-width: 768px) {
-  .studio-gyro {
-    aspect-ratio: auto;
-    height: clamp(520px, 78svh, 920px);
-    max-height: none;
-  }
-}
-/* hairlines stay hairlines at any scale (rings, axes, cube edges) */
-.studio-gyro .studio-art :is(ellipse, line, path, circle) {
-  vector-effect: non-scaling-stroke;
-  stroke-width: 0.9px;
-}
-
-/* FB002-08: the TM is a lighter, smaller superscript */
-.studio-strip__tm {
-  position: relative;
-  top: -0.55em;
-  margin-left: 0.08em;
-  font-size: 0.42em;
-  font-weight: 300;
-  line-height: 0;
-  opacity: 0.78;
-}
-
-/* FB002-03: the second black chapter is three text + drawing beats, the same
-   grammar as the intro: 768px up, two halves that alternate (text | drawing,
-   drawing | text, text | drawing); phones, text above its drawing. */
-.wo__beat {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  align-items: center;
-  gap: calc(48 * var(--u));
-  padding: 0 calc(48 * var(--u));
-  min-height: clamp(calc(340 * var(--u)), 88svh, calc(780 * var(--u)));
-}
-.wo__beat p { max-width: calc(720 * var(--u)); margin: 0; }
-.wo__beat[data-side="right"] p { order: 2; }
-.wo__beat[data-side="right"] .wo__figure { order: 1; }
-.wo__figure {
-  display: block;
-  justify-self: center;
-  width: min(100%, calc(420 * var(--u)));
-  min-width: 0;
-  overflow: clip;
-}
-.wo__figure--gears { width: min(100%, calc(560 * var(--u))); }
 /* pathLength-normalised dashes: keep user-space strokes (beats the hairline rule) */
 .r11--studio .studio-art.wo-diagram path { vector-effect: none; stroke-width: 0.6px; }
 
-/* FB002-05: the intro's orbit wheel and gear turn at the same speed (60 s per
-   turn, same direction, both from load, so they stay in phase); the cube keeps
-   its shape and only its inner lilac -> light-lilac gradient moves. */
+/* WrkOps cubes: the top cube settles once armed, then floats while on screen (artworks.tsx data-armed / data-sep / data-live). */
 @media (prefers-reduced-motion: no-preference) {
-  .studio-beat[data-side="right"] .studio-beat__figure .studio-art,
-  .studio-beat:nth-child(3) .studio-beat__figure .studio-art { animation: studio-spin 60s linear infinite; }
-  .studio-beat:first-child .studio-hex stop:first-child { animation: studio-cube-liquid 9s ease-in-out infinite alternate; }
-
   .wo-cubes__top { transition: transform 1.1s var(--studio-ease); }
   .wo-cubes[data-armed="true"]:not([data-sep="true"]) .wo-cubes__top { transform: translateY(19px); }
   .wo-cubes[data-sep="true"] .wo-cubes__float {
@@ -2302,109 +980,10 @@ main { display: block; outline: none; }
   .wo-cubes[data-live="false"] .wo-cubes__float { animation-play-state: paused; }
 }
 @keyframes wo-cubes-float { from { transform: translateY(0); } to { transform: translateY(-5px); } }
-@keyframes studio-cube-liquid { from { stop-color: #a864e2; } to { stop-color: #d8b9f2; } } /* lilac -> lilac + 55% white */
-@keyframes studio-spin { to { transform: rotate(360deg); } }
-
-/* the figures follow the intro's reveal: text first, then the drawing scales
-   in (same envelope, same entry range as the intro figures) */
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .r11--studio[data-motion="on"] .wo .wo__figure[data-reveal] {
-      animation-name: studio-cube-in;
-      animation-range: entry 15% entry 105%;
-    }
-  }
-}
-
-/* N4 C03-2: the word-reveal rules (`.wr__w`, `[data-words]`) were removed; no TSX produced them. */
-
-/* R2-FB003-12 / FB003-13: the Approach carousel, at every width. One principle
-   card is visible at a time (the track is exactly one card wide, so the next one
-   never peeks), swiped/dragged/keyed inside its own scroll-snap track and moved
-   by the Prev/Next buttons; the page never scrolls sideways. The section's grid
-   column is minmax(0, 1fr) and its clip has min-width 0: `overflow: clip` alone
-   (not a scroll container) would leave a grid item's automatic minimum width at
-   its content's. The carousel shows only while no row is open: the section
-   collapses (grid 1fr -> 0fr) and is visibility:hidden once collapsed, on
-   desktop as on phones. */
-.cards__clip { display: block; min-width: 0; min-height: 0; overflow: clip; }
-.r11--studio .section--cards {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: 1fr;
-  transition:
-    grid-template-rows 0.45s var(--studio-ease),
-    opacity 0.35s var(--studio-ease) 0.05s;
-}
-.r11--studio .cards {
-  --card-w: calc(560 * var(--u));
-  flex-direction: row;
-  flex-wrap: nowrap;
-  gap: calc(48 * var(--u));
-  width: var(--card-w);
-  max-width: 100%;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  overscroll-behavior-x: contain;
-  scrollbar-width: none;
-}
-.r11--studio .cards::-webkit-scrollbar { display: none; }
-.r11--studio .cards:focus-visible { outline: 2px solid var(--ccdv-ink); outline-offset: 4px; }
-.r11--studio .cards .card {
-  flex: 0 0 100%;
-  width: auto;
-  scroll-snap-align: start;
-}
-.r11--studio .cards .card__body { width: auto; }
-.cards__nav {
-  display: flex;
-  align-items: baseline;
-  gap: calc(24 * var(--u));
-  margin-top: calc(20 * var(--u));
-  font-size: calc(14 * var(--u));
-  line-height: 1.4;
-}
-.cards__step {
-  padding: 0;
-  border: 0;
-  background: none;
-  color: inherit;
-  font: inherit;
-  cursor: pointer;
-}
-.cards__step[aria-disabled="true"] { opacity: 0.35; cursor: default; }
-.cards__count { min-width: 6ch; }
-
-/* Phones */
-@media (max-width: 767px) {
-  .r11--studio .cards { --card-w: 100%; gap: 32px; }
-  .r11--studio .section--cards { padding: 32px var(--ccdv-gutter-m) 40px; }
-  .cards__nav { gap: 20px; margin-top: 16px; font-size: var(--ccdv-t-label-m); }
-
-  /* chapter 2: text above its drawing, drawings full-bleed so the 390 artboard
-     is drawn 1:1 on a 390 screen */
-  .wo__beat {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 40px;
-    min-height: 100vh;
-    min-height: 100svh;   /* R2-FB003-08: one beat per screen */
-    align-content: center;
-    padding: 64px var(--ccdv-gutter-m) 48px;
-  }
-  .wo__beat[data-side="right"] p,
-  .wo__beat[data-side="right"] .wo__figure { order: 0; }
-  .wo__figure,
-  .wo__figure--gears {
-    width: auto;
-    justify-self: stretch;
-    margin-inline: calc(-1 * var(--ccdv-gutter-m));
-  }
-}
 
 @media (prefers-reduced-motion: reduce) {
   .smm__panel,
-  .smm__gear,
-  .r11--studio .section--cards { transition: none; }
+  .smm__gear { transition: none; }
 }
 /* === end STUDIO-RESP R1 FB001 + FB002 ======================================= */
 
@@ -5576,8 +4155,8 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
 
 /* === N3 WORK V3 (t_20261124_ccdvn3work, OPERATOR) ==============================
    One Work workspace (WorkWorkspace) for /work, /work/archive and /work/:slug,
-   from WORK V3.svg (Featured) and WORK V3 _ archive.svg: no shared bar, no
-   footer. W-A1 (OPERATOR): it fills the screen like the rest of the site,
+   from WORK V3.svg (Featured) and WORK V3 _ archive.svg: no shared bar;
+   desktop has no footer (phones / tablets: M1 bar and site footer, N4 P-K). W-A1 (OPERATOR): it fills the screen like the rest of the site,
    with breathing margins, and moves like the CC.OS deck — the rail stays,
    the content moves on a plane: Featured above the archive, a case to the
    archive's right.
@@ -5595,6 +4174,10 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
    its own block at the end; a case slides in over it from the right. */
 .wv3 {
   --wv3-ink: #1a1a1a;
+  /* N4 P-K (OPERATOR): the Work V3 yellow is gray: --wv3-fill is the title and
+     bars, --wv3-on the pressed filters (the Workcase band stays yellow) */
+  --wv3-fill: #d9d9d9;
+  --wv3-on: #d9d9d9;
   --wv3-line: calc(0.533 * var(--u)) solid var(--wv3-ink);
   --wv3-t: max(11px, calc(12.8 * var(--u)));
   --wv3-gap: calc(24 * var(--u));
@@ -5614,7 +4197,9 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
 }
 .wv3 :is(a, button):focus { outline: none; }
 .wv3 :is(a, button):focus-visible { outline: 1px solid var(--wv3-ink); outline-offset: 2px; }
-.wv3 ul { margin: 0; padding: 0; list-style: none; }
+/* N4 P-K: :where() keeps this reset at zero specificity so .wv3-group and
+   .wv3-preview__actions margins win */
+.wv3 :where(ul) { margin: 0; padding: 0; list-style: none; }
 .wv3 p,
 .wv3 h1 { margin: 0; }
 .wv3 button { font: inherit; color: inherit; }
@@ -5629,9 +4214,9 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
   background: var(--ccdv-panel);
   text-align: center;
 }
-.wv3-side__home { display: flex; flex-direction: column; gap: calc(23.8 * var(--u)); color: inherit; }
+.wv3-side__home { display: flex; flex-direction: column; align-items: center; gap: calc(16 * var(--u)); color: inherit; }
 .wv3-side__gear,
-.wv3-side__pixel { display: block; width: 100%; height: auto; aspect-ratio: 1; }
+.wv3-side__pixel { display: block; width: calc(128 * var(--u)); height: auto; aspect-ratio: 1; }
 .wv3-side__title,
 .wv3-side__item {
   display: flex;
@@ -5648,16 +4233,15 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
   text-decoration: none;
   white-space: nowrap;
 }
-.wv3-side__title { gap: calc(6 * var(--u)); min-height: calc(26.68 * var(--u)); font-weight: 400; background: var(--ccdv-yellow); }
+.wv3-side__title { gap: calc(6 * var(--u)); min-height: calc(30.68 * var(--u)); font-weight: 400; background: var(--wv3-fill); }
 .wv3-side__title-gear { width: calc(11 * var(--u)); height: calc(11 * var(--u)); }
 .wv3-side__item { min-height: calc(26 * var(--u)); cursor: pointer; }
 .wv3-side__list li + li { margin-top: calc(-0.533 * var(--u)); }
-.wv3-side__item[data-marked] { background: var(--ccdv-white); }
-.wv3-side__item[aria-pressed="true"] { background: var(--ccdv-yellow); }
+.wv3-side__item[aria-pressed="true"] { background: var(--wv3-on); }
 .wv3-side__item[aria-disabled="true"] { opacity: 0.35; cursor: default; }
 @media (hover: hover) {
   .wv3-side__item:is(button):hover { background: var(--ccdv-white); }
-  .wv3-side__item[aria-pressed="true"]:hover { background: var(--ccdv-yellow); }
+  .wv3-side__item[aria-pressed="true"]:hover { background: var(--wv3-on); }
 }
 /* W-A1: the filters open as the content moves down to the archive */
 .wv3-side__filters {
@@ -5674,7 +4258,7 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
 .wv3-side__filters-inner { display: flex; flex-direction: column; gap: var(--wv3-gap); min-height: 0; overflow: hidden; }
 .wv3-side__unit { display: flex; align-items: center; justify-content: space-between; white-space: nowrap; }
 .wv3-side__sq { width: calc(8 * var(--u)); height: calc(8 * var(--u)); background: var(--wv3-ink); }
-.wv3-side__nav { line-height: calc(22 * var(--u)); }
+.wv3-side__nav { line-height: calc(19 * var(--u)); }
 .wv3-side__section { display: block; color: inherit; text-decoration: none; }
 .wv3-side__section:hover { text-decoration: underline; }
 .wv3-side__view { margin-top: auto; align-self: center; color: inherit; text-decoration: underline; text-underline-offset: 0.2em; white-space: nowrap; }
@@ -5716,7 +4300,7 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
 .wv3-table {
   /* N4: proportional, so the five text columns spread over the whole table;
      the glyph column is fixed and right-aligned */
-  --wv3-cols: minmax(0, 0.9fr) minmax(0, 1.4fr) minmax(0, 2fr) minmax(0, 2.2fr) minmax(0, 2fr) calc(36 * var(--u));
+  --wv3-cols: minmax(0, 0.9fr) minmax(0, 1.3fr) minmax(0, 1.6fr) minmax(0, 2.8fr) minmax(0, 2fr) calc(36 * var(--u));
   --wv3-col-gap: calc(12 * var(--u));
   --wv3-pad: calc(8 * var(--u));
   min-width: 0;
@@ -5728,9 +4312,9 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
   gap: calc(6 * var(--u));
   box-sizing: border-box;
   height: calc(26.68 * var(--u));
-  padding-inline: calc(8 * var(--u));
+  padding-inline: calc(13 * var(--u));
   border: var(--wv3-line);
-  background: var(--ccdv-yellow);
+  background: var(--wv3-fill);
   white-space: nowrap;
 }
 .wv3-table__gear,
@@ -5816,7 +4400,7 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
 .wv3-preview__action[aria-disabled="true"] { color: rgb(26 26 26 / 0.35); }
 .wv3-preview__action[aria-disabled="true"] .wv3-preview__gear { opacity: 0.35; }
 @media (hover: hover) {
-  a.wv3-preview__action:hover { background: var(--ccdv-yellow); }
+  a.wv3-preview__action:hover { background: var(--wv3-fill); }
 }
 .wv3-preview__poster {
   box-sizing: border-box;
@@ -5849,10 +4433,12 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
     bottom: calc(51.2 * var(--u));
     width: calc(185 * var(--u));
     border-radius: calc(12 * var(--u));
-    /* N4: at the 994 unit the full rail (about 898u with 24u padding) is taller than
-       the 892u stage; 16u top and bottom padding brings it to about 882u */
-    padding-block: calc(16 * var(--u));
+    /* N4 P-K: at the 994 unit the full rail is taller than the 891.6u stage;
+       12u top and bottom padding (with 30u items) brings it to about 880u of
+       the 891.6u stage */
+    padding-block: calc(12 * var(--u));
   }
+  .wv3-side__item { min-height: calc(30 * var(--u)); }
   .wv3-stage {
     position: absolute;
     left: calc(260.2 * var(--u));
@@ -5896,39 +4482,39 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
    (capped at 1.5px), 24 margins and 24 between blocks, the column at most
    760px (OPERATOR: everything below 1024, centred). Boxes and lines are the
    artboards': rows 26, bars 26.68, rules 0.5, borders 0.533, radius 12; the
-   ground is plain #D9D9D9 (no grid). The filter rows are the rail's own
+   ground is #D9D9D9 with the base grid (N4 P-K: the grid shows; the yellow is
+   gray, --wv3-fill, and a pressed choice is white, --wv3-on, on this ground;
+   the top strip is the M1 menu bar, WorkPhoneHead). The filter rows are the rail's own
    (.wv3-side__item), the actions the preview's (.wv3-preview__action). */
 @media (max-width: 1023px) {
   .wv3 {
     --u: min(1.5px, calc(100cqw / 390));
     --wv3-t: max(11px, calc(12 * var(--u)));
     --wv3p-gap: calc(24 * var(--u));
+    --wv3p-gap-s: calc(12 * var(--u));
+    --wv3-on: var(--ccdv-white);
     padding: var(--wv3p-gap);
-    background-image: none;
   }
   .wv3p-page { display: flex; flex-direction: column; gap: var(--wv3p-gap); width: 100%; max-width: 760px; margin-inline: auto; }
 
-  /* head card: x24, 342 x 281.7, radius 12 */
-  .wv3p-head {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: calc(12 * var(--u)) calc(12 * var(--u)) calc(14 * var(--u));
+  /* N4 P-K (OPERATOR): the top strip is the M1 menu bar, full-bleed over the
+     24 padding and the 760 column (the shell's width, cqw; the bar sits in the
+     flow, sticky, so the page's 24 gap follows it); then the CCDV:WORK card */
+  .wv3p .smm__bar {
+    width: 100cqw;
+    margin: calc(-1 * var(--wv3p-gap)) calc(50% - 50cqw) 0;
+  }
+  .wv3p-head__card {
+    box-sizing: border-box;
+    padding: calc(9 * var(--u)) calc(12 * var(--u));
     border-radius: calc(12 * var(--u));
     background: var(--ccdv-panel);
+    text-align: center;
   }
-  .wv3p-head__home { display: flex; flex-direction: column; align-items: center; color: inherit; }
-  .wv3p-head__gear { display: block; width: calc(132 * var(--u)); height: auto; aspect-ratio: 1; }
-  .wv3p-head__pixel { display: block; width: calc(120 * var(--u)); height: auto; margin-top: calc(28 * var(--u)); }
-  .wv3p-head__nav { align-self: stretch; margin-top: calc(26 * var(--u)); }
-  .wv3p-head__unit { display: flex; align-items: center; justify-content: space-between; white-space: nowrap; }
-  .wv3p-head__sq { flex: none; width: calc(8 * var(--u)); height: calc(8 * var(--u)); background: var(--wv3-ink); }
-  .wv3p-head__sections { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 calc(16 * var(--u)); margin-top: calc(18 * var(--u)); }
-  .wv3p-head__section { display: block; padding-block: 4px; color: inherit; text-decoration: none; }
-  .wv3p-head__section:hover { text-decoration: underline; }
+  .wv3p-head__title { margin: 0; font: inherit; font-size: calc(32 * var(--u)); font-weight: 400; line-height: 1; }
+  .wv3p-head__title span { text-decoration: underline; text-decoration-thickness: calc(2 * var(--u)); text-underline-offset: calc(4 * var(--u)); }
 
-  /* yellow bars: the Work heading, a project's name */
-  .wv3p-title { margin: 0; font: inherit; }
+  /* gray bars: Filtros, a project's name */
   .wv3p-bar {
     display: flex;
     align-items: center;
@@ -5939,7 +4525,7 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
     margin: 0;
     padding: 0 calc(12 * var(--u));
     border: var(--wv3-line);
-    background: var(--ccdv-yellow);
+    background: var(--wv3-fill);
     font: inherit;
     font-size: var(--wv3-t);
     font-weight: 400;
@@ -5948,13 +4534,44 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
   }
   .wv3p-bar__gear { flex: none; width: calc(11 * var(--u)); height: calc(11 * var(--u)); }
   .wv3p-title__toggle { cursor: pointer; }
-  .wv3p-title__fold { margin-left: auto; }
+  .wv3p-fold { display: inline-block; margin-left: auto; }
+  .wv3p-bar[aria-expanded="false"] .wv3p-fold { rotate: 180deg; }
 
-  /* the switch and the filters */
-  .wv3p-controls,
-  .wv3p-controls__panel,
-  .wv3p-filters { display: flex; flex-direction: column; gap: var(--wv3p-gap); }
-  .wv3p-controls__panel[hidden] { display: none; }
+  /* the switch and the filters: the panel folds by grid rows (0fr -> 1fr) */
+  .wv3p-controls { display: flex; flex-direction: column; }
+  .wv3p-controls__panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    visibility: hidden;
+    transition: visibility 0s linear 0.35s;
+  }
+  .wv3p-controls__panel[data-open] { grid-template-rows: 1fr; opacity: 1; visibility: visible; transition-delay: 0s; }
+  .wv3p-controls__inner {
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: var(--wv3p-gap-s);
+    padding: var(--wv3p-gap-s) 2px 2px;
+    margin-inline: -2px;
+  }
+  .wv3p-filters { display: flex; flex-direction: column; gap: var(--wv3p-gap-s); }
+  @media (prefers-reduced-motion: no-preference) {
+    .wv3p-controls__panel {
+      transition:
+        grid-template-rows 0.35s var(--wv3-ease),
+        opacity 0.3s var(--sm-ease),
+        visibility 0s linear 0.35s;
+    }
+    .wv3p-controls__panel[data-open] {
+      transition:
+        grid-template-rows 0.35s var(--wv3-ease),
+        opacity 0.3s var(--sm-ease),
+        visibility 0s linear 0s;
+    }
+    .wv3p-fold { transition: rotate 0.35s var(--wv3-ease); }
+  }
   .wv3p-switch { display: grid; grid-template-columns: 1fr 1fr; }
   .wv3p-switch__item {
     display: flex;
@@ -5962,15 +4579,23 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
     justify-content: center;
     box-sizing: border-box;
     min-height: calc(26 * var(--u));
+    margin: 0;
+    padding: 0;
     border: var(--wv3-line);
+    background: transparent;
+    font: inherit;
+    font-size: var(--wv3-t);
     color: inherit;
     text-decoration: none;
     white-space: nowrap;
+    cursor: pointer;
   }
   .wv3p-switch__item + .wv3p-switch__item { margin-left: calc(-0.533 * var(--u)); }
-  .wv3p-switch__item[aria-current="page"] { background: var(--ccdv-yellow); }
+  .wv3p-switch__item[aria-pressed="true"] { background: var(--wv3-on); }
   @media (hover: hover) {
-    .wv3p-switch__item:not([aria-current]):hover { background: var(--ccdv-white); }
+    .wv3p-switch__item:not([aria-pressed="true"]):hover,
+    .wv3p .wv3-side__item:is(button):not([aria-pressed="true"]):hover { background: var(--ccdv-panel); }
+    .wv3p-switch__item[aria-pressed="true"]:hover { background: var(--wv3-on); }
   }
 
   /* a list's label between two rules: FEATURED + one square per project, or All works */
@@ -5991,7 +4616,7 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
     min-height: calc(26 * var(--u));
     margin: 0;
     border: var(--wv3-line);
-    background: var(--ccdv-yellow);
+    background: var(--wv3-fill);
     font: inherit;
     font-size: var(--wv3-t);
     font-weight: 400;
@@ -6007,10 +4632,11 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
     background: transparent;
     cursor: pointer;
   }
-  .wv3p-pages__page[aria-pressed="true"] { background: var(--ccdv-yellow); }
+  .wv3p-pages__page[aria-pressed="true"] { background: var(--wv3-on); }
+  .wv3p-pages__page[data-empty] { opacity: 0.5; cursor: default; }
 
-  /* Featured: bar, copy, the one image (whole; cropped only past 85% of a
-     tall tablet screen), the actions */
+  /* Featured: bar, copy, the actions, then the one image (whole; cropped only past 85% of a
+     tall tablet screen) */
   .wv3p-feature { display: flex; flex-direction: column; }
   .wv3p-feature__copy { margin-top: calc(16 * var(--u)); line-height: 1.35; }
   .wv3p-feature__image { margin-top: var(--wv3p-gap); border: calc(0.72 * var(--u)) solid #000; }
@@ -6058,6 +4684,119 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
   .wv3p .wv3p-actions { margin-top: 0; }
   .wv3p .wv3p-feature .wv3p-actions { margin-top: var(--wv3p-gap); }
   .wv3p-empty { padding: calc(8 * var(--u)); }
+
+  /* N4 P-K: the M1 bar + menu (STUDIO-RESP M1, above) only exist up to 767px;
+     on Work they also show at 768-1023, so the same rules are repeated here
+     scoped under .wv3p (below 768 the originals apply unchanged). The current
+     page is Work; the focus ring and the lilac square are the shared ones. */
+  @media (min-width: 768px) {
+    .wv3p .smm__bar {
+      position: sticky;
+      top: 0;
+      z-index: 21;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-sizing: border-box;
+      height: 50px;
+      padding: 0 12px;
+      background: var(--ccdv-panel);
+    }
+    .wv3p .smm__bar[data-open="true"] { background: var(--ccdv-ink); }
+    .wv3p .smm__toggle {
+      display: grid;
+      place-items: center;
+      width: var(--ccdv-tap);
+      height: 50px;
+      margin: 0 0 0 -9px;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: inherit;
+      cursor: pointer;
+    }
+    .wv3p .smm__gear { display: block; width: 26px; height: 26px; transition: transform 0.36s var(--studio-ease, ease); }
+    .wv3p .smm__bar[data-open="true"] .smm__gear { transform: rotate(180deg); }
+    .wv3p .smm__home { display: flex; align-items: center; height: 50px; padding-left: 12px; }
+    .wv3p .smm__pixel { display: block; width: 114.5px; height: 26.17px; }
+    .wv3p .smm__toggle:focus-visible,
+    .wv3p .smm__home:focus-visible { outline: 2px solid var(--ccdv-purple-card); outline-offset: -2px; }
+    .wv3p .smm__panel {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      height: calc(100dvh - 50px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      background: var(--ccdv-panel);
+      color: var(--ccdv-ink);
+      font-size: 16px;
+      line-height: 1;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(-14px);
+      transition:
+        opacity 0.28s var(--studio-ease, ease),
+        transform 0.36s var(--studio-ease, ease),
+        visibility 0s linear 0.36s;
+    }
+    .wv3p .smm__panel[data-open="true"] {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: none;
+      transition-delay: 0s;
+    }
+    .wv3p .smm__panel ul { margin: 0; padding: 0; list-style: none; }
+    .wv3p .smm__panel a { color: inherit; text-decoration: none; }
+    .wv3p .smm__panel a:focus-visible { outline: 2px solid var(--ccdv-purple-card); outline-offset: 2px; }
+    .wv3p .smm__routes { display: grid; gap: 12px; padding: 12px 12px 0; flex: none; }
+    .wv3p .smm__route {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-sizing: border-box;
+      min-height: var(--ccdv-tap);
+      padding: 0 16px;
+      border: 1px solid var(--ccdv-ink);
+    }
+    .wv3p .smm__square { box-sizing: border-box; width: 8px; height: 8px; border: 1px solid currentColor; }
+    .wv3p .smm__route[aria-current="page"] { background: var(--ccdv-ink); color: var(--ccdv-panel); }
+    .wv3p .smm__route[aria-current="page"] .smm__square { border-color: var(--ccdv-purple-card); background: var(--ccdv-purple-card); }
+    .wv3p .smm__ccos { flex: none; margin: 18px 12px 12px; padding: 8px 0; border-block: 1px solid var(--ccdv-ink); }
+    .wv3p .smm__systems { display: grid; }
+    .wv3p .smm__system { position: relative; display: flex; align-items: center; gap: 10px; height: 33px; font-size: 16px; line-height: 22px; }
+    .wv3p .smm__system-icon { flex: none; display: block; width: 24px; height: auto; }
+    .wv3p .smm__system::after { content: ""; position: absolute; inset: -6px 0; }
+    .wv3p .smm__foot {
+      box-sizing: border-box;
+      display: flex;
+      flex: 1 0 auto;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 40px;
+      padding: 40px 12px 16px;
+      background: var(--ccdv-ink);
+      color: var(--ccdv-panel);
+      font-size: 12px;
+      line-height: 22px;
+      text-align: left;
+    }
+    .wv3p .smm__brand { display: block; flex: none; width: 146px; height: auto; aspect-ratio: 648 / 120; color: var(--ccdv-panel); }
+    .wv3p .smm__year { align-self: flex-end; margin-top: auto; text-align: right; }
+    .wv3p .smm__contact a { position: relative; text-decoration: underline; text-underline-offset: 3px; }
+    .wv3p .smm__contact a::after { content: ""; position: absolute; inset: -11px -4px; }
+    @media (prefers-reduced-motion: reduce) {
+      .wv3p .smm__panel,
+      .wv3p .smm__gear { transition: none; }
+    }
+  }
 
   /* a case slides in over the page from the right */
   .wv3-case {

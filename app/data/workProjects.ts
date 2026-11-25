@@ -11,14 +11,11 @@ import adgPhoneStamp from "../assets/work/v3/adg-phone-stamp.webp";
 import adgPhoneRoute from "../assets/work/v3/adg-phone-route.webp";
 import adgSpecimenTt from "../assets/work/v3/adg-specimen-tt.svg";
 
-/* Shared Work / Workcase project registry (MTG02). Moved verbatim out of
-   work.tsx so Work and Workcase read ONE collection: same six projects, same
-   order, same `typeFilter` (the canonical Type filter key). Names/tags/WIP
-   status are verbatim from pages_work.png (`WPG-016`–`WPG-021`).
-
-   MTG02 CORR01 (FB002): `year` now holds the OPERATOR-approved factual years
-   (2026: ADG-ARC, ADG-OPS, CC.DV Website, CC.OS 0.1; 2025: HTW Website, HTW
-   Tool). 2024/2023 have no records, so they stay inert in Work's Year filter. */
+/* Shared Work / Workcase project registry (MTG02): the six registry projects
+   Workcase reads (id, name, tag, canonical typeFilter, year). MTG02 CORR01:
+   `year` holds the OPERATOR-approved years; AVAILABLE_YEARS (the years with a
+   registry project) decides whether a case's Year is a link. The archive's
+   rows, years and categories are the V3 data below. */
 
 export interface WorkProject {
   id: string;
@@ -29,13 +26,10 @@ export interface WorkProject {
   displayName?: string;
   /** OPERATOR-approved release year (null = none sourced) */
   year: string | null;
-  wip: boolean;
-  leading?: boolean;
-  /** set only when authentic Workcase data exists for this project */
-  href?: string;
 }
 
-const YEARS = ["2026", "2025", "2024", "2023"];
+/** the archive's years, newest first (the rail's Year list; Workcase links only those with a registry project) */
+export const V3_YEARS = ["2026", "2025", "2024", "2023"];
 
 /* Work V2 D2: the Type keys' display labels. The keys (`typeFilter`) stay
    canonical in Workcase links; the archive maps them to its categories. */
@@ -107,23 +101,18 @@ export function workcaseHref(id: string): string | undefined {
   return Object.prototype.hasOwnProperty.call(WORKCASES, id) ? `/work/${id}` : undefined;
 }
 
-const BASE_PROJECTS: Omit<WorkProject, "href">[] = [
-  { id: "adg-arc", name: "ADG-ARC", tag: "INTERACTIVE WEBSITE", typeFilter: "WEBSITE", year: "2026", wip: false, leading: true },
-  { id: "adg-ops", name: "ADG-OPS", tag: "DIGITAL PRODUCT", typeFilter: "DIGITAL PRODUCT", year: "2026", wip: true },
-  { id: "ccdv-website", name: "CC.DV Website", tag: "WEBSITE", typeFilter: "WEBSITE", year: "2026", wip: false },
-  { id: "htw-website", name: "HTW Website", tag: "WEBSITE", typeFilter: "WEBSITE", year: "2025", wip: true },
-  { id: "htw-tool", name: "HTW Tool", tag: "TOOL", typeFilter: "TOOL", year: "2025", wip: true },
+const PROJECTS: WorkProject[] = [
+  { id: "adg-arc", name: "ADG-ARC", tag: "INTERACTIVE WEBSITE", typeFilter: "WEBSITE", year: "2026" },
+  { id: "adg-ops", name: "ADG-OPS", tag: "DIGITAL PRODUCT", typeFilter: "DIGITAL PRODUCT", year: "2026" },
+  { id: "ccdv-website", name: "CC.DV Website", tag: "WEBSITE", typeFilter: "WEBSITE", year: "2026" },
+  { id: "htw-website", name: "HTW Website", tag: "WEBSITE", typeFilter: "WEBSITE", year: "2025" },
+  { id: "htw-tool", name: "HTW Tool", tag: "TOOL", typeFilter: "TOOL", year: "2025" },
   /* D1: CC.OS 0.3 is a prospective WIP title, not the shipped version */
-  { id: "ccos-01", name: "CC.OS 0.1", displayName: "CC.OS 0.3", tag: "WEBSITE", typeFilter: "WEBSITE", year: "2026", wip: true },
+  { id: "ccos-01", name: "CC.OS 0.1", displayName: "CC.OS 0.3", tag: "WEBSITE", typeFilter: "WEBSITE", year: "2026" },
 ];
 
-const PROJECTS: WorkProject[] = BASE_PROJECTS.map((project) => ({
-  ...project,
-  href: workcaseHref(project.id),
-}));
-
 /* Years that actually have records — derived, never listed by hand. */
-export const AVAILABLE_YEARS = YEARS.filter((year) => PROJECTS.some((project) => project.year === year));
+export const AVAILABLE_YEARS = V3_YEARS.filter((year) => PROJECTS.some((project) => project.year === year));
 
 export function findProject(id: string): WorkProject | undefined {
   return PROJECTS.find((project) => project.id === id);
@@ -141,8 +130,6 @@ export function findProject(id: string): WorkProject | undefined {
    URL is derived: a case study opens only where WORKCASES has one (ADG-ARC);
    a live site only where the OPERATOR gave its URL (`liveUrl`, N3 C1). */
 
-/** the rail's lists, as the archive artboard draws them */
-export const V3_YEARS = ["2026", "2025", "2024", "2023"];
 /* N4 P-H B-19 (OPERATOR): only categories that have rows; PRODUCT (none) out,
    SERVICE (ADG Laus) in. A new category is added here by hand. */
 export const V3_ARCHIVE_CATEGORIES = ["WEBSITE", "TOOL", "CC.OS", "PLATFORM", "SERVICE"];
@@ -199,6 +186,9 @@ export const ARCHIVE_ROWS: ArchiveRow[] = [
   archiveRow("adg-laus-2024", "2024", "SERVICE", "Code", "ADG Laus Scripts", "ADG-FAD ET", "[x]"),
   archiveRow("adg-laus-2023", "2023", "SERVICE", "Code", "ADG Laus Scripts", "ADG-FAD ET", "[x]"),
 ];
+
+/** whether any archive row has this year / category (a filter value without rows is inert) */
+export const hasRows = (field: "year" | "category", value: string) => ARCHIVE_ROWS.some((entry) => entry[field] === value);
 
 /** the artboard's selected row */
 export const DEFAULT_ARCHIVE_ROW = "adg-arc";

@@ -1,7 +1,7 @@
 /* The overlapping outlined diamonds in the Contact masthead's active cell.
    Transcribed from pages_contact.svg's own active-cell icon, the same
    mask-source-silhouette-as-stroked-outline simplification already used by
-   WorkGearTile/ServicesArrowTile: the reference's doubled mask geometry is
+   ServicesArrowTile: the reference's doubled mask geometry is
    dropped and the single source path is drawn directly with fill="none". */
 
 const DIAMONDS_OUTLINE =

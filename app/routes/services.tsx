@@ -41,12 +41,14 @@ export default function Services() {
   const rootRef = useRef<HTMLDivElement>(null);
   const indexRef = useRef<HTMLElement>(null);
   const redRef = useRef<HTMLDivElement>(null);
+  const pageRef = useRef<HTMLElement>(null);
 
   useSceneReveal(rootRef, reduced);
   // NAV-T3: the bar appears once the cover lockup (A8: the V3 card) has scrolled past
   useBoundaryNav(rootRef, indexRef, ".masthead--services", ".cmh");
   useNavIdle(rootRef);
   usePinTop(indexRef, redRef);
+  usePinTop(pageRef); // N4 P-K D: the page holds at its end while the footer rises over it
   // A3: one gesture, one rise; stops at the markers and the Formation scene
   useStepScroll(rootRef, ".pin-snap, .sv-fm", reduced);
 
@@ -57,8 +59,10 @@ export default function Services() {
           while the red rises over it. The in-flow markers (`pin-snap`) are the
           stepper's stops (motion/stepScroll.ts, A3), since a sticky element's
           own position moves with it. N4 P-H A-14: the curtain is the main
-          landmark, so the footer is the page's contentinfo */}
-      <main className="scene-curtain">
+          landmark, so the footer is the page's contentinfo. N4 P-K D
+          (OPERATOR): `page-pin` makes the main hold at the page end (desktop)
+          while the footer rises over it */}
+      <main className="scene-curtain page-pin" ref={pageRef}>
         <ServicesCover reduced={reduced} />
 
         <span className="pin-snap" aria-hidden="true" />

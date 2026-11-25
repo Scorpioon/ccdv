@@ -35,7 +35,7 @@ const PEEK_EDGE = 70; // px from the top edge that reveals the bar (A1)
 const PEEK_SLACK = 24; // px below the bar before it is let go
 const PEEK_HIDE_MS = 250;
 const SCROLL_DIR_MIN = 4; // px: smaller moves do not count as a direction (A9)
-const INPUT_RECENT_MS = 900; // A12: a scroll this soon after wheel / key / touch is that input's (a 0.7 s step included)
+const INPUT_RECENT_MS = 1400; // A12: a scroll this soon after wheel / key / touch is that input's (a step of up to 1.2 s included)
 const SCROLL_ONLY_MIN = 40; // px: A12, a scroll with no input behind it (scrollbar) must travel this far
 const SCROLL_KEYS = new Set(["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "]);
 
@@ -151,7 +151,10 @@ export function useBoundaryNav(
    tall or less, it pins at the top; taller (a long Service Index category), it
    is read to its end first and pins by its bottom, so nothing is cut. Only
    the CSS at >= 1024px reads the property. Re-measured on resize and when
-   the module changes size. */
+   the module changes size.
+   N4 P-K D: also the legacy pages' `.page-pin` (Home, Studio, Services,
+   Products, Contact): the whole page body holds at the page end while the
+   footer rises over it, so the same bottom-aligned pin applies. */
 /* FLOW-T1 (OPERATOR): what a curtain fully covers is marked `data-covered` —
    the pinned module once the next section's top has reached the top of the
    screen, and the cover (the curtain's first child) once the module has. The

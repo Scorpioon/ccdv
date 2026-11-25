@@ -54,9 +54,11 @@ export default function Studio() {
   const rootRef = useRef<HTMLDivElement>(null);
   const approachRef = useRef<HTMLElement>(null);
   const lilacRef = useRef<HTMLDivElement>(null);
+  const pageRef = useRef<HTMLElement>(null);
 
   useSceneReveal(rootRef, reduced);
   usePinTop(approachRef, lilacRef);
+  usePinTop(pageRef); // N4 P-K D: the page holds at its end while the footer rises over it
   // NAV-T3 (OPERATOR, supersedes A3's edge): the bar appears once the cover
   // lockup's lower edge has scrolled past, or when the Approach arrives on a
   // screen tall enough that the lockup never leaves. N1: the bar itself is the
@@ -74,8 +76,10 @@ export default function Studio() {
           tall, while the lilac rises over it. The in-flow markers (`pin-snap`)
           are the stepper's stops (motion/stepScroll.ts, A3), since a sticky
           element's own position moves with it. N4 P-H A-14: the curtain is
-          the main landmark, so the footer is the page's contentinfo */}
-      <main className="scene-curtain">
+          the main landmark, so the footer is the page's contentinfo. N4 P-K D
+          (OPERATOR): `page-pin` makes the main hold at the page end (desktop)
+          while the footer rises over it */}
+      <main className="scene-curtain page-pin" ref={pageRef}>
         <StudioCover />
 
         <span className="pin-snap" aria-hidden="true" />

@@ -4,7 +4,7 @@ import { apply, mul, rotX, rotY, rotZ, type Mat3, type Vec3 } from "../marks/Stu
 
 /* Products V2 artwork. The hero cube and the card icons are transcribed from
    PRODUCTS_v2.svg: each viewBox is the drawing's own source box, so the path
-   data is pasted unchanged (the ProductsCard / WorkGearTile convention). The
+   data is pasted unchanged (the ProductsCard convention). The
    phone artboard (PRODUCTS_responsive_v2.svg) draws the same shapes uniformly
    scaled, so one drawing serves both layouts.
 

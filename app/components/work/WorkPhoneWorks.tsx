@@ -6,7 +6,8 @@ import { ARCHIVE_GROUP_YEARS, FUTURE_YEARS, type ArchiveRow } from "../../data/w
    group per year, in the archive's order (2027 first, dimmed as on desktop):
    the year's white box with its trailing rule, between two rules, then its
    cards (WorkArchiveCard). Every group carries its year (the artboard's first
-   group has none; read as an omission). The filters are the archive's. */
+   group has none; read as an omission). The filters are the archive's.
+   N4 P-K: the year boxes stay white; the label box is gray (CSS). */
 
 export function WorkPhoneWorks({ rows }: { rows: ArchiveRow[] }) {
   const groups = ARCHIVE_GROUP_YEARS.map((year) => ({ year, rows: rows.filter((entry) => entry.year === year) })).filter(

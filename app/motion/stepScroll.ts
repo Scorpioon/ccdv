@@ -18,12 +18,20 @@
    sideways wheels, a wheel over an inner area that can still scroll, keys in
    a form field, and a page that is fading out. A scroll that ends between two
    rest points by other means (scrollbar, focus, restored offset) glides to
-   the nearer one. Reduced motion: the same steps, instant. */
+   the nearer one. Reduced motion: the same steps, instant.
+
+   N4 P-K C: a step takes STEP_S for up to one screen and scales with the
+   distance beyond that, capped at STEP_MAX_S (the Products cover rise, about
+   1.67 screens, takes about 1.17 s).
+   N4 P-K D: a `.page-pin` child of the root (the legacy footer curtain, which
+   holds the page while the footer rises) is shifted up by the pinned offset,
+   so the stops inside it are measured at their natural position. */
 import { useEffect, useRef } from "react";
 import type { RefObject } from "react";
 
 const DESKTOP = "(min-width: 1024px)";
 const STEP_S = 0.7;
+const STEP_MAX_S = 1.2; // N4 P-K C: a long rise (Products cover, ≈1.67 screens → ≈1.17 s) is scaled up to this
 const QUIET_MS = 180; // wheel silence that ends a gesture
 const SETTLE_MS = 150; // scroll silence before a stray offset is settled
 const EDGE = 2; // px tolerance on a rest point
@@ -82,8 +90,18 @@ export function useStepScroll(
       const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
       const points = [0, max];
       if (stopSelector) {
+        /* N4 P-K D: once the page-pin holds, its stops sit `shift` px lower than
+           their natural place (the footer's top less the pin's own height is
+           where the pin would be unpinned) */
+        const pin = root.querySelector<HTMLElement>(":scope > .page-pin");
+        const after = pin?.nextElementSibling;
+        let shift = 0;
+        if (pin && after instanceof HTMLElement) {
+          const r = pin.getBoundingClientRect();
+          shift = Math.max(0, r.top - (after.getBoundingClientRect().top - r.height));
+        }
         root.querySelectorAll<HTMLElement>(stopSelector).forEach((el) => {
-          points.push(el.getBoundingClientRect().top + window.scrollY);
+          points.push(el.getBoundingClientRect().top + window.scrollY - (pin?.contains(el) ? shift : 0));
         });
       }
       const stops = [...new Set(points.map((p) => Math.round(Math.min(max, Math.max(0, p)))))].sort((a, b) => a - b);
@@ -135,11 +153,14 @@ export function useStepScroll(
         stepRef.current?.(direction, 0);
         return;
       }
-      stepRef.current?.(direction, STEP_S * 1000);
+      /* N4 P-K C: the duration follows the distance (a rise of more than one
+         screen takes longer, so its speed stays near a one-screen step's) */
+      const seconds = Math.min(STEP_MAX_S, STEP_S * Math.max(1, Math.abs(distance) / window.innerHeight));
+      stepRef.current?.(direction, seconds * 1000);
       animating = true;
       const begin = performance.now();
       const tick = (now: number) => {
-        const t = Math.min(1, (now - begin) / (STEP_S * 1000));
+        const t = Math.min(1, (now - begin) / (seconds * 1000));
         window.scrollTo({ top: from + distance * ease(t), behavior: "instant" });
         if (t < 1) {
           frame = requestAnimationFrame(tick);

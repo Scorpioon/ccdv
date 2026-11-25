@@ -6,10 +6,13 @@ import { ARCHIVE_ROWS, FEATURED_PROJECTS, WORK_INTRO, archiveTitle } from "../..
 /* N4 P-J (OPERATOR, WORK V3_responsive y764..1672): Featured on phones and
    tablets. Between two rules, the `FEATURED` label and one square per
    featured project (OPERATOR: the squares are the projects; today one,
-   ADG-ARC; the open one is yellow). Then the project: its yellow bar, the
-   Work line and its description, its one image (the phone landing, whole),
-   and its two actions (WorkActions: the same honest states as the archive).
-   The project's actions are its archive row's. */
+   ADG-ARC; the open one is white; N4 P-K: always five squares, the unused
+   ones empty and dimmed). Then the project: its gray bar, the Work line and
+   its description, its two actions (WorkActions: the same honest states as
+   the archive; N4 P-K: above the image), then its one image (the phone
+   landing, whole). The project's actions are its archive row's. */
+
+const SLOTS = 5;
 
 export function WorkPhoneFeatured() {
   const [active, setActive] = useState(0);
@@ -34,18 +37,22 @@ export function WorkPhoneFeatured() {
               onClick={() => setActive(i)}
             />
           ))}
+          {Array.from({ length: Math.max(0, SLOTS - FEATURED_PROJECTS.length) }, (_, i) => (
+            <span key={`empty-${i}`} className="wv3p-pages__page" data-empty="" aria-hidden="true" />
+          ))}
         </div>
       </div>
 
       <article className="wv3p-feature" aria-labelledby="wv3p-feature-name">
         <h3 className="wv3p-bar" id="wv3p-feature-name">
-          <GearMark className="wv3p-bar__gear" fill="#1A1A1A" dotFill="#FEF36A" />
+          <GearMark className="wv3p-bar__gear" fill="#1A1A1A" dotFill="#D9D9D9" />
           {title}
         </h3>
         <div className="wv3p-feature__copy">
           <p>{WORK_INTRO}</p>
           <p>{project.description}</p>
         </div>
+        {row ? <WorkActions entry={row} className="wv3p-actions" /> : null}
         <div className="wv3p-feature__image">
           <img
             src={project.poster.src}
@@ -55,7 +62,6 @@ export function WorkPhoneFeatured() {
             decoding="async"
           />
         </div>
-        {row ? <WorkActions entry={row} className="wv3p-actions" /> : null}
       </article>
     </section>
   );

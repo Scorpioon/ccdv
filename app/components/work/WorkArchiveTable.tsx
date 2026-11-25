@@ -3,7 +3,7 @@ import { GearMark } from "../marks/GearMark";
 import { ARCHIVE_GROUP_YEARS, FUTURE_YEARS, workcaseHref, type ArchiveRow } from "../../data/workProjects";
 
 /* N3 Work V3 archive table (OPERATOR, WORK V3 _ archive.svg x284-1199).
-   The yellow `Work` bar, the column head, then one group per year (2027
+   The gray (N4 P-K) `Work` bar, the column head, then one group per year (2027
    first, subdued) with row separators; the selected row is gray.
 
    Mandatory column alignment (OPERATOR annotation): the head, every row and
@@ -65,13 +65,13 @@ export function WorkArchiveTable({
   return (
     <div className="wv3-table">
       <p className="wv3-table__bar">
-        <GearMark className="wv3-table__gear" fill="#1A1A1A" dotFill="#FEF36A" />
+        <GearMark className="wv3-table__gear" fill="#1A1A1A" dotFill="#D9D9D9" />
         Work
       </p>
       <div className="wv3-row wv3-row--head" aria-hidden="true">
         <span className="wv3-cell">[ YEAR ]</span>
         <span className="wv3-cell">[ CATEG. ]</span>
-        <span className="wv3-cell">[ RESPONSABILITY ]</span>
+        <span className="wv3-cell">[ ROLE ]</span>
         <span className="wv3-cell">[ PROJECT NAME]</span>
         <span className="wv3-cell">[CLIENT]</span>
         <span className="wv3-cell wv3-cell--glyph">[+]</span>

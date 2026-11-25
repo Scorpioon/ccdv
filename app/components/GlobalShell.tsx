@@ -165,11 +165,11 @@ function routeDir(from: string, to: string, pop: boolean): RouteDir {
   return "forward";
 }
 
-/* GF07-C: the shell no longer paints a header or footer. R1.1 gives Home and
-   Studio genuinely different mastheads (two loose squares vs. a five-cell nav
-   carrying the wheel tile), so each route owns its own chrome and this
-   component is reduced to route orchestration: navigation context, the exit/
-   enter presence that GF07-A established, and incoming-route focus. */
+/* GF07-C: the shell paints no page header or footer of its own. Home, Work and
+   CC.OS own their chrome; the four section pages share the bar rendered below
+   (N1 / N4 H6, see ChromeSection). The component otherwise orchestrates the
+   route: navigation context, the exit / enter presence (GF07-A), the skip link
+   and incoming-route focus. */
 export function GlobalShell({ children }: { children: ReactNode }) {
   const transition = useTransitionCoordinator();
   const location = useLocation();

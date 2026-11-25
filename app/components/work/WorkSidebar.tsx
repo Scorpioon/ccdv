@@ -8,7 +8,7 @@ import type { WorkView } from "./useWorkDeck";
 /* N3 Work V3 rail (OPERATOR, WORK V3.svg / WORK V3 _ archive.svg). It stays
    put while the workspace's content moves (W-A1):
      - the gear and the 2 x 2 pixel mark (WorkPixelBlock): Home;
-     - the yellow `Work` box (the page heading);
+     - the gray `Work` box (the page heading; N4 P-K: was yellow);
      - Year and Category, the archive's filters (AND; a head clears its
        group). W-A1 (OPERATOR: "I removed the filters from the upper screen;
        when going down, the filters appear"): hidden and inert on Featured,
@@ -28,14 +28,12 @@ const SECTIONS = [
 
 export function WorkSidebar({
   view,
-  marked,
   year,
   category,
   onYear,
   onCategory,
 }: {
   view: WorkView;
-  marked: { year: string | null; category: string | null };
   year: string | null;
   category: string | null;
   onYear: (value: string | null) => void;
@@ -53,13 +51,13 @@ export function WorkSidebar({
       </Link>
 
       <h1 className="wv3-side__title" id="work-title">
-        <GearMark className="wv3-side__title-gear" fill="#1A1A1A" dotFill="#FEF36A" />
+        <GearMark className="wv3-side__title-gear" fill="#1A1A1A" dotFill="#D9D9D9" />
         Work
       </h1>
 
       <div className="wv3-side__filters" data-shown={filtersShown ? "" : undefined} inert={!filtersShown}>
         <div className="wv3-side__filters-inner">
-          <WorkFilterLists marked={marked} year={year} category={category} onYear={onYear} onCategory={onCategory} />
+          <WorkFilterLists year={year} category={category} onYear={onYear} onCategory={onCategory} />
         </div>
       </div>
 

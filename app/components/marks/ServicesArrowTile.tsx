@@ -1,9 +1,9 @@
 /* The thin-outline NE arrow in the Services masthead's active cell.
 
    Transcribed from pages_services.svg's own active-cell icon, the same way
-   as WorkGearTile: the reference's mask-source silhouette (a simple arrow
+   as the other masthead tiles: the reference's mask-source silhouette (a simple arrow
    shaft + head, no teeth) is reproduced directly as a stroked outline rather
-   than carrying its doubled mask geometry. Stroke width matches WorkGearTile's
+   than carrying its doubled mask geometry. Stroke width is
    0.5 for the same reason — the nearest value either reference states
    explicitly, used in place of the measured ~0.72 doubled-path offset. */
 

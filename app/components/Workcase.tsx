@@ -2,16 +2,16 @@ import { Link } from "react-router";
 import { useTransitionLink } from "./GlobalShell";
 import { AVAILABLE_YEARS, type WorkProject, type WorkcaseData } from "../data/workProjects";
 
-/* Reusable Workcase page (MTG02 / `CCDV-FBI-022`), composed per R1.1
-   `pages_workcase.png`: shared masthead, full-width yellow title band, hero
-   photo + metadata panel, divider, static showcase screenshots, shared
-   footer. Every field but the project identity and `showcase` is optional and
-   is simply not rendered when absent — no placeholder copy is invented.
+/* Reusable Workcase (MTG02 / `CCDV-FBI-022`), composed per R1.1
+   `pages_workcase.png`: full-width yellow title band, hero photo + metadata
+   panel, divider, static showcase screenshots (no masthead or footer: it is
+   drawn inside the Work workspace, see N3 W-A1 below). Every field but the
+   project identity and `showcase` is optional and is simply not rendered when
+   absent — no placeholder copy is invented.
 
    The three title-band controls are three separate links to Work
    (`WKC-DEC-001/002/003`): left arrow, `[Work]`, `collapse`. All carry
-   `state.restore`, which Work reads to restore the prior Type filter,
-   desktop List/Mosaic choice and scroll (MTG02 scope choice for `[Work]` /
+   `state.restore`, which Work reads to restore the prior filters (MTG02 scope choice for `[Work]` /
    `collapse`; the arrow is `WKC-DEC-001`). The Type value links back to Work
    with the canonical Type selected (`WKC-DEC-005`) — `state.filter`, which
    Work applies without restoring stale scroll. CORR01: the metadata box keeps

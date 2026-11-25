@@ -3,7 +3,7 @@ import { WorkActions } from "./WorkActions";
 import { ARCHIVE_POSTERS, archiveTitle, type ArchiveRow } from "../../data/workProjects";
 
 /* N4 P-J (OPERATOR, WORK V3_responsive2 y862..2108): one archive row as a
-   card on phones and tablets — the yellow bar with the project's name, its
+   card on phones and tablets — the gray bar (N4 P-K: was yellow) with the project's name, its
    image (cropped to 341 x 143, only where the project has one; OPERATOR: no
    image block otherwise), the white facts box (Year, Type, Role, Project
    Name, Client: the row's year, category, responsibility, name and client,
@@ -24,7 +24,7 @@ export function WorkArchiveCard({ entry }: { entry: ArchiveRow }) {
     <li className="wv3p-card">
       <article aria-label={title}>
         <h3 className="wv3p-bar">
-          <GearMark className="wv3p-bar__gear" fill="#1A1A1A" dotFill="#FEF36A" />
+          <GearMark className="wv3p-bar__gear" fill="#1A1A1A" dotFill="#D9D9D9" />
           {title}
         </h3>
         {image ? (

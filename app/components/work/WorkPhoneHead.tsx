@@ -1,47 +1,20 @@
-import { Link } from "react-router";
-import { useTransitionLink } from "../GlobalShell";
-import { GearMark } from "../marks/GearMark";
-import { CcdvPixelMark } from "../marks/CcdvPixelMark";
+import { StudioMobileMenu } from "../StudioMobileMenu";
 
-/* N4 P-J (OPERATOR, WORK V3_responsive / _responsive2, 390 wide): the Work
-   head on phones and tablets — a light card (x24, 342 x 281.7, radius 12):
-   the gear and the inline CCDV mark (Home), `■ CC: DEV UNIT → WORK ■`, then
-   the four other sections. The desktop rail (WorkSidebar) is not used below
-   1024. */
-
-const SECTIONS = [
-  { label: "STUDIO", to: "/studio" },
-  { label: "SERVICES", to: "/services" },
-  { label: "PRODUCTS", to: "/products" },
-  { label: "CONTACT", to: "/contact" },
-];
+/* N4 P-K (OPERATOR): the Work head on phones and tablets is the M1 menu bar
+   (the gear opens the menu, the pixel mark is Home; the same bar as the other
+   sections, Work current) over a rounded light card with the page's one h1,
+   `CCDV:WORK`. It replaces the P-J card (gear, mark, `CC: DEV UNIT -> WORK`,
+   section links). The desktop rail (WorkSidebar) is not used below 1024. */
 
 export function WorkPhoneHead() {
-  const link = useTransitionLink();
   return (
-    <header className="wv3p-head">
-      <Link className="wv3p-head__home" aria-label="CCDV — Home" {...link("/")}>
-        <GearMark className="wv3p-head__gear" fill="#1A1A1A" dotFill="#F2F2F2" />
-        <CcdvPixelMark variant="inline" className="wv3p-head__pixel" fill="#1A1A1A" />
-      </Link>
-      <nav className="wv3p-head__nav" aria-label="Sections">
-        <p className="wv3p-head__unit">
-          <span className="wv3p-head__sq" aria-hidden="true" />
-          <span>
-            CC: DEV UNIT <span aria-hidden="true">→</span> WORK
-          </span>
-          <span className="wv3p-head__sq" aria-hidden="true" />
-        </p>
-        <ul className="wv3p-head__sections">
-          {SECTIONS.map(({ label, to }) => (
-            <li key={to}>
-              <Link className="wv3p-head__section" to={to}>
-                {label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    </header>
+    <>
+      <StudioMobileMenu current="/work" />
+      <div className="wv3p-head__card">
+        <h1 className="wv3p-head__title">
+          <span>CCDV:WORK</span>
+        </h1>
+      </div>
+    </>
   );
 }

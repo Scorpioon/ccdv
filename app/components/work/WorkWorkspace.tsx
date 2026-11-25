@@ -9,17 +9,18 @@ import { WorkPhoneHead } from "./WorkPhoneHead";
 import { WorkPhoneFilters } from "./WorkPhoneFilters";
 import { WorkPhoneFeatured } from "./WorkPhoneFeatured";
 import { WorkPhoneWorks } from "./WorkPhoneWorks";
+import { SiteFooter } from "../SiteFooter";
 import { Workcase } from "../Workcase";
 import { useWorkDeck, type WorkMove, type WorkView } from "./useWorkDeck";
 import { useMotionPolicy } from "../../motion/reducedMotion";
 import {
   ARCHIVE_ROWS,
   DEFAULT_ARCHIVE_ROW,
-  FEATURED_PROJECTS,
   V3_ARCHIVE_CATEGORIES,
   V3_YEARS,
   WORKCASES,
   findProject,
+  hasRows,
   typeLabel,
   workcaseHref,
 } from "../../data/workProjects";
@@ -27,7 +28,8 @@ import {
 /* N3 Work V3, W-A1 (OPERATOR): one Work workspace for /work (Featured),
    /work/archive and /work/:slug (a case), drawn once by the `work` layout
    route, so moving between them never loads a page (GlobalShell keeps one key
-   for every /work path; no shared bar, no footer).
+   for every /work path; no shared bar; phones / tablets end on the site
+   footer, desktop has none).
 
    Desktop (>= 1024): the rail (WorkSidebar) stays put; the content sits on a
    plane beside it and moves, as the CC.OS deck does (useWorkDeck: wheel,
@@ -39,11 +41,12 @@ import {
    fills the screen with the artboard's margins (51.2 around, the rail 185,
    the content from 260.2), the unit set by the screen's height.
    Phones / tablets (N4 P-J, OPERATOR: WORK V3_responsive / _responsive2):
-   their own layout, one natively scrolling page — the head card
-   (WorkPhoneHead), the `Work` bar, the Featured / All works switch and the
-   filters (WorkPhoneFilters), then either Featured (WorkPhoneFeatured) or
-   All works (WorkPhoneWorks, one card per row); a filter chosen on
-   Featured opens All works. A case slides in over the page from the right;
+   their own layout, one natively scrolling page — the M1 menu bar and the
+   `CCDV:WORK` card (WorkPhoneHead), the `Filtros` bar, the Featured / All
+   works switch and the filters (WorkPhoneFilters), then either Featured
+   (WorkPhoneFeatured) or All works (WorkPhoneWorks, one card per row); a
+   filter chosen on Featured opens All works (N4 P-K: the switch is two
+   buttons that set the list and replace the URL). A case slides in over the page from the right;
    the page is taken to its top first (B-01: the overlay is fixed inside the
    shell, whose `container-type` makes the shell its box) and put back on
    the way out.
@@ -77,8 +80,6 @@ function writeContext(value: { year: string | null; category: string | null }) {
     /* storage unavailable: the archive simply does not restore */
   }
 }
-
-const hasRows = (field: "year" | "category", value: string) => ARCHIVE_ROWS.some((entry) => entry[field] === value);
 
 function validYear(value: unknown): string | null {
   return typeof value === "string" && V3_YEARS.includes(value) && hasRows("year", value) ? value : null;
@@ -165,10 +166,6 @@ export function WorkWorkspace() {
   const selected =
     rows.find((entry) => entry.id === selectedId) ?? rows[0] ?? ARCHIVE_ROWS.find((entry) => entry.id === DEFAULT_ARCHIVE_ROW)!;
 
-  const featured = FEATURED_PROJECTS[0];
-  const marked =
-    view === "featured" ? { year: featured.year, category: featured.category } : { year: selected.year, category: selected.category };
-
   const move = (to: WorkMove) => {
     if (to === "down" && view === "featured") navigate("/work/archive", { preventScrollReset: true });
     else if (to === "up" && view === "archive") navigate("/work", { preventScrollReset: true });
@@ -187,7 +184,8 @@ export function WorkWorkspace() {
      tablets (N4 P-J) one chosen on Featured opens All works too */
   const filterFrom = (set: (value: string | null) => void) => (value: string | null) => {
     set(value);
-    if (view === "case" || (!desktop && view === "featured")) navigate("/work/archive", { preventScrollReset: true });
+    if (view === "case") navigate("/work/archive", { preventScrollReset: true });
+    else if (!desktop && view === "featured") showList("archive");
   };
 
   /* N4 P-J: the list shown under a phone case is the one it was opened from
@@ -196,6 +194,15 @@ export function WorkWorkspace() {
   useEffect(() => {
     if (view !== "case") setList(view);
   }, [view]);
+
+  /* N4 P-K: the Featured / All works switch is two buttons, not two links; it
+     sets the list at once and the URL follows (replace: the switch is a view
+     of one page, not a history step) */
+  const showList = (next: "featured" | "archive") => {
+    setList(next);
+    const to = next === "featured" ? "/work" : "/work/archive";
+    if (path !== to) navigate(to, { replace: true, preventScrollReset: true });
+  };
 
   /* N4 P-J (B-01): phones take the page to its top before a case shows, and
      back to where it was when the case leaves */
@@ -237,22 +244,31 @@ export function WorkWorkspace() {
   );
 
   if (!desktop) {
+    /* N4 P-K: the footer is a sibling of .wv3 (not inside it: .wv3 redefines
+       --u); the case overlay (fixed, z 30) covers it, inert keeps it out of reach */
     return (
-      <div className="r11 wv3 wv3p" ref={rootRef} data-view={view}>
-        <div className="wv3p-page" inert={caseOpen}>
-          <WorkPhoneHead />
-          <WorkPhoneFilters
-            list={list}
-            marked={marked}
-            year={year}
-            category={category}
-            onYear={filterFrom(setYear)}
-            onCategory={filterFrom(setCategory)}
-          />
-          <main className="wv3p-main">{list === "featured" ? <WorkPhoneFeatured /> : <WorkPhoneWorks rows={rows} />}</main>
+      <>
+        <div className="r11 wv3 wv3p" ref={rootRef} data-view={view}>
+          <div className="wv3p-page" inert={caseOpen}>
+            <WorkPhoneHead />
+            <WorkPhoneFilters
+              list={list}
+              onList={showList}
+              year={year}
+              category={category}
+              onYear={filterFrom(setYear)}
+              onCategory={filterFrom(setCategory)}
+            />
+            <main className="wv3p-main" id="wv3p-list">
+              {list === "featured" ? <WorkPhoneFeatured /> : <WorkPhoneWorks rows={rows} />}
+            </main>
+          </div>
+          {caseSection}
         </div>
-        {caseSection}
-      </div>
+        <div className="r11 wv3p-foot" inert={caseOpen}>
+          <SiteFooter />
+        </div>
+      </>
     );
   }
 
@@ -260,7 +276,6 @@ export function WorkWorkspace() {
     <div className="r11 wv3" ref={rootRef} data-view={view}>
       <WorkSidebar
         view={view}
-        marked={marked}
         year={year}
         category={category}
         onYear={filterFrom(setYear)}

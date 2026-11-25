@@ -4,7 +4,7 @@ import { CoverMasthead } from "../components/CoverMasthead";
 import { ContactDirectory } from "../components/ContactDirectory";
 import { useMotionPolicy } from "../motion/reducedMotion";
 import { index, useSceneReveal } from "../motion/studioMotion";
-import { useBoundaryNav, useNavIdle } from "../motion/routeNav";
+import { useBoundaryNav, useNavIdle, usePinTop } from "../motion/routeNav";
 import { useStepScroll } from "../motion/stepScroll";
 
 export function meta() {
@@ -35,16 +35,20 @@ export default function Contact() {
   const { reduced } = useMotionPolicy();
   const rootRef = useRef<HTMLDivElement>(null);
   const directoryRef = useRef<HTMLElement>(null);
+  const pageRef = useRef<HTMLElement>(null);
 
   useSceneReveal(rootRef, reduced);
   useBoundaryNav(rootRef, directoryRef, ".masthead--contact", ".cmh");
   useNavIdle(rootRef);
+  usePinTop(pageRef); // N4 P-K D: the page holds at its end while the footer rises over it
   useStepScroll(rootRef, null, reduced);
 
   return (
     <div className="r11 r11--contact" ref={rootRef}>
-      {/* N4 P-H A-14: the card is the main landmark; the footer is its contentinfo */}
-      <main className="ct" aria-labelledby="contact-title">
+      {/* N4 P-H A-14: the card is the main landmark; the footer is its contentinfo.
+          N4 P-K D (OPERATOR): `page-pin` makes it hold at the page end (desktop)
+          while the footer rises over it */}
+      <main className="ct page-pin" aria-labelledby="contact-title" ref={pageRef}>
         <div className="ct__frame">
           <CoverMasthead page="Contact" />
 
