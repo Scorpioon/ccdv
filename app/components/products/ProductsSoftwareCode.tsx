@@ -35,7 +35,10 @@ export function ProductsSoftwareCode({
   const [selected, setSelected] = useState(0);
   const tabsRef = useRef<HTMLDivElement>(null);
   const last = PRODUCTS_TOPICS.length - 1;
-  const [wide, setWide] = useState(false);
+  /* N4 H2/H4: read the breakpoint on the first render; false when there is no window */
+  const [wide, setWide] = useState(() =>
+    typeof window === "undefined" ? false : window.matchMedia("(min-width: 1024px)").matches,
+  );
 
   useEffect(() => {
     const query = window.matchMedia("(min-width: 1024px)");
@@ -100,9 +103,10 @@ export function ProductsSoftwareCode({
           <div
             key={topic.key}
             className="pv-topic"
-            role="tabpanel"
+            /* N4 H2/H4: no tabpanel role on wide screens, where the tablist is hidden */
+            role={wide ? undefined : "tabpanel"}
             id={`pv-topic-${topic.key}`}
-            aria-labelledby={`pv-label-${topic.key}`}
+            aria-labelledby={wide ? undefined : `pv-label-${topic.key}`}
             data-active={i === selected}
           >
             <div className="pv-topic__art">

@@ -4,46 +4,30 @@ import { useTransitionLink } from "./GlobalShell";
 import { GearMark } from "./marks/GearMark";
 import { CcdvPixelMark } from "./marks/CcdvPixelMark";
 import { StudioWheelTile } from "./marks/StudioWheelTile";
-import { WorkGearTile } from "./marks/WorkGearTile";
 import { ServicesArrowTile } from "./marks/ServicesArrowTile";
 import { ProductsMarkTile } from "./marks/ProductsMarkTile";
 import { ContactMarkTile } from "./marks/ContactMarkTile";
 
-/* R1.1 gives Home one masthead and every other page the shared five-cell nav
-   (Studio, Work and Services each export their own copy of it with a
-   different cell filled and a different tile inside that cell — confirmed
-   identical cell geometry across all three pages' SVGs). Only the identity
-   lockup is common with Home. */
-
-/* Work, Services, Products and Contact exist in R1.1.
-
-   GF08-A4 CORRECTION 02 (supersedes the GF08-A2 "all five stay inert" note
-   above): Studio/Work/Services are the three sections GF08-A implemented.
-   GF08-B adds Products/Contact to this same routed set — see CLAUDE.md
-   §0/§6; CCOS and the six subsystem leaves stay a separate, unrouted
-   surface reached only by Products' own card 01 link, not from this nav.
-   A plain `react-router` `Link` is used rather than `useTransitionLink`,
-   deliberately: the transition coordinator's `TransitionTarget` union is
-   narrowly `"/" | "/studio"` and this movement must not widen it or give
-   the masthead new page-transition choreography — see NavBand's identical
-   reasoning for its own Work/Services/Products/Contact links. */
+/* N4 H6: one component for every route. Home gets the identity lockup only,
+   with the mark as a non-link span. Each section variant adds the five-cell
+   nav: the mark is a Link to "/" through useTransitionLink, and the five cells
+   are plain react-router Links (the current cell is a span with aria-current,
+   and CELL_ROUTES gives the others' targets). The shared bar is rendered once
+   by GlobalShell, which passes `compact` for /studio, /services, /products and
+   /contact. Work (/work and its sub-routes) renders no shared bar; Home and CC.OS
+   have no shared bar either (CC.OS has no masthead at all). */
 /* NAV-T3 (OPERATOR): section order is Studio, Services, Work, Products,
    Contact everywhere (masthead, Home bands, footer, M1 menu). */
 const CELLS = ["[Studio]", "[Services]", "[Work]", "[Products]", "[Contact]"] as const;
-const CELL_ROUTES: Partial<Record<number, string>> = {
-  0: "/studio",
-  1: "/services",
-  2: "/work",
-  3: "/products",
-  4: "/contact",
-};
+const CELL_ROUTES = ["/studio", "/services", "/work", "/products", "/contact"] as const;
 
-type SectionVariant = "studio" | "work" | "services" | "products" | "contact";
+/* N4 P-I A-05: Work has no bar (N3), so it is not a variant; its cell is a
+   plain link to /work */
+type SectionVariant = "studio" | "services" | "products" | "contact";
 
 const SECTION_NAV: Record<SectionVariant, { index: number; Tile: (props: { className?: string }) => ReactNode }> = {
   studio: { index: 0, Tile: StudioWheelTile },
   services: { index: 1, Tile: ServicesArrowTile },
-  work: { index: 2, Tile: WorkGearTile },
   products: { index: 3, Tile: ProductsMarkTile },
   contact: { index: 4, Tile: ContactMarkTile },
 };
@@ -53,13 +37,12 @@ export function SiteMasthead({ variant, compact = false }: { variant: "home" | S
   const isHome = variant === "home";
   const nav = !isHome ? SECTION_NAV[variant as SectionVariant] : null;
 
-  /* MTG05 R4-B02 (FBI-048): the Studio masthead collapses with scroll. Its
-     compact state swaps the stacked pixel block for the inline lockup (FB_R4_2),
-     so that variant is rendered too; both are driven by `--mh-p` (0..1) set by
-     the Studio route. Only Studio gets it, and with --mh-p unset it is the
-     full-size masthead.
-     Services R1: `compact` opts another section route into the same markup
-     (the thin bar); its placement CSS is scoped to that route. */
+  /* N4 H6: the collapsed markup (inline pixel lockup, `masthead--collapsing`)
+     is used for the `studio` variant and for any variant rendered with
+     `compact`, which GlobalShell passes to the shared bar. The `--mh-p` (0..1)
+     custom property that sizes it is no longer written by any script; global.css
+     sets it to 1 in its own rules, so no scroll-driven collapse happens. The
+     placement CSS for the compact bar is scoped to its route. */
   const collapsing = variant === "studio" || compact;
 
   const mark = (
@@ -122,7 +105,8 @@ export function SiteMasthead({ variant, compact = false }: { variant: "home" | S
                 <span className="cell__dot" aria-hidden="true" />
               </>
             );
-            if (!current && to) {
+            /* N4 P-I A-06: every cell routes, so only the current one is a span */
+            if (!current) {
               return (
                 <Link key={label} className="cell" to={to}>
                   {content}
@@ -130,12 +114,7 @@ export function SiteMasthead({ variant, compact = false }: { variant: "home" | S
               );
             }
             return (
-              <span
-                key={label}
-                className="cell"
-                aria-current={current ? "page" : undefined}
-                aria-disabled={current ? undefined : "true"}
-              >
+              <span key={label} className="cell" aria-current="page">
                 {content}
               </span>
             );

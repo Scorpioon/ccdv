@@ -11,20 +11,14 @@ import {
 } from "react";
 import { useLocation, useNavigationType } from "react-router";
 import { AnimatePresence, motion, useIsPresent } from "motion/react";
-import {
-  useTransitionCoordinator,
-  type TransitionDirection,
-  type TransitionTarget,
-} from "../motion/transitionCoordinator";
+import { useTransitionCoordinator, type TransitionTarget } from "../motion/transitionCoordinator";
 import { SiteMasthead } from "./SiteMasthead";
 import { StudioMobileMenu } from "./StudioMobileMenu";
 
 type RouteMotion = {
   go: (to: TransitionTarget) => void;
   endTransition: () => void;
-  leaving: TransitionDirection;
   reduced: boolean;
-  isBusy: boolean;
 };
 
 const NavigationContext = createContext<RouteMotion | null>(null);
@@ -67,12 +61,12 @@ export function useTransitionLink() {
    The direction (`data-route-dir`) is kept for a later direction-aware
    motion: "back" for Home, a parent page (/products from /products/ccos,
    /work from a case), and the browser's Back / Forward (POP); "forward"
-   otherwise. The fade itself does not use it.
+   otherwise. The fade itself does not use it. N4 P-I A-09: `data-route` and
+   `data-route-move` had no reader (CSS or script) and are gone.
 
    H3-1 (OPERATOR, Variant B): the ink beat is gone. The incoming page is
    opaque from its first frame and only the outgoing page fades out above it
    (the exit below is unchanged), so no ink shows between two pages. */
-type RouteMove = "fade" | "load";
 type RouteDir = "forward" | "back";
 const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 const FADE_OUT_S = 0.25;
@@ -86,7 +80,11 @@ const ARRIVE_MS = FADE_OUT_S * 1000 + 150;
    accessibility tree and the tab order — and gives up the id, so the page
    never carries two #main-content. Two <main> elements still coexist for the
    length of the exit; only the incoming one is exposed. Lives inside the
-   route's motion.div so it reads that route's presence. */
+   route's motion.div so it reads that route's presence.
+   N4 P-H A-14 (OPERATOR): the route box is a plain focus target, not a
+   landmark. Each page marks its own <main> (its body without the masthead
+   and the footer), so Home's header is the banner and every footer is the
+   contentinfo. #main-content stays here, the skip link's target. */
 function RouteMain({
   focusRef,
   children,
@@ -96,31 +94,47 @@ function RouteMain({
 }) {
   const present = useIsPresent();
   return (
-    <main ref={focusRef} tabIndex={-1} id={present ? "main-content" : undefined} inert={!present}>
+    <div className="site-route" ref={focusRef} tabIndex={-1} id={present ? "main-content" : undefined} inert={!present}>
       {children}
-    </main>
+    </div>
   );
 }
 
-/* N1 (OPERATOR): the navigation bar belongs to the shell, not to a page. The
-   four section pages share one thin bar (>= 768) and one M1 bar + menu
-   (phones), rendered once beside the stage, so a swap between two sections
-   never fades or moves it; only the current cell changes. Home and CC.OS keep
-   their own mastheads for now, so for them the bar fades out with the page
-   (and back in with the next section page). N2 (OPERATOR): Contact joins.
+/* N4 P-H A-14: the first stop in the tab order, shown only when focused. It
+   moves focus by script, not by a hash link, so the router sees no navigation. */
+function SkipLink() {
+  return (
+    <a
+      className="skip-link"
+      href="#main-content"
+      onClick={(event) => {
+        event.preventDefault();
+        document.getElementById("main-content")?.focus();
+      }}
+    >
+      Skip to content
+    </a>
+  );
+}
 
+/* N4 H6: N1 (OPERATOR): the navigation bar belongs to the shell, not to a page.
+   The four section pages (Studio, Services, Products and, per N2, Contact) share
+   one thin bar (>= 768) and one M1 bar + menu (phones), rendered once beside the
+   stage, so a swap between two of them never fades or moves it; only the current
+   cell changes. Work has no bar (N3), and Home and CC.OS keep their own mastheads
+   with no shared bar, so on those routes the bar fades out with the page (and
+   back in with the next section page). See chromeSection below.
    `.site-chrome` is `display: contents` and carries the section's page class
-   (`r11 r11--work`), so every bar rule scoped to the page keeps matching and
+   (`r11 r11--studio` and so on), so every bar rule scoped to the page keeps matching and
    the bar stays a direct child of `.site-shell` (sticky needs the tall box).
    The page driving it (motion/routeNav.ts) writes --nav-in / data-nav-idle
    here. Fade-out and fade-in are CSS (`data-chrome`), timed as the page. */
-type ChromeSection = "studio" | "services" | "work" | "products" | "contact";
+type ChromeSection = "studio" | "services" | "products" | "contact"; // N4 P-I A-05: no "work"
 type ChromePhase = "on" | "in" | "leaving";
 type ChromeState = { key: ChromeSection | null; shown: ChromeSection | null; phase: ChromePhase };
 const CHROME_ROUTE: Record<ChromeSection, string> = {
   studio: "/studio",
   services: "/services",
-  work: "/work",
   products: "/products",
   contact: "/contact",
 };
@@ -133,8 +147,8 @@ function chromeSection(pathname: string): ChromeSection | null {
   if (path === "/products") return "products";
   if (path === "/contact") return "contact";
   /* N3 Work V3 (OPERATOR): the Work workspace has no bar — its rail carries
-     Home and the sections. W-A1: a case study is part of the workspace too */
-  if (path === "/work" || path.startsWith("/work/")) return null;
+     Home and the sections. W-A1: a case study is part of the workspace too.
+     Home, CC.OS and every other path have no bar either. */
   return null;
 }
 
@@ -167,12 +181,11 @@ export function GlobalShell({ children }: { children: ReactNode }) {
   const shellRef = useRef<HTMLDivElement>(null);
   /* `from` is the outgoing page's scroll offset, read while rendering the new
      location (ScrollRestoration has not moved the window yet); null on the
-     first load. "load" marks the first page, which has no swap. */
+     first load, which has no swap. */
   const navigationType = useNavigationType();
-  const moveRef = useRef<{ key: string; path: string; move: RouteMove; dir: RouteDir; from: number | null }>({
+  const moveRef = useRef<{ key: string; path: string; dir: RouteDir; from: number | null }>({
     key: location.key,
     path: location.pathname,
-    move: "load",
     dir: "forward",
     from: null,
   });
@@ -180,12 +193,11 @@ export function GlobalShell({ children }: { children: ReactNode }) {
     moveRef.current = {
       key: location.key,
       path: location.pathname,
-      move: "fade",
       dir: routeDir(moveRef.current.path, location.pathname, navigationType === "POP"),
       from: typeof window !== "undefined" ? window.scrollY : 0,
     };
   }
-  const { move, dir } = moveRef.current;
+  const { dir } = moveRef.current;
 
   /* the shared bar: derived while rendering, so it is in the DOM in the same
      commit as the incoming page (whose effects look it up); a bar that is
@@ -282,10 +294,9 @@ export function GlobalShell({ children }: { children: ReactNode }) {
       <div
         className="site-shell"
         ref={shellRef}
-        data-route={location.pathname}
-        data-route-move={move}
         data-route-dir={dir}
       >
+        <SkipLink />
         {chrome.shown && (
           <div
             className={`r11 r11--${chrome.shown} site-chrome`}

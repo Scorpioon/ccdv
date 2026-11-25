@@ -210,7 +210,8 @@ export function WorkWorkspace() {
         filtersAlways={!desktop}
       />
 
-      <div className="wv3-stage">
+      {/* N4 P-H A-14: the stage (Featured, archive, case) is the page's main landmark; the rail is its nav */}
+      <main className="wv3-stage">
         <div className="wv3-plane" style={plane}>
           <div className="wv3-panel wv3-panel--featured" inert={desktop ? view !== "featured" : caseOpen}>
             <WorkMosaic reduced={reduced} />
@@ -224,7 +225,12 @@ export function WorkWorkspace() {
             data-deck-scroll
             inert={desktop ? view !== "archive" : caseOpen}
           >
-            <WorkArchiveTable rows={rows} selectedId={selected.id} onSelect={setSelectedId} />
+            <WorkArchiveTable
+              rows={rows}
+              selectedId={selected.id}
+              onSelect={setSelectedId}
+              onOpenCase={(href) => navigate(href, { preventScrollReset: true })}
+            />
             <WorkArchivePreview entry={selected} />
           </section>
 
@@ -238,7 +244,7 @@ export function WorkWorkspace() {
             {project && caseData ? <Workcase project={project} data={caseData} /> : null}
           </section>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

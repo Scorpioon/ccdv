@@ -10,7 +10,10 @@ import { useBoundaryNav, useNavIdle, usePinTop } from "../motion/routeNav";
 import { useStepScroll } from "../motion/stepScroll";
 
 export function meta() {
-  return [{ title: "CCDV — Services" }];
+  return [
+    { title: "CCDV — Services" },
+    { name: "description", content: "CCDV services: UX & information architecture, development, motion and formation." },
+  ];
 }
 
 /* Services R1 (t_20261113_servicesr1): the Studio scene grammar on the Services
@@ -53,8 +56,9 @@ export default function Services() {
           while the index rises over it; the index then pins, one screen tall,
           while the red rises over it. The in-flow markers (`pin-snap`) are the
           stepper's stops (motion/stepScroll.ts, A3), since a sticky element's
-          own position moves with it */}
-      <div className="scene-curtain">
+          own position moves with it. N4 P-H A-14: the curtain is the main
+          landmark, so the footer is the page's contentinfo */}
+      <main className="scene-curtain">
         <ServicesCover reduced={reduced} />
 
         <span className="pin-snap" aria-hidden="true" />
@@ -67,7 +71,7 @@ export default function Services() {
           <WorkWithScene reduced={reduced} />
           <FormationScene reduced={reduced} />
         </div>
-      </div>
+      </main>
 
       <SiteFooter />
     </div>

@@ -1,9 +1,16 @@
 import { useParams } from "react-router";
-import { workcaseHref } from "../data/workProjects";
+import { findProject, workcaseHref } from "../data/workProjects";
 
+/* N4 P-H A-16 (OPERATOR): the title names the project, not its slug */
 export function meta({ params }: { params: { slug?: string } }) {
   const slug = params.slug;
-  return [{ title: slug && workcaseHref(slug) ? `CCDV — Work / ${slug}` : "CCDV — Not found" }];
+  if (!slug || !workcaseHref(slug)) return [{ title: "CCDV — Not found" }];
+  const project = findProject(slug);
+  const name = project ? project.displayName ?? project.name : slug;
+  return [
+    { title: `CCDV — Work / ${name}` },
+    { name: "description", content: `${name}: a case study from the CCDV work archive.` },
+  ];
 }
 
 /* `/work/:slug` — one reusable route. Only a slug with authentic case data

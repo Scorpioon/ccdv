@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import type { CSSProperties, FocusEvent, ReactNode, TouchEvent } from "react";
-import { Link } from "react-router";
+import type { CSSProperties, FocusEvent, MouseEvent, ReactNode, TouchEvent } from "react";
+import { Link, useLocation, useNavigate } from "react-router";
 import { useTransitionLink } from "../GlobalShell";
 
 /* The CC.OS deck (P2; P2 CORR01, OPERATOR: "the same classic start stop
@@ -25,7 +25,11 @@ import { useTransitionLink } from "../GlobalShell";
    the stop is taken at once.
 
    Chrome (OPERATOR): no masthead and no M1 bar on this page; one "Back" link
-   in the top-left corner over every slide, back to /products (it falls).
+   in the top-left corner over every slide. N4 P-I A-13: it steps back through
+   history when the page was reached inside the site (the Work archive, a
+   Products card), else it goes to /products; its href is /products either way.
+   N4 P-I C-04: Back and the next chevron come before the slides in the DOM,
+   so the first Tab reaches them instead of paging the deck.
    `content` may be a function of whether its slide is the current one (the
    hero replays its entrance on arrival). */
 
@@ -75,6 +79,8 @@ export function CcosDeck({
   mark?: ReactNode;
 }) {
   const link = useTransitionLink();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [current, setCurrent] = useState(0);
   const [size, setSize] = useState({ screen: 0, tail: 0 });
   const currentRef = useRef(0);
@@ -85,6 +91,8 @@ export function CcosDeck({
   const touch = useRef<{ y: number; t: number; up: boolean; down: boolean } | null>(null);
   /* when an area inside the deck last scrolled (its own scroll or its coast) */
   const scrolledAt = useRef(0);
+  /* N4 P-I C-05: the last move came from a key, so focus may be left on the slide it left */
+  const keyMoved = useRef(false);
   const count = slides.length;
 
   /* the screen's height and the footer's, for the last stop */
@@ -148,6 +156,8 @@ export function CcosDeck({
       if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
       const target = event.target instanceof HTMLElement ? event.target : null;
       if (target?.closest("input, textarea, select, [contenteditable='true']")) return;
+      // N4 H2/H4: keys inside an open dialog belong to the dialog, not the deck
+      if (target?.closest('[role="dialog"]')) return;
       let dir = 0;
       switch (event.key) {
         case "ArrowDown":
@@ -164,21 +174,24 @@ export function CcosDeck({
           break;
         case "Home":
           event.preventDefault();
-          go(0);
+          if (go(0)) keyMoved.current = true;
           return;
         case "End":
           event.preventDefault();
-          go(count - 1);
+          if (go(count - 1)) keyMoved.current = true;
           return;
         default:
           return;
       }
       if (scrollsFurther(target, dir)) return;
       event.preventDefault();
-      step(dir);
+      if (step(dir)) keyMoved.current = true;
     };
 
-    const onScroll = () => {
+    const onScroll = (event: Event) => {
+      // N4 H2/H4: scroll resets on slides that are not current are programmatic, not a gesture
+      const slide = (event.target as HTMLElement | null)?.closest?.("[data-current]");
+      if (slide && slide.getAttribute("data-current") !== "true") return;
       scrolledAt.current = performance.now();
     };
 
@@ -208,6 +221,32 @@ export function CcosDeck({
     );
     return () => window.clearTimeout(timer);
   }, [current, reduced]);
+
+  /* N4 P-I C-05: after a key move, focus left inside a slide that is now off
+     screen goes to the slide on screen (no scroll: the deck clips) */
+  useEffect(() => {
+    if (!keyMoved.current) return;
+    keyMoved.current = false;
+    const deck = deckRef.current;
+    const active = document.activeElement;
+    if (!deck || !active) return;
+    const from = active.closest<HTMLElement>("[data-slide]");
+    if (!from || !deck.contains(from) || from.dataset.current === "true") return;
+    deck.querySelector<HTMLElement>(`[data-slide="${current}"]`)?.focus({ preventScroll: true });
+  }, [current]);
+
+  /* N4 P-I A-13: in-site arrival (any history entry but the first load) steps back */
+  const backLink = link("/products");
+  const onBack = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (location.key === "default") {
+      backLink.onClick(event);
+      return;
+    }
+    if (event.defaultPrevented || event.button !== 0) return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    navigate(-1);
+  };
 
   const onTouchStart = (event: TouchEvent) => {
     const t = event.touches[0];
@@ -260,6 +299,21 @@ export function CcosDeck({
       onFocus={onFocus}
     >
       <div className="cc-deck__ground" aria-hidden="true" />
+      <Link className="cc-back" to={backLink.to} onClick={onBack}>
+        <span className="cc-back__icon" aria-hidden="true">
+          ←
+        </span>
+        <span className="cc-back__label">Back</span>
+      </Link>
+      <button
+        type="button"
+        className="cc-deck__next"
+        aria-label="Next slide"
+        onClick={() => step(1)}
+        hidden={current >= count - 1}
+      >
+        v
+      </button>
       <div className="cc-deck__track">
         {slides.map((slide, i) => (
           <section
@@ -269,6 +323,7 @@ export function CcosDeck({
             data-slide={i}
             data-current={i === current || (current === last && i === last - 1)}
             data-deck-scroll={slide.partial || undefined}
+            tabIndex={-1}
             aria-roledescription="slide"
             aria-label={`${slide.label} (${i + 1} of ${count})`}
             style={{ "--n": i } as CSSProperties}
@@ -287,24 +342,9 @@ export function CcosDeck({
           {mark}
         </div>
       ) : null}
-      <Link className="cc-back" {...link("/products")}>
-        <span className="cc-back__icon" aria-hidden="true">
-          ←
-        </span>
-        <span className="cc-back__label">Back</span>
-      </Link>
       <p className="cc-deck__status" aria-live="polite">
         {`${slides[current]?.label ?? ""}, ${current + 1} of ${count}`}
       </p>
-      <button
-        type="button"
-        className="cc-deck__next"
-        aria-label="Next slide"
-        onClick={() => step(1)}
-        hidden={current >= count - 1}
-      >
-        v
-      </button>
     </div>
   );
 }

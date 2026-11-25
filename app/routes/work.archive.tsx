@@ -1,5 +1,8 @@
 export function meta() {
-  return [{ title: "CCDV — Work Archive" }];
+  return [
+    { title: "CCDV — Work Archive" },
+    { name: "description", content: "Selected work and project archive by CCDV." },
+  ];
 }
 
 /* N3 W-A1: /work/archive — the Archive view of the Work workspace. The layout

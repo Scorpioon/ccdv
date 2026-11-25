@@ -1,12 +1,14 @@
 import { useId } from "react";
 
-/* The hexagon-and-cube figure, shared across the three Studio placements.
+/* The hexagon-and-cube figure, first componentised for the three Studio
+   placements of pages_studio.svg and now drawn only by the CC.OS marks
+   (CcosArtwork).
 
    Sharing is justified by verified path equivalence, not by resemblance. All
-   three instances in pages_studio.svg are the same three-ring regular
-   pointy-top hexagon (half-height / half-width = 1.15465 = 2/sqrt(3) in every
-   case) with an isometric Y drawn at the middle ring, differing only by a
-   uniform scale and by how the two outer rings are filled:
+   three Studio instances are the same three-ring regular pointy-top hexagon
+   (half-height / half-width = 1.15465 = 2/sqrt(3) in every case) with an
+   isometric Y drawn at the middle ring, differing only by a uniform scale and
+   by how the two outer rings are filled:
 
      placement  centre                outer half-width  rings (normalised)
      intro      (1088.19,  672.16)    127.94            1 / 0.7996 / 0.5211
@@ -16,7 +18,12 @@ import { useId } from "react";
    In all three the innermost ring carries the gradient, confirmed by each
    linearGradient's y-extent matching that path's bounding box exactly. The
    geometry below is transcribed from the intro instance (scale 1.0); the
-   other two are the same shape and are reproduced by viewBox scaling. */
+   other two are the same shape and are reproduced by viewBox scaling.
+
+   N4 P-I (C-08): only the two looks the CC.OS marks draw remain. The
+   outlined "interior" look (Studio intro, retired) and the GF09-F "thin"
+   KRON / KAIRON look (its last caller, the CC.OS rail family, went with the
+   removed icons) are gone. */
 
 const OUTER =
   "M1216.13 598.292V746.02L1088.19 819.884L960.257 746.021V598.292L1088.19 524.428L1216.13 598.292Z";
@@ -27,49 +34,36 @@ const INNER =
 const Y_UPPER = "M985.952 613.049L1088.19 672.157L1190.43 613.049";
 const Y_STEM = "M1088.19 672.157V790.103";
 
-/* GF09-F thin CCOS family (KRON, KAIRON): R1.1 draws the middle ring as a
-   stroked hexagon about 0.7 viewBox units inside MIDDLE (half-width 101.60,
-   half-height 117.35 against MIDDLE's 102.30 / 118.12) over a filled light
-   outer hexagon. Re-expressed here in this file's scale-1 coordinates. */
-const THIN_MIDDLE =
-  "M1189.79 613.467V730.847L1088.19 789.507L986.59 730.847V613.467L1088.19 554.807L1189.79 613.467Z";
-
-export type HexCubeVariant = "interior" | "ring" | "solid" | "thin";
+export type HexCubeVariant = "ring" | "solid";
 
 export interface HexCubeProps {
-  /** interior = thin outlines (intro) · ring = light outer ring (WRKOPS) ·
-   *  solid = filled outer hexagon (CC.OS) · thin = light outer hexagon with a
-   *  fine stroked middle ring (CCOS KRON / KAIRON) */
-  variant?: HexCubeVariant;
+  /** ring = filled outer hexagon with a filled middle ring (CC.OS cores) ·
+   *  solid = filled outer hexagon only (CC.OS) */
+  variant: HexCubeVariant;
   gradientFrom: string;
   gradientTo: string;
   lineColor?: string;
   outerFill?: string;
   middleFill?: string;
-  /** Stroke width of the Y (and, by default, of the stroked rings), in this
-   *  file's scale-1 viewBox units. 1.2 is the Studio value; the CCOS pages
-   *  draw heavier/finer lines at a smaller on-screen scale. */
+  /** Stroke width of the Y, in this file's scale-1 viewBox units. 1.2 is the
+   *  Studio value; the CC.OS marks draw a heavier line at a smaller scale. */
   lineWidth?: number;
-  /** Stroke width of the stroked rings when it differs from the Y's. */
-  ringWidth?: number;
   className?: string;
 }
 
 export function HexCube({
-  variant = "interior",
+  variant,
   gradientFrom,
   gradientTo,
   lineColor = "#D9D9D9",
   outerFill = "#D9D9D9",
   middleFill = "#202020",
   lineWidth = 1.2,
-  ringWidth = lineWidth,
   className,
 }: HexCubeProps) {
   // React's generated ids carry delimiter characters that are not safe inside
   // a url(#...) reference, so reduce to an alphanumeric slug.
   const gradientId = `hexcube-${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
-  const stroked = variant === "interior";
 
   return (
     <svg
@@ -95,18 +89,8 @@ export function HexCube({
         </linearGradient>
       </defs>
 
-      <path
-        d={OUTER}
-        fill={stroked ? "none" : outerFill}
-        stroke={stroked ? lineColor : "none"}
-        strokeWidth={stroked ? ringWidth : undefined}
-      />
-      <path
-        d={variant === "thin" ? THIN_MIDDLE : MIDDLE}
-        fill={variant === "ring" ? middleFill : "none"}
-        stroke={stroked || variant === "thin" ? lineColor : "none"}
-        strokeWidth={stroked || variant === "thin" ? ringWidth : undefined}
-      />
+      <path d={OUTER} fill={outerFill} stroke="none" />
+      <path d={MIDDLE} fill={variant === "ring" ? middleFill : "none"} stroke="none" />
       <path d={INNER} fill={`url(#${gradientId})`} />
       <path d={Y_UPPER} fill="none" stroke={lineColor} strokeWidth={lineWidth} />
       <path d={Y_STEM} fill="none" stroke={lineColor} strokeWidth={lineWidth} />

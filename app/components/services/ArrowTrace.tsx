@@ -8,9 +8,10 @@
 
    Interaction: a drag on the arrow turns it about its centre (the angle follows
    the pointer around that centre, so it feels like turning a dial). On release
-   it settles back to its drawn pose, pointing north-east, on a lightly damped
-   spring (one short overshoot). Arrow keys give it a turn that settles the same
-   way. Only the arrow's hit circle takes pointers (`.studio-sphere`), so a touch
+   it settles back to its drawn pose, pointing north-east, on a critically
+   damped spring (N4 P-I, N1 P1: it was under-damped and rocked after a kick,
+   as the Products cube did before A10; now it returns without overshoot).
+   Arrow keys give it a turn that settles the same way. Only the arrow's hit circle takes pointers (`.studio-sphere`), so a touch
    elsewhere scrolls the page. Reduced motion: a drag still turns it, one write
    per event, and it returns without animation on release (keys: a step that
    returns after a short hold). Transforms are written to the DOM, no React state. */
@@ -27,7 +28,7 @@ const VIEWBOX = `${CX - 120.5} ${CY - 120.5} 241 241`;
 const HIT_R = 112;
 
 const STIFFNESS = 90; // 1/s^2
-const DAMPING = 11; // 1/s, a little under critical (2 * sqrt(90) = 19)
+const DAMPING = 19; // 1/s, critical (2 * sqrt(90) = 18.97); N4 P-I: was 11
 const KEY_KICK = 420; // deg/s
 const KEY_STEP = 15; // deg, reduced motion
 const REDUCED_HOLD = 900; // ms

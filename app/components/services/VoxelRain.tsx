@@ -58,8 +58,9 @@ const IN_DUR = 0.75;
 const IN_STAGGER = 0.07;
 
 /* throw: spring home (1/s^2, 1/s), velocity cap (viewBox units/s), hit radius
-   as a share of the cube's half width, the push a hit gives */
-const HOME = { k: 30, c: 8 };
+   as a share of the cube's half width, the push a hit gives. N4 P-I (N1 P2):
+   c is critical (2 * sqrt(30) = 10.95; was 8, slightly under-damped) */
+const HOME = { k: 30, c: 11 };
 const THROW_MAX = 1200;
 const HIT_R = 0.9;
 const HIT_PUSH = 6;

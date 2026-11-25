@@ -8,7 +8,10 @@ import { useBoundaryNav, useNavIdle } from "../motion/routeNav";
 import { useStepScroll } from "../motion/stepScroll";
 
 export function meta() {
-  return [{ title: "CCDV — Contact" }];
+  return [
+    { title: "CCDV — Contact" },
+    { name: "description", content: "Get in touch with CCDV: hello@collapsecreative.com." },
+  ];
 }
 
 /* N2 (t_20261124_ccdvn2contact, OPERATOR): one module in the Studio /
@@ -40,7 +43,8 @@ export default function Contact() {
 
   return (
     <div className="r11 r11--contact" ref={rootRef}>
-      <section className="ct" aria-labelledby="contact-title">
+      {/* N4 P-H A-14: the card is the main landmark; the footer is its contentinfo */}
+      <main className="ct" aria-labelledby="contact-title">
         <div className="ct__frame">
           <CoverMasthead page="Contact" />
 
@@ -61,7 +65,7 @@ export default function Contact() {
             <ContactDirectory />
           </section>
         </div>
-      </section>
+      </main>
 
       <SiteFooter />
     </div>

@@ -13,12 +13,18 @@ import {
 } from "react-router";
 import { GlobalShell } from "./components/GlobalShell";
 import gearFaviconUrl from "./assets/ccdv-gear-favicon.svg?no-inline";
+/* N4 H7: hashed URL of the face tokens.css declares; preloaded so the first paint does not wait for the stylesheet */
+import victorMonoSemiBold from "./assets/fonts/VictorMono-SemiBold.woff2?url";
 import "./styles/tokens.css";
 import "./styles/global.css";
 /* H1 D1: the favicon is a hashed /assets/ file, so the prerendered head passes
    the stage script's /assets/-only href guard */
 export function links() {
-  return [{ rel: "icon", type: "image/svg+xml", href: gearFaviconUrl }];
+  return [
+    { rel: "icon", type: "image/svg+xml", href: gearFaviconUrl },
+    /* N4 H7: font preload (CORS-anonymous, as font preloads require) */
+    { rel: "preload", href: victorMonoSemiBold, as: "font", type: "font/woff2", crossOrigin: "anonymous" },
+  ];
 }
 /* H1 GH-A08: an unmatched URL (router 404) or a Response thrown while rendering
    (workcase.tsx); a raw Response fails isRouteErrorResponse, so both */
@@ -28,7 +34,11 @@ function isNotFound(error: unknown) {
 /* H1 D2: SPA mode prerenders only the root, so this is index.html's title;
    each route's own meta replaces it after hydration (the leaf's meta wins) */
 export function meta({ error }: { error?: unknown }) {
-  return [{ title: !error ? "CCDV" : isNotFound(error) ? "CCDV — Page not found" : "CCDV — Error" }];
+  /* N4 P-H A-16: index.html's default description (crawlers that run no JS see only this) */
+  return [
+    { title: !error ? "CCDV" : isNotFound(error) ? "CCDV — Page not found" : "CCDV — Error" },
+    { name: "description", content: "Collapse Creative Development Unit — UX/UI, code and motion studio, part of Collapse Creative." },
+  ];
 }
 /* H1 GH-A09/GH-E01: one document for the page, the hydrate fallback and the
    error view (React Router wraps all three in Layout), so the prerendered

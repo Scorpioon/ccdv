@@ -133,6 +133,9 @@ export function CcosVaultArt({ active, reduced, className }: VoxelArtProps) {
         u < 0 ? 0 : u < DOOR ? smooth(u / DOOR) : u < CLOSE_AT ? 1 : 1 - smooth((u - CLOSE_AT) / DOOR);
 
       VAULT.forEach((c, i) => {
+        /* N4 H5: while the pile is held still only the hole cube moves, so the other cubes skip their place() */
+        const still = t > PILED && t < HELD;
+        if (still && i !== HOLE) return;
         const p = clamp01((t - delay(c)) / FALL);
         const dz = (1 - settle(p)) * FALL_FROM - (i === HOLE ? open : 0);
         place(cubes.current[i], c.x, c.y, c.z + dz, clamp01(p / 0.25) * fade);

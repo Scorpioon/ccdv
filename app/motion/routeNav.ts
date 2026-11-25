@@ -1,5 +1,7 @@
-/* Thin-masthead behaviour for a scene route (Studio, Services, Work, Products).
-   The mechanisms of R3 addenda A1/A3/A4, written once as hooks.
+/* N4 H6: Thin-masthead behaviour for the scene routes that use the shared bar:
+   Studio, Services, Products and Contact (Work has no bar, so these hooks do
+   not run there). Studio uses these hooks too (useBoundaryNav, useNavIdle,
+   usePinTop). The mechanisms of R3 addenda A1/A3/A4, written once as hooks.
 
    N1 (OPERATOR): the bar is no longer part of a page. GlobalShell renders it
    once, as `.site-chrome`, so it does not fade or move when one section page
@@ -54,8 +56,13 @@ function claimBar(root: HTMLElement) {
      the M1 bar is idle-hidden; the cursor or a scroll brings it back. */
   chrome?.style.setProperty("--nav-in", "0");
   chrome?.removeAttribute("data-nav-peek");
-  if (window.matchMedia("(max-width: 767px)").matches) chrome?.setAttribute("data-nav-idle", "");
-  else chrome?.removeAttribute("data-nav-idle");
+  /* N4 P-I A-19: while the bar is held, the phone rule follows the width (a
+     rotation or resize across 767px), not only the width at the claim */
+  const phone = window.matchMedia("(max-width: 767px)");
+  const applyHeld = () => {
+    if (barHeld) chrome?.toggleAttribute("data-nav-idle", phone.matches);
+  };
+  applyHeld();
   const release = () => {
     stopWatching?.();
     stopWatching = null;
@@ -63,15 +70,19 @@ function claimBar(root: HTMLElement) {
     releaseListeners.forEach((listener) => listener());
   };
   const onKey = (event: KeyboardEvent) => {
+    /* N4 P-I C-16: a key a control used (a sphere, a tab list) is not a scroll */
+    if (event.defaultPrevented) return;
     if (SCROLL_KEYS.has(event.key)) release();
   };
   window.addEventListener("wheel", release, { passive: true });
   window.addEventListener("touchmove", release, { passive: true });
   window.addEventListener("keydown", onKey);
+  phone.addEventListener("change", applyHeld);
   stopWatching = () => {
     window.removeEventListener("wheel", release);
     window.removeEventListener("touchmove", release);
     window.removeEventListener("keydown", onKey);
+    phone.removeEventListener("change", applyHeld);
   };
 }
 
@@ -290,7 +301,8 @@ export function useNavIdle(rootRef: RefObject<HTMLElement | null>) {
       intent(event.deltaY > 0);
     };
     const onKey = (event: KeyboardEvent) => {
-      if (event.altKey || event.ctrlKey || event.metaKey) return;
+      /* N4 P-I C-16: arrows a sphere or a tab list consumed do not hide or show the bar */
+      if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
       const el = event.target instanceof Element ? event.target : null;
       if (el?.closest("input, textarea, select, [contenteditable]")) return;
       if (event.key === "ArrowDown" || event.key === "PageDown" || event.key === "End") intent(true);

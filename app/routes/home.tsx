@@ -1,11 +1,12 @@
-import { useEffect } from "react";
-import { useLocation, useNavigationType } from "react-router";
 import { SiteMasthead } from "../components/SiteMasthead";
 import { SiteFooter } from "../components/SiteFooter";
 import { NavBand } from "../components/NavBand";
 
 export function meta() {
-  return [{ title: "CCDV — Collapse Creative Development Unit" }];
+  return [
+    { title: "CCDV — Collapse Creative Development Unit" },
+    { name: "description", content: "Collapse Creative Development Unit — UX/UI, code and motion studio, part of Collapse Creative." },
+  ];
 }
 
 /* The five bands, top to bottom, exactly as R1.1 stacks them: a 31 colour
@@ -18,40 +19,29 @@ export function meta() {
    less that glyph's R1.1 side bearing at 90, and all five land on round
    artboard numbers, which is the check that they are origins. */
 const BANDS = [
-  { slug: "studio", label: "[Studio]", suffix: ":P", suffixLeft: 951, routed: true },
+  { slug: "studio", label: "[Studio]", suffix: ":P", suffixLeft: 951 },
   // NAV-T3 (OPERATOR): Services moved above Work
-  { slug: "services", label: "[Services]", suffix: "\\", suffixLeft: 1180, routed: true },
-  { slug: "work", label: "[Work]", suffix: "+.+", suffixLeft: 722, routed: true },
-  { slug: "products", label: "[Products]", suffix: ":o", suffixLeft: 1180, routed: true },
-  { slug: "contact", label: "[Contact]", suffix: "<3", suffixLeft: 1065, routed: true },
+  { slug: "services", label: "[Services]", suffix: "\\", suffixLeft: 1180 },
+  { slug: "work", label: "[Work]", suffix: "+.+", suffixLeft: 722 },
+  { slug: "products", label: "[Products]", suffix: ":o", suffixLeft: 1180 },
+  { slug: "contact", label: "[Contact]", suffix: "<3", suffixLeft: 1065 },
 ] as const;
 
-/* GF09-G D2.1: Work's `collapse` link pushes "/" with `state.from === "work"`.
-   Only that PUSH arrival focuses the Work band's own link; focus() without
-   preventScroll lets the browser bring it into view. POP (Back/Forward/
-   reload), direct loads and any other Home entry never match. The effect is
-   keyed on location.key and holds no cross-instance flag, so it stays
-   idempotent if the route node mounts more than once during the swap. */
+/* N4 P-I A-04: GF09-G D2.1's "focus the Work band on return from Work" effect
+   is gone: nothing pushes `state.from === "work"` since the V2 Work hub. */
 export default function Home() {
-  const location = useLocation();
-  const navigationType = useNavigationType();
-  const fromWork =
-    navigationType === "PUSH" && (location.state as { from?: unknown } | null)?.from === "work";
-
-  useEffect(() => {
-    if (!fromWork) return;
-    document.getElementById("band-link-work")?.focus();
-  }, [fromWork, location.key]);
-
   return (
     <div className="r11 r11--home">
       <SiteMasthead variant="home" />
 
-      <ul className="bands">
-        {BANDS.map((band) => (
-          <NavBand key={band.slug} {...band} />
-        ))}
-      </ul>
+      {/* N4 P-H A-14: masthead (banner) and footer (contentinfo) sit outside main */}
+      <main>
+        <ul className="bands">
+          {BANDS.map((band) => (
+            <NavBand key={band.slug} {...band} />
+          ))}
+        </ul>
+      </main>
 
       <SiteFooter />
     </div>

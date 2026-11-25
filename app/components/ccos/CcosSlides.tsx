@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { CcosWordmark } from "../marks/CcosWordmark";
 import { CcosHeroIcon, CcosSystemIcon } from "../marks/CcosArtwork";
 import { CcosCoreGlyph, CcosCoreMap } from "./CcosCoreMap";
@@ -54,7 +54,10 @@ export function CcosIntroSlide() {
 
 /* the desktop layout (>= 1024, the deck's breakpoint) */
 function useWide() {
-  const [wide, setWide] = useState(true);
+  /* N4 H2/H4: read the breakpoint on the first render; true when there is no window */
+  const [wide, setWide] = useState(() =>
+    typeof window === "undefined" ? true : window.matchMedia("(min-width: 1024px)").matches,
+  );
   useEffect(() => {
     const query = window.matchMedia("(min-width: 1024px)");
     const update = () => setWide(query.matches);
@@ -65,12 +68,46 @@ function useWide() {
   return wide;
 }
 
+/* N4 P-I C-03: a phone card is modal. What lies under it is `inert`, and Tab
+   stays on its one control (the close button) instead of leaving the card */
+const keepTab = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+  if (event.key === "Tab") event.preventDefault();
+};
+
 /* the phone card's close button (images 31, 32: a circled x) */
 function CloseButton({ onClose, label }: { onClose: () => void; label: string }) {
   const ref = useRef<HTMLButtonElement>(null);
-  useEffect(() => ref.current?.focus({ preventScroll: true }), []);
+  /* N4 H2/H4: the element that had focus before this button took it, and the latest close callback */
+  const returnTo = useRef<Element | null>(null);
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  });
+  /* N4 H2/H4: an explicit close (the button or Escape) hands focus back; a plain unmount does not */
+  const close = () => {
+    const back = returnTo.current;
+    onCloseRef.current();
+    /* N4 P-I C-03: the opener sits under an `inert` layer until the card is
+       gone, so focus it on the next frame, after the close has rendered */
+    window.requestAnimationFrame(() => {
+      if (back instanceof HTMLElement && back.isConnected) back.focus({ preventScroll: true });
+    });
+  };
+  useEffect(() => {
+    /* N4 H2/H4: remember the focus before this button takes it (keep the first value under strict-mode re-runs) */
+    if (document.activeElement !== ref.current) returnTo.current = document.activeElement;
+    ref.current?.focus({ preventScroll: true });
+  }, []);
+  /* N4 H2/H4: Escape closes while this button is mounted */
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") close();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
   return (
-    <button ref={ref} type="button" className="cc-close" aria-label={label} onClick={onClose}>
+    <button ref={ref} type="button" className="cc-close" aria-label={label} onClick={close}>
       <span aria-hidden="true">×</span>
     </button>
   );
@@ -104,10 +141,13 @@ export function CcosMapSlide({
   const [cycling, setCycling] = useState(true);
   const [step, setStep] = useState(0);
   const [stage, setStage] = useState<"map" | "focus" | "card">("map");
+  const frameRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (current) {
-      setCycling(true);
+      /* N4 P-I C-01: Tab into the map makes the slide current after the
+         frame's onFocus stopped the walk; a focused map keeps it stopped */
+      setCycling(!frameRef.current?.contains(document.activeElement));
       setStep(0);
     } else setStage("map");
   }, [current]);
@@ -136,22 +176,31 @@ export function CcosMapSlide({
 
   const shown = walks ? CYCLE[step] : selected;
   const core = getCcosCore(wide ? shown : selected);
+  const carded = !wide && stage === "card";
+  /* N4 H2/H4: keyboard focus on the map stops the walk, as a click does */
   return (
-    <div className="cc-frame cc-split cc-map-slide" data-deck-scroll data-stage={wide ? undefined : stage}>
+    <div
+      ref={frameRef}
+      className="cc-frame cc-split cc-map-slide"
+      data-deck-scroll
+      data-stage={wide ? undefined : stage}
+      onFocus={() => setCycling(false)}
+    >
       <h2 className="cc-hidden" id="cc-map-title">
         The cores
       </h2>
-      <div className="cc-box">
+      <div className="cc-box" inert={carded}>
         <CcosCoreMap
           selected={wide ? shown : stage === "map" ? null : selected}
+          pressed={wide ? selected : undefined}
           focus={wide || stage === "map" ? null : selected}
           blink={stage === "focus"}
           onSelect={pick}
           labelledBy="cc-map-title"
         />
       </div>
-      {!wide && stage === "card" ? (
-        <div className="cc-card" role="dialog" aria-label={core.name} data-deck-scroll>
+      {carded ? (
+        <div className="cc-card" role="dialog" aria-modal="true" aria-label={core.name} data-deck-scroll onKeyDown={keepTab}>
           <div className="cc-card__head">
             <CcosCoreGlyph id="ccos" className="cc-card__glyph" />
             {core.id === "ccos" ? null : <CcosCoreGlyph id={core.id} solid className="cc-card__glyph" />}
@@ -183,7 +232,7 @@ export function CcosMapSlide({
           </dl>
         </div>
       ) : null}
-      <div className="cc-info">
+      <div className="cc-info" inert={carded}>
         <dl className="cc-info__swap cc-info__list" key={core.id}>
           <div className="cc-info__row">
             <dt className="cc-info__label">Core</dt>
@@ -258,7 +307,7 @@ export function CcosExplainerSlide({
     <div className="cc-frame cc-explainer" data-open={open || undefined}>
       {open ? (
         <div className="cc-excard">
-          <div className="cc-card" role="dialog" aria-label={core.name} data-deck-scroll>
+          <div className="cc-card" role="dialog" aria-modal="true" aria-label={core.name} data-deck-scroll onKeyDown={keepTab}>
             <CloseButton label={`Close ${core.name}`} onClose={() => setOpen(false)} />
             <div className="cc-explainer__pair">
               <div>
@@ -292,7 +341,7 @@ export function CcosExplainerSlide({
           </div>
         </div>
       ) : null}
-      <div className="cc-explainer__list">
+      <div className="cc-explainer__list" inert={open}>
         <CcosWordmark className="cc-explainer__mark" />
         <h2 className="cc-hidden" id="cc-products-title">
           The products
@@ -313,7 +362,7 @@ export function CcosExplainerSlide({
                   <CcosHeroIcon className="cc-explainer__icon" />
                 ) : (
                   /* P2 CORR03 (OPERATOR): KAIRON and KRON match the suite */
-                  <CcosSystemIcon className="cc-explainer__icon" family="bold" gradientTo={item.color} />
+                  <CcosSystemIcon className="cc-explainer__icon" gradientTo={item.color} />
                 )}
                 <span>{item.name}</span>
               </button>
@@ -322,7 +371,7 @@ export function CcosExplainerSlide({
         </ul>
       </div>
 
-      <div className="cc-explainer__detail" data-deck-scroll>
+      <div className="cc-explainer__detail" data-deck-scroll inert={open}>
         <div className="cc-info__swap cc-explainer__body" key={core.id}>
           <div className="cc-explainer__pair">
             <div>

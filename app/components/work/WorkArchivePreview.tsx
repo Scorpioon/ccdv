@@ -7,7 +7,9 @@ import { ARCHIVE_POSTERS, archiveTitle, workcaseHref, type ArchiveRow } from "..
    Honest states only: `View Case Study` opens a case where a Workcase exists
    (ADG-ARC) — W-A1: it slides in beside the rail, it does not load a page;
    `Open Live Site` opens the live site in a new tab where the OPERATOR gave
-   its URL (N3 C1: ADG-ARC), and is disabled elsewhere; a project without
+   its URL (N3 C1: ADG-ARC), and is disabled elsewhere; N4 (OPERATOR): a row
+   with an `explainerHref` (CC.OS) shows `See in Products [↗]` in its place,
+   linking to that page in the same tab; a project without
    imagery shows an empty poster with a plain note. */
 
 export function WorkArchivePreview({ entry }: { entry: ArchiveRow }) {
@@ -39,7 +41,13 @@ export function WorkArchivePreview({ entry }: { entry: ArchiveRow }) {
           )}
         </li>
         <li>
-          {entry.liveUrl ? (
+          {entry.explainerHref ? (
+            <Link className="wv3-preview__action" to={entry.explainerHref}>
+              <GearMark className="wv3-preview__gear" fill="#1A1A1A" dotFill="#FFFFFF" />
+              <span>See in Products</span>
+              <span className="wv3-preview__glyph">[↗]</span>
+            </Link>
+          ) : entry.liveUrl ? (
             <a className="wv3-preview__action" href={entry.liveUrl} target="_blank" rel="noopener noreferrer">
               <GearMark className="wv3-preview__gear" fill="#1A1A1A" dotFill="#FFFFFF" />
               <span>Open Live Site</span>

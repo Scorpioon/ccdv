@@ -21,6 +21,7 @@ import { CcdvPixelMark } from "./marks/CcdvPixelMark";
    are not underlined (global.css). */
 
 const COLUMN_B: { label: string; to?: string }[] = [
+  { label: "Studio", to: "/studio" }, // N4 P-H A-15 (OPERATOR): Studio was missing
   { label: "Services", to: "/services" }, // NAV-T3: Services before Work
   { label: "Work", to: "/work" },
   { label: "Products", to: "/products" },

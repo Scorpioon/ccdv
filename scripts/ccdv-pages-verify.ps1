@@ -166,8 +166,10 @@ if ($liveIndex.Status -eq 200 -and $liveIndex.Sha -ceq $stagedIndexSha -and $ref
 }
 
 # ---- SPA deep links (HTTP layer only) -------------------------------------------
-$routes = @('studio', 'work', 'services', 'products', 'contact', 'products/ccos',
-  'products/ccos/wrkops', 'products/ccos/kaia', 'products/ccos/aethernos', 'products/ccos/panoptes', 'products/ccos/kron', 'products/ccos/kairon')
+# N4 H8: live route list. 'nope-404-sample' is the deliberately unknown 404-fallback sample:
+# Pages serves the app shell for any path, so it must return the shell like the other routes.
+$routes = @('studio', 'work', 'work/archive', 'work/adg-arc', 'services', 'products', 'products/ccos', 'contact',
+  'nope-404-sample')
 $badRoutes = @(); $status404 = 0
 foreach ($rt in $routes) {
   $r = Fetch $rt
@@ -228,7 +230,7 @@ if ($CheckRemote) {
 
 # ---- what this script cannot prove ------------------------------------------------------
 foreach ($p in @(
-  'browser hard refresh of every deep link (Home, Studio, Work, Services, Products, Contact, CCOS hub, six CCOS leaves)',
+  'browser hard refresh of every deep link (Home, Studio, Work, Work archive, ADG-ARC, Services, Products, CCOS hub, Contact, nope-404-sample)',
   'mobile viewport: notice present, top-left, gray, left-aligned, copy exact, navigation not obstructed',
   'desktop viewport: notice absent, layout unchanged versus local',
   'route-by-route interaction and motion parity versus the local build',

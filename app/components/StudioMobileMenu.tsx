@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from "react";
 import type { KeyboardEvent } from "react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { GearMark } from "./marks/GearMark";
 import { CcdvPixelMark } from "./marks/CcdvPixelMark";
 import { CollapseCreativeLogo } from "./marks/CollapseCreativeLogo";
@@ -42,16 +42,27 @@ export function StudioMobileMenu({ current: currentRoute = "/studio" }: { curren
   const toggleRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLElement>(null);
   const wasOpen = useRef(false);
+  const location = useLocation();
+  const closedByRoute = useRef(false);
 
-  /* focus: into the menu when it opens, back on the gear when it closes */
+  /* focus: into the menu when it opens, back on the gear when it closes
+     (not when a route change closed it: the new page takes focus) */
   useEffect(() => {
     if (open) {
       panelRef.current?.querySelector<HTMLElement>("a[href]")?.focus();
-    } else if (wasOpen.current) {
+    } else if (wasOpen.current && !closedByRoute.current) {
       toggleRef.current?.focus();
     }
     wasOpen.current = open;
+    closedByRoute.current = false;
   }, [open]);
+
+  /* N4 P-I A-03: any route change closes the menu, Back / Forward included
+     (the bar outlives a swap between section pages) */
+  useEffect(() => {
+    closedByRoute.current = true;
+    setOpen(false);
+  }, [location.key]);
 
   useEffect(() => {
     if (!open) return;
@@ -118,17 +129,24 @@ export function StudioMobileMenu({ current: currentRoute = "/studio" }: { curren
         <ul className="smm__routes">
           {ROUTES.map(({ label, to }) => {
             const current = to === currentRoute;
+            const content = (
+              <>
+                <span>{label}</span>
+                <span className="smm__square" aria-hidden="true" />
+              </>
+            );
+            /* N4 P-I A-20: the current page is a plain entry, as in the desktop bar */
             return (
               <li key={to}>
-                <Link
-                  className="smm__route"
-                  to={to}
-                  aria-current={current ? "page" : undefined}
-                  onClick={close}
-                >
-                  <span>{label}</span>
-                  <span className="smm__square" aria-hidden="true" />
-                </Link>
+                {current ? (
+                  <span className="smm__route" aria-current="page">
+                    {content}
+                  </span>
+                ) : (
+                  <Link className="smm__route" to={to} onClick={close}>
+                    {content}
+                  </Link>
+                )}
               </li>
             );
           })}

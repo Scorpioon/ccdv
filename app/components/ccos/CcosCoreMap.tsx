@@ -100,15 +100,19 @@ function CoreDrawing({ id, uid }: { id: CcosCoreId; uid: string }) {
 
 /* P2 CORR03 (OPERATOR, phones): `selected` may be null (the whole diagram,
    every core thin); `focus` removes every branch but CC.OS and that core, and
-   `blink` makes the two left blink before the card opens (CcosSlides). */
+   `blink` makes the two left blink before the card opens (CcosSlides).
+   N4 P-I C-02: `pressed` is the user's choice for `aria-pressed` when the
+   drawn core differs from it (the desktop walk); it defaults to `selected`. */
 export function CcosCoreMap({
   selected,
+  pressed,
   onSelect,
   labelledBy,
   focus = null,
   blink = false,
 }: {
   selected: CcosCoreId | null;
+  pressed?: CcosCoreId | null;
   onSelect: (id: CcosCoreId) => void;
   labelledBy: string;
   focus?: CcosCoreId | null;
@@ -116,6 +120,7 @@ export function CcosCoreMap({
 }) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
   const gone = (id: CcosCoreId) => focus !== null && id !== focus && id !== "ccos";
+  const chosen = pressed === undefined ? selected : pressed;
 
   return (
     <div className="cc-map">
@@ -147,7 +152,7 @@ export function CcosCoreMap({
               type="button"
               className="cc-map__button"
               style={{ left: `${(cx / VIEW_W) * 100}%`, top: `${(cy / VIEW_H) * 100}%` }}
-              aria-pressed={core.id === selected}
+              aria-pressed={core.id === chosen}
               aria-label={core.name}
               disabled={gone(core.id)}
               onClick={() => onSelect(core.id)}

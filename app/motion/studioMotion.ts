@@ -13,15 +13,11 @@
 import { useEffect, useLayoutEffect } from "react";
 import type { CSSProperties, RefObject } from "react";
 
+/* N4 P-I C-09: only the impulse has a JS reader; the durations and steps live
+   in the CSS presets alone, and the idle timer went with A9 (summon-only bar) */
 export const STUDIO_MOTION = {
-  /** seconds; mirrors --sm-dur-* */
-  dur: { frame: 1.1, block: 0.7, text: 0.6, art: 0.9 },
-  /** extra delay (s) between grammar steps inside one scene */
-  step: { block: 0.12, text: 0.24, art: 0.4 },
   /** sphere impulse on a slot switch, rad/s about screen x and y */
   impulse: { x: 0.9, y: 1.6 },
-  /** seconds without a scroll before the nav bar steps aside (addendum A1) */
-  navIdle: 1.0,
 } as const;
 
 /** fixed reveal order of the CC.OS graph card (E16): centre first, then clockwise */
@@ -29,14 +25,13 @@ export const CCOS_GRAPH_ORDER = ["CCOS", "WRK", "INT", "ARC", "TME", "SEC", "BIZ
 /** seconds between two graph steps */
 export const CCOS_GRAPH_STEP = 0.32;
 
-/** `--rd` reveal delay used by `[data-reveal]` and `[data-spawn]` */
-export const delay = (seconds: number) => ({ "--rd": `${seconds}s` }) as CSSProperties;
 /** `--i` stagger index used by graph nodes, dots and spawn children */
 export const index = (i: number) => ({ "--i": i }) as CSSProperties;
 
-/* One-way reveal observer for a Studio route: marks `[data-reveal]`,
-   `[data-words]`, `[data-spawn]` and `[data-scene]` elements with `data-seen`
-   the first time they are on screen, and arms the hidden start states by
+/* N4 H6: One-way reveal observer for a Studio route: marks `[data-spawn]` and
+   `[data-scene]` elements with `data-seen` the first time they are on screen
+   (N4 P-I: the dead `[data-reveal]` / `[data-words]` selectors are gone; no
+   TSX produced either attribute), and arms the hidden start states by
    setting `data-motion="on"` on the root. Without it (reduced motion, no JS, no
    IntersectionObserver) nothing is hidden and everything is plain content.
    NAV-T4: armed in a layout effect, before the incoming page's first paint;
@@ -59,7 +54,7 @@ export function useSceneReveal(rootRef: RefObject<HTMLElement | null>, reduced: 
       { threshold: 0.15, rootMargin: "0px 0px -8% 0px" },
     );
     root
-      .querySelectorAll("[data-reveal], [data-words], [data-spawn], [data-scene]")
+      .querySelectorAll("[data-spawn], [data-scene]")
       .forEach((node) => observer.observe(node));
     root.setAttribute("data-motion", "on");
     return () => {

@@ -3,8 +3,9 @@
    text RIGHT.
 
      left     red \\Service Index strip over one slot per category (tabs), then
-              the voxel face (IndexVoxel): one pattern per service, 15 states
-              from data/servicesVoxels.ts; the face recomposes on every switch
+              the voxel face: one pattern per service, 15 states from
+              data/servicesVoxels.ts; the face recomposes on every switch
+              (A11 below: now the Rubik cube; IndexVoxel is deleted, N4 P-I)
      right    a red strip (the strip's gear only), the "//" category lead, the
               category's services (tabs), the approved description and its two
               Focus values as light chips

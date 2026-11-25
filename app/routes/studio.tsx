@@ -11,7 +11,10 @@ import { useBoundaryNav, useNavIdle, usePinTop } from "../motion/routeNav";
 import { useStepScroll } from "../motion/stepScroll";
 
 export function meta() {
-  return [{ title: "CCDV — Studio" }];
+  return [
+    { title: "CCDV — Studio" },
+    { name: "description", content: "How CCDV works: approach, build process and the CC.OS system behind it." },
+  ];
 }
 
 /* Studio page, R3 OPUS CORR01: the V2 originals' sequence of scenes in one
@@ -39,14 +42,12 @@ export function meta() {
    the cover hides it again. Without JS the bar stays tucked away and shows
    whenever focus is inside it (CSS). Phones keep the operator's M1 bar.
 
-   Addendum A1 (idle hide): once the reader stands still for
-   STUDIO_MOTION.navIdle, `data-nav-idle` on the root slides the bar (thin
-   masthead and phone M1 bar alike) up out of view; the next scroll, either
-   direction, brings it back. The hide uses the CSS `translate` property, so it
-   stacks on the --nav-in transform with its own easing. CSS keeps the bar while
-   it holds focus, the pointer or (phones) the open menu.
-   A9 (OPERATOR): summon-only. The idle timer is gone; stepping or scrolling
-   down hides the bar, up (or the page's end) brings it back. */
+   Bar hide (A1, then A9, OPERATOR: summon-only): `data-nav-idle` on the shared
+   chrome slides the bar (thin masthead and phone M1 bar alike) up out of view
+   while the reader steps or scrolls down; up (or the page's end) brings it
+   back. There is no idle timer. The hide uses the CSS `translate` property, so
+   it stacks on the --nav-in transform with its own easing. CSS keeps the bar
+   while it holds focus, the pointer or (phones) the open menu. */
 export default function Studio() {
   const { reduced } = useMotionPolicy();
 
@@ -72,8 +73,9 @@ export default function Studio() {
           while the Approach rises over it; the Approach then pins, one screen
           tall, while the lilac rises over it. The in-flow markers (`pin-snap`)
           are the stepper's stops (motion/stepScroll.ts, A3), since a sticky
-          element's own position moves with it */}
-      <div className="scene-curtain">
+          element's own position moves with it. N4 P-H A-14: the curtain is
+          the main landmark, so the footer is the page's contentinfo */}
+      <main className="scene-curtain">
         <StudioCover />
 
         <span className="pin-snap" aria-hidden="true" />
@@ -87,7 +89,7 @@ export default function Studio() {
           <CcosScene reduced={reduced} />
           <StudioConnectors />
         </div>
-      </div>
+      </main>
 
       <SiteFooter />
     </div>

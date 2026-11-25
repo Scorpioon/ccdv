@@ -1,7 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { useMotionPolicy } from "./reducedMotion";
-export type TransitionDirection = "to-studio" | "to-services" | "to-products" | "to-ccos" | "to-home" | null;
+// N4 P-I A-08: the `leaving` direction state (and `isBusy`, derived from it)
+// had no reader; setting it re-rendered the shell twice per navigation.
+// Single-flight is the `busy` ref alone.
 // NAV-T3 (OPERATOR): Services joins Studio as a scene route Home rises into,
 // and every `collapse` link returns through "/". Products V2 P1b
 // (t_20261117_products20): Products joins them; P2: /products/ccos rises out
@@ -20,7 +22,6 @@ export function useTransitionCoordinator() {
   const navigate = useNavigate();
   const location = useLocation();
   const { reduced } = useMotionPolicy();
-  const [leaving, setLeaving] = useState<TransitionDirection>(null);
   const lead = useRef<ReturnType<typeof setTimeout> | null>(null);
   const failsafe = useRef<ReturnType<typeof setTimeout> | null>(null);
   const busy = useRef(false);
@@ -48,7 +49,6 @@ export function useTransitionCoordinator() {
     clearTimers();
     busy.current = false;
     target.current = null;
-    setLeaving(null);
     const next = queued.current;
     queued.current = null;
     if (next && next !== pathname.current) goRef.current(next);
@@ -64,17 +64,6 @@ export function useTransitionCoordinator() {
     busy.current = true;
     target.current = to;
     queued.current = null;
-    setLeaving(
-      to === "/studio"
-        ? "to-studio"
-        : to === "/services"
-          ? "to-services"
-          : to === "/products"
-            ? "to-products"
-            : to === "/products/ccos"
-              ? "to-ccos"
-              : "to-home",
-    );
     const startKey = locationKey.current;
     const leadMs = reduced ? 0 : EXIT_LEAD_MS;
     lead.current = setTimeout(() => {
@@ -90,5 +79,5 @@ export function useTransitionCoordinator() {
   }, [endTransition, location.pathname, navigate, reduced]);
   useEffect(() => { goRef.current = go; }, [go]);
   useEffect(() => clearTimers, [clearTimers]);
-  return { go, endTransition, leaving, reduced, isBusy: leaving !== null };
+  return { go, endTransition, reduced };
 }

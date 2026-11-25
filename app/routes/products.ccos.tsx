@@ -14,15 +14,19 @@ import { CCOS_DEFAULT_CORE, type CcosCoreId } from "../data/ccosContent";
 import { useMotionPolicy } from "../motion/reducedMotion";
 
 export function meta() {
-  return [{ title: "CCDV — Products — CC.OS" }];
+  return [
+    { title: "CCDV — Products — CC.OS" },
+    { name: "description", content: "CC.OS — the CCDV operating system for creative development work." },
+  ];
 }
 
 /* `/products/ccos` (t_20261117_products20 P2, PRODUCTS/CCOS.svg). OPERATOR:
    one page for CC.OS and its six cores, replacing the R1.1 hub and the six
    leaf pages (deleted, no redirect), built as a slideshow — the hero, the
    intro, the core map, two statements, the product explainer, and the shared
-   footer as the last stop. It rises out of /products and falls back to it
-   (GlobalShell SCENE_PARENT).
+   footer as the last stop. N4 H6: entering and leaving use the shell's single
+   page fade (GlobalShell); a move back to /products is a "back" direction there
+   (routeDir).
 
    P2 CORR01 (OPERATOR): no masthead and no M1 bar here — the deck carries
    one "Back" link; no grid; the app slide is gone. The root keeps
@@ -63,8 +67,9 @@ export default function ProductsCcos() {
   ];
 
   return (
-    <div className="r11 r11--products r11--ccos">
+    /* N4 P-H A-14: the deck is the main landmark; its footer is a slide, so it stays inside */
+    <main className="r11 r11--products r11--ccos">
       <CcosDeck slides={slides} reduced={reduced} label="CC.OS" mark={<CcosWordmark />} />
-    </div>
+    </main>
   );
 }

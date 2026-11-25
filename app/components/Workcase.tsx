@@ -33,10 +33,9 @@ import { AVAILABLE_YEARS, type WorkProject, type WorkcaseData } from "../data/wo
 
    WORK-T2: every link back (arrow, `[Work]`, `collapse`, Year, Type) now opens
    the archive (/work/archive), which owns the filters and restore context.
-   WORK-T2 (OPERATOR, WF1): every /work/:slug page gets the thin masthead too,
-   as the hub and archive — `r11--work` on the root shares their bar CSS; the
-   yellow band is the boundary edge, so the bar shows from the top; phones get
-   the M1 bar.
+   N4 H7: the WORK-T2 / WF1 note that every /work/:slug page carries the thin
+   masthead (`r11--work` bar CSS) is superseded: a case renders no bar (see
+   N3 W-A1 below), and the root class is `r11--workcase`.
    NAV-T3 (OPERATOR): `collapse` now goes Home (global rule); the arrow,
    `[Work]`, Year and Type still open the archive.
    N3 W-A1 (OPERATOR): a case is no longer a page. The Work workspace
@@ -93,6 +92,7 @@ export function Workcase({ project, data }: { project: WorkProject; data: Workca
               alt={data.hero.alt}
               width={data.hero.width}
               height={data.hero.height}
+              fetchPriority="high"
               decoding="async"
             />
           </div>

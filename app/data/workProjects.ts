@@ -143,7 +143,9 @@ export function findProject(id: string): WorkProject | undefined {
 
 /** the rail's lists, as the archive artboard draws them */
 export const V3_YEARS = ["2026", "2025", "2024", "2023"];
-export const V3_ARCHIVE_CATEGORIES = ["WEBSITE", "TOOL", "CC.OS", "PLATFORM", "PRODUCT"];
+/* N4 P-H B-19 (OPERATOR): only categories that have rows; PRODUCT (none) out,
+   SERVICE (ADG Laus) in. A new category is added here by hand. */
+export const V3_ARCHIVE_CATEGORIES = ["WEBSITE", "TOOL", "CC.OS", "PLATFORM", "SERVICE"];
 
 export type ArchiveGlyph = "[+]" | "[↗]" | "[x]";
 
@@ -160,6 +162,8 @@ export interface ArchiveRow {
   projectId?: string;
   /** N3 C1: the project's live site, only where the OPERATOR gave its URL */
   liveUrl?: string;
+  /** N4: an on-site page that explains the project (the `[↗]` glyph and the preview's "See in Products"); CC.OS rows -> /products/ccos */
+  explainerHref?: string;
 }
 
 const archiveRow = (
@@ -172,7 +176,8 @@ const archiveRow = (
   glyph: ArchiveGlyph,
   projectId?: string,
   liveUrl?: string,
-): ArchiveRow => ({ id, year, category, responsibility, name, client, glyph, projectId, liveUrl });
+  explainerHref?: string,
+): ArchiveRow => ({ id, year, category, responsibility, name, client, glyph, projectId, liveUrl, explainerHref });
 
 export const ARCHIVE_ROWS: ArchiveRow[] = [
   archiveRow("project-ls", "2027", "PLATFORM", "UX/UI & Development", "Project LS", "CCDV Product", "[x]"),
@@ -180,9 +185,9 @@ export const ARCHIVE_ROWS: ArchiveRow[] = [
   archiveRow("panoptes", "2027", "CC.OS", "Development", "PANOPTES", "CCDV Product", "[+]"),
   archiveRow("kairon", "2027", "CC.OS", "Development", "KAIRON", "CCDV Product", "[+]"),
   archiveRow("kron", "2027", "CC.OS", "Development", "KRON", "CCDV Product", "[+]"),
-  archiveRow("aethernos", "2026", "CC.OS", "Development", "AETHERNOS", "CCDV Product", "[↗]"),
-  archiveRow("kaia", "2026", "CC.OS", "Development", "KAIA", "CCDV Product", "[↗]"),
-  archiveRow("wrkops", "2026", "CC.OS", "Development", "WRKOPS", "CCDV Product", "[↗]"),
+  archiveRow("aethernos", "2026", "CC.OS", "Development", "AETHERNOS", "CCDV Product", "[↗]", undefined, undefined, "/products/ccos"),
+  archiveRow("kaia", "2026", "CC.OS", "Development", "KAIA", "CCDV Product", "[↗]", undefined, undefined, "/products/ccos"),
+  archiveRow("wrkops", "2026", "CC.OS", "Development", "WRKOPS", "CCDV Product", "[↗]", undefined, undefined, "/products/ccos"),
   archiveRow("adg-arc", "2026", "WEBSITE", "UX/UI, Code & Motion", "Arquitectura y Tipografía", "ADG-FAD", "[+]", "adg-arc", "https://www.adg-fad.org/adg-arc/"),
   archiveRow("adg-laus-2026", "2026", "SERVICE", "Code", "ADG Laus Scripts", "ADG-FAD ET", "[x]"),
   archiveRow("htw-website", "2025", "WEBSITE", "UX/UI & Code", "Hacking The World", "Fran & Berta", "[+]", "htw-website"),

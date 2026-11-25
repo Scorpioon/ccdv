@@ -11,7 +11,10 @@ import { useBoundaryNav, useNavIdle, usePinTop } from "../motion/routeNav";
 import { useStepScroll } from "../motion/stepScroll";
 
 export function meta() {
-  return [{ title: "CCDV — Products" }];
+  return [
+    { title: "CCDV — Products" },
+    { name: "description", content: "Software and tools built by CCDV, including CC.OS." },
+  ];
 }
 
 /* Products V2 (t_20261117_products20). Desktop follows PRODUCTS_v2.svg
@@ -77,7 +80,8 @@ export default function Products() {
 
   return (
     <div className="r11 r11--products" ref={rootRef}>
-      <div className="pv">
+      {/* N4 P-H A-14: the page body is the main landmark; the footer is its contentinfo */}
+      <main className="pv">
         <h1 className="pv-visually-hidden">Products</h1>
 
         <div className="scene-curtain">
@@ -100,7 +104,7 @@ export default function Products() {
             </section>
           </div>
         </div>
-      </div>
+      </main>
 
       <SiteFooter />
     </div>
