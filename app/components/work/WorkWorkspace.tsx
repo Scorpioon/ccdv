@@ -5,6 +5,10 @@ import { WorkSidebar } from "./WorkSidebar";
 import { WorkMosaic } from "./WorkMosaic";
 import { WorkArchiveTable } from "./WorkArchiveTable";
 import { WorkArchivePreview } from "./WorkArchivePreview";
+import { WorkPhoneHead } from "./WorkPhoneHead";
+import { WorkPhoneFilters } from "./WorkPhoneFilters";
+import { WorkPhoneFeatured } from "./WorkPhoneFeatured";
+import { WorkPhoneWorks } from "./WorkPhoneWorks";
 import { Workcase } from "../Workcase";
 import { useWorkDeck, type WorkMove, type WorkView } from "./useWorkDeck";
 import { useMotionPolicy } from "../../motion/reducedMotion";
@@ -34,9 +38,15 @@ import {
    links, Back / Forward and a reload land on the same view. The workspace
    fills the screen with the artboard's margins (51.2 around, the rail 185,
    the content from 260.2), the unit set by the screen's height.
-   Phones / tablets: Featured, then the archive, on one natively scrolling
-   page; `All projects` / `Featured` scroll to them; a case slides in over
-   them from the right.
+   Phones / tablets (N4 P-J, OPERATOR: WORK V3_responsive / _responsive2):
+   their own layout, one natively scrolling page — the head card
+   (WorkPhoneHead), the `Work` bar, the Featured / All works switch and the
+   filters (WorkPhoneFilters), then either Featured (WorkPhoneFeatured) or
+   All works (WorkPhoneWorks, one card per row); a filter chosen on
+   Featured opens All works. A case slides in over the page from the right;
+   the page is taken to its top first (B-01: the overlay is fixed inside the
+   shell, whose `container-type` makes the shell its box) and put back on
+   the way out.
 
    The archive's filters and selection live here, so they survive a case
    visit. Arrival: `state.filter` (Workcase's Year / Type links) selects that
@@ -82,8 +92,12 @@ function validCategory(value: unknown): string | null {
   return V3_ARCHIVE_CATEGORIES.includes(category) && hasRows("category", category) ? category : null;
 }
 
+/* N4 P-J (B-9): the width is read on the first render (SPA, no server
+   render), so a desktop never draws the phone layout for a frame */
 function useDesktop() {
-  const [desktop, setDesktop] = useState(false);
+  const [desktop, setDesktop] = useState(() =>
+    typeof window === "undefined" ? true : window.matchMedia(DESKTOP).matches,
+  );
   useEffect(() => {
     const query = window.matchMedia(DESKTOP);
     const update = () => setDesktop(query.matches);
@@ -101,7 +115,6 @@ export function WorkWorkspace() {
   const navigationType = useNavigationType();
   const navigate = useNavigate();
   const rootRef = useRef<HTMLDivElement>(null);
-  const archiveRef = useRef<HTMLElement>(null);
   const caseRef = useRef<HTMLElement>(null);
 
   /* the layout's own params do not carry the child's :slug, so it is read
@@ -170,23 +183,36 @@ export function WorkWorkspace() {
 
   useWorkDeck({ rootRef, enabled: desktop, reduced, view, move });
 
-  /* a filter chosen from inside a case returns to the archive */
+  /* a filter chosen from inside a case returns to the archive; on phones and
+     tablets (N4 P-J) one chosen on Featured opens All works too */
   const filterFrom = (set: (value: string | null) => void) => (value: string | null) => {
     set(value);
-    if (view === "case") navigate("/work/archive", { preventScrollReset: true });
+    if (view === "case" || (!desktop && view === "featured")) navigate("/work/archive", { preventScrollReset: true });
   };
 
-  /* phones: the views are one page, so the switch links scroll to them */
-  const lastView = useRef<WorkView | null>(null);
+  /* N4 P-J: the list shown under a phone case is the one it was opened from
+     (a direct load of a case shows All works) */
+  const [list, setList] = useState<"featured" | "archive">(view === "featured" ? "featured" : "archive");
   useEffect(() => {
-    const previous = lastView.current;
-    lastView.current = view;
-    if (desktop || view === "case" || previous === "case") return;
-    if (previous === null && view === "featured") return;
-    const behavior: ScrollBehavior = reduced || previous === null ? "auto" : "smooth";
-    if (view === "archive") archiveRef.current?.scrollIntoView({ behavior, block: "start" });
-    else window.scrollTo({ top: 0, behavior });
-  }, [view, desktop, reduced]);
+    if (view !== "case") setList(view);
+  }, [view]);
+
+  /* N4 P-J (B-01): phones take the page to its top before a case shows, and
+     back to where it was when the case leaves */
+  const pageScroll = useRef<number | null>(null);
+  useEffect(() => {
+    if (desktop) return;
+    if (view === "case") {
+      if (pageScroll.current === null) {
+        pageScroll.current = window.scrollY;
+        window.scrollTo(0, 0);
+      }
+    } else if (pageScroll.current !== null) {
+      const top = pageScroll.current;
+      pageScroll.current = null;
+      window.scrollTo(0, top);
+    }
+  }, [view, desktop]);
 
   /* a case that comes in starts at its top */
   useEffect(() => {
@@ -198,6 +224,38 @@ export function WorkWorkspace() {
   const plane = { "--v": view === "featured" ? 0 : 1, "--h": view === "case" ? 1 : 0 } as CSSProperties;
   const caseOpen = view === "case";
 
+  const caseSection = (
+    <section
+      ref={caseRef}
+      className="wv3-panel wv3-panel--case wv3-case"
+      aria-label={project ? `Case study: ${project.name}` : "Case study"}
+      data-deck-scroll
+      inert={!caseOpen}
+    >
+      {project && caseData ? <Workcase project={project} data={caseData} /> : null}
+    </section>
+  );
+
+  if (!desktop) {
+    return (
+      <div className="r11 wv3 wv3p" ref={rootRef} data-view={view}>
+        <div className="wv3p-page" inert={caseOpen}>
+          <WorkPhoneHead />
+          <WorkPhoneFilters
+            list={list}
+            marked={marked}
+            year={year}
+            category={category}
+            onYear={filterFrom(setYear)}
+            onCategory={filterFrom(setCategory)}
+          />
+          <main className="wv3p-main">{list === "featured" ? <WorkPhoneFeatured /> : <WorkPhoneWorks rows={rows} />}</main>
+        </div>
+        {caseSection}
+      </div>
+    );
+  }
+
   return (
     <div className="r11 wv3" ref={rootRef} data-view={view}>
       <WorkSidebar
@@ -207,23 +265,21 @@ export function WorkWorkspace() {
         category={category}
         onYear={filterFrom(setYear)}
         onCategory={filterFrom(setCategory)}
-        filtersAlways={!desktop}
       />
 
       {/* N4 P-H A-14: the stage (Featured, archive, case) is the page's main landmark; the rail is its nav */}
       <main className="wv3-stage">
         <div className="wv3-plane" style={plane}>
-          <div className="wv3-panel wv3-panel--featured" inert={desktop ? view !== "featured" : caseOpen}>
+          <div className="wv3-panel wv3-panel--featured" inert={view !== "featured"}>
             <WorkMosaic reduced={reduced} />
           </div>
 
           <section
-            ref={archiveRef}
             className="wv3-panel wv3-panel--archive wv3-archive"
             id="work-index"
             aria-label="All projects"
             data-deck-scroll
-            inert={desktop ? view !== "archive" : caseOpen}
+            inert={view !== "archive"}
           >
             <WorkArchiveTable
               rows={rows}
@@ -234,15 +290,7 @@ export function WorkWorkspace() {
             <WorkArchivePreview entry={selected} />
           </section>
 
-          <section
-            ref={caseRef}
-            className="wv3-panel wv3-panel--case wv3-case"
-            aria-label={project ? `Case study: ${project.name}` : "Case study"}
-            data-deck-scroll
-            inert={!caseOpen}
-          >
-            {project && caseData ? <Workcase project={project} data={caseData} /> : null}
-          </section>
+          {caseSection}
         </div>
       </main>
     </div>

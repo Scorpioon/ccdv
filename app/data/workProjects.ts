@@ -292,7 +292,15 @@ export interface FeaturedProject {
   category: string;
   top: [V3Image, V3Image];
   bottom: V3Image[];
+  /** N4 P-J: the phone / tablet Featured view's short description (OPERATOR source text, condensed) */
+  description: string;
+  /** N4 P-J: the phone / tablet Featured view's one image */
+  poster: V3Image;
 }
+
+/** N4 P-J (WORK V3_responsive): the line over every featured project on phones / tablets */
+export const WORK_INTRO =
+  "Our background is in visual design and digital experiences. Today, we use that knowledge to build web applications, custom tools and software around how people actually work.";
 
 export const FEATURED_PROJECTS: FeaturedProject[] = [
   {
@@ -303,6 +311,9 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     category: "WEBSITE",
     top: [{ ...LANDING_DESKTOP, focus: "62% 50%" }, { ...SPECIMEN_TT, ground: "#FEED01" }],
     bottom: [PHONE_MEDIAPRO, SHEET_DHUB, PHONE_STAMP, PHONE_ROUTE],
+    description:
+      "Arquitectura y Tipografía en diálogo — a curated route by ADG-FAD for Barcelona 2026, World Capital of Architecture. Twenty Barcelona buildings are paired with contemporary typefaces to reveal what they share: geometry, rhythm, proportion, structure. We designed and built the explorable collection — map, data sheets and Passport — ten stops on the street with QR codes, ten online.",
+    poster: PHONE_LANDING,
   },
 ];
 

@@ -1,0 +1,47 @@
+import { GearMark } from "../marks/GearMark";
+import { WorkActions } from "./WorkActions";
+import { ARCHIVE_POSTERS, archiveTitle, type ArchiveRow } from "../../data/workProjects";
+
+/* N4 P-J (OPERATOR, WORK V3_responsive2 y862..2108): one archive row as a
+   card on phones and tablets — the yellow bar with the project's name, its
+   image (cropped to 341 x 143, only where the project has one; OPERATOR: no
+   image block otherwise), the white facts box (Year, Type, Role, Project
+   Name, Client: the row's year, category, responsibility, name and client,
+   verbatim) and the two actions (WorkActions). */
+
+export function WorkArchiveCard({ entry }: { entry: ArchiveRow }) {
+  const image = ARCHIVE_POSTERS[entry.id];
+  const title = archiveTitle(entry);
+  const facts: [string, string][] = [
+    ["Year", entry.year],
+    ["Type", entry.category],
+    ["Role", entry.responsibility],
+    ["Project Name", entry.name],
+    ["Client", entry.client],
+  ];
+
+  return (
+    <li className="wv3p-card">
+      <article aria-label={title}>
+        <h3 className="wv3p-bar">
+          <GearMark className="wv3p-bar__gear" fill="#1A1A1A" dotFill="#FEF36A" />
+          {title}
+        </h3>
+        {image ? (
+          <div className="wv3p-card__image">
+            <img src={image.src} alt={image.alt} width={image.width} height={image.height} loading="lazy" decoding="async" />
+          </div>
+        ) : null}
+        <dl className="wv3p-card__facts">
+          {facts.map(([label, value]) => (
+            <div key={label}>
+              <dt>{label}:</dt>
+              <dd>{value}</dd>
+            </div>
+          ))}
+        </dl>
+        <WorkActions entry={entry} className="wv3p-actions" />
+      </article>
+    </li>
+  );
+}

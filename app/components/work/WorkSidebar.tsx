@@ -2,7 +2,7 @@ import { Link } from "react-router";
 import { useTransitionLink } from "../GlobalShell";
 import { GearMark } from "../marks/GearMark";
 import { WorkPixelBlock } from "./WorkPixelBlock";
-import { ARCHIVE_ROWS, V3_ARCHIVE_CATEGORIES, V3_YEARS } from "../../data/workProjects";
+import { WorkFilterLists } from "./WorkFilterLists";
 import type { WorkView } from "./useWorkDeck";
 
 /* N3 Work V3 rail (OPERATOR, WORK V3.svg / WORK V3 _ archive.svg). It stays
@@ -16,9 +16,8 @@ import type { WorkView } from "./useWorkDeck";
      - CC: DEV UNIT and the four other sections;
      - the view switch: `All projects ↓` / `Featured ↑`, which move the
        content (no page load); W-A1: plain typeface arrows.
-   Fills: yellow is the active choice of a list (a head when nothing is
-   chosen); white marks the year and category of the project in view. A
-   category without rows is drawn but inert. */
+   The two filter lists are WorkFilterLists (N4 P-J, shared with the phone /
+   tablet layout). Desktop (>= 1024) only since P-J. */
 
 const SECTIONS = [
   { label: "STUDIO", to: "/studio" },
@@ -27,8 +26,6 @@ const SECTIONS = [
   { label: "CONTACT", to: "/contact" },
 ];
 
-const hasRows = (field: "year" | "category", value: string) => ARCHIVE_ROWS.some((entry) => entry[field] === value);
-
 export function WorkSidebar({
   view,
   marked,
@@ -36,11 +33,8 @@ export function WorkSidebar({
   category,
   onYear,
   onCategory,
-  filtersAlways,
 }: {
   view: WorkView;
-  /** phones: the archive sits under Featured on one page, so its filters always show */
-  filtersAlways: boolean;
   marked: { year: string | null; category: string | null };
   year: string | null;
   category: string | null;
@@ -48,43 +42,8 @@ export function WorkSidebar({
   onCategory: (value: string | null) => void;
 }) {
   const link = useTransitionLink();
-  const filtersShown = filtersAlways || view !== "featured";
-
-  const head = (field: "year" | "category") => {
-    const none = (field === "year" ? year : category) === null;
-    const set = field === "year" ? onYear : onCategory;
-    return (
-      <li>
-        <button type="button" className="wv3-side__item wv3-side__head" aria-pressed={none} onClick={() => set(null)}>
-          {field === "year" ? "[ YEAR ]" : "[ CATEGORY ]"}
-        </button>
-      </li>
-    );
-  };
-
-  const entry = (field: "year" | "category", value: string) => {
-    const text = field === "year" ? `[ ${value} ]` : value === "WEBSITE" ? `[${value}]` : `[ ${value} ]`;
-    if (!hasRows(field, value)) {
-      return (
-        <span className="wv3-side__item" aria-disabled="true">
-          {text}
-        </span>
-      );
-    }
-    const active = (field === "year" ? year : category) === value;
-    const set = field === "year" ? onYear : onCategory;
-    return (
-      <button
-        type="button"
-        className="wv3-side__item"
-        aria-pressed={active}
-        data-marked={marked[field] === value && !active ? "" : undefined}
-        onClick={() => set(active ? null : value)}
-      >
-        {text}
-      </button>
-    );
-  };
+  /* N4 P-J: the rail is desktop only (phones and tablets: WorkPhoneFilters) */
+  const filtersShown = view !== "featured";
 
   return (
     <aside className="wv3-side" data-view={view} aria-label="Work">
@@ -100,18 +59,7 @@ export function WorkSidebar({
 
       <div className="wv3-side__filters" data-shown={filtersShown ? "" : undefined} inert={!filtersShown}>
         <div className="wv3-side__filters-inner">
-          <ul className="wv3-side__list" aria-label="Year">
-            {head("year")}
-            {V3_YEARS.map((value) => (
-              <li key={value}>{entry("year", value)}</li>
-            ))}
-          </ul>
-          <ul className="wv3-side__list" aria-label="Category">
-            {head("category")}
-            {V3_ARCHIVE_CATEGORIES.map((value) => (
-              <li key={value}>{entry("category", value)}</li>
-            ))}
-          </ul>
+          <WorkFilterLists marked={marked} year={year} category={category} onYear={onYear} onCategory={onCategory} />
         </div>
       </div>
 
