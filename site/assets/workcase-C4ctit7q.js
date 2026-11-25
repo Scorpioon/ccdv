@@ -1,1 +1,0 @@
-import{w as e,h as n}from"./chunk-OB3PAWPO-Cn5KsThv.js";import{w as s}from"./workProjects-6X3t7ox6.js";function a({params:t}){const o=t.slug;return[{title:o&&s(o)?`CCDV — Work / ${o}`:"CCDV — Not found"}]}const c=e(function(){const{slug:o=""}=n();if(s(o)===void 0)throw new Response("Not Found",{status:404,statusText:"Not Found"});return null});export{c as default,a as meta};
