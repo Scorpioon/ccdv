@@ -8,7 +8,16 @@ import { useMotionPolicy } from "./reducedMotion";
 // and every `collapse` link returns through "/". Products V2 P1b
 // (t_20261117_products20): Products joins them; P2: /products/ccos rises out
 // of /products and falls back to it.
-export type TransitionTarget = "/" | "/studio" | "/services" | "/products" | "/products/ccos";
+// N5 BH2 (OPERATOR): every cross-page link (Home bands, masthead cells, footer,
+// phone menu, Work rail) routes through here, so Work and Contact join the type.
+export type TransitionTarget =
+  | "/"
+  | "/studio"
+  | "/services"
+  | "/work"
+  | "/products"
+  | "/products/ccos"
+  | "/contact";
 // PROVISIONAL lifecycle timings. NOT a design decision and NOT canonical:
 // GF05-A and matrix v3.8 both forbid freezing duration/easing before the
 // visual pieces are confirmed. EXIT_LEAD_MS is the pre-navigation scene lead;

@@ -67,6 +67,14 @@ h1, h2, p { margin: 0; font-weight: 600; }
    the incoming one while it fades and never takes input. */
 .site-stage { position: relative; }
 .site-stage > [data-motion-pop-id] { z-index: 1; pointer-events: none; }
+/* N5 BH2 (OPERATOR): direction-aware motion (`data-route-move`, GlobalShell).
+   The sideways slides run outside the stage's width: clip, so no horizontal
+   scroll (clip, not hidden: no scroll container, sticky keeps working). The
+   popped route paints above the incoming one (fall, fade, next, prev), except
+   on `rise`, where Home stays put and the incoming section slides up OVER it. */
+.site-stage { overflow-x: clip; }
+.site-shell[data-route-move="rise"] .site-stage > [data-motion-pop-id] { z-index: 0; }
+.site-shell[data-route-move="rise"] .site-stage > .site-stage__route:not([data-motion-pop-id]) { position: relative; z-index: 1; }
 /* P2 CORR02 (OPERATOR): one transition everywhere; NAV-T3's rise / fall rules
    are gone. H3-1: the new page's ground is there at once and the old page
    dissolves over it.
@@ -213,61 +221,6 @@ main { display: block; outline: none; }
    NO letter-spacing anywhere: the provisional-face compensation that was
    considered in GF07-C2 is moot and must not be reintroduced. */
 
-.masthead__title {
-  position: absolute;
-  left: calc(341.03 * var(--u));
-  top: calc(5.93 * var(--u));              /* baseline 71 */
-  font-size: calc(64.9 * var(--u));
-  line-height: calc(80 * var(--u));        /* second baseline 151 */
-  letter-spacing: 0;
-  white-space: nowrap;
-}
-
-/* R1.1's broken underline segments are descender skips, which skip-ink
-   reproduces; only the offset and thickness are stated. */
-.masthead__title span {
-  display: block;
-  text-decoration: underline;
-  text-underline-offset: 0.04545em;
-  text-decoration-thickness: 0.04545em;
-}
-
-.masthead__meta {
-  position: absolute;
-  left: calc(341.03 * var(--u));
-  top: calc(188.9 * var(--u));             /* baselines 204 / 224 / 244 */
-  /* N4 P-I B-16: 10px floor (7px at 768); the leading floor keeps the three
-     lines above the bands (y268) at 768 */
-  font-size: max(10px, calc(13.2 * var(--u)));
-  line-height: max(13px, calc(20 * var(--u)));
-  white-space: nowrap;
-}
-
-.masthead__meta a {
-  text-decoration: underline;
-  text-underline-offset: 0.04545em;
-  text-decoration-thickness: 0.04545em;
-}
-
-.masthead__lang {
-  position: absolute;
-  left: calc(1336 * var(--u));
-  top: calc(22.3 * var(--u));              /* baseline 34 */
-  font-size: max(10px, calc(13.2 * var(--u))); /* N4 P-I B-16 floor */
-  line-height: 1;
-}
-
-/* the two loose squares on the Home masthead baseline (x933.03 / x1406, y234) */
-.masthead__dot {
-  position: absolute;
-  top: calc(234 * var(--u));
-  width: calc(10 * var(--u));
-  height: calc(10 * var(--u));
-  background: var(--ccdv-ink);
-}
-.masthead__dot--a { left: calc(933.03 * var(--u)); }
-.masthead__dot--b { left: calc(1406 * var(--u)); }
-
 /* --- Studio five-cell masthead -------------------------------------------
    Cells are contiguous at a 214.89 pitch from x341.031 to x1416, y24..244. */
 .cells { position: absolute; left: calc(341.03 * var(--u)); top: calc(24 * var(--u)); display: flex; }
@@ -312,82 +265,6 @@ main { display: block; outline: none; }
   width: calc(159.17 * var(--u));
   height: calc(159.17 * var(--u));
 }
-
-/* --- Home navigation bands ----------------------------------------------
-   Each band is a 31 stripe over a 177 body. The oversized bracket label is
-   NOT clipped to the body: in the reference the label paths are painted after
-   the band rects, so each label's bracket descends about 28 past the body and
-   over the stripe below. Where that stripe is the dark footer the overlap is
-   invisible (same ink), which is why only the coloured stripes show the notch.
-   z-index keeps that paint order explicit rather than relying on source order. */
-.bands { position: relative; display: block; }
-
-.band { position: relative; display: block; }
-.band__stripe { position: relative; z-index: 1; display: block; height: calc(31 * var(--u)); }
-.band__body {
-  position: relative;
-  z-index: 2;
-  display: block;
-  height: calc(177 * var(--u));
-  background: var(--ccdv-panel);
-}
-
-.band--studio .band__stripe { background: var(--ccdv-purple); }
-.band--work .band__stripe { background: var(--ccdv-yellow); }
-.band--services .band__stripe { background: var(--ccdv-red); }
-.band--products .band__stripe { background: var(--ccdv-green); }
-.band--contact .band__stripe { background: var(--ccdv-blue); }
-
-/* VIS-01. Character pitch across the five labels is 114.3095 (differences of
-   bracket-to-bracket spans at 6/8/9/10 characters all agree), so the size is
-   114.3095 * 11/6 = 209.57. The label baseline sits exactly on the body's
-   bottom edge in all five bands and on the Studio hero — the designer set the
-   labels on the band divider — so the bracket descends 0.132 em past it over
-   the stripe below, which is the notch the reference shows. */
-.band__label {
-  position: absolute;
-  z-index: 3;
-  left: calc(24 * var(--u));               /* origin; ink lands at 53.549 */
-  top: calc(-8.76 * var(--u));             /* baseline 177 = body bottom */
-  font-size: calc(209.57 * var(--u));
-  line-height: 1;
-  white-space: nowrap;
-  color: var(--ccdv-ink);
-}
-
-/* the emoticons share the labels' baseline and are 99: pitch between the two
-   "+" of "+.+" is 53.965, and "P" cap measures 72.000 against the face's
-   0.7273 em cap. */
-.band__suffix {
-  position: absolute;
-  z-index: 3;
-  top: calc(89.25 * var(--u));             /* baseline 177, as the label */
-  font-size: calc(99 * var(--u));
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.band__chevron {
-  position: absolute;
-  z-index: 3;
-  left: calc(1408 * var(--u));
-  top: calc(22.3 * var(--u));              /* baseline 34 */
-  font-size: max(10px, calc(13.2 * var(--u))); /* "v" x-height measures 7.416; N4 P-I B-16 floor */
-  line-height: 1;
-  color: var(--ccdv-bg);
-}
-
-/* GF09-C (FBI-014/015): on Home the stripe crosses OVER the label and
-   emoticon that overrun the band above. .band__body is a stacking context at
-   z 2 and carries the label (z 3 inside it), so that overflow painted above
-   the next band's stripe (z 1). Dropping Home's body to z 0 puts the whole
-   body — and its overflow — beneath every stripe; the glyph geometry,
-   overflow and any later hover reveal are untouched. Home only: other routes
-   do not use .band__body. */
-.r11--home .band__body { z-index: 0; }
-
-.band__link { display: block; color: inherit; }
-.band__link[aria-disabled="true"] { cursor: default; }
 
 /* --- footer -------------------------------------------------------------- */
 /* STUDIO-RESP T1 (C04): the absolute columns are now a grid in normal flow,
@@ -2821,86 +2698,118 @@ main { display: block; outline: none; }
 }
 /* === end WORK V2 + PROJECT V2 =============================================== */
 
-/* === HOME T1 (t_20261113_workv2 addendum, OPERATOR-approved) ================
-   Home only: every rule is scoped under .r11--home. Desktop geometry (R1.1) is
-   untouched; this block adds the band hover/focus state and the phone layout. */
-
-/* Hover / keyboard focus: the label group steps right and the chevron turns
-   ink. Transform only — no reflow, no change to the label/stripe overlap. The
-   global reduced-motion rule zeroes the transition. */
-.r11--home .band__label,
-.r11--home .band__suffix { transition: translate 0.18s ease-out; }
-.r11--home .band__chevron { transition: color 0.18s ease-out; }
-.r11--home .band__link:focus-visible { outline-offset: calc(-3 * var(--u)); }
-.r11--home .band__link:focus-visible :is(.band__label, .band__suffix) { translate: calc(24 * var(--u)) 0; }
-.r11--home .band__link:focus-visible .band__chevron { color: var(--ccdv-ink); }
-@media (hover: hover) {
-  .r11--home .band__link:hover :is(.band__label, .band__suffix) { translate: calc(24 * var(--u)) 0; }
-  .r11--home .band__link:hover .band__chevron { color: var(--ccdv-ink); }
+/* === HOME BH1 (t_20261125_ccdvn5home, OPERATOR) =============================
+   Home = two light panels on the grey ground: the identity panel (the page
+   h1) and the section cards. Every rule is scoped under .r11--home.
+   >= 1024: the 1440 artboard in --u (two 684 panels, 24 gutters, 775 tall);
+   < 1024: stacked and compact, in px on the 16 gutter (PROVISIONAL, operator
+   review). Ground, ink and panel are the live tokens. */
+.r11--home { background: var(--ccdv-light); }
+.r11--home .hm { min-width: 0; }
+.r11--home .hm__panel { position: relative; min-width: 0; background: var(--ccdv-panel); }
+.r11--home .hi__mark { display: flex; align-items: center; }
+.r11--home .hi__gear,
+.r11--home .hi__pixel { display: block; flex: none; }
+.r11--home .hi__pixel { height: auto; }
+.r11--home .hi__title { margin: 0; }
+.r11--home .hi__title span {
+  display: block;
+  white-space: nowrap;
+  text-decoration: underline;
+  text-underline-offset: 0.04545em;
+  text-decoration-thickness: 0.04545em;
 }
+.r11--home .hi__square { position: absolute; background: var(--ccdv-ink); }
+.r11--home .hs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.r11--home .hs__card { min-width: 0; }
+.r11--home .hs__link { display: block; position: relative; color: inherit; text-decoration: none; cursor: pointer; }
+.r11--home .hs__stripe { display: block; }
+.r11--home .hs__card--studio .hs__stripe { background: var(--ccdv-purple); }
+.r11--home .hs__card--services .hs__stripe { background: var(--ccdv-red); }
+.r11--home .hs__card--work .hs__stripe { background: var(--ccdv-yellow); }
+.r11--home .hs__card--products .hs__stripe { background: var(--ccdv-green); }
+.r11--home .hs__card--contact .hs__stripe { background: var(--ccdv-blue); }
+.r11--home .hs__body { position: relative; display: block; background: var(--ccdv-light); }
+.r11--home .hs__label-card { background: var(--ccdv-panel); box-sizing: border-box; min-width: 0; }
+.r11--home .hs__label { min-width: 0; white-space: nowrap; }
+.r11--home .hs__square { box-sizing: border-box; }
+.r11--home .hs__square--outline { background: transparent; border: 1px solid var(--ccdv-ink); }
+.r11--home .hs__link:hover .hs__square--outline,
+.r11--home .hs__link:focus-visible .hs__square--outline { background: var(--ccdv-ink); }
+.r11--home .hs__square--filled { display: none; background: var(--ccdv-ink); }
+.r11--home .hs__link:focus-visible { outline-offset: -3px; }
 
-/* <=767px: composed in px on the 16px gutter instead of scaled from 1440
-   (at 375 the 1440 scale gave an 8px stripe and a 3.4px masthead text).
-   --hb-f sizes the label so the longest band, "[Services]" + gap + "\",
-   fits: 10 + 3 * 0.4724 glyph advances of 0.545em = 6.22em (+ 8px gap). The
-   label keeps its baseline on the body's bottom edge (top = H - 0.886364f),
-   so the bracket still descends over the next stripe. */
-@media (max-width: 767px) {
-  .r11--home {
-    --hb-f: min(calc((100cqw - 2 * var(--ccdv-gutter-m) - 8px) / 6.22), 96px);
-    --hb-s: calc(var(--hb-f) * 0.4724);       /* 99 / 209.57 */
-    --hb-h: max(calc(var(--hb-f) * 1.15), var(--ccdv-tap));
-  }
-
-  .r11--home .masthead--home {
+@media (min-width: 1024px) {
+  .r11--home .hm {
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    align-items: center;
-    gap: 12px;
-    height: auto;
-    padding: 16px var(--ccdv-gutter-m);
+    grid-template-columns: calc(684 * var(--u)) calc(684 * var(--u));
+    gap: calc(24 * var(--u));
+    padding: calc(24 * var(--u));
   }
-  .r11--home .masthead--home .masthead__mark { position: relative; left: auto; top: auto; width: 85.25px; height: 64px; }
-  .r11--home .masthead--home .masthead__gear { width: 64px; height: 64px; }
-  .r11--home .masthead--home .masthead__pixel { left: 71px; width: 14.26px; height: 64px; }
-  .r11--home .masthead--home .masthead__title {
-    position: static;
-    font-size: min(calc((100cqw - 2 * var(--ccdv-gutter-m) - 97.25px) / 9.3), 1.5rem);
-    line-height: 1.25;
+  .r11--home .hm__panel { height: calc(775 * var(--u)); border-radius: calc(4 * var(--u)); overflow: hidden; }
+  .r11--home .hm__panel--nav { padding: calc(24 * var(--u)); }
+  /* gear x48 y48 (53), pixel mark x125..358 (53 tall): panel-relative 24 / 101 */
+  .r11--home .hi__mark { position: absolute; top: calc(24 * var(--u)); left: calc(24 * var(--u)); gap: calc(24 * var(--u)); }
+  .r11--home .hi__gear { width: calc(53 * var(--u)); height: calc(53 * var(--u)); }
+  .r11--home .hi__pixel { width: calc(233 * var(--u)); }
+  /* 52 on 70: baselines at panel y156 / 226 (page 180 / 250); baseline = top + L/2 + 0.386364 * size */
+  .r11--home .hi__title {
+    position: absolute;
+    top: calc(101 * var(--u));
+    left: calc(24 * var(--u));
+    font-size: calc(52 * var(--u));
+    line-height: calc(70 * var(--u));
   }
-  .r11--home .masthead--home :is(.masthead__meta, .masthead__lang) {
-    position: static;
-    grid-column: 1 / -1;
-    font-size: var(--ccdv-t-label-m);
-    line-height: 1.5;
-    white-space: normal;
-  }
-  .r11--home .masthead--home .masthead__lang { margin-top: -8px; }
-  .r11--home .masthead--home .masthead__dot { display: none; }
-
-  .r11--home .band__stripe { height: 12px; }
-  .r11--home .band__body { height: var(--hb-h); }
-  .r11--home .band__label {
-    left: var(--ccdv-gutter-m);
-    top: calc(var(--hb-h) - 0.886364 * var(--hb-f));
-    font-size: var(--hb-f);
-  }
-  /* the inline desktop `left` (an artboard x) is overridden: the emoticon
-     sits on the label baseline at the right gutter */
-  .r11--home .band__suffix {
-    left: auto !important;
-    right: var(--ccdv-gutter-m);
-    top: calc(var(--hb-h) - 0.886364 * var(--hb-s));
-    font-size: var(--hb-s);
-  }
-  .r11--home .band__chevron { left: auto; right: var(--ccdv-gutter-m); top: 6px; font-size: 13px; }
-  .r11--home .band__link:focus-visible { outline-offset: -2px; }
-  .r11--home .band__link:focus-visible :is(.band__label, .band__suffix) { translate: none; }
-  @media (hover: hover) {
-    .r11--home .band__link:hover :is(.band__label, .band__suffix) { translate: none; }
+  .r11--home .hi__square { width: calc(10.67 * var(--u)); height: calc(10.67 * var(--u)); right: calc(24 * var(--u)); }
+  .r11--home .hi__square--top { top: calc(24 * var(--u)); }
+  .r11--home .hi__square--bottom { bottom: calc(24 * var(--u)); }
+  .r11--home .hi__meta { position: absolute; left: calc(24 * var(--u)); bottom: calc(24 * var(--u)); font-size: calc(13.2 * var(--u)); line-height: calc(22 * var(--u)); }
+  .r11--home .hs { gap: calc(12 * var(--u)); }
+  .r11--home .hs__stripe { height: calc(31 * var(--u)); }
+  .r11--home .hs__body { height: calc(76 * var(--u)); overflow: hidden; }
+  .r11--home .hs__card[data-open] .hs__body { height: calc(220 * var(--u)); }
+  .r11--home .hs__art { display: none; position: absolute; left: calc(24 * var(--u)); top: calc(43 * var(--u)); width: calc(134 * var(--u)); height: calc(134 * var(--u)); background: var(--ccdv-panel); border-radius: calc(4 * var(--u)); }
+  .r11--home .hs__card[data-open] .hs__art { display: block; }
+  .r11--home .hs__tile { display: block; width: 100%; height: 100%; padding: calc(12 * var(--u)); box-sizing: border-box; }
+  .r11--home .hs__label-card { position: absolute; top: calc(12 * var(--u)); left: calc(12 * var(--u)); right: calc(12 * var(--u)); height: calc(52 * var(--u)); display: flex; align-items: center; padding: 0 calc(20 * var(--u)); border-radius: calc(3 * var(--u)); }
+  .r11--home .hs__card[data-open] .hs__label-card { top: calc(43 * var(--u)); left: calc(170 * var(--u)); right: calc(24 * var(--u)); height: calc(134 * var(--u)); flex-direction: column; justify-content: center; align-items: flex-start; }
+  .r11--home .hs__label { font-size: calc(36 * var(--u)); line-height: 1; }
+  .r11--home .hs__line { display: none; margin-top: calc(8 * var(--u)); font-size: calc(13.2 * var(--u)); }
+  .r11--home .hs__card[data-open] .hs__line { display: block; }
+  .r11--home .hs__square { position: absolute; right: calc(13 * var(--u)); }
+  .r11--home .hs__square--outline { top: calc(21 * var(--u)); width: calc(9.6 * var(--u)); height: calc(9.6 * var(--u)); }
+  .r11--home .hs__square--filled { top: calc(43 * var(--u)); width: calc(10.67 * var(--u)); height: calc(10.67 * var(--u)); }
+  .r11--home .hs__card[data-open] .hs__square--outline { display: none; }
+  .r11--home .hs__card[data-open] .hs__square--filled { display: block; }
+  @media (prefers-reduced-motion: no-preference) {
+    .r11--home .hs__body { transition: height 0.3s ease; }
+    .r11--home .hs__label-card { transition: top 0.3s ease, left 0.3s ease, right 0.3s ease, height 0.3s ease; }
   }
 }
-/* === end HOME T1 ============================================================ */
+
+@media (max-width: 1023.98px) {
+  .r11--home .hm { display: flex; flex-direction: column; gap: 16px; padding: 16px var(--ccdv-gutter-m); }
+  .r11--home .hm__panel { display: flex; flex-direction: column; gap: 16px; padding: 24px; border-radius: 4px; }
+  .r11--home .hm__panel--nav { padding: 16px; }
+  .r11--home .hi__mark { gap: 16px; }
+  .r11--home .hi__gear { width: 40px; height: 40px; }
+  .r11--home .hi__pixel { width: 175px; max-width: 100%; }
+  .r11--home .hi__title { font-size: min(34px, calc((100vw - 80px) / 9.8)); line-height: 1.2; }
+  .r11--home .hi__square { width: 10.67px; height: 10.67px; right: 16px; }
+  .r11--home .hi__square--top { top: 16px; }
+  .r11--home .hi__square--bottom { bottom: 16px; }
+  .r11--home .hi__meta { font-size: 13px; line-height: 20px; overflow-wrap: anywhere; }
+  .r11--home .hs { gap: 12px; }
+  .r11--home .hs__stripe { height: 31px; }
+  .r11--home .hs__body { padding: 12px; }
+  .r11--home .hs__art,
+  .r11--home .hs__line { display: none; }
+  .r11--home .hs__label-card { position: static; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: var(--ccdv-tap); padding: 0 16px; border-radius: 3px; }
+  .r11--home .hs__label { font-size: 24px; line-height: 1.2; }
+  .r11--home .hs__square { position: static; flex: none; }
+  .r11--home .hs__square--outline { width: 10px; height: 10px; }
+}
+/* === end HOME BH1 =========================================================== */
 
 /* === PRODUCTS V2 (t_20261117_products20) ====================================
    /products follows PRODUCTS_v2.svg (1536 x 3354, OPERATOR D1; since P1b its

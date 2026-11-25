@@ -9,7 +9,7 @@ import {
   type MouseEvent,
   type ReactNode,
 } from "react";
-import { useLocation, useNavigationType } from "react-router";
+import { useLocation } from "react-router";
 import { AnimatePresence, motion, useIsPresent } from "motion/react";
 import { useTransitionCoordinator, type TransitionTarget } from "../motion/transitionCoordinator";
 import { SiteMasthead } from "./SiteMasthead";
@@ -37,9 +37,12 @@ export function useSiteNavigation(): RouteMotion {
 export function useTransitionLink() {
   const nav = useSiteNavigation();
   return useCallback(
-    (to: TransitionTarget) => ({
+    (to: TransitionTarget, options?: { onNavigate?: () => void }) => ({
       to,
       onClick(event: MouseEvent<HTMLAnchorElement>) {
+        /* N5 BH2 (OPERATOR): fires on EVERY activation, native ones included,
+           so the phone menu closes whichever way the link is opened */
+        options?.onNavigate?.();
         if (event.defaultPrevented || event.button !== 0) return;
         if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
         event.preventDefault();
@@ -50,30 +53,75 @@ export function useTransitionLink() {
   );
 }
 
-/* P2 CORR02 (OPERATOR): ONE page transition for every navigation — a band,
-   a masthead cell, the footer, the menu, a Back link, `collapse`, a typed
-   link or the browser's Back / Forward: the old page fades to the ink ground
-   and the new one fades in, fully drawn. It replaces NAV-T3's rise / fall
-   (the rise exit animated nothing, so Motion ended it at once and the grey
-   body showed while the new page slid up; the fall moved the whole page one
-   screen down, which read as a scroll) and the plain 0.22s fade.
-
-   The direction (`data-route-dir`) is kept for a later direction-aware
-   motion: "back" for Home, a parent page (/products from /products/ccos,
-   /work from a case), and the browser's Back / Forward (POP); "forward"
-   otherwise. The fade itself does not use it. N4 P-I A-09: `data-route` and
-   `data-route-move` had no reader (CSS or script) and are gone.
-
-   H3-1 (OPERATOR, Variant B): the ink beat is gone. The incoming page is
-   opaque from its first frame and only the outgoing page fades out above it
-   (the exit below is unchanged), so no ink shows between two pages. */
-type RouteDir = "forward" | "back";
+/* N5 BH2 (OPERATOR): the page transition follows the move, read from the real
+   from / to paths for a link click and the browser's Back / Forward alike
+   (so Back plays the reverse). `data-route-move` on .site-shell carries it:
+     rise  Home -> a section: the section slides up over Home, which stays;
+     fall  a section -> Home: the section drops away, revealing Home;
+     next / prev  between neighbours in SEQ: both pages slide sideways, as
+           one strip, next = towards the right neighbour;
+     fade  everything else (non-adjacent sections, /products <-> /products/ccos,
+           404 paths): the P2 CORR02 fade of the outgoing page, unchanged.
+   Any /work/* path counts as /work. A move inside /work keeps one routeKey,
+   so it never animates. The shared bar sits outside the moving route.
+   H3-1 (OPERATOR, Variant B, kept): the incoming page is opaque, in flow, from
+   its first frame; the popped outgoing page is layered by global.css
+   (`data-route-move`). Slide / rise / fall run MOVE_S; reduced motion: instant.
+   N4 P-I A-09: `data-route` had no reader and is gone. */
+type RouteMove = "rise" | "fall" | "next" | "prev" | "fade";
+const SEQ = ["/studio", "/services", "/work", "/products", "/contact"];
+function normPath(path: string): string {
+  const p = path.replace(/\/+$/, "") || "/";
+  return p === "/work" || p.startsWith("/work/") ? "/work" : p;
+}
+function routeMove(fromPath: string, toPath: string): RouteMove {
+  const from = normPath(fromPath);
+  const to = normPath(toPath);
+  const fi = SEQ.indexOf(from);
+  const ti = SEQ.indexOf(to);
+  if (from === "/" && ti >= 0) return "rise";
+  if (to === "/" && fi >= 0) return "fall";
+  if (fi >= 0 && ti >= 0 && Math.abs(ti - fi) === 1) return ti > fi ? "next" : "prev";
+  return "fade";
+}
 const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 const FADE_OUT_S = 0.25;
+const MOVE_S = 0.5;
 const FADE_EASE: [number, number, number, number] = [0.22, 0.61, 0.36, 1];
 /* how long the arriving page counts as arriving (its pieces show at once):
-   until the outgoing page, which fades over it, is gone */
-const ARRIVE_MS = FADE_OUT_S * 1000 + 150;
+   until the outgoing page is gone (fade: it fades over; slides: MOVE_S) */
+const arriveMs = (move: RouteMove) => (move === "fade" ? FADE_OUT_S : MOVE_S) * 1000 + 150;
+
+/* N5 BH2: the route's variants. `custom` is the CURRENT move, read by the
+   exiting route too (AnimatePresence custom), so the leaving page plays this
+   navigation's exit, not the one it entered with. "enter" is the initial pose
+   (AnimatePresence initial={false} still skips the first load). Final poses
+   are x: 0 / y: 0, which Motion writes as transform "none". rise: the exit
+   keeps the page in place for MOVE_S (opacity 0.999, because an exit that
+   changes nothing ends at once, which NAV-T3 found); fall: the entry is
+   static, the exit drops one screen. */
+function routeTransition(reduced: boolean, duration: number) {
+  return reduced ? { duration: 0 } : { duration, ease: FADE_EASE };
+}
+type RouteVariantCtx = { move: RouteMove; reduced: boolean };
+const routeVariants = {
+  enter: ({ move }: RouteVariantCtx) =>
+    move === "next" ? { x: "100%" } : move === "prev" ? { x: "-100%" } : move === "rise" ? { y: "100vh" } : { opacity: 1 },
+  center: ({ move, reduced }: RouteVariantCtx) => ({
+    x: 0,
+    y: 0,
+    opacity: 1,
+    transition: routeTransition(reduced, move === "fade" ? FADE_OUT_S : MOVE_S),
+  }),
+  exit: ({ move, reduced }: RouteVariantCtx) => {
+    const transition = routeTransition(reduced, move === "fade" ? FADE_OUT_S : MOVE_S);
+    if (move === "next") return { x: "-100%", transition };
+    if (move === "prev") return { x: "100%", transition };
+    if (move === "rise") return { opacity: 0.999, transition };
+    if (move === "fall") return { y: "100vh", transition };
+    return { opacity: 0, transition };
+  },
+};
 
 /* H3-1 GH-A01: only the present route is the landmark. The route that is
    fading out (popped, still mounted for the exit) is `inert` — out of the
@@ -160,11 +208,6 @@ function nextChrome(state: ChromeState, section: ChromeSection | null): ChromeSt
   return { key: null, shown: state.shown, phase: "leaving" };
 }
 
-function routeDir(from: string, to: string, pop: boolean): RouteDir {
-  if (pop || to === "/" || from.startsWith(`${to}/`)) return "back";
-  return "forward";
-}
-
 /* GF07-C: the shell paints no page header or footer of its own. Home, Work and
    CC.OS own their chrome; the four section pages share the bar rendered below
    (N1 / N4 H6, see ChromeSection). The component otherwise orchestrates the
@@ -182,22 +225,22 @@ export function GlobalShell({ children }: { children: ReactNode }) {
   /* `from` is the outgoing page's scroll offset, read while rendering the new
      location (ScrollRestoration has not moved the window yet); null on the
      first load, which has no swap. */
-  const navigationType = useNavigationType();
-  const moveRef = useRef<{ key: string; path: string; dir: RouteDir; from: number | null }>({
+  const moveRef = useRef<{ key: string; path: string; move: RouteMove; from: number | null }>({
     key: location.key,
     path: location.pathname,
-    dir: "forward",
+    move: "fade",
     from: null,
   });
   if (moveRef.current.key !== location.key) {
     moveRef.current = {
       key: location.key,
       path: location.pathname,
-      dir: routeDir(moveRef.current.path, location.pathname, navigationType === "POP"),
+      move: routeMove(moveRef.current.path, location.pathname),
       from: typeof window !== "undefined" ? window.scrollY : 0,
     };
   }
-  const { dir } = moveRef.current;
+  const { move } = moveRef.current;
+  const custom: RouteVariantCtx = { move, reduced: transition.reduced };
 
   /* the shared bar: derived while rendering, so it is in the DOM in the same
      commit as the incoming page (whose effects look it up); a bar that is
@@ -225,7 +268,7 @@ export function GlobalShell({ children }: { children: ReactNode }) {
     const shell = shellRef.current;
     if (!shell || moveRef.current.from === null) return;
     shell.setAttribute("data-arriving", "");
-    const timer = window.setTimeout(() => shell.removeAttribute("data-arriving"), ARRIVE_MS);
+    const timer = window.setTimeout(() => shell.removeAttribute("data-arriving"), arriveMs(moveRef.current.move));
     return () => {
       window.clearTimeout(timer);
       shell.removeAttribute("data-arriving");
@@ -288,13 +331,16 @@ export function GlobalShell({ children }: { children: ReactNode }) {
      its first frame (no entry fade, no ink beat); `isolation` on
      .site-stage__route keeps each route's z-indexes inside it, so the
      incoming chrome never paints over the route that is leaving. Reduced
-     motion: the same swap, instant. */
+     motion: the same swap, instant.
+     N5 BH2 (OPERATOR): the exit / entry now follow `data-route-move` (see
+     routeVariants); `animate` is "center", the exit reads the current move
+     through AnimatePresence `custom`. */
   return (
     <NavigationContext.Provider value={transition}>
       <div
         className="site-shell"
         ref={shellRef}
-        data-route-dir={dir}
+        data-route-move={move}
       >
         <SkipLink />
         {chrome.shown && (
@@ -308,17 +354,15 @@ export function GlobalShell({ children }: { children: ReactNode }) {
           </div>
         )}
         <div className="site-stage">
-          <AnimatePresence mode="popLayout" initial={false} onExitComplete={transition.endTransition}>
+          <AnimatePresence mode="popLayout" initial={false} custom={custom} onExitComplete={transition.endTransition}>
             <motion.div
               key={routeKey}
               className="site-stage__route"
-              initial={false}
-              animate={{ opacity: 1 }}
-              exit={{
-                opacity: 0,
-                transition: transition.reduced ? { duration: 0 } : { duration: FADE_OUT_S, ease: FADE_EASE },
-              }}
-              transition={transition.reduced ? { duration: 0 } : { duration: FADE_OUT_S, ease: FADE_EASE }}
+              variants={routeVariants}
+              custom={custom}
+              initial="enter"
+              animate="center"
+              exit="exit"
             >
               <RouteMain focusRef={focusRoute}>{children}</RouteMain>
             </motion.div>

@@ -1,4 +1,6 @@
 import { Link } from "react-router";
+import type { TransitionTarget } from "../motion/transitionCoordinator";
+import { useTransitionLink } from "./GlobalShell";
 import { GearMark } from "./marks/GearMark";
 import { CcdvPixelMark } from "./marks/CcdvPixelMark";
 
@@ -20,7 +22,7 @@ import { CcdvPixelMark } from "./marks/CcdvPixelMark";
    P2 CORR03 (OPERATOR): only the first column keeps its [ ] brackets; links
    are not underlined (global.css). */
 
-const COLUMN_B: { label: string; to?: string }[] = [
+const COLUMN_B: { label: string; to?: TransitionTarget }[] = [
   { label: "Studio", to: "/studio" }, // N4 P-H A-15 (OPERATOR): Studio was missing
   { label: "Services", to: "/services" }, // NAV-T3: Services before Work
   { label: "Work", to: "/work" },
@@ -37,6 +39,7 @@ const COLUMN_C: { label: string; href?: string }[] = [
 ];
 
 export function SiteFooter() {
+  const link = useTransitionLink();
   return (
     <footer className="footer">
       <span className="footer__mark" aria-hidden="true">
@@ -54,8 +57,9 @@ export function SiteFooter() {
       </div>
 
       <div className="footer__col footer__col--b">
+        {/* N5 BH2 (OPERATOR): footer section links go through the coordinator */}
         {COLUMN_B.map((item) => (
-          <div key={item.label}>{item.to ? <Link to={item.to}>{item.label}</Link> : item.label}</div>
+          <div key={item.label}>{item.to ? <Link {...link(item.to)}>{item.label}</Link> : item.label}</div>
         ))}
       </div>
 

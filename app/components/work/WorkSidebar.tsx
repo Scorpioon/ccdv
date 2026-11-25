@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import type { TransitionTarget } from "../../motion/transitionCoordinator";
 import { useTransitionLink } from "../GlobalShell";
 import { GearMark } from "../marks/GearMark";
 import { WorkPixelBlock } from "./WorkPixelBlock";
@@ -23,7 +24,7 @@ import type { WorkView } from "./useWorkDeck";
 
 /* N4 P-M: the five sections in rail order; WORK is the current page, so it has
    no `to` and is drawn as a span */
-const SECTIONS: { label: string; to?: string }[] = [
+const SECTIONS: { label: string; to?: TransitionTarget }[] = [
   { label: "STUDIO", to: "/studio" },
   { label: "SERVICES", to: "/services" },
   { label: "WORK" },
@@ -66,7 +67,8 @@ export function WorkSidebar({
             <li key={label}>
               {/* N4 P-M: the current page is a span, not a link (like the desktop bar's current cell) */}
               {to ? (
-                <Link className="wv3-side__section" to={to}>
+                /* N5 BH2 (OPERATOR): section links go through the coordinator */
+                <Link className="wv3-side__section" {...link(to)}>
                   {label}
                 </Link>
               ) : (

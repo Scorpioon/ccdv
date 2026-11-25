@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router";
+import type { TransitionTarget } from "../motion/transitionCoordinator";
 import { useTransitionLink } from "./GlobalShell";
 import { GearMark } from "./marks/GearMark";
 import { CcdvPixelMark } from "./marks/CcdvPixelMark";
@@ -8,18 +9,18 @@ import { ServicesArrowTile } from "./marks/ServicesArrowTile";
 import { ProductsMarkTile } from "./marks/ProductsMarkTile";
 import { ContactMarkTile } from "./marks/ContactMarkTile";
 
-/* N4 H6: one component for every route. Home gets the identity lockup only,
-   with the mark as a non-link span. Each section variant adds the five-cell
-   nav: the mark is a Link to "/" through useTransitionLink, and the five cells
-   are plain react-router Links (the current cell is a span with aria-current,
-   and CELL_ROUTES gives the others' targets). The shared bar is rendered once
-   by GlobalShell, which passes `compact` for /studio, /services, /products and
-   /contact. Work (/work and its sub-routes) renders no shared bar; Home and CC.OS
-   have no shared bar either (CC.OS has no masthead at all). */
+/* N4 H6: one component for every section route. The mark is a Link to "/"
+   through useTransitionLink, and the five cells are Links through the same
+   hook (the current cell is a span with aria-current, and CELL_ROUTES gives the
+   others' targets). The shared bar is rendered once by GlobalShell, which
+   passes `compact` for /studio, /services, /products and /contact. Work
+   (/work and its sub-routes) renders no shared bar; Home and CC.OS have no
+   shared bar either (CC.OS has no masthead at all).
+   N5 BH1: Home has its own identity panel, so there is no home variant. */
 /* NAV-T3 (OPERATOR): section order is Studio, Services, Work, Products,
    Contact everywhere (masthead, Home bands, footer, M1 menu). */
 const CELLS = ["[Studio]", "[Services]", "[Work]", "[Products]", "[Contact]"] as const;
-const CELL_ROUTES = ["/studio", "/services", "/work", "/products", "/contact"] as const;
+const CELL_ROUTES: readonly TransitionTarget[] = ["/studio", "/services", "/work", "/products", "/contact"];
 
 /* N4 P-I A-05: Work has no bar (N3), so it is not a variant; its cell is a
    plain link to /work */
@@ -32,10 +33,9 @@ const SECTION_NAV: Record<SectionVariant, { index: number; Tile: (props: { class
   contact: { index: 4, Tile: ContactMarkTile },
 };
 
-export function SiteMasthead({ variant, compact = false }: { variant: "home" | SectionVariant; compact?: boolean }) {
+export function SiteMasthead({ variant, compact = false }: { variant: SectionVariant; compact?: boolean }) {
   const link = useTransitionLink();
-  const isHome = variant === "home";
-  const nav = !isHome ? SECTION_NAV[variant as SectionVariant] : null;
+  const nav = SECTION_NAV[variant];
 
   /* N4 H6: the collapsed markup (inline pixel lockup, `masthead--collapsing`)
      is used for the `studio` variant and for any variant rendered with
@@ -63,64 +63,38 @@ export function SiteMasthead({ variant, compact = false }: { variant: "home" | S
 
   return (
     <header className={`masthead masthead--${variant}${collapsing ? " masthead--collapsing" : ""}`}>
-      {isHome ? (
-        <span className="masthead__mark" aria-current="page">
-          {mark}
-        </span>
-      ) : (
-        <Link className="masthead__mark" aria-label="CCDV — Home" {...link("/")}>
-          {mark}
-        </Link>
-      )}
+      <Link className="masthead__mark" aria-label="CCDV — Home" {...link("/")}>
+        {mark}
+      </Link>
 
-      {isHome ? (
-        <>
-          <h1 className="masthead__title">
-            <span>Collapse Creative</span>
-            <span>Development Unit</span>
-          </h1>
-
-          <div className="masthead__meta">
-            <div>[ COLLAPSE CREATIVE : DEV UNIT ]</div>
-            <div>[ hello[@]collapsecreative.com ]</div>
-            <div>
-              [ Part of <a href="https://collapsecreative.com">collapsecreative.com</a> ]
-            </div>
-          </div>
-
-          <div className="masthead__lang">[ english ]</div>
-          <span className="masthead__dot masthead__dot--a" aria-hidden="true" />
-          <span className="masthead__dot masthead__dot--b" aria-hidden="true" />
-        </>
-      ) : (
-        <nav className="cells" aria-label="Sections">
-          {CELLS.map((label, i) => {
-            const current = i === nav!.index;
-            const Tile = nav!.Tile;
-            const to = CELL_ROUTES[i];
-            const content = (
-              <>
-                <span className="cell__label">{label}</span>
-                {current && <Tile className="cell__tile" />}
-                <span className="cell__dot" aria-hidden="true" />
-              </>
-            );
-            /* N4 P-I A-06: every cell routes, so only the current one is a span */
-            if (!current) {
-              return (
-                <Link key={label} className="cell" to={to}>
-                  {content}
-                </Link>
-              );
-            }
+      <nav className="cells" aria-label="Sections">
+        {CELLS.map((label, i) => {
+          const current = i === nav.index;
+          const Tile = nav.Tile;
+          const to = CELL_ROUTES[i];
+          const content = (
+            <>
+              <span className="cell__label">{label}</span>
+              {current && <Tile className="cell__tile" />}
+              <span className="cell__dot" aria-hidden="true" />
+            </>
+          );
+          /* N4 P-I A-06: every cell routes, so only the current one is a span.
+             N5 BH2 (OPERATOR): the other cells go through the coordinator */
+          if (!current) {
             return (
-              <span key={label} className="cell" aria-current="page">
+              <Link key={label} className="cell" {...link(to)}>
                 {content}
-              </span>
+              </Link>
             );
-          })}
-        </nav>
-      )}
+          }
+          return (
+            <span key={label} className="cell" aria-current="page">
+              {content}
+            </span>
+          );
+        })}
+      </nav>
     </header>
   );
 }

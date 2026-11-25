@@ -1,6 +1,8 @@
 import { useEffect, useId, useRef, useState } from "react";
 import type { KeyboardEvent } from "react";
 import { Link, useLocation } from "react-router";
+import type { TransitionTarget } from "../motion/transitionCoordinator";
+import { useTransitionLink } from "./GlobalShell";
 import { GearMark } from "./marks/GearMark";
 import { CcdvPixelMark } from "./marks/CcdvPixelMark";
 import { CollapseCreativeLogo } from "./marks/CollapseCreativeLogo";
@@ -17,7 +19,7 @@ import { ProductsCcosIcon } from "./marks/CcosArtwork";
    legal lines are plain text exactly as in SiteFooter (no legal page exists, so
    none is linked). The gear is the open/close toggle; the pixel mark is Home. */
 
-const ROUTES: { label: string; to: string }[] = [
+const ROUTES: { label: string; to: TransitionTarget }[] = [
   { label: "[Studio]", to: "/studio" },
   { label: "[Services]", to: "/services" },
   { label: "[Work]", to: "/work" },
@@ -50,6 +52,7 @@ export function StudioMobileMenu({ current: currentRoute = "/studio" }: { curren
   const panelRef = useRef<HTMLElement>(null);
   const wasOpen = useRef(false);
   const location = useLocation();
+  const link = useTransitionLink();
   const closedByRoute = useRef(false);
 
   /* focus: into the menu when it opens, back on the gear when it closes
@@ -115,7 +118,8 @@ export function StudioMobileMenu({ current: currentRoute = "/studio" }: { curren
         >
           <GearMark className="smm__gear" fill={ink} dotFill={ground} />
         </button>
-        <Link className="smm__home" to="/" aria-label="CCDV — Home" onClick={close}>
+        {/* N5 BH2 (OPERATOR): menu links go through the coordinator; onNavigate closes the menu */}
+        <Link className="smm__home" aria-label="CCDV — Home" {...link("/", { onNavigate: close })}>
           <CcdvPixelMark variant="inline" className="smm__pixel" fill={ink} />
         </Link>
 
@@ -150,7 +154,7 @@ export function StudioMobileMenu({ current: currentRoute = "/studio" }: { curren
                     {content}
                   </span>
                 ) : (
-                  <Link className="smm__route" to={to} onClick={close}>
+                  <Link className="smm__route" {...link(to, { onNavigate: close })}>
                     {content}
                   </Link>
                 )}

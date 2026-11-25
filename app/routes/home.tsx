@@ -1,6 +1,6 @@
-import { SiteMasthead } from "../components/SiteMasthead";
 import { SiteFooter } from "../components/SiteFooter";
-import { NavBand } from "../components/NavBand";
+import { HomeIdentity } from "../components/home/HomeIdentity";
+import { HomeSections } from "../components/home/HomeSections";
 
 export function meta() {
   return [
@@ -9,38 +9,21 @@ export function meta() {
   ];
 }
 
-/* The five bands, top to bottom, exactly as R1.1 stacks them: a 31 colour
-   stripe over a 177 body, repeating every 208 from y268. All five are
-   routed as of GF08-B.
-
-   GF07-C2: `suffixLeft` is each emoticon's text ORIGIN on the 1440 artboard,
-   not its ink — GF07-C used measured ink minus an estimated bearing, which
-   left three of the five several units out. Each origin is the measured ink
-   less that glyph's R1.1 side bearing at 90, and all five land on round
-   artboard numbers, which is the check that they are origins. */
-const BANDS = [
-  { slug: "studio", label: "[Studio]", suffix: ":P", suffixLeft: 951 },
-  // NAV-T3 (OPERATOR): Services moved above Work
-  { slug: "services", label: "[Services]", suffix: "\\", suffixLeft: 1180 },
-  { slug: "work", label: "[Work]", suffix: "+.+", suffixLeft: 722 },
-  { slug: "products", label: "[Products]", suffix: ":o", suffixLeft: 1180 },
-  { slug: "contact", label: "[Contact]", suffix: "<3", suffixLeft: 1065 },
-] as const;
-
-/* N4 P-I A-04: GF09-G D2.1's "focus the Work band on return from Work" effect
-   is gone: nothing pushes `state.from === "work"` since the V2 Work hub. */
+/* N5 BH1 (OPERATOR): Home rebuilt to the BetterHome design. Two light panels on
+   the grey ground: the identity panel (the page h1) and the section cards. The
+   masthead and the five NavBand bands are gone from Home. The identity panel
+   sits inside <main> because it carries the h1; the footer (contentinfo) stays
+   outside it (N4 P-H A-14). */
 export default function Home() {
   return (
     <div className="r11 r11--home">
-      <SiteMasthead variant="home" />
-
-      {/* N4 P-H A-14: masthead (banner) and footer (contentinfo) sit outside main */}
-      <main>
-        <ul className="bands">
-          {BANDS.map((band) => (
-            <NavBand key={band.slug} {...band} />
-          ))}
-        </ul>
+      <main className="hm">
+        <section className="hm__panel hm__panel--id">
+          <HomeIdentity />
+        </section>
+        <section className="hm__panel hm__panel--nav">
+          <HomeSections />
+        </section>
       </main>
 
       <SiteFooter />
