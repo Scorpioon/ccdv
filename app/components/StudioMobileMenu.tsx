@@ -74,6 +74,20 @@ export function StudioMobileMenu({ current: currentRoute = "/studio" }: { curren
     setOpen(false);
   }, [location.key]);
 
+  /* N6 G1 F-M-06: a resize or rotation across the bar's breakpoint closes the
+     menu, focus not sent back (the gear may be hidden). The section bar shows
+     below 768; Work's (its .wv3p copy in global.css) below 1024. */
+  useEffect(() => {
+    const work = toggleRef.current?.closest(".wv3p");
+    const query = window.matchMedia(work ? "(min-width: 1024px)" : "(min-width: 768px)");
+    const onChange = () => {
+      closedByRoute.current = true;
+      setOpen(false);
+    };
+    query.addEventListener("change", onChange);
+    return () => query.removeEventListener("change", onChange);
+  }, []);
+
   useEffect(() => {
     if (!open) return;
     const onKey = (event: globalThis.KeyboardEvent) => {

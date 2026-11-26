@@ -153,6 +153,8 @@ export function CcosDeck({
     };
 
     const onKey = (event: KeyboardEvent) => {
+      /* N6 G1 F-NAV-01 (D06): a deck fading out (its .site-route is inert) leaves the keys alone */
+      if (deck.closest(".site-route[inert]")) return;
       if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
       const target = event.target instanceof HTMLElement ? event.target : null;
       if (target?.closest("input, textarea, select, [contenteditable='true']")) return;

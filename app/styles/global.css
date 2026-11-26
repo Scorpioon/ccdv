@@ -131,7 +131,7 @@ h1, h2, p { margin: 0; font-weight: 600; }
 @keyframes chrome-in {
   from { opacity: 0; }
 }
-@media (max-width: 767px) {
+@media (width < 768px) {
   /* the M1 bar overlays its page (no layout of its own), so it can come and
      go without moving anything. A8 (OPERATOR): the page no longer reserves
      its 50px (an empty band while the bar was hidden, and on CC.OS, which
@@ -574,7 +574,7 @@ main { display: block; outline: none; }
 }
 
 /* T1-3. Touch tablets: compact cells, strips and rows reach 44px. */
-@media (min-width: 768px) and (max-width: 1023px) and (pointer: coarse) {
+@media (min-width: 768px) and (width < 1024px) and (pointer: coarse) {
   .r11--studio {
     --studio-strip-h: max(calc(58 * var(--u)), 2.75rem);
   }
@@ -584,7 +584,7 @@ main { display: block; outline: none; }
 /* T1-4. Phones. Composed in px/rem on a 16px gutter, not scaled from 1440.
    Heights of the masthead states (P2-2): M2 (406-589) is the default here,
    M3 and M1 adjust it in T1-5. */
-@media (max-width: 767px) {
+@media (width < 768px) {
   .r11--studio {
     font-size: var(--ccdv-t-body-m);
     --studio-strip-h: 48px;
@@ -683,7 +683,7 @@ main { display: block; outline: none; }
    user's default font size). */
 /* M3, 590-767: in state B the inline lockup and the five cells share one
    60px bar; the cells slide right as the mark shrinks. */
-@media (min-width: 36.875em) and (max-width: 767px) {
+@media (min-width: 36.875em) and (width < 768px) {
   .masthead--collapsing {
     --mm-mark-top: calc(12px + 2px * var(--mh-p, 0));
     --mm-nav-top: calc(88px - 80px * var(--mh-p, 0));
@@ -692,7 +692,7 @@ main { display: block; outline: none; }
 }
 /* M1, under 406: equal cells do not fit five across, so 3 + 2 on a six-column
    grid (DOM order kept, no empty slot). */
-@media (max-width: 767px) and (max-width: 25.37em) {
+@media (width < 768px) and (max-width: 25.37em) {
   .r11--studio { --mh-full: 188px; }
   .masthead--collapsing .cells { grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .masthead--collapsing .cell { grid-column: span 2; }
@@ -712,7 +712,7 @@ main { display: block; outline: none; }
 .smm__bar,
 .smm__panel { display: none; }
 
-@media (max-width: 767px) {
+@media (width < 768px) {
   /* the compact masthead is replaced by the M1 bar below */
   .r11--studio .masthead--studio { display: none; }
   .r11--studio {
@@ -945,7 +945,7 @@ main { display: block; outline: none; }
   --mh-p: 1;
   -webkit-tap-highlight-color: transparent;
 }
-@media (max-width: 1023px) {
+@media (width < 1024px) {
   .r11--studio {
     --k: min(1.5px, calc(100cqw / 390));
     --s: var(--k);
@@ -1072,7 +1072,7 @@ main { display: block; outline: none; }
     height: calc(6 * var(--u));
   }
 }
-@media (min-width: 768px) and (max-width: 1023px) and (pointer: coarse) {
+@media (min-width: 768px) and (width < 1024px) and (pointer: coarse) {
   :is(.r11--studio, .r11--services, .r11--products, .r11--contact) .masthead--collapsing { --cell-h: max(calc(32 * var(--u)), 2.75rem); }
 }
 /* N5 round 2 (OPERATOR): at >= 1024 the bar is the masthead card's twin: inset
@@ -1275,7 +1275,7 @@ main { display: block; outline: none; }
   .cmh__sq--b { right: calc(24 * var(--cm)); }
 }
 
-@media (max-width: 1023px) {
+@media (width < 1024px) {
   /* gear + pixel mark + `collapse` on one row, then the title, the meta, and
      the two squares on the card's foot */
   .cmh {
@@ -1375,7 +1375,7 @@ main { display: block; outline: none; }
   .cv__whois p + p { margin-top: calc(15 * var(--u)); }
 }
 
-@media (max-width: 1023px) {
+@media (width < 1024px) {
   /* STUDIO_resp3-1 y0..1118 (A8: the V3 card, .cmh, replaces the lockup) */
   .cv { padding-bottom: calc(45 * var(--k)); }
   .cv__sq { display: none; }
@@ -1512,7 +1512,7 @@ main { display: block; outline: none; }
   .ap__toollets { display: grid; grid-template-columns: repeat(2, calc(300 * var(--u))); column-gap: calc(24 * var(--u)); }
 }
 
-@media (max-width: 1023px) {
+@media (width < 1024px) {
   /* STUDIO_resp3-1 y1118..2636: bars, the sphere wider than the column (cropped
      by the screen edges), the strip + slots over the sphere's foot, copy, two
      stacked toollets */
@@ -1585,7 +1585,7 @@ main { display: block; outline: none; }
   .bu__cards-wrap { position: absolute; left: calc(442 * var(--u)); top: calc(48 * var(--u)); }
 }
 
-@media (max-width: 1023px) {
+@media (width < 1024px) {
   /* STUDIO_resp3-1 y2636..3705 */
   .bu { padding: calc(48 * var(--k)) calc(var(--x0) + 48 * var(--k)) 0; }
   .bc { width: calc(294 * var(--k)); height: calc(91.8 * var(--k)); }
@@ -1735,7 +1735,7 @@ main { display: block; outline: none; }
   .cs__sq { position: absolute; left: calc(1385.68 * var(--u)); top: calc(868 * var(--u)); }
 }
 
-@media (max-width: 1023px) {
+@media (width < 1024px) {
   /* STUDIO_resp3-1 y3705..4968; the phone original has no globe and no
      external connectors */
   .cs {
@@ -1827,7 +1827,7 @@ main { display: block; outline: none; }
   .r11--studio .ap::after { translate: calc(-1 * var(--gx)) 0; }
   .r11--studio .sc { overflow: visible; }
 }
-@media (max-width: 1023px) {
+@media (width < 1024px) {
   .cv__frame { display: contents; }
 }
 /* === end STUDIO FIT ========================================================== */
@@ -1926,7 +1926,7 @@ main { display: block; outline: none; }
   background: var(--ccdv-ink);           /* a sub-pixel seam shows ink, as Studio */
   -webkit-tap-highlight-color: transparent;
 }
-@media (max-width: 1023px) {
+@media (width < 1024px) {
   .r11--services {
     --k: min(1.5px, calc(100cqw / 390));
     --s: var(--k);
@@ -1974,7 +1974,7 @@ main { display: block; outline: none; }
     translate: var(--gx) 0;
   }
 }
-@media (max-width: 1023px) {
+@media (width < 1024px) {
   .sv-cv__frame { display: contents; }
 }
 /* NAV-T3 compact Service Index (see the NAV-T3 Studio block), FLOW-T1 rhythm:
@@ -2050,7 +2050,7 @@ main { display: block; outline: none; }
 /* phones: the M1 bar + menu (StudioMobileMenu, Services current) replaces the
    masthead, as on Studio; the shared .smm__* rules apply unchanged, only the
    route's accent differs */
-@media (max-width: 767px) {
+@media (width < 768px) {
   .r11--services .masthead--services { display: none; }
   .r11--services .smm__route[aria-current="page"] .smm__square { border-color: var(--ccdv-red); background: var(--ccdv-red); }
   .r11--services :is(.smm__toggle, .smm__home):focus-visible { outline-color: var(--ccdv-red); }
@@ -2141,7 +2141,7 @@ main { display: block; outline: none; }
   .sv-cv__whatis p + p { margin-top: calc(15 * var(--u)); }
 }
 
-@media (max-width: 1023px) {
+@media (width < 1024px) {
   .sv-cv { padding-bottom: calc(45 * var(--k)); }
   .sv-cv__sq { display: none; }
   /* the Studio phone sphere's 351 box */
@@ -2304,7 +2304,7 @@ main { display: block; outline: none; }
   .sv-ix__focus { margin-top: calc(32 * var(--u)); }
 }
 
-@media (max-width: 1023px) {
+@media (width < 1024px) {
   /* phones: the same order in one column: strip + slots, the face (column
      wide), then the editorial strip and the category content; every slot and
      service row is a 44px target */
@@ -2375,7 +2375,7 @@ main { display: block; outline: none; }
   .sv-ww__cards-wrap { position: absolute; left: calc(442 * var(--u)); top: calc(48 * var(--u)); }
 }
 
-@media (max-width: 1023px) {
+@media (width < 1024px) {
   .sv-ww { padding: calc(48 * var(--k)) calc(var(--x0) + 48 * var(--k)) 0; }
   .sv-ww__copy { margin-top: calc(43.2 * var(--k)); }
   .sv-ww__cards-wrap { width: calc(284.667 * var(--k)); margin-top: calc(64 * var(--k)); }
@@ -2566,7 +2566,7 @@ main { display: block; outline: none; }
   .sv-fm__sq { display: none; } /* A5 (OPERATOR): the corner dot is removed on desktop */
 }
 
-@media (max-width: 1023px) {
+@media (width < 1024px) {
   .sv-fm {
     display: flex;
     flex-direction: column;
@@ -2768,7 +2768,7 @@ main { display: block; outline: none; }
 /* <=767px: the same hierarchy, reflowed. --pu is ~0.26px here, so sizes that
    must stay legible/tappable are given in px. Title band and metadata stack;
    the three return controls keep their own padded hit areas. */
-@media (max-width: 767px) {
+@media (width < 768px) {
   .r11--workcase .workcase-band { height: auto; min-height: 96px; padding: 34px 12px 8px; }
   .r11--workcase .workcase-title {
     position: static;
@@ -2974,7 +2974,7 @@ main { display: block; outline: none; }
   --sm-rise: calc(16 * var(--u));
   background: var(--ccdv-ink);
 }
-@media (max-width: 1023px) {
+@media (width < 1024px) {
   .r11--products { --sm-rise: 16px; }
 }
 /* P1b: the cover spawns as Studio's / Services' (useSceneReveal arms
@@ -2999,7 +2999,7 @@ main { display: block; outline: none; }
   .r11--products .pv-lit path { transition: none; }
 }
 .r11--products .masthead--collapsing .cell[aria-current="page"] .cell__dot { background: var(--ccdv-green); }
-@media (max-width: 767px) {
+@media (width < 768px) {
   .r11--products .masthead--products { display: none; }
   .r11--products .smm__route[aria-current="page"] .smm__square { border-color: var(--ccdv-green); background: var(--ccdv-green); }
 }
@@ -3558,7 +3558,7 @@ button.pv-card { cursor: pointer; }
    (three), each opening its panel under it (P1b CORR03;
    CC.OS: Studio's graph x0.7849 on top). The scene flow (curtain, pin) is
    desktop only, as on Studio / Services. */
-@media (max-width: 1023px) {
+@media (width < 1024px) {
   .r11--products {
     --k: min(1.5px, calc(100cqw / 390));
     --s: calc(1.0667 * var(--k));
@@ -4071,7 +4071,7 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
 }
 
 /* --- phones + tablets: one 390 column per slide ----------------------------- */
-@media (max-width: 1023px) {
+@media (width < 1024px) {
   .r11--ccos { --k: min(1.5px, calc(100cqw / 390)); }
   .cc-frame {
     inset: var(--cc-m);
@@ -4182,7 +4182,7 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
   background: var(--ccdv-ink);           /* a sub-pixel seam shows ink, as Services */
   -webkit-tap-highlight-color: transparent;
 }
-@media (max-width: 1023px) {
+@media (width < 1024px) {
   .r11--contact {
     --k: min(1.5px, calc(100cqw / 390));
     --s: var(--k);
@@ -4203,7 +4203,7 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
 
 /* the shared bar: active cell ink with a blue square; phones the M1 bar */
 .r11--contact .masthead--collapsing .cell[aria-current="page"] .cell__dot { background: var(--ccdv-blue); }
-@media (max-width: 767px) {
+@media (width < 768px) {
   .r11--contact .masthead--contact { display: none; }
   .r11--contact .smm__route[aria-current="page"] .smm__square { border-color: var(--ccdv-blue); background: var(--ccdv-blue); }
   .r11--contact :is(.smm__toggle, .smm__home):focus-visible { outline-color: var(--ccdv-blue); }
@@ -4270,7 +4270,7 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
   .r11--contact .contact-directory__groups { font-size: max(11px, calc(16 * var(--u))); }
 }
 
-@media (max-width: 1023px) {
+@media (width < 1024px) {
   .ct { padding-bottom: calc(45 * var(--k)); }
   /* A3: the heading is twenty glyphs and <3 two: 26k keeps the row inside
      366k (22 x 0.6em = 343k); it may wrap, <3 staying at the end */
@@ -4653,7 +4653,7 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
    gray, --wv3-fill, and a pressed choice is white, --wv3-on, on this ground;
    the top strip is the M1 menu bar, WorkPhoneHead). The filter rows are the rail's own
    (.wv3-side__item), the actions the preview's (.wv3-preview__action). */
-@media (max-width: 1023px) {
+@media (width < 1024px) {
   .wv3 {
     --u: min(1.5px, calc(100cqw / 390));
     --wv3-t: max(11px, calc(12 * var(--u)));
@@ -4912,6 +4912,9 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
         transform var(--dur-short) var(--studio-ease, ease),
         visibility 0s linear var(--dur-short);
     }
+    /* N6 G1 F-M-03: the A5 page lock (above, up to 767px only) for Work's
+       768-1023 menu; a Work page fading out (inert .site-route) holds nothing */
+    html:has(.site-route:not([inert]) .wv3p .smm__panel[data-open="true"]) { overflow: hidden; }
     .wv3p .smm__panel[data-open="true"] {
       opacity: 1;
       visibility: visible;
