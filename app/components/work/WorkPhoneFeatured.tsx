@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { GearMark } from "../marks/GearMark";
 import { WorkActions } from "./WorkActions";
-import { ARCHIVE_ROWS, FEATURED_PROJECTS, WORK_INTRO, archiveTitle } from "../../data/workProjects";
+import { ARCHIVE_ROWS, FEATURED_PROJECTS, archiveTitle } from "../../data/workProjects";
 
 /* N4 P-J (OPERATOR, WORK V3_responsive y764..1672): Featured on phones and
    tablets. Between two rules, the `FEATURED` label and one square per
@@ -10,7 +10,10 @@ import { ARCHIVE_ROWS, FEATURED_PROJECTS, WORK_INTRO, archiveTitle } from "../..
    ones empty and dimmed). Then the project: its gray bar, the Work line and
    its description, its two actions (WorkActions: the same honest states as
    the archive; N4 P-K: above the image), then its one image (the phone
-   landing, whole). The project's actions are its archive row's. */
+   landing, whole). The project's actions are its archive row's.
+   N6 R1 B9: the copy is the project's own description only; the Studio
+   paragraph (WORK_INTRO) no longer sits above it. N6 R1 B5: unavailable
+   actions are hidden, not drawn disabled. */
 
 const SLOTS = 5;
 
@@ -49,10 +52,9 @@ export function WorkPhoneFeatured() {
           {title}
         </h3>
         <div className="wv3p-feature__copy">
-          <p>{WORK_INTRO}</p>
           <p>{project.description}</p>
         </div>
-        {row ? <WorkActions entry={row} className="wv3p-actions" /> : null}
+        {row ? <WorkActions entry={row} className="wv3p-actions" hideUnavailable /> : null}
         <div className="wv3p-feature__image">
           <img
             src={project.poster.src}

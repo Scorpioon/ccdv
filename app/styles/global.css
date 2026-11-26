@@ -804,7 +804,7 @@ main { display: block; outline: none; }
   .smm__panel a:focus-visible { outline: 2px solid var(--ccdv-purple-card); outline-offset: 2px; }
 
   /* five outlined rows; the current one is ink with a lilac square */
-  .smm__routes { display: grid; gap: 12px; padding: 12px 12px 0; flex: none; }
+  .smm__routes { display: grid; gap: 8px; padding: 12px 12px 0; flex: none; } /* N6 R1 C2: 8px gap, the menu fits one screen */
   .smm__route {
     display: flex;
     align-items: center;
@@ -833,8 +833,8 @@ main { display: block; outline: none; }
      beside the name, on a 33px pitch */
   .smm__ccos {
     flex: none;
-    margin: 18px 12px 12px;
-    padding: 8px 0;
+    margin: 12px 12px 8px; /* N6 R1 C2 */
+    padding: 4px 0;
     border-block: 1px solid var(--ccdv-ink);
   }
   .smm__systems { display: grid; }
@@ -853,8 +853,8 @@ main { display: block; outline: none; }
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    gap: 40px;
-    padding: 40px 12px 16px;   /* R2-FB003-16: the menu body's 12px inset */
+    gap: 16px;                 /* N6 R1 C2: was 40px; the menu fits one screen */
+    padding: 20px 12px 12px;   /* R2-FB003-16: the menu body's 12px inset */
     background: var(--ccdv-ink);
     color: var(--ccdv-panel);
     font-size: 12px;
@@ -864,7 +864,11 @@ main { display: block; outline: none; }
   /* Collapse Creative mark, small, light ink (its paths carry a dark fill) */
   /* A5: the 648 x 120 lockup at 146 wide (27 tall), STUDIO_resp2's logo box */
   .smm__brand { display: block; flex: none; width: 146px; height: auto; aspect-ratio: 648 / 120; color: var(--ccdv-panel); }
-  .smm__year { align-self: flex-end; margin-top: auto; text-align: right; }
+  .smm__year { text-align: right; }
+  /* N6 R1 C2: the logo drops to the foot's bottom-left on the 12px margin, the year opposite */
+  .smm__base { box-sizing: border-box; display: flex; align-items: flex-end; justify-content: space-between; width: 100%; margin-top: auto; }
+  /* N6 R1 C2: the four legal lines share rows */
+  .smm__legal { display: flex; flex-wrap: wrap; gap: 0 16px; }
   .smm__contact a { position: relative; text-decoration: underline; text-underline-offset: 3px; }
   .smm__contact a::after { content: ""; position: absolute; inset: -11px -4px; }
 }
@@ -1285,14 +1289,17 @@ main { display: block; outline: none; }
     align-items: center;
     column-gap: calc(8 * var(--cm));
     margin: calc(12 * var(--cm)) calc(var(--x0, 0px) + 12 * var(--cm)) 0;
-    padding: calc(12 * var(--cm)) calc(12 * var(--cm)) calc(30 * var(--cm));
+    padding: calc(12 * var(--cm)) calc(12 * var(--cm)) calc(12 * var(--cm)); /* N6 R1 C1: the card ends under the meta lines (STUDIO_resp3) */
     border-radius: calc(8 * var(--cm));
   }
+  /* N6 R1 C1: the card's top margin stays inside its cover, on the cover's own ground,
+     instead of collapsing out and showing the shell's ink above the card */
+  .cv, .sv-cv, .pv-cover, .ct { display: flow-root; }
   .cmh__gear { width: calc(26 * var(--cm)); height: calc(26 * var(--cm)); }
   .cmh__pixel { justify-self: start; width: calc(113.7 * var(--cm)); height: calc(26 * var(--cm)); }
   /* A9: pinned to the first row's end (auto-placement dropped it under the meta) */
   .cmh__label { grid-row: 1; grid-column: 3; align-self: start; justify-self: end; font-size: max(10px, calc(10 * var(--cm))); }
-  .cmh__title { grid-column: 1 / -1; margin-top: calc(16 * var(--cm)); font-size: calc(34 * var(--cm)); line-height: 1.2; }
+  .cmh__title { grid-column: 1 / -1; margin-top: calc(16 * var(--cm)); font-size: calc(44 * var(--cm)); line-height: 1.2; } /* N6 R1 C1: STUDIO_resp3 draws the title larger (was 34) */
   .cmh__title span {
     text-decoration-thickness: calc(2 * var(--cm));
     text-underline-offset: calc(4 * var(--cm));
@@ -1303,9 +1310,52 @@ main { display: block; outline: none; }
     font-size: max(10px, calc(9.6 * var(--cm))); /* N4 P-I D-27: floor 9px -> 10px */
     line-height: calc(14 * var(--cm));
   }
-  .cmh__sq { bottom: calc(12 * var(--cm)); width: calc(7 * var(--cm)); height: calc(7 * var(--cm)); }
-  .cmh__sq--a { right: calc(92 * var(--cm)); }
+  /* N6 R1 C1: one square, level with the second meta line (the e-mail), as in STUDIO_resp3;
+     the first square is gone. 12 padding + (14 line - 7 square) / 2 = 15.5 */
+  .cmh__sq { bottom: calc(15.5 * var(--cm)); width: calc(7 * var(--cm)); height: calc(7 * var(--cm)); }
+  .cmh__sq--a { display: none; }
   .cmh__sq--b { right: calc(12 * var(--cm)); }
+}
+
+/* N6 R1 C3 (OPERATOR): phones and tablets step like the desktop deck, natively: the
+   browser snaps each swipe to the next section's start (mandatory), so a swipe never
+   rests between two screens. A section taller than the screen still scrolls inside
+   its own snap area. Studio, Services and Products only; desktop uses stepScroll.ts. */
+@media (width < 1024px) {
+  html:has(.r11--studio, .r11--services, .r11--products) {
+    scroll-snap-type: y mandatory;
+  }
+  .r11--studio :is(.cv, .studio-approach, .bu, .cs),
+  .r11--services :is(.sv-cv, .sv-index, .sv-ww, .sv-fm),
+  .r11--products :is(.pv-cover, .pv-scene, .pv-next) {
+    scroll-snap-align: start;
+  }
+  .r11--studio .footer,
+  .r11--services .footer,
+  .r11--products .footer {
+    scroll-snap-align: end;
+  }
+}
+/* the `V` under a cover's art (CoverNext.tsx): phones and tablets only */
+.cover-next { display: none; }
+@media (width < 1024px) {
+  .cover-next {
+    display: block;
+    position: relative;
+    width: var(--ccdv-tap);
+    height: var(--ccdv-tap);
+    margin: 0 auto;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ccdv-ink);
+    font: inherit;
+    font-size: 20px;
+    line-height: var(--ccdv-tap);
+    cursor: pointer;
+  }
+  .cover-next:focus { outline: none; }
+  .cover-next:focus-visible { outline: 2px solid var(--ccdv-ink); outline-offset: -4px; }
 }
 
 /* --- S1 cover (OC01-01) ----------------------------------------------------- */
@@ -1530,6 +1580,73 @@ main { display: block; outline: none; }
      otherwise leave no room to scroll past it */
   .ap__sphere .studio-sphere__hit,
   .cv__sphere .studio-sphere__hit { transform: scale(0.62); transform-box: fill-box; transform-origin: center; }
+}
+
+/* N6 R1 A1-A4 (Studio, < 1024px). Later than the block above, so it wins. */
+@media (width < 1024px) {
+  /* N6 R1 A1: the big [Studio] label is visually hidden; the h1 stays for AT */
+  .cv__studio {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+    font: inherit;
+  }
+
+  /* N6 R1 A2: the cover per STUDIO_resp3@2x: the card overlaps the top of a
+     sphere about 1.28 x the column, cut at both sides; a gap under the sphere
+     holds the V (coordinator); Whois is a light rounded card */
+  .cv { overflow-x: clip; }
+  .cv .cmh { position: relative; z-index: 2; }
+  .cv__orbit {
+    position: relative;
+    z-index: 0;
+    width: calc(500 * var(--k));
+    height: calc(500 * var(--k));
+    margin: calc(-115 * var(--k)) auto 0;
+  }
+  .cv .cover-next { margin-bottom: calc(12 * var(--k)); } /* N6 R1 C3: the V under the sphere */
+  .cv__whois-col { margin: 0 calc(var(--x0) + 24 * var(--k)) 0; }
+  .cv__whois {
+    padding: calc(12 * var(--k)) calc(12 * var(--k)) calc(24 * var(--k));
+    background: var(--ccdv-panel);
+    color: var(--ccdv-ink);
+    border-radius: calc(8 * var(--k));
+  }
+
+  /* N6 R1 A3: the Studio sphere never takes a touch, so the page scrolls on it */
+  .cv__orbit .studio-sphere,
+  .ap__sphere {
+    pointer-events: none;
+    touch-action: auto;
+  }
+  .cv__orbit .studio-sphere__hit,
+  .ap__sphere .studio-sphere__hit { display: none; }
+
+  /* N6 R1 A4: compact Approach, one screen at 390 x 844 (copy unchanged) */
+  .ap__bars { display: none; }
+  .ap { padding: calc(24 * var(--k)) calc(var(--x0) + 48 * var(--k)) calc(24 * var(--k)); }
+  .ap__art {
+    width: calc(448 * var(--k));
+    height: calc(448 * var(--k));
+    margin-left: calc(-77 * var(--k));
+  }
+  .ap__head { margin-top: calc(-120 * var(--k)); }
+  .ap__body { margin-top: calc(12 * var(--k)); }
+  .ap__copy { font-size: calc(15.5 * var(--k)); line-height: calc(20 * var(--k)); }
+  .ap__copy p + p { margin-top: calc(12 * var(--k)); }
+  .ap__toollets { row-gap: calc(12 * var(--k)); margin-top: calc(16 * var(--k)); }
+  .ap__toollet p { margin: calc(8 * var(--k)) 0 0; font-size: 11px; line-height: calc(15 * var(--k)); }
+  /* N6 R1 A4 (OPERATOR: "we can cut copy, a copy pass later"): to fit one screen the phone
+     view shows each slot's lead, its first paragraph and its first toollet; the data
+     (studioApproach.ts) and the desktop copy are untouched */
+  .ap__copy p:nth-child(n + 3),
+  .ap__toollet:nth-child(n + 2) { display: none; }
 }
 
 /* --- S3 Build (OC01-05) ----------------------------------------------------- */
@@ -2326,6 +2443,90 @@ main { display: block; outline: none; }
   .sv-ix__copy { font-size: max(13px, calc(14 * var(--k))); line-height: 1.5; }
   .sv-ix__copy p + p { margin-top: calc(14 * var(--k)); }
   .sv-ix__focus { margin-top: calc(28 * var(--k)); }
+}
+
+/* N6 R1 A1-A3, A5 (Services cover and Service Index, < 1024px), and N6 R1
+   list (the shared list look). Later than the blocks above, so it wins. */
+@media (width < 1024px) {
+  /* N6 R1 A1: the big [Services] label is visually hidden; the h1 stays for AT */
+  .sv-cv__services {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+    font: inherit;
+  }
+
+  /* N6 R1 A2: the cover per STUDIO_resp3@2x-1: the card over the top of a cube
+     about 1.28 x the column, cut at both sides; a gap under it holds the V
+     (coordinator); Whois is a light rounded card */
+  .sv-cv { overflow-x: clip; }
+  .sv-cv .cmh { position: relative; z-index: 2; }
+  .sv-cv__art {
+    position: relative;
+    z-index: 0;
+    width: calc(500 * var(--k));
+    height: calc(500 * var(--k));
+    margin: calc(-115 * var(--k)) auto 0;
+  }
+  .sv-cv .cover-next { margin-bottom: calc(12 * var(--k)); } /* N6 R1 C3: the V under the cube */
+  .sv-cv__whatis-col { margin: 0 calc(var(--x0) + 24 * var(--k)) 0; }
+  .sv-cv__whatis {
+    padding: calc(12 * var(--k)) calc(12 * var(--k)) calc(24 * var(--k));
+    background: var(--ccdv-panel);
+    color: var(--ccdv-ink);
+    border-radius: calc(8 * var(--k));
+  }
+
+  /* N6 R1 A3: the Services cube does not lean on touch (its JS is told via
+     interactive, ServicesCover); the voxel pile yields vertical scroll */
+  .sv-fm__pile { touch-action: pan-y; }
+
+  /* N6 R1 list: the shared list look (A4 Studio, A5 Services, B7 Products).
+     A section sets --r1-accent (its strip colour) and --r1-on-accent (the ink
+     on it). Inactive: ink ground, accent text and hairline, hollow square.
+     Active: accent ground, ink text, filled square. */
+  .r1-list {
+    --r1-ground: var(--ccdv-ink);
+    --r1-accent: var(--ccdv-purple-card);
+    --r1-on-accent: var(--ccdv-ink);
+  }
+  .sv-ix .r1-list {
+    --r1-accent: var(--ccdv-red);
+  }
+  .r1-list__row {
+    box-sizing: border-box;
+    height: auto;
+    min-height: calc(26 * var(--k));
+    margin: 0;
+    padding: 0 0 0 calc(8 * var(--k));
+    border: 0.5px solid var(--r1-accent);
+    background: var(--r1-ground);
+    color: var(--r1-accent);
+    font-size: calc(15 * var(--k));
+    line-height: 1.2;
+  }
+  .r1-list__row + .r1-list__row { border-top-width: 0; }
+  .r1-list__row[aria-selected="true"] {
+    background: var(--r1-accent);
+    color: var(--r1-on-accent);
+    border-color: var(--r1-accent);
+  }
+  .r1-list__row :is(.ap__slot-dot, .sv-ix__slot-dot, .sv-ix__service-mark) {
+    width: 6px;
+    height: 6px;
+    border: 1px solid currentColor;
+    background: transparent;
+  }
+  .r1-list__row[aria-selected="true"] :is(.ap__slot-dot, .sv-ix__slot-dot, .sv-ix__service-mark) {
+    background: currentColor;
+    border-color: currentColor;
+  }
 }
 
 /* --- S3 Work with CCDV. ------------------------------------------------------ */
@@ -3672,6 +3873,86 @@ button.pv-card { cursor: pointer; }
   .pv-panel__body + .pv-panel__body { margin-top: calc(22 * var(--k)); }
   .pv-panel__body:last-of-type { margin-bottom: calc(22 * var(--k)); }
   .pv-panel__cta { padding: 0 calc(5.5 * var(--k)); font-size: max(10px, calc(13.07 * var(--k))); line-height: max(18px, calc(18 * var(--k))); }
+
+  /* N6 R1 B6 (phones and tablets): the rail is Work-archive-style cards
+     (ProductsPhoneCard), always open: a name bar with the gear, the art, the
+     facts box, the product's copy and the one action where there is a CTA.
+     Own .pv-pcard classes; the desktop rail (.pv-rail) is not drawn here. */
+  .pv-pcards { display: flex; flex-direction: column; gap: calc(24.2 * var(--k)); margin: calc(34.4 * var(--k)) 0 0; padding: 0; list-style: none; }
+  .pv-pcards__item { margin: 0; padding: 0; min-width: 0; }
+  .pv-pcard { display: flex; flex-direction: column; gap: calc(8 * var(--k)); min-width: 0; }
+  .pv-pcard__bar {
+    display: flex;
+    align-items: center;
+    gap: calc(6 * var(--k));
+    box-sizing: border-box;
+    width: 100%;
+    min-height: max(26px, calc(26.68 * var(--k)));
+    margin: 0;
+    padding: 0 calc(12 * var(--k));
+    border: max(0.5px, calc(0.533 * var(--k))) solid var(--ccdv-green);
+    background: var(--ccdv-green);
+    color: var(--ccdv-ink);
+    font: inherit;
+    font-size: max(11px, calc(12.8 * var(--k)));
+    font-weight: 400;
+    line-height: 1.2;
+  }
+  .pv-pcard__gear { flex: none; width: calc(11 * var(--k)); height: calc(11 * var(--k)); }
+  .pv-pcard__art {
+    overflow: hidden;
+    border: max(0.5px, calc(0.533 * var(--k))) solid var(--ccdv-green);
+    border-radius: calc(12.09 * var(--k));
+  }
+  .pv-pcard__art > svg { display: block; width: 100%; height: auto; }
+  .pv-pcard__facts {
+    margin: 0;
+    box-sizing: border-box;
+    padding: calc(7 * var(--k)) calc(8 * var(--k));
+    border: max(0.5px, calc(0.533 * var(--k))) solid var(--ccdv-green);
+    font-size: max(11px, calc(13.2 * var(--k)));
+    line-height: calc(20 * var(--k));
+  }
+  .pv-pcard__facts div { display: flex; gap: 0.5em; min-width: 0; }
+  .pv-pcard__facts dt { flex: none; }
+  .pv-pcard__facts dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+  .pv-pcard__copy { display: flex; flex-direction: column; }
+  .pv-pcard__title { margin: 0; font: inherit; font-size: calc(17.6 * var(--k)); font-weight: 600; line-height: calc(22 * var(--k)); }
+  .pv-pcard__body { margin: calc(12 * var(--k)) 0 0; font-size: calc(17.6 * var(--k)); line-height: calc(22 * var(--k)); }
+  .pv-pcard__action {
+    display: flex;
+    align-items: center;
+    gap: calc(6 * var(--k));
+    box-sizing: border-box;
+    height: max(30px, calc(30 * var(--k)));
+    padding-inline: calc(12 * var(--k));
+    border: max(0.5px, calc(0.533 * var(--k))) solid var(--ccdv-green);
+    color: var(--ccdv-green);
+    text-decoration: none;
+    font-size: max(11px, calc(13.2 * var(--k)));
+  }
+  .pv-pcard__glyph { margin-left: auto; }
+
+  /* N6 R1 B7 (phones and tablets): Our Software Code's rows take the shared
+     list look (r1-list, above) in the Products green on the Products ink. */
+  .pv-code__tabs.r1-list {
+    --r1-accent: var(--ccdv-green);
+    --r1-ground: var(--ccdv-ink);
+    --r1-on-accent: var(--ccdv-ink);
+  }
+  .pv-code__tabs .pv-code__tab.r1-list__row {
+    min-height: max(26px, calc(26 * var(--k)));
+    padding: 0 0 0 calc(8 * var(--k));
+    border: max(0.5px, calc(0.533 * var(--k))) solid var(--ccdv-green);
+    background: var(--ccdv-ink);
+    color: var(--ccdv-green);
+    font-size: calc(15 * var(--k));
+  }
+  .pv-code__tabs .pv-code__tab.r1-list__row[aria-selected="true"] {
+    background: var(--ccdv-green);
+    color: var(--ccdv-ink);
+  }
+  .pv-code__tabs .pv-code__tab.r1-list__row + .pv-code__tab.r1-list__row { border-top-width: 0; }
 }
 /* === end PRODUCTS V2 ======================================================== */
 
@@ -4303,10 +4584,14 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
   .r11--contact .contact-directory__value { padding: calc(1 * var(--k)) calc(6 * var(--k)); overflow-wrap: anywhere; }
   .r11--contact .contact-directory__legal {
     flex-wrap: wrap;
+    justify-content: center;
     gap: calc(8 * var(--k)) calc(16 * var(--k));
     margin-top: calc(16 * var(--k));
     font-size: var(--t-small);
+    text-align: center;
   }
+  /* N6 R1 B8 / R1-D5 (phones and tablets): the version line is centred on its own row */
+  .r11--contact .contact-directory__version { flex-basis: 100%; margin-left: 0; text-align: center; }
 }
 /* === end N2 CONTACT ========================================================= */
 
@@ -4356,7 +4641,7 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
 .wv3 :is(a, button):focus-visible { outline: 1px solid var(--wv3-ink); outline-offset: 2px; }
 /* N4 P-K: :where() keeps this reset at zero specificity so .wv3-group and
    .wv3-preview__actions margins win */
-.wv3 :where(ul) { margin: 0; padding: 0; list-style: none; }
+.wv3 :where(ul:not(.smm__routes, .smm__systems, .smm__legal)) { margin: 0; padding: 0; list-style: none; } /* N6 R1 C2: keep the menu's 12px inset on /work */
 .wv3 p,
 .wv3 h1 { margin: 0; }
 .wv3 button { font: inherit; color: inherit; }
@@ -4852,6 +5137,123 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
   .wv3p .wv3p-feature .wv3p-actions { margin-top: var(--wv3p-gap); }
   .wv3p-empty { padding: calc(8 * var(--u)); }
 
+  /* N6 R1 B1 (phones and tablets): three grayscale tiers. LABELS (FEATURED,
+     All works, year heads, project-name bars) are plain text between rules,
+     no box. CONTROLS (Filtros, the switch, filter heads and options) are the
+     gray fill with a 0.5px ink border, at least 44 tall; pressed = ink fill
+     with light text. ACTIONS (.wv3-preview__action) stay white boxes. */
+  .wv3p .wv3p-label__box,
+  .wv3p .wv3p-year__box {
+    flex: 0 1 auto;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    justify-content: flex-start;
+    text-align: start;
+  }
+  .wv3p .wv3p-pages { margin-left: auto; }
+  .wv3p .wv3p-bar:not(.wv3p-title__toggle) {
+    min-height: 0;
+    padding: calc(10 * var(--u)) 0;
+    border: 0;
+    border-block: 0.5px solid var(--wv3-ink);
+    background: none;
+  }
+  .wv3p .wv3p-title__toggle { min-height: 44px; border: 0.5px solid var(--wv3-ink); }
+  .wv3p .wv3p-switch__item,
+  .wv3p .wv3-side__item {
+    min-height: 44px;
+    border: 0.5px solid var(--wv3-ink);
+    background: var(--wv3-fill);
+    color: var(--wv3-ink);
+  }
+  .wv3p .wv3p-switch__item + .wv3p-switch__item { margin-left: -0.5px; }
+  .wv3p :is(.wv3p-switch__item, .wv3-side__item)[aria-pressed="true"] {
+    background: var(--wv3-ink);
+    color: var(--wv3-fill);
+  }
+  .wv3p .wv3-side__list li + li .wv3-side__item { border-top: 0; }
+  @media (hover: hover) {
+    .wv3p :is(.wv3p-switch__item, .wv3-side__item):not([aria-pressed="true"]):hover { background: var(--ccdv-panel); }
+    .wv3p :is(.wv3p-switch__item, .wv3-side__item)[aria-pressed="true"]:hover { background: var(--wv3-ink); }
+  }
+
+  /* N6 R1 B2/B4: the disclosures. A v rotates when open; a panel folds by
+     grid rows (0fr -> 1fr), inert and hidden when closed. */
+  .wv3p-v { display: inline-block; margin-left: auto; line-height: 1; }
+  @media (prefers-reduced-motion: no-preference) {
+    .wv3p-v { transition: rotate var(--dur-short) var(--wv3-ease); }
+  }
+  .wv3p button[aria-expanded="true"] > .wv3p-v { rotate: 180deg; }
+  .wv3p-disclosure {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    visibility: hidden;
+    transition: visibility 0s linear 0.35s;
+  }
+  .wv3p-disclosure[data-open] { grid-template-rows: 1fr; opacity: 1; visibility: visible; transition-delay: 0s; }
+  .wv3p-disclosure__inner { min-height: 0; overflow: hidden; }
+  @media (prefers-reduced-motion: no-preference) {
+    .wv3p-disclosure {
+      transition:
+        grid-template-rows 0.35s var(--wv3-ease),
+        opacity 0.3s var(--sm-ease),
+        visibility 0s linear 0.35s;
+    }
+    .wv3p-disclosure[data-open] {
+      transition:
+        grid-template-rows 0.35s var(--wv3-ease),
+        opacity 0.3s var(--sm-ease),
+        visibility 0s linear 0s;
+    }
+  }
+  .wv3p-disclosure-group { display: flex; flex-direction: column; }
+  .wv3p .wv3p-head { justify-content: space-between; padding-inline: calc(12 * var(--u)); }
+  /* the chosen value sits before the v, so a folded head still says what is filtered */
+  .wv3p-head__value { margin-left: auto; margin-right: calc(8 * var(--u)); font-weight: 600; }
+  .wv3p-head__value + .wv3p-v { margin-left: 0; }
+  .wv3p-disclosure-group > .wv3p-disclosure[data-open] > .wv3p-disclosure__inner { padding-top: var(--wv3p-gap-s); }
+  .wv3p-year__toggle {
+    display: flex;
+    align-items: center;
+    gap: calc(12 * var(--u));
+    min-height: 44px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-size: var(--wv3-t);
+    font-weight: 400;
+    text-align: start;
+    cursor: pointer;
+  }
+  .wv3p-year__toggle > .wv3p-v { margin-left: 0; }
+  .wv3p-card__toggle {
+    display: flex;
+    align-items: center;
+    gap: calc(6 * var(--u));
+    width: 100%;
+    min-height: 44px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-size: var(--wv3-t);
+    font-weight: 400;
+    text-align: start;
+    cursor: pointer;
+  }
+  .wv3p-card__toggle > span:not(.wv3p-v) { min-width: 0; }
+  .wv3p-year { gap: 0; }
+  .wv3p .wv3p-year .wv3p-disclosure[data-open] > .wv3p-disclosure__inner { padding-top: var(--wv3p-gap); }
+
   /* N4 P-K: the M1 bar + menu (STUDIO-RESP M1, above) only exist up to 767px;
      on Work they also show at 768-1023, so the same rules are repeated here
      scoped under .wv3p (below 768 the originals apply unchanged). The current
@@ -4925,7 +5327,7 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
     .wv3p .smm__panel ul { margin: 0; padding: 0; list-style: none; }
     .wv3p .smm__panel a { color: inherit; text-decoration: none; }
     .wv3p .smm__panel a:focus-visible { outline: 2px solid var(--ccdv-purple-card); outline-offset: 2px; }
-    .wv3p .smm__routes { display: grid; gap: 12px; padding: 12px 12px 0; flex: none; }
+    .wv3p .smm__routes { display: grid; gap: 8px; padding: 12px 12px 0; flex: none; }
     .wv3p .smm__route {
       display: flex;
       align-items: center;
@@ -4938,7 +5340,7 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
     .wv3p .smm__square { box-sizing: border-box; width: 8px; height: 8px; border: 1px solid currentColor; }
     .wv3p .smm__route[aria-current="page"] { background: var(--ccdv-ink); color: var(--ccdv-panel); }
     .wv3p .smm__route[aria-current="page"] .smm__square { border-color: var(--ccdv-purple-card); background: var(--ccdv-purple-card); }
-    .wv3p .smm__ccos { flex: none; margin: 18px 12px 12px; padding: 8px 0; border-block: 1px solid var(--ccdv-ink); }
+    .wv3p .smm__ccos { flex: none; margin: 12px 12px 8px; padding: 4px 0; border-block: 1px solid var(--ccdv-ink); }
     .wv3p .smm__systems { display: grid; }
     .wv3p .smm__system { position: relative; display: flex; align-items: center; gap: 10px; height: 33px; font-size: 16px; line-height: 22px; }
     .wv3p .smm__system-icon { flex: none; display: block; width: 24px; height: auto; }
@@ -4950,8 +5352,8 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
       flex-direction: column;
       align-items: flex-start;
       justify-content: flex-start;
-      gap: 40px;
-      padding: 40px 12px 16px;
+      gap: 16px;
+      padding: 20px 12px 12px;
       background: var(--ccdv-ink);
       color: var(--ccdv-panel);
       font-size: 12px;
@@ -4959,7 +5361,9 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
       text-align: left;
     }
     .wv3p .smm__brand { display: block; flex: none; width: 146px; height: auto; aspect-ratio: 648 / 120; color: var(--ccdv-panel); }
-    .wv3p .smm__year { align-self: flex-end; margin-top: auto; text-align: right; }
+    .wv3p .smm__year { text-align: right; }
+    .wv3p .smm__base { box-sizing: border-box; display: flex; align-items: flex-end; justify-content: space-between; width: 100%; margin-top: auto; }
+    .wv3p .smm__legal { display: flex; flex-wrap: wrap; gap: 0 16px; }
     .wv3p .smm__contact a { position: relative; text-decoration: underline; text-underline-offset: 3px; }
     .wv3p .smm__contact a::after { content: ""; position: absolute; inset: -11px -4px; }
     @media (prefers-reduced-motion: reduce) {

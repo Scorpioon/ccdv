@@ -35,14 +35,13 @@ const GROUPS: DirectoryGroup[] = [
   {
     heading: "[ Get in touch with CCDV ]",
     rows: [
-      { tag: "@", value: "[ hello[@]collapsecreative.com ]" },
+      { tag: "@", value: "hello[@]collapsecreative.com" },
       { tag: "IG", value: "@cc.dv" },
     ],
   },
   {
-    heading: "[ Get in touch with Collapse Creative ]",
+    heading: "[ Collapse Creative ]",
     rows: [
-      { tag: "@", value: "[ hello[@]collapsecreative.com ]" },
       { tag: "IG", value: "@collapse.creative" },
       { tag: "W", value: "collapsecreative.com", href: COLLAPSE_CREATIVE_URL },
     ],
@@ -57,7 +56,7 @@ export function ContactDirectory() {
         {/* N3 Pass G2 (OPERATOR): the CCDV identity (caption + long lockup)
             is removed; the V3 card above already names CCDV */}
         <div className="contact-directory__identity">
-          <p className="contact-directory__caption">[ Part of: Collapse Creative ]</p>
+          <p className="contact-directory__caption">[ Part of: ]</p>
           <a href={COLLAPSE_CREATIVE_URL} aria-label="Collapse Creative">
             <CollapseCreativeMark className="contact-directory__collapse" />
           </a>

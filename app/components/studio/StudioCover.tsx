@@ -24,6 +24,7 @@
    (CoverMasthead); the h1 is [Studio] at every width (visually hidden on
    desktop, as on Services). */
 import { CoverMasthead } from "../CoverMasthead";
+import { CoverNext } from "../CoverNext";
 import { StudioMobileOrbit } from "../marks/StudioMobileOrbit";
 import { Chip } from "./studioMarks";
 import { index } from "../../motion/studioMotion";
@@ -42,6 +43,8 @@ export function StudioCover() {
         <div className="cv__orbit" data-spawn style={index(4)}>
           <StudioMobileOrbit className="cv__sphere" />
         </div>
+
+        <CoverNext />
 
         {/* phones: the large page label of STUDIO_resp3-1 (desktop shows the
             identity title above as the page heading instead) */}

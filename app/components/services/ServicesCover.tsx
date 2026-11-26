@@ -14,8 +14,9 @@
    is a link Home (global); the pieces spawn in reading order as on Studio.
    A8 (OPERATOR): the lockup, `collapse` and squares a / b are Masthead V3
    (CoverMasthead). */
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { CoverMasthead } from "../CoverMasthead";
+import { CoverNext } from "../CoverNext";
 import { Chip } from "../studio/studioMarks";
 import { RubikCube } from "./RubikCube";
 import { SERVICES_WHATIS } from "../../data/servicesScenes";
@@ -28,6 +29,21 @@ const COVER_GRIDS = indexGrids("strategy");
 const COVER_REST = { rx: 0.45, ry: -0.6 };
 
 export function ServicesCover({ reduced }: { reduced: boolean }) {
+  /* N6 R1 A3: the cube leans with the pointer on desktop only; below 1024 it
+     stays at rest so a touch on the cover scrolls the page (the
+     ProductsSoftwareCode breakpoint pattern; SSR-safe) */
+  const [wide, setWide] = useState(() =>
+    typeof window === "undefined" ? false : window.matchMedia("(min-width: 1024px)").matches,
+  );
+
+  useEffect(() => {
+    const query = window.matchMedia("(min-width: 1024px)");
+    const update = () => setWide(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
   return (
     <section className="sv-cv sv-grid" aria-labelledby="services-title">
       {/* R1 CORR01: the 1440 x 1118 frame; on desktop it scales to fit the
@@ -47,9 +63,12 @@ export function ServicesCover({ reduced }: { reduced: boolean }) {
             category={0}
             reduced={reduced}
             rest={COVER_REST}
+            interactive={wide}
             zone=".sv-cv"
           />
         </div>
+
+        <CoverNext />
 
         <h1 className="sv-cv__services" id="services-title">
           [Services]

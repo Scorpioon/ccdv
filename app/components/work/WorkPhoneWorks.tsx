@@ -1,3 +1,4 @@
+import { useId, useState } from "react";
 import { WorkArchiveCard } from "./WorkArchiveCard";
 import { ARCHIVE_GROUP_YEARS, FUTURE_YEARS, type ArchiveRow } from "../../data/workProjects";
 
@@ -7,7 +8,46 @@ import { ARCHIVE_GROUP_YEARS, FUTURE_YEARS, type ArchiveRow } from "../../data/w
    the year's white box with its trailing rule, between two rules, then its
    cards (WorkArchiveCard). Every group carries its year (the artboard's first
    group has none; read as an omission). The filters are the archive's.
-   N4 P-K: the year boxes stay white; the label box is gray (CSS). */
+   N4 P-K: the year boxes stay white; the label box is gray (CSS).
+   N6 R1 B2: each year's box is a disclosure with a rotating v; its cards fold
+   under it. Open by default, except 2027 (FUTURE_YEARS), which starts folded. */
+
+function YearGroup({ year, rows }: { year: string; rows: ArchiveRow[] }) {
+  const future = FUTURE_YEARS.includes(year);
+  const [open, setOpen] = useState(!future);
+  const panelId = useId();
+
+  return (
+    <section className="wv3p-year" aria-labelledby={`wv3p-year-${year}`} data-future={future ? "" : undefined}>
+      <div className="wv3p-year__head">
+        <h3 className="wv3p-year__box" id={`wv3p-year-${year}`}>
+          <button
+            type="button"
+            className="wv3p-year__toggle"
+            aria-expanded={open}
+            aria-controls={panelId}
+            onClick={() => setOpen((value) => !value)}
+          >
+            <span>{year}</span>
+            <span className="wv3p-v" aria-hidden="true">
+              v
+            </span>
+          </button>
+        </h3>
+        <span className="wv3p-year__rule" aria-hidden="true" />
+      </div>
+      <div className="wv3p-disclosure" id={panelId} data-open={open ? "" : undefined} inert={!open}>
+        <div className="wv3p-disclosure__inner">
+          <ul className="wv3p-cards">
+            {rows.map((entry) => (
+              <WorkArchiveCard key={entry.id} entry={entry} />
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 export function WorkPhoneWorks({ rows }: { rows: ArchiveRow[] }) {
   const groups = ARCHIVE_GROUP_YEARS.map((year) => ({ year, rows: rows.filter((entry) => entry.year === year) })).filter(
@@ -25,26 +65,7 @@ export function WorkPhoneWorks({ rows }: { rows: ArchiveRow[] }) {
       {groups.length === 0 ? (
         <p className="wv3p-empty">[ No projects for this filter ]</p>
       ) : (
-        groups.map((group) => (
-          <section
-            key={group.year}
-            className="wv3p-year"
-            aria-labelledby={`wv3p-year-${group.year}`}
-            data-future={FUTURE_YEARS.includes(group.year) ? "" : undefined}
-          >
-            <div className="wv3p-year__head">
-              <h3 className="wv3p-year__box" id={`wv3p-year-${group.year}`}>
-                {group.year}
-              </h3>
-              <span className="wv3p-year__rule" aria-hidden="true" />
-            </div>
-            <ul className="wv3p-cards">
-              {group.rows.map((entry) => (
-                <WorkArchiveCard key={entry.id} entry={entry} />
-              ))}
-            </ul>
-          </section>
-        ))
+        groups.map((group) => <YearGroup key={group.year} year={group.year} rows={group.rows} />)
       )}
     </section>
   );

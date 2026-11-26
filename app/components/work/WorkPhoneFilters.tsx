@@ -10,7 +10,10 @@ import { WorkFilterLists } from "./WorkFilterLists";
    two toggle buttons (aria-pressed, controlling the list) that set the list
    and let WorkWorkspace replace the URL; the pressed half is the view shown.
    The panel stays mounted and folds by grid rows (CSS); closed it is inert.
-   A filter chosen on Featured opens All works (WorkWorkspace). */
+   A filter chosen on Featured opens All works (WorkWorkspace).
+   N6 R1 B1-B3: the controls are gray with an ink border (CSS, .wv3p); the
+   filter heads fold their options and the options lose their brackets; both
+   come from the `collapsible` prop of WorkFilterLists, passed only here. */
 
 export function WorkPhoneFilters({
   list,
@@ -69,7 +72,7 @@ export function WorkPhoneFilters({
             </button>
           </div>
           <div className="wv3p-filters">
-            <WorkFilterLists year={year} category={category} onYear={onYear} onCategory={onCategory} />
+            <WorkFilterLists year={year} category={category} onYear={onYear} onCategory={onCategory} collapsible />
           </div>
         </div>
       </div>

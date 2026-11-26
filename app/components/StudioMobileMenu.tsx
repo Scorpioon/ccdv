@@ -198,7 +198,6 @@ export function StudioMobileMenu({ current: currentRoute = "/studio" }: { curren
               CCDV mark in the bar), small, in the light ink. R3 A5: the operator's
               own lockup (CollapseCreativeLogo.tsx, verbatim paths) replaces the
               approximate rings, in the logo box the M1 frame draws (x48, 144 wide). */}
-          <CollapseCreativeLogo className="smm__brand" />
           <div className="smm__contact">
             <div>[ COLLAPSE CREATIVE : DEV UNIT ]</div>
             <div>[ hello[@]collapsecreative.com ]</div>
@@ -219,7 +218,11 @@ export function StudioMobileMenu({ current: currentRoute = "/studio" }: { curren
               </li>
             ))}
           </ul>
-          <div className="smm__year">[ © 2026 ]</div>
+          {/* N6 R1 C2: the logo sits at the foot's bottom-left, the year opposite */}
+          <div className="smm__base">
+            <CollapseCreativeLogo className="smm__brand" />
+            <div className="smm__year">[ © 2026 ]</div>
+          </div>
         </div>
         </nav>
       </header>

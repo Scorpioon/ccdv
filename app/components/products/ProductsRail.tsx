@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ProductsCard } from "../ProductsCard";
 import { ProductsPanel } from "./ProductsPanel";
+import { ProductsPhoneCard } from "./ProductsPhoneCard";
 import { PRODUCTS, PRODUCTS_DEFAULT_OPEN } from "../../data/productsContent";
 
 /* The Products rail (P1b CORR03, OPERATOR): a product slot opens its panel
@@ -16,9 +17,38 @@ import { PRODUCTS, PRODUCTS_DEFAULT_OPEN } from "../../data/productsContent";
    CORR04 (OPERATOR): only the three products remain; the empty frames are
    gone, but the rail keeps its eight-column sizes (global.css).
    CORR05 (OPERATOR): on desktop the panels sit beside the cards instead of
-   below them — the shared cell is columns 4-8 of the cards' row. */
+   below them — the shared cell is columns 4-8 of the cards' row.
+   N6 R1 B6 (OPERATOR): below 1024 the rail is Work-archive-style cards
+   (ProductsPhoneCard): always open, so nothing folds or reflows. The desktop
+   rail is unchanged; the split is read from matchMedia (min-width: 1024px)
+   on the first render, as WorkWorkspace does. */
+const DESKTOP = "(min-width: 1024px)";
+
 export function ProductsRail() {
   const [open, setOpen] = useState<string | null>(PRODUCTS_DEFAULT_OPEN);
+  const [desktop, setDesktop] = useState(() =>
+    typeof window === "undefined" ? true : window.matchMedia(DESKTOP).matches,
+  );
+
+  useEffect(() => {
+    const query = window.matchMedia(DESKTOP);
+    const update = () => setDesktop(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
+  if (!desktop) {
+    return (
+      <ul className="pv-pcards">
+        {PRODUCTS.map((product) => (
+          <li key={product.index} className="pv-pcards__item">
+            <ProductsPhoneCard product={product} />
+          </li>
+        ))}
+      </ul>
+    );
+  }
 
   return (
     <ul className="pv-rail">

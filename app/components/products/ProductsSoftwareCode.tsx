@@ -70,7 +70,8 @@ export function ProductsSoftwareCode({
       </Chip>
 
       <div
-        className="pv-code__tabs"
+        /* N6 R1 B7: phones take the shared list look (global.css, r1-list), in the Products green */
+        className="pv-code__tabs r1-list"
         role="tablist"
         aria-labelledby="pv-code-title"
         aria-orientation="vertical"
@@ -81,7 +82,7 @@ export function ProductsSoftwareCode({
           <button
             key={topic.key}
             type="button"
-            className="pv-code__tab"
+            className="pv-code__tab r1-list__row"
             role="tab"
             id={`pv-tab-${topic.key}`}
             aria-selected={i === selected}

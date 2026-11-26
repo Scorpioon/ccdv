@@ -130,7 +130,7 @@ export function ServiceIndex({ reduced, titleId }: { reduced: boolean; titleId: 
           <Chip tone="red" as="h2" className="sv-ix__title" id={titleId}>
             {"\\\\Service Index"}
           </Chip>
-          <div className="sv-ix__slots" role="tablist" aria-labelledby={titleId} onKeyDown={onCategoryKey}>
+          <div className="sv-ix__slots r1-list" role="tablist" aria-labelledby={titleId} onKeyDown={onCategoryKey}>
             {SERVICE_CATEGORIES.map((c, i) => (
               <button
                 key={c.id}
@@ -140,7 +140,7 @@ export function ServiceIndex({ reduced, titleId }: { reduced: boolean; titleId: 
                 type="button"
                 role="tab"
                 id={categoryTab(i)}
-                className="sv-ix__slot"
+                className="sv-ix__slot r1-list__row"
                 aria-selected={active === i}
                 aria-controls={categoryPanel}
                 tabIndex={active === i ? 0 : -1}
@@ -177,7 +177,7 @@ export function ServiceIndex({ reduced, titleId }: { reduced: boolean; titleId: 
                   type="button"
                   role="tab"
                   id={serviceTab(i)}
-                  className="sv-ix__service"
+                  className="sv-ix__service r1-list__row"
                   data-service-id={s.id}
                   aria-selected={selected === i}
                   aria-controls={servicePanel}

@@ -197,7 +197,7 @@ export function ApproachPanel({ reduced, titleId }: { reduced: boolean; titleId:
           <Chip tone="lilac" as="h2" className="ap__title" id={titleId}>
             {"\\\\Studio Approach"}
           </Chip>
-          <div className="ap__slots" role="tablist" aria-labelledby={titleId} onKeyDown={onKeyDown}>
+          <div className="ap__slots r1-list" role="tablist" aria-labelledby={titleId} onKeyDown={onKeyDown}>
             {APPROACH_SLOTS.map((s, i) => (
               <button
                 key={s.key}
@@ -207,7 +207,7 @@ export function ApproachPanel({ reduced, titleId }: { reduced: boolean; titleId:
                 type="button"
                 role="tab"
                 id={tabId(i)}
-                className="ap__slot"
+                className="ap__slot r1-list__row"
                 aria-selected={active === i}
                 aria-controls={panelId}
                 tabIndex={active === i ? 0 : -1}
