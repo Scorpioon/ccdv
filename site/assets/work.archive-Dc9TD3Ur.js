@@ -1,0 +1,1 @@
+import{w as e}from"./chunk-OB3PAWPO-DhA8-wRD.js";function o(){return[{title:"CCDV — Work Archive"},{name:"description",content:"Selected work and project archive by CCDV."}]}const n=e(function(){return null});export{n as default,o as meta};
