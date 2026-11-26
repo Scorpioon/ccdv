@@ -2,8 +2,8 @@
    (StudioCover.tsx, FB_R4_5.svg y0..1118 / STUDIO_resp3-1.svg y0..1118) on the
    Services red: the same identity lockup, meta lines, "collapse" label and
    loose squares at the same artboard positions; the Whatis\\ chip and the
-   three OPERATOR draft paragraphs in the Whois column; and the enlarged Arrow
-   Trace in the sphere's box. Services has no V2 artboard of its own, so these
+   three OPERATOR draft paragraphs in the Whois column; and the Rubik cube
+   (RubikCube) in the box. Services has no V2 artboard of its own, so these
    are system positions, not a Services drawing.
 
    Heading: one h1 at every width. Phones show it as the large [Services] label
@@ -17,9 +17,15 @@
 import { Fragment } from "react";
 import { CoverMasthead } from "../CoverMasthead";
 import { Chip } from "../studio/studioMarks";
-import { ArrowTrace } from "./ArrowTrace";
+import { RubikCube } from "./RubikCube";
 import { SERVICES_WHATIS } from "../../data/servicesScenes";
+import { indexGrids } from "../../data/servicesVoxels";
 import { index } from "../../motion/studioMotion";
+
+/* the cover's cube: the strategy category's grids (front, top, right), at a
+   fixed rest pose; its pointer zone is the cover, not the Service Index */
+const COVER_GRIDS = indexGrids("strategy");
+const COVER_REST = { rx: 0.45, ry: -0.6 };
 
 export function ServicesCover({ reduced }: { reduced: boolean }) {
   return (
@@ -33,7 +39,16 @@ export function ServicesCover({ reduced }: { reduced: boolean }) {
         <span className="sv-cv__sq sv-cv__sq--e" aria-hidden="true" data-spawn style={index(2)} />
 
         <div className="sv-cv__art" data-spawn style={index(4)}>
-          <ArrowTrace reduced={reduced} className="sv-arrow" />
+          <RubikCube
+            className="rc--outline"
+            front={COVER_GRIDS[0]}
+            top={COVER_GRIDS[1]}
+            right={COVER_GRIDS[2]}
+            category={0}
+            reduced={reduced}
+            rest={COVER_REST}
+            zone=".sv-cv"
+          />
         </div>
 
         <h1 className="sv-cv__services" id="services-title">

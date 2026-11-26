@@ -63,4 +63,15 @@
   --ccdv-tap: 44px;
   --ccdv-t-body-m: 1rem;
   --ccdv-t-label-m: 0.8125rem;
+
+  /* --- motion (N5 round 2): one vocabulary; app/motion/tokens.ts mirrors it - */
+  --dur-micro: 160ms;
+  --dur-short: 240ms;
+  --dur-medium: 400ms;
+  --dur-long: 700ms;
+  --dur-deck: 800ms;
+  --stagger: 50ms;
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 }

@@ -25,10 +25,11 @@
    1.67 screens, takes about 1.17 s). */
 import { useEffect, useRef } from "react";
 import type { RefObject } from "react";
+import { MOTION } from "./tokens";
 
 const DESKTOP = "(min-width: 1024px)";
-const STEP_S = 0.7;
-const STEP_MAX_S = 1.2; // N4 P-K C: a long rise (Products cover, ≈1.67 screens → ≈1.17 s) is scaled up to this
+const STEP_S = MOTION.long / 1000;
+const STEP_MAX_S = MOTION.stepMax / 1000; // N4 P-K C: a long rise (Products cover, ≈1.67 screens → ≈1.17 s) is scaled up to this
 const QUIET_MS = 180; // wheel silence that ends a gesture
 const SETTLE_MS = 150; // scroll silence before a stray offset is settled
 const EDGE = 2; // px tolerance on a rest point

@@ -57,6 +57,9 @@ interface Quad {
 /* A12 (OPERATOR): at rest the cube faces the reader (the front face square
    on, as the approved index); the pointer tilts and turns it */
 const VIEW: Mat3 = IDENT;
+/* the default rest pose: square on (a stable identity, so the default prop
+   never re-runs effects) */
+const REST_DEFAULT = { rx: 0, ry: 0 };
 const SCALE = 150; // px per cubie (A12: the square-on face fills the box, as the approved index)
 const HALF = 0.47; // cubie half-size (0.06 gaps)
 const INSET = 0.39; // sticker half-size
@@ -210,6 +213,10 @@ export function RubikCube({
   right,
   category,
   reduced,
+  className,
+  rest = REST_DEFAULT,
+  interactive = true,
+  zone = ".sv-ix",
 }: {
   front: VoxelGrid;
   top: VoxelGrid;
@@ -217,6 +224,13 @@ export function RubikCube({
   /** the category's position in the index; a change turns the whole cube */
   category: number;
   reduced: boolean;
+  className?: string;
+  /** the pose at rest and the pointer's home (copied, never mutated) */
+  rest?: { rx: number; ry: number };
+  /** false: no pointer lean; the cube stays at rest */
+  interactive?: boolean;
+  /** the pointer zone: the nearest ancestor matching this selector */
+  zone?: string;
 }) {
   const svgRef = useRef<SVGSVGElement>(null);
   const pathRefs = useRef<(SVGPathElement | null)[]>([]);
@@ -246,15 +260,15 @@ export function RubikCube({
       t0: 0,
       nextAt: 0,
       clock: 0,
-      pose: { rx: 0, ry: 0 },
+      pose: { ...rest },
       vel: { rx: 0, ry: 0 },
-      aim: { rx: 0, ry: 0 },
+      aim: { ...rest },
       still: false,
     };
   }
   /* the server and the first paint: the cube at rest */
   const firstQuads = useRef<Quad[] | null>(null);
-  if (!firstQuads.current) firstQuads.current = scene(sim.current.cubies, VIEW, null, 0);
+  if (!firstQuads.current) firstQuads.current = scene(sim.current.cubies, leanView(rest.rx, rest.ry), null, 0);
 
   const write = (quads: Quad[]) => {
     pathRefs.current.forEach((path, i) => {
@@ -279,7 +293,7 @@ export function RubikCube({
     s.category = category;
     if (reduced) {
       paintFront(s.cubies, front);
-      write(scene(s.cubies, VIEW, null, 0));
+      write(scene(s.cubies, leanView(rest.rx, rest.ry), null, 0));
       return;
     }
     s.wanted = { target: front, dir: dir === 0 && s.wanted ? s.wanted.dir : dir };
@@ -337,12 +351,12 @@ export function RubikCube({
       s.queue = [];
       s.wanted = null;
       paintFront(s.cubies, s.target);
-      s.pose = { rx: 0, ry: 0 };
+      s.pose = { ...rest };
       s.vel = { rx: 0, ry: 0 };
       s.clock = 0;
       s.nextAt = 0;
       s.still = false;
-      write(scene(s.cubies, VIEW, null, 0));
+      write(scene(s.cubies, leanView(rest.rx, rest.ry), null, 0));
     },
   );
 
@@ -350,11 +364,11 @@ export function RubikCube({
   useEffect(() => {
     const node = svgRef.current;
     const s = sim.current;
-    if (!node || !s || reduced) return;
+    if (!node || !s || reduced || !interactive) return;
     const aim = s.aim;
     /* A12: the whole Service Index is the pointer's zone, so the cube follows
        smoothly from anywhere in the module, not only over itself */
-    const zone: Element = node.closest(".sv-ix") ?? node;
+    const home = node.closest(zone) ?? node;
     const onMove = (event: PointerEvent) => {
       const r = node.getBoundingClientRect();
       if (!r.width || !r.height) return;
@@ -365,8 +379,8 @@ export function RubikCube({
       s.still = false;
     };
     const onLeave = () => {
-      aim.rx = 0;
-      aim.ry = 0;
+      aim.rx = rest.rx;
+      aim.ry = rest.ry;
       s.still = false;
     };
     const onUp = (event: PointerEvent) => {
@@ -374,24 +388,27 @@ export function RubikCube({
     };
     const move = onMove as EventListener;
     const up = onUp as EventListener;
-    zone.addEventListener("pointermove", move);
-    zone.addEventListener("pointerdown", move);
-    zone.addEventListener("pointerleave", onLeave);
-    zone.addEventListener("pointercancel", onLeave);
-    zone.addEventListener("pointerup", up);
+    home.addEventListener("pointermove", move);
+    home.addEventListener("pointerdown", move);
+    home.addEventListener("pointerleave", onLeave);
+    home.addEventListener("pointercancel", onLeave);
+    home.addEventListener("pointerup", up);
     return () => {
-      zone.removeEventListener("pointermove", move);
-      zone.removeEventListener("pointerdown", move);
-      zone.removeEventListener("pointerleave", onLeave);
-      zone.removeEventListener("pointercancel", onLeave);
-      zone.removeEventListener("pointerup", up);
+      home.removeEventListener("pointermove", move);
+      home.removeEventListener("pointerdown", move);
+      home.removeEventListener("pointerleave", onLeave);
+      home.removeEventListener("pointercancel", onLeave);
+      home.removeEventListener("pointerup", up);
       onLeave();
     };
-  }, [reduced]);
+  }, [reduced, interactive, zone, rest.rx, rest.ry]);
 
   const quads = firstQuads.current ?? [];
   return (
-    <svg ref={svgRef} className="rc" viewBox="-270 -270 540 540" fill="none" aria-hidden="true" focusable="false">
+    <svg
+      ref={svgRef}
+      className={`rc${className ? " " + className : ""}`}
+      viewBox="-270 -270 540 540" fill="none" aria-hidden="true" focusable="false">
       {Array.from({ length: POOL }, (_, i) => {
         const q = quads[i];
         return (

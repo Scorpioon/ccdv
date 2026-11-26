@@ -4,7 +4,6 @@ import {
   Link,
   Links,
   Meta,
-  Outlet,
   Scripts,
   ScrollRestoration,
   useLocation,
@@ -65,7 +64,7 @@ export function Layout({ children }: { children: ReactNode }) {
 }
 export default function Root() {
   return (
-    <GlobalShell><Outlet /></GlobalShell>
+    <GlobalShell />
   );
 }
 /* H1 D7: the ink ground is the loading state (replaces React Router's
