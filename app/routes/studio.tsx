@@ -66,10 +66,10 @@ export default function Studio() {
   useBoundaryNav(rootRef, approachRef, ".masthead--studio", ".cmh");
   useNavIdle(rootRef);
   // A3: one gesture, one rise; stops at the markers and the CC.OS scene
-  useStepScroll(rootRef, ".pin-snap, .cs", reduced);
+  useStepScroll(rootRef, ".pin-snap, .step:not(.step--phone)", reduced);
 
   return (
-    <div className="r11 r11--studio" ref={rootRef}>
+    <div className="r11 r11--studio page-snap" ref={rootRef}>
       {/* NAV-T3 curtain + PIN-T1 pin (desktop, global.css): the cover pins
           while the Approach rises over it; the Approach then pins, one screen
           tall, while the lilac rises over it. The in-flow markers (`pin-snap`)

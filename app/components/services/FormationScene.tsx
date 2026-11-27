@@ -29,10 +29,10 @@
              the cards stay the keyboard path.
    Phones: the pile above a two-by-two card grid, no connectors; the pile takes
    no touches, so the page scrolls over it. */
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
-import { Link } from "react-router";
-import { AdvanceArrowArt, GearMeshArt, NetworkArt, ToolmakingArt } from "./cardArt";
+import { CtaChip } from "../CtaChip";
+import { AdvanceArrowArt, FORMATION_FRAMES, GearMeshArt, NetworkArt, ToolmakingArt } from "./cardArt";
 import { VoxelRain } from "./VoxelRain";
 import { CUBE_CORNERS, FORMATION_SHAPES, FORMATION_WIRED, LLM_LINK_SLOTS, LLM_WIRES } from "./voxelShapes";
 import type { VoxelShape } from "./voxelShapes";
@@ -92,29 +92,44 @@ function tether(shape: VoxelShape, card: number, g: number) {
   return `${start}L${x1.toFixed(2)} ${mid.toFixed(2)}H${edge}`;
 }
 
+/* R3 S8: below 1024 the four cards are near-square and their figures take the square
+   frames (cardArt FORMATION_FRAMES); read on the first render, as the Software Code */
+function useNarrow() {
+  const [narrow, setNarrow] = useState(() =>
+    typeof window === "undefined" ? false : window.matchMedia("(max-width: 1023.98px)").matches,
+  );
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 1023.98px)");
+    const update = () => setNarrow(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+  return narrow;
+}
+
 export function FormationScene({ reduced }: { reduced: boolean }) {
+  const narrow = useNarrow();
   const [selected, setSelected] = useState(FORMATION_DEFAULT);
   const pileRef = useRef<HTMLDivElement>(null);
   const g = useFrameSpread(pileRef, 1536);
   const tethers = useMemo(() => FORMATION_SHAPES.map((shape, card) => tether(shape, card, g)), [g]);
 
   const art: Record<(typeof FORMATION_CARDS)[number]["key"], ReactNode> = {
-    gear: <GearMeshArt reduced={reduced} />,
-    arrow: <AdvanceArrowArt reduced={reduced} />,
-    network: <NetworkArt reduced={reduced} />,
-    toolmaking: <ToolmakingArt reduced={reduced} />,
+    gear: <GearMeshArt reduced={reduced} frame={narrow ? FORMATION_FRAMES.gear : undefined} />,
+    arrow: <AdvanceArrowArt reduced={reduced} frame={narrow ? FORMATION_FRAMES.arrow : undefined} />,
+    network: <NetworkArt reduced={reduced} frame={narrow ? FORMATION_FRAMES.network : undefined} />,
+    toolmaking: <ToolmakingArt reduced={reduced} frame={narrow ? FORMATION_FRAMES.toolmaking : undefined} />,
   };
 
   return (
-    <section className="sv-fm" aria-labelledby="services-formation" data-scene>
+    <section className="sv-fm step" aria-labelledby="services-formation" data-scene>
       <h2 className="sv-fm__title" id="services-formation" data-spawn style={index(0)}>
         Formation
       </h2>
       <div className="sv-fm__intro" data-spawn style={index(1)}>
         <p className="sv-fm__copy">{FORMATION_COPY}</p>
-        <Link className="sv-fm__link" to={FORMATION_LINK.to}>
-          {FORMATION_LINK.label}
-        </Link>
+        <CtaChip className="sv-fm__link" to={FORMATION_LINK.to} label={FORMATION_LINK.label} />
       </div>
 
       <div className="sv-fm__pile" ref={pileRef} aria-hidden="true">
@@ -143,7 +158,7 @@ export function FormationScene({ reduced }: { reduced: boolean }) {
       </div>
 
       {FORMATION_THROW ? (
-        <p className="sv-visually-hidden" id="services-formation-drag">
+        <p className="sr-only" id="services-formation-drag">
           With a mouse you can also drag and throw a cube of the formation; it returns to its place.
         </p>
       ) : null}

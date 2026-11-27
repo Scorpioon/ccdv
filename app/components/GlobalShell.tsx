@@ -84,6 +84,27 @@ function normPath(path: string): string {
   const p = path.replace(/\/+$/, "") || "/";
   return p === "/work" || p.startsWith("/work/") ? "/work" : p;
 }
+/* R3 S2: the one site grid's ground, by route. Home and Work sit on grey
+   (--ccdv-light), Studio on the page ground, the dark sections on ink. The
+   grid is one node outside the route, so a page change reads as the same grid
+   changing colour (css .site-grid). */
+type Ground = "grey" | "studio" | "ink";
+function groundOf(pathname: string): Ground {
+  const p = normPath(pathname);
+  if (p === "/" || p === "/work") return "grey";
+  if (p === "/studio") return "studio";
+  return "ink";
+}
+/* R3 S4: +1 forward in SEQ, -1 back; Home sits before Studio (-1 from it). */
+function seqIndex(path: string): number {
+  const p = normPath(path);
+  if (p === "/") return -1;
+  return SEQ.findIndex((entry) => p === entry || p.startsWith(entry + "/"));
+}
+function dirFor(fromPath: string, toPath: string): number {
+  const d = Math.sign(seqIndex(toPath) - seqIndex(fromPath));
+  return d === 0 ? 1 : d;
+}
 function arrivalFor(fromPath: string, toPath: string): { arrival: Arrival; cardExit: Side | null } {
   const from = normPath(fromPath);
   const to = normPath(toPath);
@@ -234,20 +255,30 @@ export function GlobalShell() {
     arrival: Arrival;
     cardExit: Side | null;
     from: number | null;
+    dir: number;
   }>({
     key: routeKey,
     arrival: { kind: "load", side: null },
     cardExit: null,
     from: null,
+    dir: 1,
   });
   if (moveRef.current.key !== routeKey) {
     moveRef.current = {
       key: routeKey,
       ...arrivalFor(moveRef.current.key, routeKey),
+      dir: dirFor(moveRef.current.key, routeKey),
       from: typeof window !== "undefined" ? window.scrollY : 0,
     };
   }
-  const { arrival, cardExit } = moveRef.current;
+  const { arrival, cardExit, dir } = moveRef.current;
+  const exitPlane = {
+    exit: (d: number) => ({
+      opacity: 0,
+      x: transition.reduced ? 0 : `${-d * 12}vw`,
+      transition: transition.reduced ? { duration: 0 } : { duration: MOTION.routePlane / 1000, ease: EASE.inOut },
+    }),
+  };
 
   /* the shared bar: derived while rendering, so it is in the DOM in the same
      commit as the incoming page (whose effects look it up); a bar that is
@@ -351,6 +382,8 @@ export function GlobalShell() {
           data-nav-type={navigationType}
         >
           <SkipLink />
+          {/* R3 S2: the one site grid; outside AnimatePresence so a page change never remounts it */}
+          <div className="site-grid" aria-hidden="true" data-ground={groundOf(location.pathname)} />
           {chrome.shown && (
             <div
               className={`r11 r11--${chrome.shown} site-chrome`}
@@ -362,15 +395,8 @@ export function GlobalShell() {
             </div>
           )}
           <div className="site-stage">
-            <AnimatePresence mode="popLayout" initial={false} onExitComplete={transition.endTransition}>
-              <motion.div
-                key={routeKey}
-                className="site-stage__route"
-                exit={{
-                  opacity: 0,
-                  transition: transition.reduced ? { duration: 0 } : { duration: MOTION.routeOut / 1000, ease: EASE.in },
-                }}
-              >
+            <AnimatePresence mode="popLayout" initial={false} custom={dir} onExitComplete={transition.endTransition}>
+              <motion.div key={routeKey} className="site-stage__route" custom={dir} variants={exitPlane} exit="exit">
                 <RouteMain focusRef={focusRoute}>{outlet}</RouteMain>
               </motion.div>
             </AnimatePresence>

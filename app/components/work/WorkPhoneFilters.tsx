@@ -13,6 +13,8 @@ import { WorkFilterLists } from "./WorkFilterLists";
    A filter chosen on Featured opens All works (WorkWorkspace).
    N6 R1 B1-B3: the controls are gray with an ink border (CSS, .wv3p); the
    filter heads fold their options and the options lose their brackets; both
+   R3 S9: the switch sits above the Filtros bar, outside the folding panel, so it
+   stays in view when the controls are folded.
    come from the `collapsible` prop of WorkFilterLists, passed only here. */
 
 export function WorkPhoneFilters({
@@ -35,6 +37,27 @@ export function WorkPhoneFilters({
 
   return (
     <div className="wv3p-controls">
+      <div className="wv3p-switch" role="group" aria-label="Work views">
+        <button
+          type="button"
+          className="wv3p-switch__item"
+          aria-pressed={list === "featured"}
+          aria-controls="wv3p-list"
+          onClick={() => onList("featured")}
+        >
+          [ Featured ]
+        </button>
+        <button
+          type="button"
+          className="wv3p-switch__item"
+          aria-pressed={list === "archive"}
+          aria-controls="wv3p-list"
+          onClick={() => onList("archive")}
+        >
+          [ All works ]
+        </button>
+      </div>
+
       <button
         type="button"
         className="wv3p-bar wv3p-title__toggle"
@@ -51,26 +74,6 @@ export function WorkPhoneFilters({
 
       <div className="wv3p-controls__panel" id={panelId} data-open={open ? "" : undefined} inert={!open}>
         <div className="wv3p-controls__inner">
-          <div className="wv3p-switch" role="group" aria-label="Work views">
-            <button
-              type="button"
-              className="wv3p-switch__item"
-              aria-pressed={list === "featured"}
-              aria-controls="wv3p-list"
-              onClick={() => onList("featured")}
-            >
-              [ Featured ]
-            </button>
-            <button
-              type="button"
-              className="wv3p-switch__item"
-              aria-pressed={list === "archive"}
-              aria-controls="wv3p-list"
-              onClick={() => onList("archive")}
-            >
-              [ All works ]
-            </button>
-          </div>
           <div className="wv3p-filters">
             <WorkFilterLists year={year} category={category} onYear={onYear} onCategory={onCategory} collapsible />
           </div>

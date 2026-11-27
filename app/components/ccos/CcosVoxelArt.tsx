@@ -57,7 +57,7 @@ function place(node: SVGGElement | null, x: number, y: number, z: number, alpha:
 /* a cube's three faces, edged in grey */
 function CubeFaces({ id, top, left, right }: { id: string; top: string; left: string; right: string }) {
   return (
-    <g id={id} stroke={EDGE} strokeWidth="0.6" strokeLinejoin="round">
+    <g id={id} stroke={EDGE} strokeLinejoin="round">
       <path d={LEFT} fill={left} />
       <path d={RIGHT} fill={right} />
       <path d={TOP} fill={top} />
@@ -159,7 +159,7 @@ export function CcosVaultArt({ active, reduced, className }: VoxelArtProps) {
   );
 
   return (
-    <svg ref={svgRef} className={className} viewBox="-340 -291 680 582" aria-hidden="true" focusable="false">
+    <svg data-illo="" ref={svgRef} className={className} viewBox="-340 -291 680 582" aria-hidden="true" focusable="false">
       <defs>
         <CubeFaces id={`${uid}-ink`} {...INK_FACES} />
         <CubeFaces id={`${uid}-pkg`} {...WHITE_FACES} />
@@ -254,7 +254,7 @@ export function CcosModularArt({ active, reduced, className }: VoxelArtProps) {
   };
 
   return (
-    <svg ref={svgRef} className={className} viewBox="-340 -291 680 582" aria-hidden="true" focusable="false">
+    <svg data-illo="" ref={svgRef} className={className} viewBox="-340 -291 680 582" aria-hidden="true" focusable="false">
       <defs>
         <CubeFaces id={`${uid}-ink`} {...INK_FACES} />
         <CubeFaces id={`${uid}-core`} {...WHITE_FACES} />
@@ -266,7 +266,7 @@ export function CcosModularArt({ active, reduced, className }: VoxelArtProps) {
                 <stop stopColor="#FFFFFF" />
                 <stop offset="1" stopColor={color} />
               </linearGradient>
-              <path id={`${uid}-lit-${core}`} d={TOP} fill={`url(#${uid}-g-${core})`} stroke={EDGE} strokeWidth="0.6" strokeLinejoin="round" />
+              <path id={`${uid}-lit-${core}`} d={TOP} fill={`url(#${uid}-g-${core})`} stroke={EDGE} strokeLinejoin="round" />
             </g>
           );
         })}

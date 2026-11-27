@@ -139,6 +139,8 @@ function ApproachSphere({
 export function ApproachPanel({ reduced, titleId }: { reduced: boolean; titleId: string }) {
   const baseId = useId();
   const [active, setActive] = useState(APPROACH_DEFAULT_SLOT);
+  /* R3 S6: which way the last switch went; the keyed panel slides in from that side */
+  const [dir, setDir] = useState<"next" | "prev">("next");
   const control = useRef<SphereControl | null>(null);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const slot = APPROACH_SLOTS[active];
@@ -147,6 +149,7 @@ export function ApproachPanel({ reduced, titleId }: { reduced: boolean; titleId:
     const target = (next + APPROACH_SLOTS.length) % APPROACH_SLOTS.length;
     if (target !== active) {
       const dir = target > active ? 1 : -1;
+      setDir(target > active ? "next" : "prev");
       control.current?.kick(STUDIO_MOTION.impulse.x * dir, STUDIO_MOTION.impulse.y * dir);
       setActive(target);
     }
@@ -213,7 +216,7 @@ export function ApproachPanel({ reduced, titleId }: { reduced: boolean; titleId:
                 tabIndex={active === i ? 0 : -1}
                 onClick={() => select(i)}
               >
-                <span className="ap__slot-dot" aria-hidden="true" />
+                <span className="r1-list__dot ap__slot-dot" aria-hidden="true" />
                 {s.label}
               </button>
             ))}
@@ -228,12 +231,12 @@ export function ApproachPanel({ reduced, titleId }: { reduced: boolean; titleId:
           key={slot.key}
           id={panelId}
           className="ap__content"
+          data-dir={dir}
           role="tabpanel"
           aria-labelledby={tabId(active)}
         >
           <div className="ap__copy">
             <p>
-              <span aria-hidden="true">{"// "}</span>
               {slot.lead}
             </p>
             {slot.body.map((paragraph) => (

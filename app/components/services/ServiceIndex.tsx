@@ -6,7 +6,7 @@
               the voxel face: one pattern per service, 15 states from
               data/servicesVoxels.ts; the face recomposes on every switch
               (A11 below: now the Rubik cube; IndexVoxel is deleted, N4 P-I)
-     right    a red strip (the strip's gear only), the "//" category lead, the
+     right    a red strip (the strip's gear only), the category lead, the
               category's services (tabs), the approved description and its two
               Focus values as light chips
 
@@ -49,6 +49,8 @@ const keyTarget = (key: string, current: number, count: number) =>
 export function ServiceIndex({ reduced, titleId }: { reduced: boolean; titleId: string }) {
   const baseId = useId();
   const [active, setActive] = useState(DEFAULT_INDEX);
+  /* R3 S6: which way the last category switch went; the keyed panel slides in from that side */
+  const [dir, setDir] = useState<"next" | "prev">("next");
   const [chosen, setChosen] = useState<Record<string, number>>({});
   const categoryRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const serviceRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -64,7 +66,10 @@ export function ServiceIndex({ reduced, titleId }: { reduced: boolean; titleId: 
   const others = grids.filter((_, i) => i !== selected);
 
   const selectCategory = (next: number, focus = false) => {
-    if (next !== active) setActive(next);
+    if (next !== active) {
+      setDir(next > active ? "next" : "prev");
+      setActive(next);
+    }
     if (focus) categoryRefs.current[next]?.focus();
   };
   const selectService = (next: number, focus = false) => {
@@ -146,7 +151,7 @@ export function ServiceIndex({ reduced, titleId }: { reduced: boolean; titleId: 
                 tabIndex={active === i ? 0 : -1}
                 onClick={() => selectCategory(i)}
               >
-                <span className="sv-ix__slot-dot" aria-hidden="true" />
+                <span className="r1-list__dot sv-ix__slot-dot" aria-hidden="true" />
                 {c.label}
               </button>
             ))}
@@ -156,15 +161,14 @@ export function ServiceIndex({ reduced, titleId }: { reduced: boolean; titleId: 
         {/* wrapper takes the scene spawn; the keyed panel replays the CSS
             spawn on a new category (lead + services first, then the copy) */}
         <div className="sv-ix__body" data-spawn style={index(2)}>
-          <div key={category.id} id={categoryPanel} className="sv-ix__content" role="tabpanel" aria-labelledby={categoryTab(active)}>
+          <div key={category.id} id={categoryPanel} className="sv-ix__content" data-dir={dir} role="tabpanel" aria-labelledby={categoryTab(active)}>
             {lead ? (
               <p className="sv-ix__lead">
-                <span aria-hidden="true">{"// "}</span>
                 {lead}
               </p>
             ) : null}
 
-            <h3 className="sv-visually-hidden" id={servicesLabel}>
+            <h3 className="sr-only" id={servicesLabel}>
               {category.label} services
             </h3>
             <div className="sv-ix__services" role="tablist" aria-labelledby={servicesLabel} onKeyDown={onServiceKey}>

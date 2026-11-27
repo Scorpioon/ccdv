@@ -38,7 +38,7 @@ export function CoverMasthead({ page }: { page: string }) {
       <CcdvPixelMark variant="inline" className="cmh__pixel" fill={INK} />
       <p className="cmh__title">
         <span aria-hidden="true">{shown}</span>
-        <span className="cmh__sr">{full}</span>
+        <span className="sr-only">{full}</span>
       </p>
       <div className="cmh__meta">
         <div>[ COLLAPSE CREATIVE : DEV UNIT ]</div>

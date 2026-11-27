@@ -42,6 +42,17 @@
   --ccdv-ink: #141414;     /* type, dark sections, footer                  */
   --ccdv-light: #d9d9d9;   /* gear centre, footer mark, hex rings          */
   --ccdv-white: #ffffff;
+  --ccdv-gray: #c6c6c6;    /* R3 S1: Work pressed / hover tier (was an orphan #d2d2d2) */
+
+  /* R3 S1: the one site grid (.site-grid, GlobalShell): a square cell, 24px on
+     phones, 1/30 of the viewport from 1024 (48px at the 1440 reference) */
+  --grid-cell: 24px;
+  --grid-line-dark: rgb(20 20 20 / 0.05);    /* on light / lilac grounds */
+  --grid-line-light: rgb(242 242 242 / 0.05); /* on ink */
+
+  /* R3 S3: one stroke for every illustration (data-illo) */
+  --stroke-illustration: 1px;
+  --stroke-illustration-fine: 0.5px;
 
   /* --- band stripes, top to bottom (Home) ------------------------------ */
   --ccdv-purple: #a864e2;
@@ -71,8 +82,14 @@
   --dur-long: 700ms;
   --dur-deck: 1000ms;
   --dur-route: 320ms; /* N6 R2: MOTION.routeOut / arriveLead */
+  --dur-plane: 420ms; /* R3 S1: MOTION.routePlane, the plane change (exit + grid ground) */
+  --dur-arrive-lead: 140ms; /* R3 S4: MOTION.arriveLead2, the arrival lead */
   --stagger: 50ms;
   --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
   --ease-in: cubic-bezier(0.4, 0, 1, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+/* R3 S1: the grid cell from 1024 */
+@media (width >= 1024px) {
+  :root { --grid-cell: calc(100vw / 30); }
 }

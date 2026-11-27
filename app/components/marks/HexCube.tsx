@@ -45,8 +45,9 @@ export interface HexCubeProps {
   lineColor?: string;
   outerFill?: string;
   middleFill?: string;
-  /** Stroke width of the Y, in this file's scale-1 viewBox units. 1.2 is the
-   *  Studio value; the CC.OS marks draw a heavier line at a smaller scale. */
+  /** R3 S3: omit for the shared illustration stroke (--stroke-illustration, data-illo).
+   *  The CC.OS marks pass a heavier line (in this file's viewBox units) and are
+   *  marked data-illo-keep so the token does not override it. */
   lineWidth?: number;
   className?: string;
 }
@@ -58,7 +59,7 @@ export function HexCube({
   lineColor = "#D9D9D9",
   outerFill = "#D9D9D9",
   middleFill = "#202020",
-  lineWidth = 1.2,
+  lineWidth,
   className,
 }: HexCubeProps) {
   // React's generated ids carry delimiter characters that are not safe inside
@@ -67,6 +68,8 @@ export function HexCube({
 
   return (
     <svg
+      data-illo=""
+      data-illo-keep={lineWidth !== undefined ? "" : undefined}
       className={className}
       viewBox="960.257 524.428 255.873 295.456"
       xmlns="http://www.w3.org/2000/svg"

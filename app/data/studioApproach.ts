@@ -17,7 +17,7 @@ export interface ApproachToollet {
 export interface ApproachSlot {
   key: "resolution" | "efficiency" | "creativity";
   label: string;
-  /** first paragraph, shown after the "// " lead as in the original */
+  /** first paragraph, shown first in the panel (R3 S6: the "// " marker is gone) */
   lead: string;
   body: readonly string[];
   toollets: readonly [ApproachToollet, ApproachToollet];

@@ -4,8 +4,8 @@ import { GearMark } from "../marks/GearMark";
 /* N5 BH1 (OPERATOR): the Home identity panel contents (the section wrapper
    lives in home.tsx). Home is the destination, so the gear and the inline pixel
    mark are decoration, not links. The page h1 names the unit, so the marks are
-   aria-hidden (their svgs carry aria-hidden too). The two ink squares are
-   decoration on the panel corners. */
+   aria-hidden (their svgs carry aria-hidden too).
+   (R3 S5: the two corner squares are gone.) */
 export function HomeIdentity() {
   return (
     <>
@@ -18,9 +18,6 @@ export function HomeIdentity() {
         <span>Collapse Creative:</span>
         <span>Development Unit</span>
       </h1>
-
-      <span className="hi__square hi__square--top" aria-hidden="true" />
-      <span className="hi__square hi__square--bottom" aria-hidden="true" />
 
       <div className="hi__meta">
         <div>[ Part of Collapse Creative ]</div>

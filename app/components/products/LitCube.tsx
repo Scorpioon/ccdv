@@ -106,7 +106,7 @@ const RADII: [number, number, number] = [100, 80, 52];
 export function LitCube({ pattern, className }: { pattern: LitPattern; className?: string }) {
   const [r0, r1, r2] = RADII;
   return (
-    <svg className={className} viewBox="-88 -102 176 204" fill="none" aria-hidden="true" focusable="false">
+    <svg data-illo="" className={className} viewBox="-88 -102 176 204" fill="none" aria-hidden="true" focusable="false">
       <defs>
         <linearGradient id="pv-lit-inner" x1="0" y1={-r2} x2="0" y2={r0} gradientUnits="userSpaceOnUse">
           <stop stopColor="#5AE36F" />
@@ -114,7 +114,7 @@ export function LitCube({ pattern, className }: { pattern: LitPattern; className
         </linearGradient>
       </defs>
       <LitFaces cx={0} cy={0} radii={RADII} pattern={pattern} />
-      <g strokeWidth="1">
+      <g>
         <path d={hexPath(0, 0, r0)} stroke="#F2F2F2" vectorEffect="non-scaling-stroke" />
         <path d={hexPath(0, 0, r1)} stroke="#5AE36F" vectorEffect="non-scaling-stroke" />
         <path d={hexPath(0, 0, r2)} stroke="url(#pv-lit-inner)" vectorEffect="non-scaling-stroke" />

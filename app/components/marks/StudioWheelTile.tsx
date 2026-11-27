@@ -23,7 +23,6 @@ const CX = 448.728;
 const CY = 134.061;
 const R = 79.5869;
 const STROKE = "#202020";
-const WIDTH = 0.286284;
 
 const RINGS: Vec3[] = [
   [0, 0.7855, 0.6188],
@@ -56,7 +55,7 @@ export function StudioWheelTile({ className }: { className?: string }) {
   });
 
   return (
-    <svg
+    <svg data-illo=""
       ref={svgRef}
       className={className}
       viewBox="369.141 54.4741 159.174 159.174"
@@ -64,7 +63,7 @@ export function StudioWheelTile({ className }: { className?: string }) {
       aria-hidden="true"
       focusable="false"
     >
-      <circle cx={CX} cy={CY} r="79.4438" fill="none" stroke={STROKE} strokeWidth={WIDTH} />
+      <circle cx={CX} cy={CY} r="79.4438" fill="none" stroke={STROKE} />
       {RINGS.map((n, i) => (
         <ellipse
           key={i}
@@ -74,7 +73,6 @@ export function StudioWheelTile({ className }: { className?: string }) {
           {...ellipseAttrs(ringEllipse(n, CX, CY, R))}
           fill="none"
           stroke={STROKE}
-          strokeWidth={WIDTH}
           strokeLinecap="round"
           strokeDasharray="2.86 2.86"
         />
@@ -88,7 +86,6 @@ export function StudioWheelTile({ className }: { className?: string }) {
         x2="448.871"
         y2="213.648"
         stroke={STROKE}
-        strokeWidth={WIDTH}
       />
       <line
         ref={(node) => {
@@ -99,7 +96,6 @@ export function StudioWheelTile({ className }: { className?: string }) {
         x2="369.138"
         y2="134.207"
         stroke={STROKE}
-        strokeWidth={WIDTH}
       />
     </svg>
   );

@@ -305,6 +305,8 @@ export function useNavIdle(rootRef: RefObject<HTMLElement | null>) {
     };
     const onDown = (event: PointerEvent) => {
       if (barOwner !== root || event.pointerType !== "touch") return;
+      /* R3 S4: a tap on a link, button or card is not a bar gesture */
+      if ((event.target as Element | null)?.closest?.("a,button,[role=button],input,label,.cmh")) return;
       if (event.clientY <= NAV_IDLE_MIN_SCROLL) {
         touchPeek = true;
         setPeek(true);

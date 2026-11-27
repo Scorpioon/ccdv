@@ -176,14 +176,11 @@ export const ARCHIVE_ROWS: ArchiveRow[] = [
   archiveRow("kaia", "2026", "CC.OS", "Development", "KAIA", "CCDV Product", "[↗]", undefined, undefined, "/products/ccos"),
   archiveRow("wrkops", "2026", "CC.OS", "Development", "WRKOPS", "CCDV Product", "[↗]", undefined, undefined, "/products/ccos"),
   archiveRow("adg-arc", "2026", "WEBSITE", "UX/UI, Code & Motion", "Arquitectura y Tipografía", "ADG-FAD", "[+]", "adg-arc", "https://www.adg-fad.org/adg-arc/"),
-  archiveRow("adg-laus-2026", "2026", "SERVICE", "Code", "ADG Laus Scripts", "ADG-FAD ET", "[x]"),
   archiveRow("htw-website", "2025", "WEBSITE", "UX/UI & Code", "Hacking The World", "Fran & Berta", "[+]", "htw-website"),
   archiveRow("htw-tool", "2025", "TOOL", "UX/UI & Code", "Hacking The World", "Fran & Berta", "[+]", "htw-tool"),
   archiveRow("par-banya", "2025", "WEBSITE", "UX/UI + Implement", "Par Banya Web", "Par Banya Barcelona", "[+]"),
-  archiveRow("adg-laus-2025", "2025", "SERVICE", "Code", "ADG Laus Scripts", "ADG-FAD ET", "[x]"),
   archiveRow("binomial", "2024", "WEBSITE", "UX/UI Responsive Only", "Binomial", "Binomial (Morillas)", "[+]"),
   archiveRow("equivalenza", "2024", "WEBSITE", "UX/UI", "Equivalenza", "Equivalenza (Morillas)", "[+]"),
-  archiveRow("adg-laus-2024", "2024", "SERVICE", "Code", "ADG Laus Scripts", "ADG-FAD ET", "[x]"),
   archiveRow("adg-laus-2023", "2023", "SERVICE", "Code", "ADG Laus Scripts", "ADG-FAD ET", "[x]"),
 ];
 
@@ -196,6 +193,8 @@ export const DEFAULT_ARCHIVE_ROW = "adg-arc";
 /** years in the order the archive groups them; the 2027 rows lead, subdued */
 export const ARCHIVE_GROUP_YEARS = ["2027", "2026", "2025", "2024", "2023"];
 export const FUTURE_YEARS = ["2027"];
+/** R3 S9: the one year group open when All works first shows on phones and tablets */
+export const DEFAULT_OPEN_YEAR = "2026";
 
 /* The preview column's title: the registry name where a project exists
    (ADG-ARC, as drawn), else the row's own name. */

@@ -46,7 +46,7 @@ export interface ProductsTopic {
 export const PRODUCTS_TOPICS: ProductsTopic[] = [
   {
     key: "approach",
-    label: "\\\\Approach",
+    label: "Approach",
     headline: "We aim to develop software that does a specific job, and does it well.",
     body: [
       "We develop tools for our own work and use them every day.",
@@ -56,7 +56,7 @@ export const PRODUCTS_TOPICS: ProductsTopic[] = [
   },
   {
     key: "target",
-    label: "\\\\Target",
+    label: "Target",
     headline: "Our target is mainly the creative industry: freelancers, design studios and the teams around them.",
     body: [
       "We build for people who run their own projects and need tools that fit the way creative work actually happens.",
@@ -65,7 +65,7 @@ export const PRODUCTS_TOPICS: ProductsTopic[] = [
   },
   {
     key: "offline",
-    label: "\\\\You own your software, also offline",
+    label: "You own your software, also offline",
     headline: "You can use your software forever, also offline. With or without an LLM.",
     body: [
       "What you get is yours to keep: it keeps working without a connection or an account.",
@@ -74,7 +74,7 @@ export const PRODUCTS_TOPICS: ProductsTopic[] = [
   },
   {
     key: "updates",
-    label: "\\\\Updates and community feedback",
+    label: "Updates and community feedback",
     headline: "We review all feedback and update our products constantly.",
     body: [
       "Regular updates are included. Major versions are offered to existing users at a reduced price, so you decide when to upgrade.",

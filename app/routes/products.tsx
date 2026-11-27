@@ -77,11 +77,11 @@ export default function Products() {
   useNavIdle(rootRef);
   usePinTop(moduleRef, nextRef);
   // A3: one gesture, one rise; N4 P-M: the cover rests on a second page (as Studio / Services), then rises into the module
-  useStepScroll(rootRef, ".pin-snap", reduced, { onStep });
+  useStepScroll(rootRef, ".pin-snap, .step", reduced, { onStep });
   useEffect(reroll, [reroll]);
 
   return (
-    <div className="r11 r11--products" ref={rootRef}>
+    <div className="r11 r11--products page-snap" ref={rootRef}>
       {/* N4 P-H A-14: the page body is the main landmark; the footer is its contentinfo. */}
       <main className="pv">
         <h1 className="pv-visually-hidden">Products</h1>
@@ -98,7 +98,7 @@ export default function Products() {
           <span className="pin-snap" aria-hidden="true" />
           <div className="pv-next" ref={nextRef}>
             <FloatingCube className="pv-float" pattern={pattern} reduced={reduced} />
-            <section className="pv-products" aria-labelledby="pv-products-title">
+            <section className="pv-products step" aria-labelledby="pv-products-title">
               <h2 className="pv-products__title" id="pv-products-title">
                 Products
               </h2>

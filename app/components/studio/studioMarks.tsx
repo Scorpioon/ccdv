@@ -210,7 +210,7 @@ export function JoinedChip({ id, className, children }: { id: string; className?
    mobile drawing is the same size). The gradient stops are the original's. */
 export function CcosHexMark({ id }: { id: string }) {
   return (
-    <svg className="cs__mark" viewBox="680.494 2809 83.951 96.94" aria-hidden="true" focusable="false">
+    <svg data-illo="" className="cs__mark" viewBox="680.494 2809 83.951 96.94" aria-hidden="true" focusable="false">
       <defs>
         <linearGradient id={id} x1="722.47" y1="2832.27" x2="722.47" y2="2882.67" gradientUnits="userSpaceOnUse">
           <stop stopColor="#F2F2F2" />
@@ -220,8 +220,8 @@ export function CcosHexMark({ id }: { id: string }) {
       <path d="M722.469 2809L764.445 2833.23V2881.7L722.469 2905.94L680.494 2881.7V2833.23L722.469 2809Z" fill="#F2F2F2" />
       <path d="M722.471 2818.7L756.051 2838.08V2876.86L722.471 2896.25L688.89 2876.86V2838.08L722.471 2818.7Z" fill="#141414" />
       <path d="M722.47 2832.27L744.297 2844.87V2870.07L722.47 2882.67L700.642 2870.07V2844.87L722.47 2832.27Z" fill={`url(#${id})`} />
-      <path d="M688.539 2838.08L722.468 2857.47L756.396 2838.08" stroke="#F2F2F2" strokeWidth="1.67542" fill="none" />
-      <path d="M722.469 2857.47V2896.24" stroke="#F2F2F2" strokeWidth="1.67542" fill="none" />
+      <path d="M688.539 2838.08L722.468 2857.47L756.396 2838.08" stroke="#F2F2F2" fill="none" />
+      <path d="M722.469 2857.47V2896.24" stroke="#F2F2F2" fill="none" />
     </svg>
   );
 }

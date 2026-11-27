@@ -13,7 +13,7 @@
 
 export function ProductsMarkTile({ className }: { className?: string }) {
   return (
-    <svg
+    <svg data-illo=""
       className={className}
       viewBox="1026.72 57.0547 133.38 153.46"
       xmlns="http://www.w3.org/2000/svg"
@@ -24,22 +24,19 @@ export function ProductsMarkTile({ className }: { className?: string }) {
         d="M1160.1 95.5566V172.564L1093.41 211.066L1026.72 172.563V95.5576L1093.41 57.0547L1160.1 95.5566Z"
         fill="none"
         stroke="#202020"
-        strokeWidth="0.277577"
       />
       <path
         d="M1146.73 103.274V164.846L1093.41 195.634L1040.08 164.846V103.274L1093.41 72.4868L1146.73 103.274Z"
         fill="#5AE36F"
         stroke="#202020"
-        strokeWidth="0.277577"
       />
       <path
         d="M1128.02 114.078V154.043L1093.41 174.027L1058.8 154.043V114.078L1093.41 94.0938L1128.02 114.078Z"
         fill="none"
         stroke="#D9D9D9"
-        strokeWidth="0.277577"
       />
-      <path d="M1040.11 103.25L1093.41 134.061L1146.7 103.25" fill="none" stroke="#202020" strokeWidth="0.277577" />
-      <path d="M1093.41 134.061V195.543" fill="none" stroke="#202020" strokeWidth="0.277577" />
+      <path d="M1040.11 103.25L1093.41 134.061L1146.7 103.25" fill="none" stroke="#202020" />
+      <path d="M1093.41 134.061V195.543" fill="none" stroke="#202020" />
     </svg>
   );
 }

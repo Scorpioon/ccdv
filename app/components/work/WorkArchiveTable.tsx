@@ -1,4 +1,6 @@
 import { Link } from "react-router";
+import { useSiteNavigation } from "../GlobalShell";
+import type { TransitionTarget } from "../../motion/transitionCoordinator";
 import { GearMark } from "../marks/GearMark";
 import { ARCHIVE_GROUP_YEARS, FUTURE_YEARS, workcaseHref, type ArchiveRow } from "../../data/workProjects";
 
@@ -15,8 +17,10 @@ import { ARCHIVE_GROUP_YEARS, FUTURE_YEARS, workcaseHref, type ArchiveRow } from
    N4 (OPERATOR): the columns are proportional, so they spread across the
    whole table instead of bunching at its left.
 
-   Rows are buttons: hover, focus or a press selects the row and fills the
-   preview (WorkArchivePreview), so a keyboard reaches every project.
+   Rows are buttons: hover or focus selects the row and fills the preview
+   (WorkArchivePreview), so a keyboard reaches every project. R3 S9 (OPERATOR): a press
+   selects AND opens (the case study, or the Products explainer through the transition
+   coordinator); a row with neither only selects.
 
    N4 glyphs (OPERATOR): `[+]` opens the project's case study (only where a
    Workcase exists), `[↗]` goes to the page that explains the project
@@ -51,6 +55,7 @@ export function WorkArchiveTable({
   onSelect: (id: string) => void;
   onOpenCase: (href: string) => void;
 }) {
+  const nav = useSiteNavigation();
   const groups = ARCHIVE_GROUP_YEARS.map((year) => ({ year, rows: rows.filter((entry) => entry.year === year) })).filter(
     (group) => group.rows.length > 0,
   );
@@ -90,9 +95,13 @@ export function WorkArchiveTable({
                     type="button"
                     className="wv3-row"
                     aria-pressed={entry.id === selectedId}
-                    aria-label={`${entry.year}, ${entry.category}, ${entry.responsibility}, ${entry.name}, ${entry.client}`}
+                    aria-label={`${entry.year}, ${entry.category}, ${entry.responsibility}, ${entry.name}, ${entry.client}${caseHref || explainer ? ", open project" : ""}`}
                     onFocus={() => onSelect(entry.id)}
-                    onClick={() => onSelect(entry.id)}
+                    onClick={() => {
+                      onSelect(entry.id);
+                      if (caseHref) onOpenCase(caseHref);
+                      else if (explainer) nav.go(explainer as TransitionTarget);
+                    }}
                   >
                     <Cells entry={entry} />
                   </button>

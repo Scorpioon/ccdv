@@ -346,7 +346,7 @@ export function FloatingCube({
   }, [reduced]);
 
   return (
-    <svg
+    <svg data-illo=""
       ref={svgRef}
       className={className}
       viewBox="-120 -120 240 240"
@@ -382,7 +382,7 @@ export function FloatingCube({
             );
           })}
         </g>
-        <g strokeWidth={1}>
+        <g>
           <path ref={ref(9)} d={REST[9]} stroke="#F2F2F2" vectorEffect="non-scaling-stroke" strokeLinejoin="round" />
           <path ref={ref(10)} d={REST[10]} stroke="#5AE36F" vectorEffect="non-scaling-stroke" strokeLinejoin="round" />
           <path

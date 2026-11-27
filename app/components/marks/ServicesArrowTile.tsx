@@ -12,14 +12,14 @@ const ARROW_OUTLINE =
 
 export function ServicesArrowTile({ className }: { className?: string }) {
   return (
-    <svg
+    <svg data-illo=""
       className={className}
       viewBox="797.445 53.0083 162.14 162.106"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
       focusable="false"
     >
-      <path d={ARROW_OUTLINE} fill="none" stroke="#202020" strokeWidth="0.5" />
+      <path d={ARROW_OUTLINE} fill="none" stroke="#202020" />
     </svg>
   );
 }

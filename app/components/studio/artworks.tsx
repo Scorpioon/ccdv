@@ -14,8 +14,7 @@ import type { Mat3, Vec3 } from "../marks/StudioMobileOrbit";
 
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
 
-/* All strokes in the Studio illustrations are 0.5 (MTG05 R4-B03, B03-09). */
-export const STROKE = 0.5;
+/* R3 S3: illustration strokes are the shared token (data-illo, --stroke-illustration). */
 export const LILAC = "#A864E2";
 
 /* --- R1-FB001: scroll-reel figures (phones, <768px) ---------------------------
@@ -182,10 +181,10 @@ export function CcosGyro({ reduced }: { reduced: boolean }) {
   });
 
   const rest = ringHalves(CG_RING_N0);
-  const ink = { stroke: INK, strokeWidth: 1.38523 } as const;
+  const ink = { stroke: INK } as const;
   const ring = { ...ink, strokeLinecap: "round", strokeDasharray: "8 9" } as const;
   return (
-    <svg
+    <svg data-illo=""
       ref={svgRef}
       className="cs__globe studio-sphere"
       viewBox="20 2961 911 913"
@@ -203,9 +202,9 @@ export function CcosGyro({ reduced }: { reduced: boolean }) {
       <g clipPath={`url(#${clip})`}>
         <path ref={backRef} d={rest.back} {...ring} />
         <circle cx={CG.cx} cy={CG.cy} r={CG.r} {...ink} />
-        <path d={CG_CUBE} fill={LILAC} stroke={INK} strokeWidth="1.47527" strokeLinejoin="round" />
-        <path d="M290.965 3313.47L475.198 3418.75L659.435 3313.47" stroke={INK} strokeWidth="1.47527" />
-        <path d="M477.125 3418.64L477.125 3873" stroke={INK} strokeWidth="1.47527" />
+        <path d={CG_CUBE} fill={LILAC} stroke={INK} strokeLinejoin="round" />
+        <path d="M290.965 3313.47L475.198 3418.75L659.435 3313.47" stroke={INK} />
+        <path d="M477.125 3418.64L477.125 3873" stroke={INK} />
         <line x1="475.048" y1="2961.52" x2="475.048" y2="3313.37" {...ink} />
         <path ref={frontRef} d={rest.front} {...ring} />
       </g>
@@ -227,8 +226,8 @@ const CUBE_STEM = "M0 171.89V86C29.289 69.21 45.211 59.79 74.5 43M0 85.99L-73.5 
 function CubeDrawing({ x, y }: { x: number; y: number }) {
   return (
     <g transform={`translate(${x} ${y})`}>
-      <path d={CUBE_OUTLINE} stroke={LIGHT} strokeWidth="0.77554" />
-      <path d={CUBE_STEM} stroke={LIGHT} strokeWidth={STROKE} />
+      <path d={CUBE_OUTLINE} stroke={LIGHT} />
+      <path d={CUBE_STEM} stroke={LIGHT} />
     </g>
   );
 }
@@ -257,7 +256,7 @@ export function ThreeCubes({ reduced, frame = "0 4800 390 360" }: { reduced: boo
   }, [reduced]);
 
   return (
-    <svg ref={svgRef} className="studio-art wo-cubes" viewBox={frame} fill="none" aria-hidden="true" focusable="false">
+    <svg data-illo="" ref={svgRef} className="studio-art wo-cubes" viewBox={frame} fill="none" aria-hidden="true" focusable="false">
       <CubeDrawing x={120} y={4972.1} />
       <CubeDrawing x={269} y={4972.1} />
       <g className="wo-cubes__top">
@@ -345,10 +344,10 @@ export function WritingDiagram({ reduced, frame = "0 5470 390 240" }: { reduced:
     },
   );
 
-  const stroke = { stroke: LIGHT, strokeWidth: 0.54844 } as const;
+  const stroke = { stroke: LIGHT } as const;
   const dashed = { pathLength: 1, strokeDasharray: 1 } as const;
   return (
-    <svg ref={svgRef} className="studio-art wo-diagram" viewBox={frame} fill="none" aria-hidden="true" focusable="false">
+    <svg data-illo="" ref={svgRef} className="studio-art wo-diagram" viewBox={frame} fill="none" aria-hidden="true" focusable="false">
       {COL_TOPS.map(([x1, x2], col) => (
         <path key={col} d={`M${x1} 5494.1H${x2}`} {...stroke} />
       ))}
@@ -424,14 +423,14 @@ export function GearConveyor({
   const initial = (slot: number) =>
     `translate(${195 + slot * pitch} 65) rotate(${((slot % 2) + 2) % 2 ? 22.5 : 0}) scale(${GEAR_SCALE.toFixed(5)}) translate(-148.034 -148.034)`;
   return (
-    <svg ref={svgRef} className="studio-art" viewBox={frame} fill="none" aria-hidden="true" focusable="false">
+    <svg data-illo="" ref={svgRef} className="studio-art" viewBox={frame} fill="none" aria-hidden="true" focusable="false">
       <defs>
         <linearGradient id={id} gradientUnits="userSpaceOnUse" x1="148" y1="170" x2="148" y2="126">
           <stop stopColor="#D4D4D4" />
           <stop offset="1" stopColor={LILAC} />
         </linearGradient>
         <g id={`${id}-gear`}>
-          <path d={GEAR_OUTLINE} stroke={LIGHT} strokeWidth={STROKE} />
+          <path d={GEAR_OUTLINE} stroke={LIGHT} />
           <path d={GEAR_CORE} fill={`url(#${id})`} />
         </g>
       </defs>

@@ -49,10 +49,10 @@ export default function Services() {
   useNavIdle(rootRef);
   usePinTop(indexRef, redRef);
   // A3: one gesture, one rise; stops at the markers and the Formation scene
-  useStepScroll(rootRef, ".pin-snap, .sv-fm", reduced);
+  useStepScroll(rootRef, ".pin-snap, .step:not(.step--phone)", reduced);
 
   return (
-    <div className="r11 r11--services" ref={rootRef}>
+    <div className="r11 r11--services page-snap" ref={rootRef}>
       {/* NAV-T3 curtain + PIN-T1 pin (desktop, global.css): the cover pins
           while the index rises over it; the index then pins, one screen tall,
           while the red rises over it. The in-flow markers (`pin-snap`) are the

@@ -6,20 +6,24 @@
    with their own figures and motion (cardArt.tsx): Diagnose, Product
    intelligence, Modular approach.
 
-   Desktop: a row at the Studio cards' x. Below 1024px: a one-card carousel
-   (the track is exactly one card wide and snaps per card; it scrolls only
-   sideways, so vertical page scrolling is never caught), Left/Right on the
-   focused track, and three 44px dot buttons. The page never scrolls sideways. */
-import { useRef, useState } from "react";
+   Desktop: a row at the Studio cards' x. Below 1024px: a controlled carousel
+   (R3 S7: index in state, the track moved by css translate, swipe by
+   useRailSwipe; the next card peeks), Left/Right on the focused track, and
+   three 44px dot buttons. The intro and the rail are two one-screen steps on
+   phones. The page never scrolls sideways. */
+import { useState } from "react";
 import type { CSSProperties, KeyboardEvent, ReactNode } from "react";
+import { CtaChip } from "../CtaChip";
 import { JoinedChip } from "../studio/studioMarks";
 import { DiagnoseArt, IntelligenceArt, ModularArt } from "./cardArt";
 import { WORK_WITH_CARDS, WORK_WITH_INTRO } from "../../data/servicesScenes";
 import { index } from "../../motion/studioMotion";
+import { useRailSwipe } from "../../motion/useRailSwipe";
 
 export function WorkWithScene({ reduced }: { reduced: boolean }) {
-  const trackRef = useRef<HTMLDivElement>(null);
   const [current, setCurrent] = useState(0);
+  const go = (to: number) => setCurrent(Math.min(WORK_WITH_CARDS.length - 1, Math.max(0, to)));
+  const swipe = useRailSwipe({ count: WORK_WITH_CARDS.length, index: current, setIndex: go, reduced });
 
   const art: Record<(typeof WORK_WITH_CARDS)[number]["key"], ReactNode> = {
     diagnose: <DiagnoseArt reduced={reduced} />,
@@ -27,19 +31,6 @@ export function WorkWithScene({ reduced }: { reduced: boolean }) {
     modular: <ModularArt reduced={reduced} />,
   };
 
-  const step = () => {
-    const track = trackRef.current;
-    const [a, b] = track ? [track.children[0], track.children[1]] : [];
-    return a instanceof HTMLElement && b instanceof HTMLElement ? b.offsetLeft - a.offsetLeft : 0;
-  };
-  const go = (to: number) => {
-    const track = trackRef.current;
-    const size = step();
-    if (!track || !size) return;
-    const next = Math.min(WORK_WITH_CARDS.length - 1, Math.max(0, to));
-    track.scrollTo({ left: next * size, behavior: reduced ? "auto" : "smooth" });
-    setCurrent(next);
-  };
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     const delta = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
     if (!delta) return;
@@ -49,28 +40,26 @@ export function WorkWithScene({ reduced }: { reduced: boolean }) {
 
   return (
     <section className="sv-ww" aria-labelledby="services-work-with" data-scene>
-      <JoinedChip id="services-work-with" className="sv-ww__chip">
-        Work with CCDV.
-      </JoinedChip>
-      <div className="sv-ww__copy" data-spawn style={index(1)}>
-        {WORK_WITH_INTRO.map((text) => (
-          <p key={text}>{text}</p>
-        ))}
+      <div className="sv-ww__intro step step--phone">
+        <JoinedChip id="services-work-with" className="sv-ww__chip">
+          Work with CCDV.
+        </JoinedChip>
+        <div className="sv-ww__copy" data-spawn style={index(1)}>
+          {WORK_WITH_INTRO.map((text) => (
+            <p key={text}>{text}</p>
+          ))}
+        </div>
       </div>
 
-      <div className="sv-ww__cards-wrap">
+      <div className="sv-ww__rail step step--phone">
+      <div className="sv-ww__cards-wrap" ref={swipe.ref} style={swipe.style}>
         <div
-          ref={trackRef}
           className="sv-ww__cards"
           role="group"
           aria-roledescription="carousel"
           aria-label="How we work with you"
           tabIndex={0}
           onKeyDown={onKeyDown}
-          onScroll={(event) => {
-            const size = step();
-            if (size) setCurrent(Math.round(event.currentTarget.scrollLeft / size));
-          }}
         >
           {WORK_WITH_CARDS.map((card, i) => (
             <article
@@ -101,6 +90,8 @@ export function WorkWithScene({ reduced }: { reduced: boolean }) {
             />
           ))}
         </div>
+      </div>
+      <CtaChip to="/products/ccos" label="See CC.OS" />
       </div>
       <WorkWithConnectors />
     </section>

@@ -3,7 +3,7 @@
    clip2_1737_6345): outer circle, two dashed rings, the vertical and the
    horizontal axis. The viewBox is that group's clip rect (30.1719, 215.1719,
    328.826 square), so the drawing keeps the artboard's proportions at any width.
-   Strokes are the source values (1.03292 / 0.591414) in #141414. */
+   Strokes are the shared illustration stroke (data-illo, --stroke-illustration) in #141414. */
 
 const INK = "#141414";
 
@@ -361,7 +361,7 @@ export function StudioMobileOrbit({ className }: { className?: string }) {
   });
 
   return (
-    <svg
+    <svg data-illo=""
       ref={svgRef}
       className={`${className ?? ""} studio-sphere`}
       viewBox="30.1719 215.1719 328.826 328.826"
@@ -371,12 +371,12 @@ export function StudioMobileOrbit({ className }: { className?: string }) {
       aria-label="Orbit drawing. Drag, or use the arrow keys, to turn it."
       tabIndex={0}
     >
-      <circle cx="194.585" cy="379.587" r="163.897" stroke={INK} strokeWidth={1.03292} />
+      <circle cx="194.585" cy="379.587" r="163.897" stroke={INK} />
       {/* CORR01: the only part of the figure that takes pointers (CSS), so a
           drag that starts outside the circle scrolls the page */}
       <circle className="studio-sphere__hit" cx="194.585" cy="379.587" r="163.897" fill="transparent" />
-      <path ref={(n) => { pathRefs.current[0] = n; }} d={RING_A} stroke={INK} strokeWidth={1.03292} strokeLinecap="round" />
-      <path ref={(n) => { pathRefs.current[1] = n; }} d={RING_B} stroke={INK} strokeWidth={1.03292} strokeLinecap="round" />
+      <path ref={(n) => { pathRefs.current[0] = n; }} d={RING_A} stroke={INK} strokeLinecap="round" />
+      <path ref={(n) => { pathRefs.current[1] = n; }} d={RING_B} stroke={INK} strokeLinecap="round" />
       {RINGS.map((_, i) => (
         <ellipse
           key={i}
@@ -387,13 +387,12 @@ export function StudioMobileOrbit({ className }: { className?: string }) {
           ry={R * RINGS[i].n0[2]}
           visibility="hidden"
           stroke={INK}
-          strokeWidth={1.03292}
           strokeLinecap="round"
           strokeDasharray={DASH}
         />
       ))}
-      <line {...axis(0)} x1="195.102" y1="215.174" x2="195.102" y2="544" stroke={INK} strokeWidth={1.03292} />
-      <line {...axis(1)} x1="358.996" y1="379.889" x2="30.1699" y2="379.889" stroke={INK} strokeWidth={0.591414} />
+      <line {...axis(0)} x1="195.102" y1="215.174" x2="195.102" y2="544" stroke={INK} />
+      <line {...axis(1)} x1="358.996" y1="379.889" x2="30.1699" y2="379.889" stroke={INK} />
     </svg>
   );
 }

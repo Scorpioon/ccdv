@@ -1,3 +1,4 @@
+import { useId, useState } from "react";
 import { CoverMasthead } from "../CoverMasthead";
 import { Chip } from "../studio/studioMarks";
 import { FloatingCube } from "./FloatingCube";
@@ -23,6 +24,10 @@ import { index } from "../../motion/studioMotion";
    (CoverMasthead), the light card on the ink. Phones now show the cover for
    the card alone (global.css). */
 export function ProductsCover({ pattern, reduced }: { pattern: LitPattern; reduced: boolean }) {
+  /* R3 S5 (phones): the intro folds under a `v` below the cube; >= 1024 the text
+     shows as ever and the button is hidden (css) */
+  const [open, setOpen] = useState(false);
+  const foldId = useId();
   return (
     <section className="pv-cover" aria-label="CCDV">
       {/* P1b CORR03: the 1536 x 1243.73 frame; on desktop it scales to fit
@@ -38,6 +43,17 @@ export function ProductsCover({ pattern, reduced }: { pattern: LitPattern; reduc
             A6: that copy is the 3D FloatingCube */}
         <FloatingCube className="pv-cover__cube pv-float" pattern={pattern} reduced={reduced} spawn={4} />
 
+        <button
+          type="button"
+          className="cover-v"
+          aria-expanded={open}
+          aria-controls={foldId}
+          onClick={() => setOpen((value) => !value)}
+        >
+          <span className="sr-only">{open ? "Hide intro" : "Show intro"}</span>
+          <span className="cover-v__glyph" aria-hidden="true">v</span>
+        </button>
+
         <div className="pv-cover__whois" data-spawn style={index(3)}>
           <Chip tone="ink" as="p" className="pv-chip pv-cover__chip">
             {"Whois\\\\"}
@@ -45,11 +61,15 @@ export function ProductsCover({ pattern, reduced }: { pattern: LitPattern; reduc
           {/* N4 P-M: the text is staged over the cover's two pages; the first
               paragraph is on the first, the rest arrive with the second
               (data-later, global.css, read with the root's data-stage2) */}
-          {PRODUCTS_INTRO.map((line, i) => (
-            <p key={line} {...(i >= 1 ? { "data-later": "", style: index(i - 1) } : {})}>
-              {line}
-            </p>
-          ))}
+          <div className="cover-fold" id={foldId} data-open={open}>
+            <div className="cover-fold__in">
+              {PRODUCTS_INTRO.map((line, i) => (
+                <p key={line} {...(i >= 1 ? { "data-later": "", style: index(i - 1) } : {})}>
+                  {line}
+                </p>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>

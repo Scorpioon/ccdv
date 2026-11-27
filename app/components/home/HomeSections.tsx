@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { useRef, useState } from "react";
+import { useIsPresent } from "motion/react";
 import { Link } from "react-router";
 import { indexGrids } from "../../data/servicesVoxels";
 import type { TransitionTarget } from "../../motion/transitionCoordinator";
@@ -63,13 +64,21 @@ export function HomeSections() {
      Leaving the list returns to the focused card (if any), else closes all. */
   const [active, setActive] = useState<Slug | null>(null);
   const focused = useRef<Slug | null>(null);
+  /* R3 S4: a page that is leaving (popped, fading out) must not collapse its open
+     card: pointer-leave and blur fire as the pointer moves to the bar / link,
+     and the label snapped back (":contact" flash) while the page was exiting */
+  const present = useIsPresent();
 
   return (
     <nav aria-label="Sections">
       <ul
         className="hs"
-        onPointerLeave={() => setActive(focused.current)}
+        onPointerLeave={() => {
+          if (!present) return;
+          setActive(focused.current);
+        }}
         onBlur={(e) => {
+          if (!present) return;
           if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
             focused.current = null;
             setActive(null);

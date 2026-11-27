@@ -9,14 +9,14 @@ const DIAMONDS_OUTLINE =
 
 export function ContactMarkTile({ className }: { className?: string }) {
   return (
-    <svg
+    <svg data-illo=""
       className={className}
       viewBox="1227.9 59.061 160.81 150"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
       focusable="false"
     >
-      <path d={DIAMONDS_OUTLINE} fill="none" stroke="#202020" strokeWidth="0.5" />
+      <path d={DIAMONDS_OUTLINE} fill="none" stroke="#202020" />
     </svg>
   );
 }

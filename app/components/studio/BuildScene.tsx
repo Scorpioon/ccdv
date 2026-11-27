@@ -7,19 +7,24 @@
    edge. No card titles, no light lower half (E06/E07/E08). Figures: three
    cubes, the five-column info panel, the gear conveyor, each in its card
    window (artworks.tsx BUILD_FRAMES).
-   Desktop: a row at the original's x (CSS). Phones: a one-card-at-a-time
-   carousel (scroll-snap track exactly one card wide, so no card peeks; three
-   dots; Left/Right on the focused track). The page never scrolls sideways. */
-import { useRef, useState } from "react";
+   Desktop: a row at the original's x (CSS). Phones: a controlled carousel
+   (R3 S7: index in state, the track moved by css translate, swipe by
+   useRailSwipe; the next card peeks at the edge; three dots; Left/Right on the
+   focused track). The intro and the rail are two one-screen steps on phones
+   (`.step`, display: contents from 1024). The page never scrolls sideways. */
+import { useState } from "react";
 import type { KeyboardEvent, ReactNode } from "react";
 import { BUILD_FRAMES, CARD_GEAR_PITCH, GearConveyor, ThreeCubes, WritingDiagram } from "./artworks";
+import { CtaChip } from "../CtaChip";
 import { BuildChip } from "./studioMarks";
 import { BUILD_CARDS, BUILD_INTRO } from "../../data/studioApproach";
 import { index } from "../../motion/studioMotion";
+import { useRailSwipe } from "../../motion/useRailSwipe";
 
 export function BuildScene({ reduced }: { reduced: boolean }) {
-  const trackRef = useRef<HTMLDivElement>(null);
   const [current, setCurrent] = useState(0);
+  const go = (to: number) => setCurrent(Math.min(BUILD_CARDS.length - 1, Math.max(0, to)));
+  const swipe = useRailSwipe({ count: BUILD_CARDS.length, index: current, setIndex: go, reduced });
 
   const art: Record<(typeof BUILD_CARDS)[number]["key"], ReactNode> = {
     cubes: <ThreeCubes reduced={reduced} frame={BUILD_FRAMES.cubes} />,
@@ -27,19 +32,6 @@ export function BuildScene({ reduced }: { reduced: boolean }) {
     gear: <GearConveyor reduced={reduced} frame={BUILD_FRAMES.gear} pitch={CARD_GEAR_PITCH} />,
   };
 
-  const step = () => {
-    const track = trackRef.current;
-    const [a, b] = track ? [track.children[0], track.children[1]] : [];
-    return a instanceof HTMLElement && b instanceof HTMLElement ? b.offsetLeft - a.offsetLeft : 0;
-  };
-  const go = (to: number) => {
-    const track = trackRef.current;
-    const size = step();
-    if (!track || !size) return;
-    const next = Math.min(BUILD_CARDS.length - 1, Math.max(0, to));
-    track.scrollTo({ left: next * size, behavior: reduced ? "auto" : "smooth" });
-    setCurrent(next);
-  };
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     const delta = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
     if (!delta) return;
@@ -49,26 +41,24 @@ export function BuildScene({ reduced }: { reduced: boolean }) {
 
   return (
     <section className="bu" aria-labelledby="studio-build" data-scene>
-      <BuildChip id="studio-build" />
-      <div className="bu__copy" data-spawn style={index(1)}>
-        {BUILD_INTRO.map((text) => (
-          <p key={text}>{text}</p>
-        ))}
+      <div className="bu__intro step step--phone">
+        <BuildChip id="studio-build" />
+        <div className="bu__copy" data-spawn style={index(1)}>
+          {BUILD_INTRO.map((text) => (
+            <p key={text}>{text}</p>
+          ))}
+        </div>
       </div>
 
-      <div className="bu__cards-wrap">
+      <div className="bu__rail step step--phone">
+      <div className="bu__cards-wrap" ref={swipe.ref} style={swipe.style}>
         <div
-          ref={trackRef}
           className="bu__cards"
           role="group"
           aria-roledescription="carousel"
           aria-label="WrkOps practice"
           tabIndex={0}
           onKeyDown={onKeyDown}
-          onScroll={(event) => {
-            const size = step();
-            if (size) setCurrent(Math.round(event.currentTarget.scrollLeft / size));
-          }}
         >
           {BUILD_CARDS.map((card, i) => (
             <article
@@ -99,6 +89,8 @@ export function BuildScene({ reduced }: { reduced: boolean }) {
             />
           ))}
         </div>
+      </div>
+      <CtaChip to="/services" label="See our services" />
       </div>
     </section>
   );

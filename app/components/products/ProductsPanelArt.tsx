@@ -33,7 +33,7 @@ const LS_DOTS = LS_ROWS.flatMap((n, row) => {
 
 function LsArt() {
   return (
-    <svg className="pv-panel__svg pv-ls" viewBox="487.336 58.121 909.932 502.879" fill="none" aria-hidden="true" focusable="false">
+    <svg data-illo="" className="pv-panel__svg pv-ls" viewBox="487.336 58.121 909.932 502.879" fill="none" aria-hidden="true" focusable="false">
       {LS_DOTS.map((dot) =>
         dot.hollow ? (
           <circle
@@ -43,7 +43,6 @@ function LsArt() {
             cy={dot.y}
             r="5.35676"
             stroke="#F2F2F2"
-            strokeWidth="1.19039"
             style={{ "--d": dot.d } as CSSProperties}
           />
         ) : (
@@ -68,15 +67,15 @@ function IdsArt() {
   const outer = "M942.302 197.422L1022.15 243.523V335.724L942.302 381.825L862.454 335.724V243.523L942.302 197.422Z";
   const inner = "M942.323 215.855L1006.2 252.736V326.497L942.323 363.378L878.445 326.497V252.736L942.323 215.855Z";
   return (
-    <svg className="pv-panel__svg" viewBox="487.336 58.121 909.932 463" fill="none" aria-hidden="true" focusable="false">
+    <svg data-illo="" className="pv-panel__svg" viewBox="487.336 58.121 909.932 463" fill="none" aria-hidden="true" focusable="false">
       <defs>
         <mask id="pv-ids-m0" fill="white"><path d={outer} /></mask>
         <mask id="pv-ids-m1" fill="white"><path d={inner} /></mask>
       </defs>
-      <path d={outer} strokeWidth="2.79397" stroke="#F2F2F2" mask="url(#pv-ids-m0)" />
-      <path d={inner} strokeWidth="2.79397" stroke="#F2F2F2" mask="url(#pv-ids-m1)" />
-      <path d="M878.617 252.805L890.289 259.544M994.351 259.544L1005.15 253.307" strokeWidth="1.39699" stroke="#F2F2F2" />
-      <path d="M942.305 350.41V363.091" strokeWidth="1.39699" stroke="#F2F2F2" />
+      <path d={outer} stroke="#F2F2F2" mask="url(#pv-ids-m0)" />
+      <path d={inner} stroke="#F2F2F2" mask="url(#pv-ids-m1)" />
+      <path d="M878.617 252.805L890.289 259.544M994.351 259.544L1005.15 253.307" stroke="#F2F2F2" />
+      <path d="M942.305 350.41V363.091" stroke="#F2F2F2" />
       <text className="pv-ids__name" x="942.3" y="302.65" textAnchor="middle" fill="#F2F2F2">
         iDS
       </text>

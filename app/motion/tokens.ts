@@ -18,13 +18,16 @@ export const MOTION = {
      the shell keeps data-arriving */
   routeOut: 320,
   arriveLead: 320,
+  /* R3 S1/S4: the plane change (exit and grid ground) and the shorter arrival lead */
+  routePlane: 420,
+  arriveLead2: 140,
   arrive: 1000,
   /* N6 R2: one gesture threshold for the Work and CC.OS decks (wheel px
      accumulated, touch swipe px) and for the stepper's wheel */
   wheelStep: 80,
   swipe: 64,
   /* masthead title retype */
-  typeChar: 48,
+  typeChar: 72,
   eraseChar: 28,
   retypePause: 60,
 } as const;

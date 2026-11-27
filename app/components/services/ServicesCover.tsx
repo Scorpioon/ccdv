@@ -16,7 +16,6 @@
    (CoverMasthead). */
 import { Fragment, useEffect, useState } from "react";
 import { CoverMasthead } from "../CoverMasthead";
-import { CoverNext } from "../CoverNext";
 import { Chip } from "../studio/studioMarks";
 import { RubikCube } from "./RubikCube";
 import { SERVICES_WHATIS } from "../../data/servicesScenes";
@@ -68,9 +67,7 @@ export function ServicesCover({ reduced }: { reduced: boolean }) {
           />
         </div>
 
-        <CoverNext />
-
-        <h1 className="sv-cv__services" id="services-title">
+        <h1 className="sr-only" id="services-title">
           [Services]
         </h1>
 

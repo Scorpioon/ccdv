@@ -1,17 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import type { KeyboardEvent } from "react";
-import { Chip, ChipGear } from "../studio/studioMarks";
+import { Chip } from "../studio/studioMarks";
 import { ProductsTopicArt } from "./ProductsArtwork";
 import { LitCube, type LitPattern } from "./LitCube";
 import { PENDING, PRODUCTS_TOPICS } from "../../data/productsContent";
 
 /* \\Our Software Code. CORR04 (OPERATOR): desktop is back to
    PRODUCTS_v2.svg's four columns — every topic side by side (figure, label
-   chip, headline, body), all four figures animating; the tab rows and pager
-   are not shown (CSS). The lit cube there is the hero cube only (one cube on
+   chip, headline, body), all four figures animating; the tab rows are not
+   shown (CSS). The lit cube there is the hero cube only (one cube on
    desktop), so the LitCube below is hidden. Phones keep
    PRODUCTS_responsive_v2.svg (y585..1419): rows, one panel
-   (figure, headline, body), four pager squares — and the LitCube is the
+   (figure, headline, body) — and the LitCube is the
    page's one cube, drawn first with the chip and rows over its foot, as the
    Studio sphere / Services voxel face sit behind their selectors (CSS order;
    it holds nothing focusable, so reading order is unchanged).
@@ -20,9 +20,9 @@ import { PENDING, PRODUCTS_TOPICS } from "../../data/productsContent";
    current row included — asks the route for a new lit pattern (`onSelect`).
    On desktop there are no rows to click, so the cube rolls once on load.
    On phones the label chip inside each panel is visually hidden (the row
-   names it). The
-   pager squares duplicate the tabs, so they stay out of the tab order and the
-   accessibility tree. */
+   names it). R3 S10: the pager squares are gone; the rows are the only
+   selector. R3 S6: topic labels carry no leading backslashes in the data; the
+   desktop chip prepends them here. */
 export function ProductsSoftwareCode({
   pattern,
   onSelect,
@@ -90,7 +90,7 @@ export function ProductsSoftwareCode({
             tabIndex={i === selected ? 0 : -1}
             onClick={() => select(i)}
           >
-            <ChipGear className="chip__gear" />
+            <span className="r1-list__dot" aria-hidden="true" />
             <span>{topic.label ?? PENDING}</span>
           </button>
         ))}
@@ -113,8 +113,8 @@ export function ProductsSoftwareCode({
             <div className="pv-topic__art">
               <ProductsTopicArt topic={topic.key} active={wide || i === selected} reduced={reduced} />
             </div>
-            <Chip tone="lilac" as="h3" id={`pv-label-${topic.key}`} className="pv-chip pv-topic__label">
-              {topic.label ?? PENDING}
+            <Chip tone="lilac" as="h3" id={`pv-label-${topic.key}`} className={`pv-chip pv-topic__label${wide ? "" : " sr-only"}`}>
+              {topic.label ? `\\\\${topic.label}` : PENDING}
             </Chip>
             <p className="pv-topic__headline" data-pending={topic.headline ? undefined : true}>
               {topic.headline ?? PENDING}
@@ -125,19 +125,6 @@ export function ProductsSoftwareCode({
               </p>
             ))}
           </div>
-        ))}
-      </div>
-
-      <div className="pv-code__pager" aria-hidden="true">
-        {PRODUCTS_TOPICS.map((topic, i) => (
-          <button
-            key={topic.key}
-            type="button"
-            className="pv-code__page"
-            tabIndex={-1}
-            data-active={i === selected}
-            onClick={() => select(i)}
-          />
         ))}
       </div>
     </section>

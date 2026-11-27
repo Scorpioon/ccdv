@@ -41,6 +41,16 @@ const smooth = (v: number) => {
 };
 const CARD_W = 303.644;
 
+/* R3 S8: the Formation cards on phones are near-square, so each figure is framed in a
+   SQUARE viewBox centred on its own bounding box (padded to the larger side);
+   the desktop frames are the default of each component below. */
+export const FORMATION_FRAMES = {
+  gear: `0 -14.2 ${CARD_W} ${CARD_W}`,
+  arrow: `0 -22.7 ${CARD_W} ${CARD_W}`,
+  network: "-7.4 104 318.45 318.45",
+  toolmaking: "-90.45 23.4 484.7 484.7",
+} as const;
+
 function Cube({ x, y, s = 1, opacity }: { x: number; y: number; s?: number; opacity?: number }) {
   return (
     <g transform={`translate(${x} ${y})${s === 1 ? "" : ` scale(${s})`}`} opacity={opacity}>
@@ -88,7 +98,7 @@ export function DiagnoseArt({ reduced }: { reduced: boolean }) {
   useVisibleLoop(svgRef, !reduced, (clock) => place(mid + amp * Math.sin((clock / DIAG_PERIOD) * Math.PI * 2)), () => place(mid));
 
   return (
-    <svg ref={svgRef} className="studio-art sv-ca" viewBox={`0 0 ${CARD_W} 480`} fill="none" aria-hidden="true" focusable="false">
+    <svg data-illo="" ref={svgRef} className="studio-art sv-ca" viewBox={`0 0 ${CARD_W} 480`} fill="none" aria-hidden="true" focusable="false">
       <path ref={backRef} className="sv-ca__ring" d={ringArc(mid, "back")} />
       {DIAG_CUBES.map(([x, y], i) => (
         <g
@@ -139,7 +149,7 @@ export function IntelligenceArt({ reduced }: { reduced: boolean }) {
   useVisibleLoop(svgRef, !reduced, place, () => place(0));
 
   return (
-    <svg ref={svgRef} className="studio-art sv-ca" viewBox={`0 0 ${CARD_W} 480`} fill="none" aria-hidden="true" focusable="false">
+    <svg data-illo="" ref={svgRef} className="studio-art sv-ca" viewBox={`0 0 ${CARD_W} 480`} fill="none" aria-hidden="true" focusable="false">
       {INTEL.map(([x, y], i) => (
         <g
           key={i}
@@ -210,7 +220,7 @@ export function ModularArt({ reduced }: { reduced: boolean }) {
   useVisibleLoop(svgRef, !reduced, (clock) => place(Math.max(0, clock - MOD_REST)), () => place(0));
 
   return (
-    <svg ref={svgRef} className="studio-art sv-ca" viewBox={`0 0 ${CARD_W} 480`} fill="none" aria-hidden="true" focusable="false">
+    <svg data-illo="" ref={svgRef} className="studio-art sv-ca" viewBox={`0 0 ${CARD_W} 480`} fill="none" aria-hidden="true" focusable="false">
       {MOD_SLOTS.map(([x, y], i) => (
         <g
           key={i}
@@ -242,7 +252,7 @@ const G_HALF = G.alone + G.enter + G.mesh + G.leave;
 const gearAt = (x: number, y: number, deg: number) =>
   `translate(${x.toFixed(2)} ${y.toFixed(2)}) rotate(${deg.toFixed(2)}) scale(${GEAR_S.toFixed(5)}) translate(-148.034 -148.034)`;
 
-export function GearMeshArt({ reduced }: { reduced: boolean }) {
+export function GearMeshArt({ reduced, frame }: { reduced: boolean; frame?: string }) {
   const svgRef = useRef<SVGSVGElement>(null);
   const centreRef = useRef<SVGGElement>(null);
   const partnerRef = useRef<SVGGElement>(null);
@@ -269,7 +279,7 @@ export function GearMeshArt({ reduced }: { reduced: boolean }) {
     </>
   );
   return (
-    <svg ref={svgRef} className="studio-art sv-ca" viewBox={`0 0 ${CARD_W} 275.22`} fill="none" aria-hidden="true" focusable="false">
+    <svg data-illo="" ref={svgRef} className="studio-art sv-ca" viewBox={frame ?? `0 0 ${CARD_W} 275.22`} fill="none" aria-hidden="true" focusable="false">
       <defs>
         <linearGradient id={id} gradientUnits="userSpaceOnUse" x1="148" y1="170" x2="148" y2="126">
           <stop stopColor="#D4D4D4" />
@@ -308,7 +318,7 @@ function arrowState(t: number): [number, number] {
   return [-1, 0];
 }
 
-export function AdvanceArrowArt({ reduced }: { reduced: boolean }) {
+export function AdvanceArrowArt({ reduced, frame }: { reduced: boolean; frame?: string }) {
   const svgRef = useRef<SVGSVGElement>(null);
   const arrowRef = useRef<SVGGElement>(null);
   const place = (offset: number, alpha: number) => {
@@ -325,7 +335,7 @@ export function AdvanceArrowArt({ reduced }: { reduced: boolean }) {
   useVisibleLoop(svgRef, !reduced, (clock) => place(...arrowState((clock + atFirstStop) % ARROW_PERIOD)), () => place(0, 1));
 
   return (
-    <svg ref={svgRef} className="studio-art sv-ca" viewBox={`0 0 ${CARD_W} 258.22`} fill="none" aria-hidden="true" focusable="false">
+    <svg data-illo="" ref={svgRef} className="studio-art sv-ca" viewBox={frame ?? `0 0 ${CARD_W} 258.22`} fill="none" aria-hidden="true" focusable="false">
       <g ref={arrowRef} transform={`translate(${ARROW_C.x} ${ARROW_C.y}) scale(${ARROW_S}) translate(-95.2 -81.06)`}>
         <path className="sv-ca__arrow" d={ARROW} />
       </g>
@@ -356,7 +366,7 @@ const NET_PERIOD = NET_BUILT + N.hold + N.fade + N.gap;
 const thread = ([x1, y1, x2, y2]: [number, number, number, number], sag: number) =>
   `M${x1} ${y1}Q${((x1 + x2) / 2).toFixed(2)} ${((y1 + y2) / 2 + 2 * sag).toFixed(2)} ${x2} ${y2}`;
 
-export function NetworkArt({ reduced }: { reduced: boolean }) {
+export function NetworkArt({ reduced, frame }: { reduced: boolean; frame?: string }) {
   const svgRef = useRef<SVGSVGElement>(null);
   const inputRef = useRef<SVGGElement>(null);
   const outputRef = useRef<SVGGElement>(null);
@@ -389,7 +399,7 @@ export function NetworkArt({ reduced }: { reduced: boolean }) {
   useVisibleLoop(svgRef, !reduced, (clock) => place(clock % NET_PERIOD, clock), () => place(NET_BUILT + 1, 0));
 
   return (
-    <svg ref={svgRef} className="studio-art sv-ca" viewBox={`0 104 ${CARD_W} 318.45`} fill="none" aria-hidden="true" focusable="false">
+    <svg data-illo="" ref={svgRef} className="studio-art sv-ca" viewBox={frame ?? `0 104 ${CARD_W} 318.45`} fill="none" aria-hidden="true" focusable="false">
       {NET_LINKS.map((links, layer) =>
         links.map((link, i) => (
           <path
@@ -431,13 +441,13 @@ export function NetworkArt({ reduced }: { reduced: boolean }) {
 }
 
 /* --- Toolmaking Workshops (Frame 352 coordinates, scaled into the card) ------- */
-export function ToolmakingArt({ reduced }: { reduced: boolean }) {
+export function ToolmakingArt({ reduced, frame }: { reduced: boolean; frame?: string }) {
   return (
     <VoxelRain
       shapes={TOOLMAKING_SHAPES}
       active={0}
       reduced={reduced}
-      viewBox="-79.2 23.4 462.2 484.7"
+      viewBox={frame ?? "-79.2 23.4 462.2 484.7"}
       tone="card"
       className="studio-art sv-ca"
       rain={260}

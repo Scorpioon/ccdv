@@ -1,6 +1,6 @@
 import { useId, useState } from "react";
 import { WorkArchiveCard } from "./WorkArchiveCard";
-import { ARCHIVE_GROUP_YEARS, FUTURE_YEARS, type ArchiveRow } from "../../data/workProjects";
+import { ARCHIVE_GROUP_YEARS, DEFAULT_OPEN_YEAR, FUTURE_YEARS, type ArchiveRow } from "../../data/workProjects";
 
 /* N4 P-J (OPERATOR, WORK V3_responsive2 y764..2108): All works on phones and
    tablets. Between two rules, the full-width `All works` label; then one
@@ -10,11 +10,12 @@ import { ARCHIVE_GROUP_YEARS, FUTURE_YEARS, type ArchiveRow } from "../../data/w
    group has none; read as an omission). The filters are the archive's.
    N4 P-K: the year boxes stay white; the label box is gray (CSS).
    N6 R1 B2: each year's box is a disclosure with a rotating v; its cards fold
-   under it. Open by default, except 2027 (FUTURE_YEARS), which starts folded. */
+   under it. R3 S9: only DEFAULT_OPEN_YEAR (2026) starts open; 2027 (FUTURE_YEARS) stays
+   dimmed but its toggle works like any other. The box's trailing rule is gone. */
 
 function YearGroup({ year, rows }: { year: string; rows: ArchiveRow[] }) {
   const future = FUTURE_YEARS.includes(year);
-  const [open, setOpen] = useState(!future);
+  const [open, setOpen] = useState(year === DEFAULT_OPEN_YEAR);
   const panelId = useId();
 
   return (
@@ -34,7 +35,6 @@ function YearGroup({ year, rows }: { year: string; rows: ArchiveRow[] }) {
             </span>
           </button>
         </h3>
-        <span className="wv3p-year__rule" aria-hidden="true" />
       </div>
       <div className="wv3p-disclosure" id={panelId} data-open={open ? "" : undefined} inert={!open}>
         <div className="wv3p-disclosure__inner">

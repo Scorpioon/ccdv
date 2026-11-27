@@ -14,7 +14,7 @@
    draws with the node it reaches. */
 import { useId } from "react";
 import type { CSSProperties } from "react";
-import { Link } from "react-router";
+import { CtaChip } from "../CtaChip";
 import { CcosGyro } from "./artworks";
 import { CcosHexMark } from "./studioMarks";
 import { CCOS_CAPTION, CCOS_COPY } from "../../data/studioApproach";
@@ -108,7 +108,7 @@ export function CcosGraph({ decorative = false }: { decorative?: boolean } = {})
 export function CcosScene({ reduced }: { reduced: boolean }) {
   const markId = `ccm-${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
   return (
-    <section className="cs" aria-labelledby="ccos-title" data-scene>
+    <section className="cs step" aria-labelledby="ccos-title" data-scene>
       <div className="cs__head" data-spawn style={index(0)}>
         <CcosHexMark id={markId} />
         <h2 className="cs__title" id="ccos-title">
@@ -131,9 +131,7 @@ export function CcosScene({ reduced }: { reduced: boolean }) {
         <p className="cs__caption">{CCOS_CAPTION}</p>
       </div>
 
-      <Link className="cs__cta" to="/products/ccos" data-spawn style={index(4)}>
-        Read dev notes <span aria-hidden="true">→</span>
-      </Link>
+      <CtaChip className="cs__cta" to="/products/ccos" label="Read dev notes" spawn style={index(4)} />
       <span className="cs__sq" aria-hidden="true" />
     </section>
   );
