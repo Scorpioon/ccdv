@@ -69,7 +69,8 @@
   --dur-short: 240ms;
   --dur-medium: 400ms;
   --dur-long: 700ms;
-  --dur-deck: 800ms;
+  --dur-deck: 1000ms;
+  --dur-route: 320ms; /* N6 R2: MOTION.routeOut / arriveLead */
   --stagger: 50ms;
   --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
   --ease-in: cubic-bezier(0.4, 0, 1, 1);

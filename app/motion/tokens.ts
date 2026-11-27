@@ -7,15 +7,22 @@ export const MOTION = {
   short: 240,
   medium: 400,
   long: 700,
-  stepMax: 1200,
-  deck: 800,
+  /* N6 R2 paced reading: the desktop stepper's own pace (one screen), and its cap
+     for a long rise; `long` stays for the many CSS twins that share it */
+  step: 1000,
+  stepMax: 1500,
+  deck: 1000,
   stagger: 50,
   /* route: the outgoing page fades over routeOut; the arriving pieces wait
      arriveLead (= routeOut), then spawn over `medium`; `arrive` is how long
      the shell keeps data-arriving */
-  routeOut: 240,
-  arriveLead: 240,
-  arrive: 900,
+  routeOut: 320,
+  arriveLead: 320,
+  arrive: 1000,
+  /* N6 R2: one gesture threshold for the Work and CC.OS decks (wheel px
+     accumulated, touch swipe px) and for the stepper's wheel */
+  wheelStep: 80,
+  swipe: 64,
   /* masthead title retype */
   typeChar: 48,
   eraseChar: 28,

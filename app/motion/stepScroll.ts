@@ -28,13 +28,16 @@ import type { RefObject } from "react";
 import { MOTION } from "./tokens";
 
 const DESKTOP = "(min-width: 1024px)";
-const STEP_S = MOTION.long / 1000;
-const STEP_MAX_S = MOTION.stepMax / 1000; // N4 P-K C: a long rise (Products cover, ≈1.67 screens → ≈1.17 s) is scaled up to this
+const STEP_S = MOTION.step / 1000; // N6 R2 paced reading: was MOTION.long (0.7 s)
+const STEP_MAX_S = MOTION.stepMax / 1000; // N4 P-K C: a long rise (Products cover, ≈1.67 screens → ≈1.7 s at this pace) is scaled up to this
+const WHEEL_STEP = MOTION.wheelStep; // N6 R2: wheel px accumulated in one gesture before a step starts
 const QUIET_MS = 180; // wheel silence that ends a gesture
 const SETTLE_MS = 150; // scroll silence before a stray offset is settled
 const EDGE = 2; // px tolerance on a rest point
 
-const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+/* N6 R2: ease-in-out quad (peak speed 2x the average; the cubic's 3x read as a
+   snap) */
+const ease = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
 
 type Segment = { start: number; end: number; next: number | null };
 
@@ -78,6 +81,7 @@ export function useStepScroll(
     let animating = false;
     let swallow = false;
     let lastWheel = 0;
+    let wheelSum = 0;
     let pointerDown = false;
     let settleTimer = 0;
 
@@ -170,8 +174,15 @@ export function useStepScroll(
       /* A3.1: from here on the page never scrolls natively under the wheel */
       event.preventDefault();
       if (animating || (swallow && !quiet)) return;
+      /* N6 R2: a step needs WHEEL_STEP px in one direction within the gesture
+         (a single light trackpad touch does not move the page) */
+      const px = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? window.innerHeight : 1);
+      if (quiet || Math.sign(px) !== Math.sign(wheelSum)) wheelSum = 0;
+      wheelSum += px;
+      if (Math.abs(wheelSum) < WHEEL_STEP) return;
+      wheelSum = 0;
       swallow = true;
-      const to = target(window.scrollY, Math.sign(event.deltaY));
+      const to = target(window.scrollY, Math.sign(px));
       if (to !== null) go(to);
     };
 

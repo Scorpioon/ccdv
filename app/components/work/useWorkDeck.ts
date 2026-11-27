@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import type { RefObject } from "react";
+import { MOTION } from "../../motion/tokens";
 
 /* N3 W-A1 (OPERATOR: "navigation like /products/ccos — arrow controlled"):
    the Work workspace pages like the CC.OS deck (components/ccos/CcosDeck.tsx,
@@ -21,10 +22,10 @@ import type { RefObject } from "react";
 export type WorkView = "featured" | "archive" | "case";
 export type WorkMove = "down" | "up" | "in" | "out";
 
-export const MOVE_MS = 800;
-const WHEEL_STEP = 50;
+export const MOVE_MS = MOTION.deck; // N6 R2 paced reading: was 800 (global.css --wv3-move follows)
+const WHEEL_STEP = MOTION.wheelStep; // was 50
 const WHEEL_QUIET_MS = 180;
-const SWIPE_PX = 48;
+const SWIPE_PX = MOTION.swipe; // was 48
 const COAST_MS = 120;
 
 /* can the nearest `data-deck-scroll` area still scroll that way? */

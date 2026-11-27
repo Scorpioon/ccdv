@@ -74,8 +74,8 @@ h1, h2, p { margin: 0; font-weight: 600; }
    below); clip, not hidden: no scroll container, sticky keeps working. */
 .site-stage { overflow-x: clip; }
 /* N1 (OPERATOR): the pieces arrive — while the shell is arriving
-   (`data-arriving`, held 900 ms by GlobalShell) the spawn pieces wait for the
-   outgoing page to be gone (--dur-short), then take --dur-medium with a
+   (`data-arriving`, held MOTION.arrive by GlobalShell) the spawn pieces wait for the
+   outgoing page to be gone (--dur-route), then take --dur-medium with a
    --stagger step, instead of the scroll reveal's block timing. The shared bar
    (below) fades in on the same beat. A first load keeps its own entrance, and
    reveals further down still play when scrolled to.
@@ -84,7 +84,7 @@ h1, h2, p { margin: 0; font-weight: 600; }
 @media (prefers-reduced-motion: no-preference) {
   .site-shell[data-arriving] [data-spawn] {
     transition-duration: var(--dur-medium) !important;
-    transition-delay: calc(var(--dur-short) + var(--i, 0) * var(--stagger)) !important;
+    transition-delay: calc(var(--dur-route) + var(--i, 0) * var(--stagger)) !important;
     transition-timing-function: var(--ease-out) !important;
   }
   /* Work's ground is grey, so the fade alone would read as "goes grey": the
@@ -92,7 +92,7 @@ h1, h2, p { margin: 0; font-weight: 600; }
      (`data-card-exit`, GlobalShell). Work -> section mirrors it: the card
      enters from its side (`data-enter`), then types. Work's content fades in. */
   .site-shell[data-card-exit] .site-stage > .site-stage__route[data-motion-pop-id] .cmh {
-    transition: translate var(--dur-short) var(--ease-in);
+    transition: translate var(--dur-route) var(--ease-in);
   }
   .site-shell[data-card-exit="left"] .site-stage > .site-stage__route[data-motion-pop-id] .cmh {
     translate: calc(-100% - var(--card-x, 48px)) 0;
@@ -107,7 +107,7 @@ h1, h2, p { margin: 0; font-weight: 600; }
     transform: translateX(calc(100% + var(--card-x, 48px)));
   }
   .site-shell[data-arriving] .wv3 > * {
-    animation: arrive-fade var(--dur-medium) var(--ease-out) var(--dur-short) both;
+    animation: arrive-fade var(--dur-medium) var(--ease-out) var(--dur-route) both;
   }
 }
 @keyframes arrive-fade {
@@ -1118,7 +1118,8 @@ main { display: block; outline: none; }
 @media (prefers-reduced-motion: no-preference) {
   /* A4: back in --dur-short, decelerating (the transition of the state reached) */
   :is(.r11--studio, .r11--services, .r11--products, .r11--contact) .masthead--collapsing { transition: transform 0.12s linear, translate var(--dur-short) var(--ease-out); }
-  :is(.r11--studio, .r11--services, .r11--products, .r11--contact) .smm__bar { transition: transform 0.12s linear, translate var(--dur-short) var(--ease-out); }
+  /* N6 R2: the phone bar follows --nav-in per frame, so no transform lag (it twitched against the finger) */
+  :is(.r11--studio, .r11--services, .r11--products, .r11--contact) .smm__bar { transition: translate var(--dur-short) var(--ease-out); }
 }
 
 /* --- Addendum A1: idle hide ------------------------------------------------
@@ -1141,7 +1142,7 @@ main { display: block; outline: none; }
     transition: transform 0.12s linear, translate var(--dur-short) var(--ease-in);
   }
   :is(.r11--studio, .r11--services, .r11--products, .r11--contact)[data-nav-idle] .smm__bar:not([data-open="true"]):not(:focus-within) {
-    transition: transform 0.12s linear, translate var(--dur-short) var(--ease-in);
+    transition: translate var(--dur-short) var(--ease-in);
   }
 }
 
@@ -1317,17 +1318,20 @@ main { display: block; outline: none; }
   .cmh__sq--b { right: calc(12 * var(--cm)); }
 }
 
-/* N6 R1 C3 (OPERATOR): phones and tablets step like the desktop deck, natively: the
-   browser snaps each swipe to the next section's start (mandatory), so a swipe never
-   rests between two screens. A section taller than the screen still scrolls inside
-   its own snap area. Studio, Services and Products only; desktop uses stepScroll.ts. */
+/* N6 R2 paced reading (supersedes R1 C3's mandatory snap on every section):
+   phones and tablets scroll freely. Mandatory snap over sections of unequal height
+   (some taller than the screen) fought the finger and re-snapped. Now only the
+   covers and the footer are snap points, and the snap is proximity: a swipe that
+   ends near a cover settles on it, anywhere else it rests where the finger left it.
+   The cover's `V` (CoverNext) is the deliberate next-screen move. Desktop uses
+   stepScroll.ts. */
 @media (width < 1024px) {
   html:has(.r11--studio, .r11--services, .r11--products) {
-    scroll-snap-type: y mandatory;
+    scroll-snap-type: y proximity;
   }
-  .r11--studio :is(.cv, .studio-approach, .bu, .cs),
-  .r11--services :is(.sv-cv, .sv-index, .sv-ww, .sv-fm),
-  .r11--products :is(.pv-cover, .pv-scene, .pv-next) {
+  .r11--studio .cv,
+  .r11--services .sv-cv,
+  .r11--products .pv-cover {
     scroll-snap-align: start;
   }
   .r11--studio .footer,
@@ -3977,7 +3981,7 @@ button.pv-card { cursor: pointer; }
   --cc-panel: #171717;
   --cc-r: calc(16 * var(--pv));
   --cc-m: max(10px, calc(24 * var(--pv)));
-  --cc-move: 0.8s;
+  --cc-move: 1s; /* N6 R2: = MOTION.deck */
   --cc-ease: cubic-bezier(0.65, 0, 0.35, 1);
   color: var(--ccdv-panel);
 }
@@ -4623,7 +4627,7 @@ html:has(.r11--ccos) .site-shell { min-height: 0; }
   --wv3-line: calc(0.533 * var(--u)) solid var(--wv3-ink);
   --wv3-t: max(11px, calc(12.8 * var(--u)));
   --wv3-gap: calc(24 * var(--u));
-  --wv3-move: 0.8s;
+  --wv3-move: 1s; /* N6 R2: = MOTION.deck */
   --wv3-ease: cubic-bezier(0.65, 0, 0.35, 1);
   --sm-rise: calc(16 * var(--u));
   --sm-ease: var(--ease-out);

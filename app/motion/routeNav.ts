@@ -34,7 +34,7 @@ const NAV_IDLE_MIN_SCROLL = 50; // px: the M1 bar's height; nearer the top the b
 const PEEK_EDGE = 70; // px from the top edge that reveals the bar (A1)
 const PEEK_SLACK = 24; // px below the bar before it is let go
 const PEEK_HIDE_MS = 250;
-const SCROLL_DIR_MIN = 4; // px: smaller moves do not count as a direction (A9)
+const TOUCH_FLIP_PX = 24; // N6 R2: a finger must travel this far one way before the bar changes (micro reversals twitched it)
 const INPUT_RECENT_MS = 1400; // A12: a scroll this soon after wheel / key / touch is that input's (a step of up to 1.2 s included)
 const SCROLL_ONLY_MIN = 40; // px: A12, a scroll with no input behind it (scrollbar) must travel this far
 const SCROLL_KEYS = new Set(["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "]);
@@ -58,7 +58,7 @@ function claimBar(root: HTMLElement) {
   chrome?.removeAttribute("data-nav-peek");
   /* N4 P-I A-19: while the bar is held, the phone rule follows the width (a
      rotation or resize across 767px), not only the width at the claim */
-  const phone = window.matchMedia("(max-width: 767px)");
+  const phone = window.matchMedia("(width < 768px)"); // N6 R2 FU-G1-01: was (max-width: 767px), which missed 767.x
   const applyHeld = () => {
     if (barHeld) chrome?.toggleAttribute("data-nav-idle", phone.matches);
   };
@@ -323,14 +323,21 @@ export function useNavIdle(rootRef: RefObject<HTMLElement | null>) {
       else if (event.key === "ArrowUp" || event.key === "PageUp" || event.key === "Home") intent(false);
       else if (event.key === " " && !el?.closest("button, a, summary, [role='button']")) intent(!event.shiftKey);
     };
+    let touchAcc = 0;
     const onTouchStart = (event: TouchEvent) => {
       touchY = event.touches[0]?.clientY ?? null;
+      touchAcc = 0;
     };
     const onTouchMove = (event: TouchEvent) => {
       const y = event.touches[0]?.clientY;
-      if (touchY === null || y === undefined || Math.abs(y - touchY) <= SCROLL_DIR_MIN * 2) return;
-      intent(y < touchY); // finger up = the page scrolls down
+      if (touchY === null || y === undefined) return;
+      lastInput = performance.now(); // a drag is input throughout, so the scroll path never second-guesses it
+      const d = touchY - y; // finger up (positive) = the page scrolls down
       touchY = y;
+      if (d === 0) return;
+      if (Math.sign(d) !== Math.sign(touchAcc)) touchAcc = 0;
+      touchAcc += d;
+      if (Math.abs(touchAcc) >= TOUCH_FLIP_PX) setHidden(touchAcc > 0);
     };
     const onScroll = () => {
       if (barOwner !== root) return;

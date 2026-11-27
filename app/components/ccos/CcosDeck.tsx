@@ -2,6 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import type { CSSProperties, FocusEvent, MouseEvent, ReactNode, TouchEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { useTransitionLink } from "../GlobalShell";
+import { MOTION } from "../../motion/tokens";
 
 /* The CC.OS deck (P2; P2 CORR01, OPERATOR: "the same classic start stop
    slideshow"). Every slide is one screen on one vertical strip; paging slides
@@ -43,10 +44,10 @@ export interface DeckSlide {
   unmarked?: boolean;
 }
 
-const MOVE_MS = 800;
-const WHEEL_STEP = 50;
+const MOVE_MS = MOTION.deck; // N6 R2 paced reading: was 800 (global.css --cc-move follows)
+const WHEEL_STEP = MOTION.wheelStep; // was 50
 const WHEEL_QUIET_MS = 180;
-const SWIPE_PX = 48;
+const SWIPE_PX = MOTION.swipe; // was 48
 const PARALLAX = 0.35;
 
 const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
